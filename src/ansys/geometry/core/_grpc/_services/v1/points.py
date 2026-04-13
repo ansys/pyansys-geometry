@@ -34,6 +34,7 @@ from .conversions import (
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
     from_point3d_to_grpc_design_point,
+    from_trimmed_curve_to_grpc_trimmed_curve,
     serialize_tracked_command_response,
 )
 
@@ -170,5 +171,50 @@ class GRPCPointsServiceV1(GRPCPointsService):
         return {
             "success": response.tracked_command_response.command_response.success,
             "created_curves": created_curves,
+            "tracked_response": serialized_response,
+        }
+
+    @protect_grpc
+    def sweep_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SweepDatumPointRequest,
+            SweepDatumPointRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SweepDatumPointRequest(
+            request_data=[
+                SweepDatumPointRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+                    distance=from_length_to_grpc_quantity(kwargs["distance"]),
+                    trajectory_curves=[
+                        from_trimmed_curve_to_grpc_trimmed_curve(tc)
+                        for tc in kwargs.get("trajectory_curves", [])
+                    ],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SweepDatumPoint(request)
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "created_curves": [
+                {
+                    "id": curve.id.id,
+                    "name": curve.owner_name,
+                    "length": from_grpc_quantity_to_distance(curve.length),
+                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.response_data[0].created_curves
+            ],
             "tracked_response": serialized_response,
         }

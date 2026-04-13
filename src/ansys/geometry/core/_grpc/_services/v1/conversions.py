@@ -1638,6 +1638,22 @@ def from_grpc_quantity_to_float(grpc_quantity: GRPCQuantity) -> float:
     return grpc_quantity.value_in_geometry_units
 
 
+def from_float_to_grpc_quantity(value: float) -> GRPCQuantity:
+    """Convert a float to a gRPC quantity.
+
+    Parameters
+    ----------
+    value : float
+        The float value to convert.
+
+    Returns
+    -------
+    GRPCQuantity
+        Converted gRPC quantity containing the float value.
+    """
+    return GRPCQuantity(value_in_geometry_units=value)
+
+
 def from_parameter_to_grpc_quantity(value: float) -> GRPCQuantity:
     """Convert a v1 dimensionless parameter to a gRPC quantity.
 

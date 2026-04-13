@@ -139,3 +139,35 @@ class GRPCPointsServiceV0(GRPCPointsService):
             )
 
         return {"success": success, "created_curves": all_curves}
+
+    @protect_grpc
+    def sweep_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import SweepPointsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SweepPointsRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+            trajectories=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+            distance=from_measurement_to_server_length(kwargs["distance"]),
+        )
+
+        # Call the gRPC service
+        response = self.stub.SweepPoints(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.result.success,
+            "created_curves": [
+                {
+                    "id": curve.id,
+                    "name": curve.owner_name,
+                    "length": to_distance(curve.length),
+                    "start_point": from_grpc_point_to_point3d(curve.points[0]),
+                    "end_point": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.created_curves
+            ],
+        }
