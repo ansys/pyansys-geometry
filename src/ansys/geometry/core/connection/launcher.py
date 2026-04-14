@@ -302,6 +302,7 @@ def launch_docker_modeler(
     client_log_file: str | None = None,
     transport_mode: str | None = None,
     certs_dir: Path | str | None = None,
+    bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using Docker.
@@ -348,6 +349,8 @@ def launch_docker_modeler(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    bypass_token : str, default: None
+        Bypass token to use for authentication when connecting to the Geometry service.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -371,6 +374,7 @@ def launch_docker_modeler(
         image=image,
         transport_mode=transport_mode,
         certs_dir=certs_dir,
+        bypass_token=bypass_token,
     )
 
     # Once the local Docker instance is ready... return the Modeler
