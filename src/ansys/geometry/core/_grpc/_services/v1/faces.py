@@ -696,6 +696,38 @@ class GRPCFacesServiceV1(GRPCFacesService):
         }
 
     @protect_grpc
+    def sweep_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SweepFacesRequest,
+            SweepFacesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        distance = kwargs.get("distance")
+        request = SweepFacesRequest(
+            request_data=[
+                SweepFacesRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+                    optional_distance=(
+                        from_length_to_grpc_quantity(distance) if distance is not None else None
+                    ),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SweepFaces(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
+        }
+
+    @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])

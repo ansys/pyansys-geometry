@@ -73,7 +73,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.edge.id,
+            "id": response.edge.id.id,
             "curve_type": response.edge.curve_type,
             "is_reversed": response.edge.is_reversed,
         }
@@ -322,6 +322,38 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         # Return the response - formatted as a dictionary
         return {
             "success": response.tracked_command_response.command_response.success,
+        }
+
+    @protect_grpc
+    def sweep_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SweepEdgesRequest,
+            SweepEdgesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        distance = kwargs.get("distance")
+        request = SweepEdgesRequest(
+            request_data=[
+                SweepEdgesRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["edge_ids"]],
+                    trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+                    optional_distance=(
+                        from_length_to_grpc_quantity(distance) if distance is not None else None
+                    ),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SweepEdges(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "modified_bodies": [body.get("id") for body in tracked_response.get("modified_bodies")],
+            "tracked_response": tracked_response,
         }
 
     @protect_grpc
