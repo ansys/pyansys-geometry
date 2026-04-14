@@ -335,7 +335,10 @@ class Design(Component):
             )
 
         # Write to file
-        if self._grpc_client.services.version == GeometryApiProtos.V0:
+        if (
+            self._grpc_client.services.version == GeometryApiProtos.V0
+            or self._grpc_client.backend_version < (27, 1, 0)
+        ):
             file_location.write_bytes(received_bytes)
         elif self._grpc_client.services.version == GeometryApiProtos.V1:
             zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
