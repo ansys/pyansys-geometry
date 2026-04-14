@@ -26,8 +26,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
