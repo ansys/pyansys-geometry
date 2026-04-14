@@ -425,7 +425,9 @@ class LocalDockerInstance:
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
                     "SERVER_ENDPOINT": "50051@0.0.0.0",
                     "ANSYS_GRPC_CERTIFICATES": container_cert_path,
-                    "ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN": bypass_token if bypass_token else "",
+                    "ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN": bypass_token
+                    if bypass_token
+                    else "",
                 },
                 command=f"--transport-mode={transport_mode}",
             )
