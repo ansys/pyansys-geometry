@@ -135,7 +135,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -240,7 +240,7 @@ jobs:
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -338,7 +338,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -426,7 +426,7 @@ jobs:
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -518,7 +518,7 @@ jobs:
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login in Github Container registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -570,7 +570,7 @@ jobs:
         python-version: ['3.10', '3.14']
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@b45d80f862d83dbcd57f89517bcf500b2ab88fb2 # v4.0.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -949,7 +949,7 @@ jobs:
           path: ${{ env.PACKAGE_NAME }}-artifacts
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
           repository-url: "https://upload.pypi.org/legacy/"
           print-hash: true
