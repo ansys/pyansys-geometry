@@ -270,7 +270,7 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
 
     if (
         BackendType.is_linux_service(modeler.client.backend_type)
-        and modeler._grpc_client._services.version == "v0"
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
     ):
         file_location = location / f"{design.name}.xmt_txt"
     else:
