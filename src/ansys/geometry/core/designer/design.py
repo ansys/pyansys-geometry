@@ -581,7 +581,7 @@ class Design(Component):
         ext = (
             "xmt_txt"
             if BackendType.is_linux_service(self._grpc_client.backend_type)
-            and self._grpc_client._services.version == "v0"
+            and self._grpc_client._services.version == GeometryApiProtos.V0
             else "x_t"
         )
 
