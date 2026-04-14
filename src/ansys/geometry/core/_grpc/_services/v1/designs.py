@@ -21,6 +21,8 @@
 # SOFTWARE.
 """Module containing the designs service implementation for v1."""
 
+from pathlib import Path
+
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
@@ -180,11 +182,17 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         )
 
         _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
+        file_path = kwargs["filepath"]
+
+        # Sanity checks on inputs
+        if isinstance(file_path, str):
+            file_path = Path(file_path)
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveRequest(
             format=from_design_file_format_to_grpc_file_export_format(kwargs["format"]),
             write_body_facets=kwargs["write_body_facets"],
+            file_name=file_path.stem,
         )
 
         # Call the gRPC service
