@@ -2607,12 +2607,8 @@ def test_fill_edge_loops(modeler: Modeler):
     """Test fill_edge_loops with the inner boundary loop of a box face with a cylindrical hole.
 
     Creates a 2x2x1 box, subtracts a cylinder (radius=0.5) to produce a through-hole,
-    then passes the inner loop of the top face to fill_edge_loops.  On v1 backends
-    >= 27R1 this creates a circular planar surface body capping the hole; on v0
-    protos the service raises NotImplementedError; on pre-27R1 backends the
-    decorator raises GeometryRuntimeError.
-
-    Also exercises the list[FaceLoop] input path using the same inner loop.
+    then passes the inner loop of the top face to fill_edge_loops. Also exercises the
+    list[FaceLoop] input path using the same inner loop.
     """
     from ansys.geometry.core.designer.face import FaceLoopType
 
