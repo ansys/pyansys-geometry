@@ -56,8 +56,8 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
         import ansys.geometry.core.connection.defaults as pygeom_defaults
 
         def request_generator(
-            addin_path: Path,
-            addin_name: str,
+            manifest_path: Path,
+            manifest_name: str,
         ) -> Generator[LoadAddinRequest, None, None]:
             """Generate requests for streaming file upload."""
             msg_buffer = 5 * 1024  # 5KB - for additional message data
@@ -65,11 +65,10 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
                 raise ValueError("MAX_MESSAGE_LENGTH is too small for file upload.")
 
             chunk_size = pygeom_defaults.MAX_MESSAGE_LENGTH - msg_buffer
-            with Path.open(addin_path, "rb") as file:
+            with Path.open(manifest_path, "rb") as file:
                 while chunk := file.read(chunk_size):
                     test_req = LoadAddinRequest(
-                        addin_path=addin_path.stem,
-                        addin_name=addin_name,
+                        manifest_name=manifest_name,
                         data=chunk,
                     )
                     yield test_req
@@ -77,8 +76,8 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
         # Call the gRPC service
         response = self.file_stub.LoadAddin(
             request_generator(
-                addin_path=kwargs["addin_path"],
-                addin_name=kwargs["addin_name"],
+                manifest_path=kwargs["manifest_path"],
+                manifest_name=kwargs["manifest_name"],
             )
         )
 

@@ -367,31 +367,28 @@ class UnsupportedCommands:
         )
 
     @min_backend_version(27, 1, 0)
-    def load_addin(self, addin_path: Path | str, addin_name: str) -> None:
+    def load_addin(self, manifest_path: Path | str) -> None:
         """Load an add-in to the current design.
 
         Parameters
         ----------
-        addin_path : str | Path
-            Path to the add-in folder to load. The folder should contain the dll and manifest files
-            for the add-in.
-        addin_name : str
-            Name to identify the add-in instance. This name will be used when invoking methods on the add-in
-            via :meth:`run_addin_method`.
+        manifest_path : str | Path
+            Path to the add-in manifest file to load. The manifest file should
+            describe the add-in and its components.
 
         Warnings
         --------
         This method is only available starting on Ansys release 27R1.
         """
-        fp_path = Path(addin_path).resolve()
+        fp_path = Path(manifest_path).resolve()
 
         try:
             temp_zip_path = prepare_file_for_server_upload(fp_path)
 
             # Pass the zip file path to the service
             self._grpc_client.services.unsupported.load_addin(
-                addin_path=temp_zip_path,
-                addin_name=addin_name,
+                manifest_path=temp_zip_path,
+                manifest_name=fp_path.name,
             )
 
         finally:
