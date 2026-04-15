@@ -2633,9 +2633,7 @@ def test_fill_edge_loops(modeler: Modeler):
     # A circular cap (pi * 0.5^2 ≈ 0.7854 m²) is created as a new surface body
     assert len(new_bodies) == 1
     assert new_bodies[0].is_surface
-    assert new_bodies[0].faces[0].area.m == pytest.approx(
-        np.pi * 0.5**2, rel=1e-5
-    )
+    assert new_bodies[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
     assert len(design1.bodies) == n_bodies_before + 1
 
     # --- list[FaceLoop] input ---
@@ -2652,6 +2650,4 @@ def test_fill_edge_loops(modeler: Modeler):
     assert isinstance(new_bodies2, list)
     assert len(new_bodies2) == 1
     assert new_bodies2[0].is_surface
-    assert new_bodies2[0].faces[0].area.m == pytest.approx(
-        np.pi * 0.5**2, rel=1e-5
-    )
+    assert new_bodies2[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
