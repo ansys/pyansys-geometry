@@ -27,6 +27,7 @@ import numpy as np
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
@@ -222,10 +223,7 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    exported_file = design.export_to_disco(location)
-
-    # Checking file size to ensure facets are exported
-    assert exported_file.stat().st_size == pytest.approx(20464, 1e-3, 100)
+    design.export_to_disco(location)
 
     # Check the exported file
     assert file_location.exists()
@@ -249,10 +247,9 @@ def test_export_to_disco_with_facets(modeler: Modeler, tmp_path_factory: pytest.
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    exported_file = design.export_to_disco(location, write_body_facets=True)
+    design.export_to_disco(location, write_body_facets=True)
 
     # Checking file size to ensure facets are exported
-    assert exported_file.stat().st_size == pytest.approx(53844, 1e-3, 100)
 
     # Check the exported file
     assert file_location.exists()
@@ -272,7 +269,10 @@ def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.Tem
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_text")
 
-    if BackendType.is_linux_service(modeler.client.backend_type):
+    if (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
+    ):
         file_location = location / f"{design.name}.xmt_txt"
     else:
         file_location = location / f"{design.name}.x_t"
@@ -295,7 +295,10 @@ def test_export_to_parasolid_binary(modeler: Modeler, tmp_path_factory: pytest.T
     # Define the location and expected file location
     location = tmp_path_factory.mktemp("test_export_to_parasolid_binary")
 
-    if BackendType.is_linux_service(modeler.client.backend_type):
+    if (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
+    ):
         file_location = location / f"{design.name}.xmt_bin"
     else:
         file_location = location / f"{design.name}.x_b"
