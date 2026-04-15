@@ -1825,7 +1825,7 @@ class GeometryCommands:
         Returns
         -------
         list[Body]
-            Bodies created by the sweep operation.
+            Bodies modified by the sweep operation.
 
         Warnings
         --------
