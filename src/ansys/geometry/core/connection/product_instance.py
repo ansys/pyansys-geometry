@@ -554,7 +554,11 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Exe args: {exe_args}")
     LOG.debug(f"Transport mode values: {transport_values}")
-    LOG.debug(f"Environment variables: {env_copy}")
+    sensitive_envs = {"ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN"}
+    env_copy_safe = {
+        k: ("***" if k in sensitive_envs else v) for k, v in env_copy.items()
+    }
+    LOG.debug(f"Environment variables: {env_copy_safe}")
 
     instance = ProductInstance(
         __start_program(args, exe_args, env_copy, server_working_dir=server_working_dir).pid
