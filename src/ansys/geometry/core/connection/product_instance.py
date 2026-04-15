@@ -460,7 +460,7 @@ def prepare_and_start_backend(
             env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
 
         # If token is provided, set the environment variable to bypass the license checkout process.
-        if bypass_token is not None:
+        if bypass_token:
             env_copy["ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN"] = bypass_token
 
         # Adapt the path environment variable to the OS and
