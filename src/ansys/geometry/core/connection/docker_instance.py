@@ -123,8 +123,8 @@ class LocalDockerInstance:
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    bypass_token : str, default: None
-        Bypass token to use for authentication when connecting to the Geometry service.
+    bypass_token : str | None, default: None
+        Bypass token to use to bypass license checks when connecting to the Geometry service.
     """
 
     __DOCKER_CLIENT__: "DockerClient" = None
@@ -319,7 +319,7 @@ class LocalDockerInstance:
             variable. If not found, it will use the "certs" folder assuming it is in the
             current working directory.
         bypass_token : str | None
-            Bypass token to use for authentication when connecting to the Geometry service.
+            Bypass token to use to bypass license checks when connecting to the Geometry service.
 
         Raises
         ------
@@ -366,6 +366,8 @@ class LocalDockerInstance:
             raise RuntimeError(
                 "No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
             )
+        if not license_server and bypass_token:
+            license_server = ""
 
         # Verify the transport mode
         if transport_mode:
@@ -425,9 +427,11 @@ class LocalDockerInstance:
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
                     "SERVER_ENDPOINT": "50051@0.0.0.0",
                     "ANSYS_GRPC_CERTIFICATES": container_cert_path,
-                    "ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN": bypass_token
-                    if bypass_token
-                    else "",
+                    **(
+                        {"ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN": bypass_token}
+                        if bypass_token
+                        else {}
+                    ),
                 },
                 command=f"--transport-mode={transport_mode}",
             )

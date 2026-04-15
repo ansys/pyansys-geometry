@@ -349,8 +349,8 @@ def launch_docker_modeler(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    bypass_token : str, default: None
-        Bypass token to use for authentication when connecting to the Geometry service.
+    bypass_token : str | None, default: None
+        Bypass token to use to bypass license checkout when connecting to the Geometry service.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -983,8 +983,8 @@ def launch_modeler_with_core_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-    proto_version: str = None,
-    bypass_token: str = None,
+    proto_version: str | None = None,
+    bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry Core service locally using the ``ProductInstance`` class.
@@ -1053,10 +1053,10 @@ def launch_modeler_with_core_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
-    proto_version : str, default: None
+    proto_version : str | None, default: None
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
-    bypass_token : str, default: None
+    bypass_token : str | None, default: None
         Token used to bypass license checks when connecting to the service.
         If None, no bypass token is used.
     **kwargs : dict, default: None

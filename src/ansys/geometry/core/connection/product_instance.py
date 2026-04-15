@@ -196,8 +196,8 @@ def prepare_and_start_backend(
     certs_dir: Path | str | None = None,
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
-    proto_version: str = None,
-    bypass_token: str = None,
+    proto_version: str | None = None,
+    bypass_token: str | None = None,
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -270,10 +270,10 @@ def prepare_and_start_backend(
     server_working_dir : str | Path, optional
         Sets the working directory for the product instance. If nothing is defined,
         the working directory will be inherited from the parent process.
-    proto_version: str, optional
+    proto_version: str | None, optional
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
-    bypass_token: str, optional
+    bypass_token: str | None, optional
         The token to bypass the license checkout process. For use with vertical applications.
 
     Returns
