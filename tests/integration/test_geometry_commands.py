@@ -2601,3 +2601,53 @@ def test_sweep_faces_design_curve_trajectory(modeler: Modeler):
 
     bodies = modeler.geometry_commands.sweep_faces(face, trajectory, Distance(0.5, UNITS.m))
     assert len(bodies) == 1
+
+
+def test_fill_edge_loops(modeler: Modeler):
+    """Test fill_edge_loops with the inner boundary loop of a box face with a cylindrical hole.
+
+    Creates a 2x2x1 box, subtracts a cylinder (radius=0.5) to produce a through-hole,
+    then passes the inner loop of the top face to fill_edge_loops. Also exercises the
+    list[FaceLoop] input path using the same inner loop.
+    """
+    from ansys.geometry.core.designer.face import FaceLoopType
+
+    # --- single FaceLoop input ---
+    design1 = modeler.create_design("fill_edge_loops_single")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    hole1 = design1.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 1)
+    box1.subtract(hole1)
+
+    # Top face (z=1 normal) has one outer loop and one inner loop (the hole boundary)
+    top_face1 = next(f for f in box1.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    loops1 = top_face1.loops
+    inner_loops1 = [lp for lp in loops1 if lp.type == FaceLoopType.INNER_LOOP]
+    assert len(inner_loops1) == 1
+    inner_loop1 = inner_loops1[0]
+
+    n_bodies_before = len(design1.bodies)
+    new_bodies = modeler.geometry_commands.fill_edge_loops(inner_loop1)
+
+    # The fill should succeed and return a list
+    assert isinstance(new_bodies, list)
+    # A circular cap (pi * 0.5^2 ≈ 0.7854 m²) is created as a new surface body
+    assert len(new_bodies) == 1
+    assert new_bodies[0].is_surface
+    assert new_bodies[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
+    assert len(design1.bodies) == n_bodies_before + 1
+
+    # --- list[FaceLoop] input ---
+    design2 = modeler.create_design("fill_edge_loops_list")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    hole2 = design2.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 1)
+    box2.subtract(hole2)
+
+    top_face2 = next(f for f in box2.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    inner_loops2 = [lp for lp in top_face2.loops if lp.type == FaceLoopType.INNER_LOOP]
+    assert len(inner_loops2) == 1
+
+    new_bodies2 = modeler.geometry_commands.fill_edge_loops([inner_loops2[0]])
+    assert isinstance(new_bodies2, list)
+    assert len(new_bodies2) == 1
+    assert new_bodies2[0].is_surface
+    assert new_bodies2[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
