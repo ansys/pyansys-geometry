@@ -32,6 +32,7 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -77,7 +78,7 @@ from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, IMPORT_FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_no_geometry_service
 
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -1393,9 +1394,19 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
     # Linux backend...
-    else:
+    elif (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
+    ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    # Windows backend...
+    elif (
+        BackendType.is_windows_service(modeler.client.backend_type)
+        or modeler._grpc_client._services.version == GeometryApiProtos.V1
+    ):
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
     # FMD
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
@@ -4032,27 +4043,32 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     testns = design._named_selections["Test"]
     assert len(testns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
-    size_with_facets = exported_file_with_facets.stat().st_size
-    assert size_with_facets == pytest.approx(216551, 1e-3, 150)
-    assert file_location.exists()
-    design_read = modeler.open_file(file_location)
-    assert len(design_read.named_selections) == 5
+    # Test only against CoreService since the file size is different when exported from
+    # SpaceClaim or Discovery.
+    if modeler.client.backend_type.is_core_service:
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
+        size_with_facets = exported_file_with_facets.stat().st_size
+        assert size_with_facets == pytest.approx(216551, 1e-3, 150)
+        assert file_location.exists()
+        design_read = modeler.open_file(file_location)
+        assert len(design_read.named_selections) == 5
 
-    exportedtestns = design_read._named_selections["Test"]
-    assert len(exportedtestns.vertices) == 2
+        exportedtestns = design_read._named_selections["Test"]
+        assert len(exportedtestns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file_without_facets = design_read.export_to_scdocx(location, write_body_facets=False)
-    size_without_facets = exported_file_without_facets.stat().st_size
-    assert size_without_facets == pytest.approx(26202, 1e-3, 150)
-    assert size_with_facets > size_without_facets, (
-        f"Expected export with facets to be larger than without facets. "
-        f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
-    )
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_without_facets = design_read.export_to_scdocx(
+            location, write_body_facets=False
+        )
+        size_without_facets = exported_file_without_facets.stat().st_size
+        assert size_without_facets == pytest.approx(26202, 1e-3, 150)
+        assert size_with_facets > size_without_facets, (
+            f"Expected export with facets to be larger than without facets. "
+            f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
+        )
 
 
 @pytest.mark.parametrize(
@@ -4196,6 +4212,12 @@ def test_legacy_export_download(
 
 def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # # Creating the directory and file to export
+    skip_if_no_geometry_service(
+        modeler,
+        test_failure_for_export.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
+
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
     reexported_file = Path(working_directory, "reexported.scdocx")
