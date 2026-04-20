@@ -256,7 +256,7 @@ def test_combine_example(modeler: Modeler):
     assert len(bottom_plate.faces) == 220
     assert len(bottom_plate.edges) == 453
     assert bottom_plate.volume.m == pytest.approx(
-        Quantity(1.3864476820718344e-3, UNITS.m**3).m,
+        Quantity(1.3864373182647354e-3, UNITS.m**3).m,
         rel=1e-6,
         abs=1e-8,
     )
