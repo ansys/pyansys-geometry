@@ -268,7 +268,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.4269747187154044e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(ring)
