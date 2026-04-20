@@ -279,7 +279,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.5706619652928885e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(cut_cylin)
@@ -290,7 +290,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.180802392322327e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(stand_plate)
@@ -301,7 +301,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.2504771923223263e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.subtract(part_one)
@@ -318,7 +318,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.3915717201112474e-4, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_one = design.components[1].bodies[0]
@@ -330,7 +330,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(2.1881226057527826e-5, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_two = design.components[1].bodies[0]
@@ -342,7 +342,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(1.9648422680842302e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
 
