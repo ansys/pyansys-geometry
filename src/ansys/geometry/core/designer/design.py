@@ -341,9 +341,13 @@ class Design(Component):
         ):
             file_location.write_bytes(received_bytes)
         elif self._grpc_client.services.version == GeometryApiProtos.V1:
-            zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
+            # In v1 - the file is sent as a zip containing the main file
+            zipped_file = file_location.parent / f"{file_location.stem}.zip"
             zipped_file.write_bytes(received_bytes)
+            # Extract the main file from the zip and save to the specified location
             extract_project_from_zip(zipped_file, file_location.parent)
+            # If extraction is successful, remove the zip file
+            zipped_file.unlink()
         else:  # pragma: no cover
             # This should never happen as the version is set in the constructor
             raise ValueError(f"Unsupported version: {self.version}")
