@@ -43,6 +43,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffset
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -304,6 +305,8 @@ class Design(Component):
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         """
+        from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
+
         # Sanity checks on inputs
         if isinstance(file_location, str):
             file_location = Path(file_location)
@@ -328,11 +331,23 @@ class Design(Component):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(
-                format=format, write_body_facets=write_body_facets
+                format=format, write_body_facets=write_body_facets, file_location=file_location
             )
 
         # Write to file
-        file_location.write_bytes(received_bytes)
+        if (
+            self._grpc_client.services.version == GeometryApiProtos.V0
+            or self._grpc_client.backend_version < (27, 1, 0)
+        ):
+            file_location.write_bytes(received_bytes)
+        elif self._grpc_client.services.version == GeometryApiProtos.V1:
+            zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
+            zipped_file.write_bytes(received_bytes)
+            extract_project_from_zip(zipped_file, file_location.parent)
+        else:  # pragma: no cover
+            # This should never happen as the version is set in the constructor
+            raise ValueError(f"Unsupported version: {self.version}")
+
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
     @min_backend_version(24, 1, 0)
@@ -401,6 +416,7 @@ class Design(Component):
         self,
         format: DesignFileFormat,
         write_body_facets: bool = False,
+        file_location: Union[Path, str] = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -433,6 +449,7 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
+                    filename=file_location,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -444,6 +461,7 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
+                    filepath=file_location,
                 )
         else:
             self._grpc_client.log.warning(
@@ -563,7 +581,12 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "xmt_txt" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_t"
+        ext = (
+            "xmt_txt"
+            if BackendType.is_linux_service(self._grpc_client.backend_type)
+            and self._grpc_client._services.version == GeometryApiProtos.V0
+            else "x_t"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -589,7 +612,12 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "xmt_bin" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_b"
+        ext = (
+            "xmt_bin"
+            if BackendType.is_linux_service(self._grpc_client.backend_type)
+            and self._grpc_client._services.version == GeometryApiProtos.V0
+            else "x_b"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -1162,6 +1190,7 @@ class Design(Component):
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
+        lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
@@ -1426,6 +1455,21 @@ class Design(Component):
             # Append the datum plane to the component to which it belongs
             created_dp.parent_component._datum_planes.append(created_dp)
 
+        # Create DesignCurves
+        for dc in response.get("design_curves"):
+            created_dc = DesignCurve(
+                dc.get("id"),
+                dc.get("name"),
+                dc.get("length"),
+                dc.get("start"),
+                dc.get("end"),
+                self._grpc_client,
+                created_components.get(dc.get("parent_id"), self),
+            )
+
+            # Append the design curve to the component to which it belongs
+            created_dc.parent_component._design_curves.append(created_dc)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1449,6 +1493,10 @@ class Design(Component):
         self._grpc_client.log.debug(f"NamedSelections created: {len(self.named_selections)}")
         self._grpc_client.log.debug(f"CoordinateSystems created: {num_created_coord_systems}")
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
+        self._grpc_client.log.debug(f"Beams created: {len(self.beams)}")
+        self._grpc_client.log.debug(f"Design points created: {len(self.design_points)}")
+        self._grpc_client.log.debug(f"Datum planes created: {len(self.datum_planes)}")
+        self._grpc_client.log.debug(f"Design curves created: {len(self.design_curves)}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
 

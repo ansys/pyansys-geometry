@@ -32,6 +32,7 @@ import pytest
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import (
@@ -77,7 +78,7 @@ from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, IMPORT_FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_no_geometry_service
 
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -1393,9 +1394,19 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
     # Linux backend...
-    else:
+    elif (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
+    ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    # Windows backend...
+    elif (
+        BackendType.is_windows_service(modeler.client.backend_type)
+        or modeler._grpc_client._services.version == GeometryApiProtos.V1
+    ):
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
     # FMD
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
@@ -2809,7 +2820,36 @@ def test_sphere_creation(modeler: Modeler):
     spherebody = design.create_sphere("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
     assert len(spherebody.faces) == 1
-    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
+    assert spherebody.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
+
+    # Create a nested sphere and verify that it reports the correct parent component.
+    nested = design.add_component("NestedBlockComp")
+    nested_sphere = nested.create_sphere(
+        "nestedspherebody", Point3D([0, 0, 0]), Distance(1, UNITS.m)
+    )
+
+    assert nested_sphere.name == "nestedspherebody"
+    assert len(nested_sphere.faces) == 1
+    assert nested_sphere.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
+    assert nested_sphere.parent_component.id == nested.id
+
+
+def test_create_block_body(modeler: Modeler):
+    """Test the creation of a block body given two opposite corner points."""
+    design = modeler.create_design("BlockTest")
+    block = design.create_block("testblockbody", Point3D([0, 0, 0]), Point3D([1, 2, 3]))
+
+    assert len(block.faces) == 6
+    assert block.volume.m == 6.0
+    assert block.parent_component.id == design.id
+
+    # Create a nested block body and verify that it reports the correct parent component.
+    nested = design.add_component("NestedBlockComp")
+    nested_block = nested.create_block("nestedblockbody", Point3D([2, 3, 4]), Point3D([5, 6, 7]))
+
+    assert len(nested_block.faces) == 6
+    assert nested_block.volume.m == 27.0
+    assert nested_block.parent_component.id == nested.id
 
 
 def test_body_mirror(modeler: Modeler):
@@ -4003,21 +4043,32 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     testns = design._named_selections["Test"]
     assert len(testns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file = design.export_to_scdocx(location, write_body_facets=True)
-    assert exported_file.stat().st_size == pytest.approx(216551, 1e-3, 100)
-    assert file_location.exists()
-    design_read = modeler.open_file(file_location)
-    assert len(design_read.named_selections) == 5
+    # Test only against CoreService since the file size is different when exported from
+    # SpaceClaim or Discovery.
+    if modeler.client.backend_type.is_core_service:
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
+        size_with_facets = exported_file_with_facets.stat().st_size
+        assert size_with_facets == pytest.approx(216551, 1e-3, 150)
+        assert file_location.exists()
+        design_read = modeler.open_file(file_location)
+        assert len(design_read.named_selections) == 5
 
-    exportedtestns = design_read._named_selections["Test"]
-    assert len(exportedtestns.vertices) == 2
+        exportedtestns = design_read._named_selections["Test"]
+        assert len(exportedtestns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file = design_read.export_to_scdocx(location, write_body_facets=False)
-    assert exported_file.stat().st_size == pytest.approx(26202, 1e-3, 100)
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_without_facets = design_read.export_to_scdocx(
+            location, write_body_facets=False
+        )
+        size_without_facets = exported_file_without_facets.stat().st_size
+        assert size_without_facets == pytest.approx(26202, 1e-3, 150)
+        assert size_with_facets > size_without_facets, (
+            f"Expected export with facets to be larger than without facets. "
+            f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
+        )
 
 
 @pytest.mark.parametrize(
@@ -4161,6 +4212,12 @@ def test_legacy_export_download(
 
 def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # # Creating the directory and file to export
+    skip_if_no_geometry_service(
+        modeler,
+        test_failure_for_export.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
+
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
     reexported_file = Path(working_directory, "reexported.scdocx")
@@ -4696,6 +4753,80 @@ def test_create_datum_plane(modeler: Modeler):
     assert datum_plane3 in all_datum_planes
     assert datum_plane4 in all_datum_planes
     assert datum_plane6 in all_datum_planes
+
+
+def test_get_centroid(modeler: Modeler):
+    """Test get_centroid() method on body, face, and edge objects.
+
+    This test validates that the centroid calculation works correctly for:
+    - Body: Tests a simple box and a cylinder
+    - Face: Tests face centroids from various geometries
+    - Edge: Tests edge centroids from various geometries
+    """
+    # Create a design
+    design = modeler.create_design("CentroidTest")
+
+    # Test 1: Body centroid - Box centered at origin
+    sketch_box = Sketch()
+    sketch_box.box(Point2D([0, 0], UNITS.mm), Quantity(20, UNITS.mm), Quantity(10, UNITS.mm))
+    box_body = design.extrude_sketch("TestBox", sketch_box, Quantity(5, UNITS.mm))
+
+    # Get centroid of the box body
+    # Expected: center of a 20x10x5 mm box, centered at origin
+    # The box is drawn from [0,0] with width=20, height=10, so center is at [0, 0] in XY
+    # Extruded by 5mm, so center in Z is at 2.5mm
+    box_centroid = box_body.centroid
+    assert isinstance(box_centroid, Point3D)
+    assert box_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)  # 2.5mm in meters
+
+    # Test 2: Body centroid - Cylinder
+    sketch_circle = Sketch()
+    sketch_circle.circle(Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm))
+    cylinder_body = design.extrude_sketch("TestCylinder", sketch_circle, Quantity(30, UNITS.mm))
+
+    # Get centroid of the cylinder body
+    # Expected: center of cylinder with base at [50, 50, 0] and height 30mm
+    # So centroid should be at [50, 50, 15] mm
+    cylinder_centroid = cylinder_body.centroid
+    assert isinstance(cylinder_centroid, Point3D)
+    assert cylinder_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)  # 15mm in meters
+
+    # Test 3: Face centroid - Top face of the box
+    # The box has 6 faces. Let's test the top face (typically the last face after extrusion)
+    top_face = next(f for f in box_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # Top face at 5mm
+
+    # Test 4: Face centroid - Circular face of cylinder
+    top_face = next(f for f in cylinder_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(30e-3, rel=1e-6, abs=1e-8)
+
+    # Test 5: Edge centroid - Edges of the box
+    box_edges = box_body.edges
+    edge_centroid = box_edges[0].centroid  # Edge at the bottom of the box
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)
+
+    # Test 6: Edge centroid - Edges of the cylinder
+    cylinder_edges = cylinder_body.edges
+    edge_centroid = cylinder_edges[0].centroid
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
 
 
 def test_tracking_changes_dict(modeler: Modeler):

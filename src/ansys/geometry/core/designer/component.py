@@ -41,6 +41,7 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
@@ -182,6 +183,7 @@ class Component:
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
     _datum_planes: list[DatumPlane]
+    _design_curves: list[DesignCurve]
 
     @check_input_types
     def __init__(
@@ -240,6 +242,7 @@ class Component:
         self._coordinate_systems = []
         self._design_points = []
         self._datum_planes = []
+        self._design_curves = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -356,6 +359,11 @@ class Component:
     def datum_planes(self) -> list[DatumPlane]:
         """List of ``DatumPlane`` objects inside of the component."""
         return self._datum_planes
+
+    @property
+    def design_curves(self) -> list[DesignCurve]:
+        """List of ``DesignCurve`` objects inside of the component."""
+        return self._design_curves
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -890,6 +898,36 @@ class Component:
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
             name=name, parent=self.id, center=center, radius=radius
+        )
+        return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_block(self, name: str, start: Point3D, end: Point3D) -> Body:
+        """Create a block body defined by the start and end points.
+
+        Parameters
+        ----------
+        name : str
+            Body name.
+        start : Point3D
+            Start point of the block (one corner).
+        end : Point3D
+            End point of the block (opposite corner).
+
+        Returns
+        -------
+        Body
+            Block body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating a block body on {self.id}.")
+        response = self._grpc_client.services.bodies.create_block_body(
+            name=name, parent_id=self.id, start=start, end=end
         )
         return self.__build_body_from_response(response)
 
