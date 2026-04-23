@@ -64,6 +64,7 @@ from ansys.geometry.core.misc.checks import (
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
+    FMDExportOptions,
     ImportOptions,
     ImportOptionsDefinitions,
     TessellationOptions,
@@ -293,6 +294,7 @@ class Design(Component):
         file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
         write_body_facets: bool = False,
+        options: FMDExportOptions | None = None,
     ) -> None:
         """Export and download the design from the server.
 
@@ -304,6 +306,8 @@ class Design(Component):
             Format for the file to save to.
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
         """
         from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
 
@@ -331,7 +335,10 @@ class Design(Component):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(
-                format=format, write_body_facets=write_body_facets, file_location=file_location
+                format=format,
+                write_body_facets=write_body_facets,
+                file_location=file_location,
+                options=options,
             )
 
         # Write to file
@@ -421,6 +428,7 @@ class Design(Component):
         format: DesignFileFormat,
         write_body_facets: bool = False,
         file_location: Union[Path, str] = None,
+        options: FMDExportOptions | None = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -428,6 +436,13 @@ class Design(Component):
         ----------
         format : DesignFileFormat
             Format for the file to save to.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        file_location : ~pathlib.Path | str, optional
+            Location on disk to save the file to.
+        options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
+
 
         Returns
         -------
@@ -454,6 +469,7 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filename=file_location,
+                    options=options,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -466,6 +482,7 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filepath=file_location,
+                    options=options,
                 )
         else:
             self._grpc_client.log.warning(
@@ -632,7 +649,11 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Path | str | None = None) -> Path:
+    def export_to_fmd(
+        self,
+        location: Path | str | None = None,
+        options: FMDExportOptions | None = None,
+    ) -> Path:
         """Export the design to an FMD file.
 
         Parameters
@@ -640,6 +661,8 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        options : FMDExportOptions, optional
+            Options for FMD export. If None, default options will be used.
 
         Returns
         -------
@@ -650,7 +673,7 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
-        self.download(file_location, DesignFileFormat.FMD)
+        self.download(file_location, DesignFileFormat.FMD, options)
 
         # Return the file location
         return file_location

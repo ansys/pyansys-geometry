@@ -30,6 +30,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
+from ansys.geometry.core.misc.options import FMDExportOptions
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.sketch import Sketch
 
@@ -374,6 +375,38 @@ def test_export_to_fmd(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
 
     # TODO: Check the exported file content
     # https://github.com/ansys/pyansys-geometry/issues/1146
+
+
+def test_export_to_fmd_with_options(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test exporting a design to FMD format with custom FMDExportOptions.
+
+    Verifies that coarser mesh options produce a smaller file than finer mesh options
+    when using the v1 protocol, where the options are actually sent to the server.
+    """
+    skip_if_discovery(
+        modeler, test_export_to_fmd_with_options.__name__, "FMD format"
+    )  # Skip test on Discovery
+
+    # Create a demo design
+    design = _create_demo_design(modeler)
+
+    # --- Coarser options (larger deviation, larger angle -> fewer facets, smaller file) ---
+    location_coarse = tmp_path_factory.mktemp("test_fmd_coarse")
+    design.export_to_fmd(location_coarse, FMDExportOptions(deviation=0.01, angle=0.5))
+    file_coarse = location_coarse / f"{design.name}.fmd"
+    assert file_coarse.exists()
+    assert file_coarse.stat().st_size > 0
+
+    # --- Finer options (smaller deviation, smaller angle -> more facets, larger file) ---
+    location_fine = tmp_path_factory.mktemp("test_fmd_fine")
+    design.export_to_fmd(location_fine, FMDExportOptions(deviation=0.0001, angle=0.01))
+    file_fine = location_fine / f"{design.name}.fmd"
+    assert file_fine.exists()
+    assert file_fine.stat().st_size > 0
+
+    # On v1 protocol options are sent to the server; finer mesh should yield a larger file.
+    if modeler._grpc_client._services.version != GeometryApiProtos.V0:
+        assert file_fine.stat().st_size > file_coarse.stat().st_size
 
 
 def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):

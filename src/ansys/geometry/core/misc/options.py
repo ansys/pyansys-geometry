@@ -168,3 +168,72 @@ class TessellationOptions:
         Whether triangles on opposite sides of an edge should match.
         """
         return self._watertight
+
+
+class FMDExportOptions:
+    """Provides options for FMD export.
+
+    Parameters
+    ----------
+    deviation : Distance | Quantity | Real, default=0.00075
+        The maximum deviation from the true surface position.
+        If a Real is provided, it is assumed to be in the default length unit.
+    angle : Angle | Quantity | Real, default=0.13962634016
+        The maximum deviation from the true surface normal.
+        If a Real is provided, it is assumed to be in radians.
+    aspect_ratio: Real, default=-3.0
+        The maximum aspect ratio of facets.
+    max_edge_length: Distance | Quantity | Real, default=0.0
+        The maximum facet edge length.
+    """
+
+    def __init__(
+        self,
+        deviation: Distance | Quantity | Real = 0.00075,
+        angle: Angle | Quantity | Real = 0.13962634016,
+        aspect_ratio: Real = -3.0,
+        max_edge_length: Distance | Quantity | Real = 0.0,
+    ):
+        """Initialize ``FMDExportOptions`` class."""
+        self._deviation = (
+            deviation if isinstance(deviation, Distance) else Distance(deviation)
+        )
+        self._angle = angle if isinstance(angle, Angle) else Angle(angle)
+        self._aspect_ratio = aspect_ratio
+        self._max_edge_length = (
+            max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
+        )
+
+    @property
+    def deviation(self) -> Distance:
+        """Deviation.
+
+        The maximum deviation from the true surface position.
+        """
+        return self._deviation
+
+    @property
+    def angle(self) -> Angle:
+        """Angle.
+
+        The maximum deviation from the true surface normal.
+        """
+        return self._angle
+
+    @property
+    def aspect_ratio(self) -> Real:
+        """Aspect ratio.
+
+        The maximum aspect ratio of facets.
+        """
+        return self._aspect_ratio
+
+    @property
+    def max_edge_length(self) -> Distance:
+        """Maximum edge length.
+
+        The maximum facet edge length.
+        """
+        return self._max_edge_length
+
+    
