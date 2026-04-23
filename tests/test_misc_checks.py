@@ -156,14 +156,14 @@ def test_fmd_export_options():
     opts = FMDExportOptions(
         deviation=0.001,
         angle=0.5,
-        aspect_ratio=-2.0,
+        aspect_ratio=-2,
         max_edge_length=0.05,
     )
     assert isinstance(opts.deviation, Distance)
     assert isinstance(opts.angle, Angle)
     assert opts.deviation.value.m_as("m") == 0.001
     assert opts.angle.value.m_as("rad") == 0.5
-    assert opts.aspect_ratio == -2.0
+    assert opts.aspect_ratio == -2
     assert isinstance(opts.max_edge_length, Distance)
     assert opts.max_edge_length.value.m_as("m") == 0.05
 
@@ -171,36 +171,51 @@ def test_fmd_export_options():
     opts_meas = FMDExportOptions(
         deviation=Distance(0.75, UNITS.millimeter),
         angle=Angle(8.0, UNITS.degree),
-        aspect_ratio=-3.0,
+        aspect_ratio=-3,
         max_edge_length=Distance(2.0, UNITS.centimeter),
     )
     assert isinstance(opts_meas.deviation, Distance)
     assert isinstance(opts_meas.angle, Angle)
     assert abs(opts_meas.deviation.value.m_as("m") - 0.00075) < 1e-12
     assert abs(opts_meas.angle.value.m_as("rad") - math.radians(8.0)) < 1e-12
-    assert opts_meas.aspect_ratio == -3.0
+    assert opts_meas.aspect_ratio == -3
     assert abs(opts_meas.max_edge_length.value.m_as("m") - 0.02) < 1e-12
 
     # --- Quantity objects ---
     opts_qty = FMDExportOptions(
         deviation=Quantity(1.0, UNITS.millimeter),
-        angle=Quantity(45.0, UNITS.degree),
-        aspect_ratio=0.0,
+        angle=Quantity(25.0, UNITS.degree),
+        aspect_ratio=0,
         max_edge_length=Quantity(10.0, UNITS.centimeter),
     )
     assert isinstance(opts_qty.deviation, Distance)
     assert isinstance(opts_qty.angle, Angle)
     assert abs(opts_qty.deviation.value.m_as("m") - 0.001) < 1e-12
-    assert abs(opts_qty.angle.value.m_as("rad") - math.pi / 4) < 1e-12
-    assert opts_qty.aspect_ratio == 0.0
+    assert abs(opts_qty.angle.value.m_as("rad") - math.radians(25.0)) < 1e-12
+    assert opts_qty.aspect_ratio == 0
     assert abs(opts_qty.max_edge_length.value.m_as("m") - 0.1) < 1e-12
 
     # --- Default values ---
     opts_default = FMDExportOptions()
     assert abs(opts_default.deviation.value.m_as("m") - 0.00075) < 1e-12
     assert abs(opts_default.angle.value.m_as("rad") - 0.13962634016) < 1e-12
-    assert opts_default.aspect_ratio == -3.0
+    assert opts_default.aspect_ratio == -3
     assert opts_default.max_edge_length.value.m_as("m") == 0.0
+
+
+def test_fmd_export_options_invalid():
+    """Test that FMDExportOptions raises ValueError for out-of-range deviation and angle."""
+    with pytest.raises(ValueError, match="deviation must be between"):
+        FMDExportOptions(deviation=0.00001)
+
+    with pytest.raises(ValueError, match="deviation must be between"):
+        FMDExportOptions(deviation=0.003)
+
+    with pytest.raises(ValueError, match="angle must be between"):
+        FMDExportOptions(angle=0.0001)  # ~0.006 degrees
+
+    with pytest.raises(ValueError, match="angle must be between"):
+        FMDExportOptions(angle=1.0)  # ~57.3 degrees
 
 
 def test_misc_checks():

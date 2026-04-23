@@ -574,7 +574,7 @@ def from_fmd_options_to_grpc_fmd_options(
         angle=GRPCQuantity(
             value_in_geometry_units=options.angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
         ),
-        aspect_ratio=GRPCQuantity(value_in_geometry_units=options.aspect_ratio),
+        aspect_ratio=options.aspect_ratio,
         max_edge_length=GRPCQuantity(
             value_in_geometry_units=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         ),

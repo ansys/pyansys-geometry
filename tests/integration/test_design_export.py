@@ -30,8 +30,8 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
-from ansys.geometry.core.misc.options import FMDExportOptions
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
+from ansys.geometry.core.misc.options import FMDExportOptions
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -392,7 +392,7 @@ def test_export_to_fmd_with_options(modeler: Modeler, tmp_path_factory: pytest.T
 
     # --- Coarser options (larger deviation, larger angle -> fewer facets, smaller file) ---
     location_coarse = tmp_path_factory.mktemp("test_fmd_coarse")
-    design.export_to_fmd(location_coarse, FMDExportOptions(deviation=0.01, angle=0.5))
+    design.export_to_fmd(location_coarse, FMDExportOptions(deviation=0.002, angle=0.5))
     file_coarse = location_coarse / f"{design.name}.fmd"
     assert file_coarse.exists()
     assert file_coarse.stat().st_size > 0

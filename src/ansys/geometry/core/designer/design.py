@@ -673,7 +673,7 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
-        self.download(file_location, DesignFileFormat.FMD, options)
+        self.download(file_location, DesignFileFormat.FMD, options=options)
 
         # Return the file location
         return file_location
