@@ -269,7 +269,7 @@ class Design(Component):
         "export_to_*",
         "use the export_to_* or download methods instead",
         "0.15.2",
-        "0.16.0",
+        "0.17.0",
     )
     def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
         """Save a design to disk on the active Geometry server instance.
