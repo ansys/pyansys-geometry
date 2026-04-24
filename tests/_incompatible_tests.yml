@@ -470,5 +470,3 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
       # Import error message added in 27.1
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
-      # FMD Export Options added in 27.1
-      - tests/integration/test_design_export.py::test_export_to_fmd_with_options

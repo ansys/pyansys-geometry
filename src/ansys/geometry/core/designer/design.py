@@ -675,11 +675,24 @@ class Design(Component):
         -------
         ~pathlib.Path
             The path to the saved file.
+
+        Warnings
+        --------
+        FMD export options are only available in Ansys 27.1 and later products. If options are 
+        provided but the backend version does not support them, a warning will be issued and the 
+        options will be ignored.
         """
         # Define the file location
         file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
+        if options and self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "FMD export options are only supported in Ansys 27.1 and later products."
+                " Ignoring provided options and exporting with default settings."
+            )
+            options = None
+            
         self.download(file_location, DesignFileFormat.FMD, options=options)
 
         # Return the file location
