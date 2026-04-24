@@ -59,6 +59,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
 )
@@ -265,6 +266,12 @@ class Design(Component):
 
     @check_input_types
     @ensure_design_is_active
+    @deprecated_method(
+        "export_to_*",
+        "use the export_to_* or download methods instead",
+        "0.15.2",
+        "0.17.0",
+    )
     def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
         """Save a design to disk on the active Geometry server instance.
 

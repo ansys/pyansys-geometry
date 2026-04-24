@@ -47,6 +47,7 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.options import FMDExportOptions
 
+
 def test_tessellation_options():
     # Testing tessellation options with Real values
     tessellation_options = TessellationOptions(

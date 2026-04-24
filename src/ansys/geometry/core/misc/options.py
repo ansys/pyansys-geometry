@@ -197,14 +197,10 @@ class FMDExportOptions:
         max_edge_length: Distance | Quantity | Real = 0.0,
     ):
         """Initialize ``FMDExportOptions`` class."""
-        self._deviation = (
-            deviation if isinstance(deviation, Distance) else Distance(deviation)
-        )
+        self._deviation = deviation if isinstance(deviation, Distance) else Distance(deviation)
         _dev_m = self._deviation.value.m_as("m")
         if not (0.00003 <= _dev_m <= 0.002):
-            raise ValueError(
-                f"deviation must be between 0.00003 m and 0.002 m, got {_dev_m} m."
-            )
+            raise ValueError(f"deviation must be between 0.00003 m and 0.002 m, got {_dev_m} m.")
 
         self._angle = angle if isinstance(angle, Angle) else Angle(angle)
         _ang_deg = self._angle.value.m_as("degree")
@@ -249,5 +245,3 @@ class FMDExportOptions:
         The maximum facet edge length.
         """
         return self._max_edge_length
-
-    
