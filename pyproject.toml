@@ -144,6 +144,7 @@ lint.select = [
   "TD",  # flake8-todos, https://docs.astral.sh/ruff/rules/#flake8-todos-td
 ]
 lint.ignore = [
+  "D213",  # Multi-line docstring summary should start at the second line (conflicts with D212/numpy convention)
   "TD002", # Missing author in TODOs comment
 ]
 # Ignore `D` rules everywhere except for the `src/` directory.

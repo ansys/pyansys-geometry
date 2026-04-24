@@ -4,8 +4,3 @@ exclude_paths:
   - "doc/**"
   - "docker/**"
   - ".github/**"
-tools:
-  - name: ruff
-    patterns:
-      - patternId: D213
-        enabled: false
