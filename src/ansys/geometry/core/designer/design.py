@@ -678,8 +678,8 @@ class Design(Component):
 
         Warnings
         --------
-        FMD export options are only available in Ansys 27.1 and later products. If options are 
-        provided but the backend version does not support them, a warning will be issued and the 
+        FMD export options are only available in Ansys 27.1 and later products. If options are
+        provided but the backend version does not support them, a warning will be issued and the
         options will be ignored.
         """
         # Define the file location
@@ -692,7 +692,7 @@ class Design(Component):
                 " Ignoring provided options and exporting with default settings."
             )
             options = None
-            
+
         self.download(file_location, DesignFileFormat.FMD, options=options)
 
         # Return the file location
