@@ -182,8 +182,6 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             from_fmd_options_to_grpc_fmd_options,
         )
 
-        print(kwargs)
-
         _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
         file_path = kwargs["filepath"]
 
