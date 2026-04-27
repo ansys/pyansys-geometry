@@ -1786,6 +1786,10 @@ class Body(IBody):
         self._template = template
         self._grpc_client = template._grpc_client
 
+    def __eq__(self, other) -> bool:
+        """Define equality based on unique ID."""
+        return self._id == other._id if isinstance(other, Body) else False
+
     def reset_tessellation_cache(func):  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 

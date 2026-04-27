@@ -281,6 +281,10 @@ class Component:
 
         self._master_component.occurrences.append(self)
 
+    def __eq__(self, other) -> bool:
+        """Define equality based on unique ID."""
+        return self._id == other._id if isinstance(other, Component) else False
+
     def _clear_cached_bodies(self) -> None:
         """Clear the cached bodies."""
         if "bodies" in self.__dict__:
