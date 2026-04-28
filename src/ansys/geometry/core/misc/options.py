@@ -175,28 +175,30 @@ class FMDExportOptions:
 
     Parameters
     ----------
-    deviation : Distance | Quantity | Real, default=0.00075
+    deviation : Distance | Quantity | Real
         The maximum deviation from the true surface position.
         If a Real is provided, it is assumed to be in the default length unit.
         Must be between 0.00003 m and 0.002 m.
-    angle : Angle | Quantity | Real, default=0.13962634016
+    angle : Angle | Quantity | Real
         The maximum deviation from the true surface normal.
         If a Real is provided, it is assumed to be in radians.
         Must be between 0.05 degrees (≈ 8.727e-4 rad) and 30 degrees (≈ 0.5236 rad).
-    aspect_ratio: int, default=-3
+    aspect_ratio : int, default=-3
         The maximum aspect ratio of facets.
-    max_edge_length: Distance | Quantity | Real, default=0.0
+    max_edge_length : Distance | Quantity | Real, default=0.0
         The maximum facet edge length.
     """
 
+    @check_input_types
     def __init__(
         self,
-        deviation: Distance | Quantity | Real = 0.00075,
-        angle: Angle | Quantity | Real = 0.13962634016,
+        deviation: Distance | Quantity | Real,
+        angle: Angle | Quantity | Real,
         aspect_ratio: int = -3,
         max_edge_length: Distance | Quantity | Real = 0.0,
     ):
         """Initialize ``FMDExportOptions`` class."""
+        # Convert inputs to Distance and Angle objects
         self._deviation = deviation if isinstance(deviation, Distance) else Distance(deviation)
         _dev_m = self._deviation.value.m_as("m")
         if not (0.00003 <= _dev_m <= 0.002):
@@ -209,7 +211,7 @@ class FMDExportOptions:
                 f"angle must be between 0.05 degrees and 30 degrees, got {_ang_deg:.6f} degrees."
             )
 
-        self._aspect_ratio = int(aspect_ratio)
+        self._aspect_ratio = aspect_ratio
         self._max_edge_length = (
             max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
         )
