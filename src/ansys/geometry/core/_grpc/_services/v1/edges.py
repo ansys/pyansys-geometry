@@ -30,6 +30,8 @@ from ..base.conversions import to_distance
 from ..base.edges import GRPCEdgesService
 from .conversions import (
     build_grpc_id,
+    from_face_loop_to_grpc_loop,
+    from_float_to_grpc_quantity,
     from_grpc_curve_to_curve,
     from_grpc_point_to_point3d,
     from_length_to_grpc_quantity,
@@ -72,7 +74,7 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
 
         # Return the response - formatted as a dictionary
         return {
-            "id": response.edge.id,
+            "id": response.edge.id.id,
             "curve_type": response.edge.curve_type,
             "is_reversed": response.edge.is_reversed,
         }
@@ -324,9 +326,39 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         }
 
     @protect_grpc
-    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+    def sweep_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SweepEdgesRequest,
+            SweepEdgesRequestData,
+        )
 
+        # Create the request - assumes all inputs are valid and of the proper type
+        distance = kwargs.get("distance")
+        request = SweepEdgesRequest(
+            request_data=[
+                SweepEdgesRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["edge_ids"]],
+                    trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+                    optional_distance=(
+                        from_length_to_grpc_quantity(distance) if distance is not None else None
+                    ),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SweepEdges(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "modified_bodies": [body.get("id") for body in tracked_response.get("modified_bodies")],
+            "tracked_response": tracked_response,
+        }
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
 
@@ -336,4 +368,67 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         # Return the response - formatted as a dictionary
         return {
             "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
+    @protect_grpc
+    def split_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SplitEdgesRequest,
+            SplitEdgesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SplitEdgesRequest(
+            request_data=[
+                SplitEdgesRequestData(
+                    selection_ids=[build_grpc_id(kwargs["edge_id"])],
+                    split_type=kwargs["split_type"].value,
+                    proportions=(
+                        [from_float_to_grpc_quantity(kwargs["proportion"])]
+                        if kwargs["proportion"]
+                        else None
+                    ),
+                    points=(
+                        [from_point3d_to_grpc_point(kwargs["point"])]
+                        if kwargs["point"] is not None
+                        else None
+                    ),
+                    lengths=(
+                        [from_length_to_grpc_quantity(kwargs["length"])]
+                        if kwargs["length"]
+                        else None
+                    ),
+                    reference=kwargs["reference"].value,
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SplitEdges(request)
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracked_response": serialized_response,
+        }
+
+    @protect_grpc
+    def fill_edge_loops(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import FillEdgeLoopsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FillEdgeLoopsRequest(
+            loops=[from_face_loop_to_grpc_loop(loop) for loop in kwargs["loops"]]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.edit_stub.FillEdgeLoops(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }

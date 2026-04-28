@@ -377,6 +377,7 @@ linkcheck_ignore = [
     r"https://download.ansys.com/",
     r"https://stackoverflow.com/",  # Requires human authentication
     r"https://docs.pyvista.org/",  # Intermittent timeout issues
+    r"https://docs.conda.io/",  # Intermittent timeout issues
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
     r"_static/assets/.*",

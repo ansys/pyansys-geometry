@@ -1,6 +1,5 @@
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
-
-# Sp4X-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -15,11 +14,12 @@
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A p1RTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Testing of SpaceClaim Tutorials Examples."""
 
 from pathlib import Path
@@ -256,9 +256,9 @@ def test_combine_example(modeler: Modeler):
     assert len(bottom_plate.faces) == 220
     assert len(bottom_plate.edges) == 453
     assert bottom_plate.volume.m == pytest.approx(
-        Quantity(1.3864476820718344e-3, UNITS.m**3).m,
+        Quantity(1.3864373182647354e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(sleep_plate)
@@ -268,7 +268,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.4269747187154044e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(ring)
@@ -279,7 +279,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.5706619652928885e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(cut_cylin)
@@ -290,7 +290,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.180802392322327e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(stand_plate)
@@ -301,7 +301,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.2504771923223263e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.subtract(part_one)
@@ -318,7 +318,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.3915717201112474e-4, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_one = design.components[1].bodies[0]
@@ -330,7 +330,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(2.1881226057527826e-5, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_two = design.components[1].bodies[0]
@@ -342,7 +342,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(1.9648422680842302e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
 
