@@ -251,8 +251,6 @@ def test_combine_example(modeler: Modeler):
     for screw in screws:
         bottom_plate.unite(screw)
 
-    design._update_design_inplace()
-
     assert len(bottom_plate.faces) == 220
     assert len(bottom_plate.edges) == 453
     assert bottom_plate.volume.m == pytest.approx(
@@ -262,7 +260,6 @@ def test_combine_example(modeler: Modeler):
     )
 
     bottom_plate.unite(sleep_plate)
-    design._update_design_inplace()
     assert len(bottom_plate.faces) == 215
     assert len(bottom_plate.edges) == 443
     assert bottom_plate.volume.m == pytest.approx(
@@ -272,7 +269,6 @@ def test_combine_example(modeler: Modeler):
     )
 
     bottom_plate.unite(ring)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 185
     assert len(bottom_plate.edges) == 378
@@ -283,7 +279,6 @@ def test_combine_example(modeler: Modeler):
     )
 
     bottom_plate.unite(cut_cylin)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 187
     assert len(bottom_plate.edges) == 384
@@ -294,7 +289,6 @@ def test_combine_example(modeler: Modeler):
     )
 
     bottom_plate.unite(stand_plate)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 189
     assert len(bottom_plate.edges) == 390
@@ -521,7 +515,6 @@ def test_intersect_example(modeler: Modeler):
         faces=faces_to_split_with,
         extendfaces=False,
     )
-    design._update_design_inplace()
 
     design.delete_body(design.bodies[0])
     design._update_design_inplace()
@@ -661,6 +654,7 @@ def test_intersect_example(modeler: Modeler):
         bodies=bodies_to_split, plane=plane, slicers=None, faces=None, extendfaces=False
     )
     design._update_design_inplace()
+
     face_count_four = 0
     edge_count_four = 0
     volume_count_four = 0
