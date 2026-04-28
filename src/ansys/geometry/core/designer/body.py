@@ -1707,9 +1707,21 @@ class MasterBody(IBody):
         check_type_all_elements_in_iterable(other, Body)
 
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
-        self._grpc_client.services.bodies.combine_merge(
+        response = self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
         )
+
+        if not response.get("success"):
+            self._grpc_client.log.warning(f"Failed to combine and merge body {self.id}.")
+            return
+
+        # Get the parent design from any of the bodies
+        parent_design = get_design_from_body(other[0] if other else self)
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def _combine_subtract(  # noqa: D102
         self,
