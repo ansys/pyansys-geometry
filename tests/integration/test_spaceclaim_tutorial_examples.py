@@ -653,6 +653,8 @@ def test_intersect_example(modeler: Modeler):
     modeler.geometry_commands.split_body(
         bodies=bodies_to_split, plane=plane, slicers=None, faces=None, extendfaces=False
     )
+    design._update_design_inplace()
+
     face_count_four = 0
     edge_count_four = 0
     volume_count_four = 0
