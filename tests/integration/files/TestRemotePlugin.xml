@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- © 2025 ANSYS, Inc. Unauthorized use, distribution, or duplication is prohibited. -->
+<AddIns>
+	<AddIn name="TestRemotePlugin"
+	       description="TestRemotePlugin for ApiServer Runtime Addins"
+	       assembly="TestRemotePlugin.dll"
+	       typename="TestRemotePlugin.RemotePluginAddin"
+	       host="SameAppDomain"
+	       allowEmbedded="false"/>
+	<!-- ANSYS_REVISIONING -->
+</AddIns>
