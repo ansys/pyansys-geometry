@@ -1702,7 +1702,7 @@ class Design(Component):
                 )
 
             if new_body:
-                created_bodies_dict[body_id] = new_body            
+                created_bodies_dict[body_id] = new_body
 
         # Handle modified bodies
         for body_info in tracker_response.get("modified_bodies", []):
