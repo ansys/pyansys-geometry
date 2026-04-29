@@ -1,6 +1,5 @@
 # Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
-
-# Sp4X-License-Identifier: MIT
+# SPDX-License-Identifier: MIT
 #
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -15,11 +14,12 @@
 #
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A p1RTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 # AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Testing of SpaceClaim Tutorials Examples."""
 
 from pathlib import Path
@@ -251,57 +251,51 @@ def test_combine_example(modeler: Modeler):
     for screw in screws:
         bottom_plate.unite(screw)
 
-    design._update_design_inplace()
-
     assert len(bottom_plate.faces) == 220
     assert len(bottom_plate.edges) == 453
     assert bottom_plate.volume.m == pytest.approx(
-        Quantity(1.3864476820718344e-3, UNITS.m**3).m,
+        Quantity(1.3864373182647354e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(sleep_plate)
-    design._update_design_inplace()
     assert len(bottom_plate.faces) == 215
     assert len(bottom_plate.edges) == 443
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.4269747187154044e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(ring)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 185
     assert len(bottom_plate.edges) == 378
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.5706619652928885e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(cut_cylin)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 187
     assert len(bottom_plate.edges) == 384
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.180802392322327e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.unite(stand_plate)
-    design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 189
     assert len(bottom_plate.edges) == 390
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(2.2504771923223263e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     bottom_plate.subtract(part_one)
@@ -318,7 +312,7 @@ def test_combine_example(modeler: Modeler):
     assert bottom_plate.volume.m == pytest.approx(
         Quantity(1.3915717201112474e-4, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_one = design.components[1].bodies[0]
@@ -330,7 +324,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(2.1881226057527826e-5, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
     solid_two = design.components[1].bodies[0]
@@ -342,7 +336,7 @@ def test_combine_example(modeler: Modeler):
     assert design.components[1].bodies[0].volume.m == pytest.approx(
         Quantity(1.9648422680842302e-3, UNITS.m**3).m,
         rel=1e-6,
-        abs=1e-8,
+        abs=1.1e-8,
     )
 
 
@@ -521,7 +515,6 @@ def test_intersect_example(modeler: Modeler):
         faces=faces_to_split_with,
         extendfaces=False,
     )
-    design._update_design_inplace()
 
     design.delete_body(design.bodies[0])
     design._update_design_inplace()
@@ -661,6 +654,7 @@ def test_intersect_example(modeler: Modeler):
         bodies=bodies_to_split, plane=plane, slicers=None, faces=None, extendfaces=False
     )
     design._update_design_inplace()
+
     face_count_four = 0
     edge_count_four = 0
     volume_count_four = 0

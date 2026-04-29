@@ -25,12 +25,17 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.designer.geometry_commands import (
     DraftSide,
     ExtrudeType,
     FillPatternType,
     GeometryCommands,
     OffsetMode,
+    SplitEdgeReference,
+    SplitEdgeType,
+    SplitFaceParameterType,
+    SplitFaceType,
 )
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
@@ -41,7 +46,7 @@ from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.surfaces.sphere import Sphere
 from ansys.geometry.core.sketch.sketch import Sketch
 
-from .conftest import FILES_DIR
+from .conftest import FILES_DIR, skip_if_linux
 
 
 def test_chamfer(modeler: Modeler):
@@ -1576,7 +1581,6 @@ def test_revolve_edges(modeler: Modeler):
     )
 
 
-@pytest.mark.skip(reason="Test is hitting an exception.")
 def test_intersect_curve_and_surface(modeler: Modeler):
     """Test intersection of curves and surfaces."""
     curve = Line(Point3D([0, 0, 0]), [1, 0, 0])
@@ -1726,6 +1730,9 @@ def test_revolve_points_by_helix(modeler: Modeler):
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
 
     # --- Distance / Angle types ---
+    # r=1m, height=1m, pitch=0.1m → 10 turns; helix arc = 10 * sqrt((2π*1)² + 0.1²)
+    expected_helix_length = 10 * np.sqrt((2 * np.pi) ** 2 + 0.1**2)
+
     design1 = modeler.create_design("revolve_points_by_helix_distance_angle")
     dp1 = design1.add_design_point("point1", Point3D([1, 0, 0], UNITS.m))
     curves1 = modeler.geometry_commands.revolve_points_by_helix(
@@ -1739,6 +1746,8 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves1) == 1
     assert isinstance(curves1[0], DesignCurve)
+    # Helix starts at the design point and rises one full height along Z
+    assert curves1[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
 
     # --- Quantity types ---
     design2 = modeler.create_design("revolve_points_by_helix_quantity")
@@ -1754,6 +1763,7 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves2) == 1
     assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
 
     # --- Raw float (SI units: metres for length, radians for angle) ---
     design3 = modeler.create_design("revolve_points_by_helix_float")
@@ -1769,6 +1779,7 @@ def test_revolve_points_by_helix(modeler: Modeler):
     )
     assert len(curves3) == 1
     assert isinstance(curves3[0], DesignCurve)
+    assert curves3[0].length.value.m == pytest.approx(expected_helix_length, rel=1e-5)
 
 
 def test_revolve_points_by_helix_multiple_points(modeler: Modeler):
@@ -1834,3 +1845,809 @@ def test_revolve_points_by_helix_pull_symmetric(modeler: Modeler):
     )
     assert len(curves) == 1
     assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_basic(modeler: Modeler):
+    """Test sweeping a design point along an edge trajectory with all supported distance types.
+
+    Creates a box to obtain a straight edge as the sweep trajectory, places a
+    design point at one end of the edge, then sweeps using Distance, Quantity,
+    and raw float (metres) to verify all input variants are accepted and produce
+    a DesignCurve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    # box(Point2D([0,0]), 2, 2) → bottom face edge from [-1,-1,0] to [1,-1,0]
+    # sweeping 0.5m along that edge: start=[-1,-1,0], end=[-0.5,-1,0]
+
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_points_distance")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge1 = box1.faces[0].edges[0]
+    sx1, sy1, sz1 = edge1.start[0], edge1.start[1], edge1.start[2]
+    dp1 = design1.add_design_point("point1", Point3D([sx1, sy1, sz1], UNITS.m))
+    curves1 = modeler.geometry_commands.sweep_points(dp1, edge1, Distance(0.5, UNITS.m))
+    assert len(curves1) == 1
+    assert isinstance(curves1[0], DesignCurve)
+    assert curves1[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_points_quantity")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge2 = box2.faces[0].edges[0]
+    sx2, sy2, sz2 = edge2.start[0], edge2.start[1], edge2.start[2]
+    dp2 = design2.add_design_point("point1", Point3D([sx2, sy2, sz2], UNITS.m))
+    curves2 = modeler.geometry_commands.sweep_points(dp2, edge2, Quantity(0.5, UNITS.m))
+    assert len(curves2) == 1
+    assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_points_float")
+    box3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge3 = box3.faces[0].edges[0]
+    sx3, sy3, sz3 = edge3.start[0], edge3.start[1], edge3.start[2]
+    dp3 = design3.add_design_point("point1", Point3D([sx3, sy3, sz3], UNITS.m))
+    curves3 = modeler.geometry_commands.sweep_points(dp3, edge3, 0.5)
+    assert len(curves3) == 1
+    assert isinstance(curves3[0], DesignCurve)
+    assert curves3[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+
+
+def test_sweep_points_multiple_points(modeler: Modeler):
+    """Test sweeping multiple design points along an edge trajectory.
+
+    Two points placed at the start and end of the same edge, swept 0.5 m along
+    that edge.  The server treats all selection points as a single operation and
+    returns exactly one curve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_multiple")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = box.faces[0].edges[0]
+
+    esx, easy, esz = edge.start[0], edge.start[1], edge.start[2]
+    eex, eey, eez = edge.end[0], edge.end[1], edge.end[2]
+    dp1 = design.add_design_point("point1", Point3D([esx, easy, esz], UNITS.m))
+    dp2 = design.add_design_point("point2", Point3D([eex, eey, eez], UNITS.m))
+
+    curves = modeler.geometry_commands.sweep_points([dp1, dp2], edge, Distance(0.5, UNITS.m))
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping a design point along a DesignCurve trajectory.
+
+    Uses revolve_points to first create a circular arc DesignCurve, then
+    uses that curve as the trajectory for sweep_points.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_design_curve_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Create a quarter-arc DesignCurve to act as the trajectory
+    traj_dp = design.add_design_point("traj_point", Point3D([1, 0, 0], UNITS.m))
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1, "Expected one trajectory curve from revolve_points"
+    trajectory = traj_curves[0]
+
+    # Now sweep a new design point along the arc trajectory
+    # The point is at (1,0,0); sweeping 0.5m along arc of r=1 moves it by 0.5 rad:
+    # end = (cos(0.5), sin(0.5), 0)
+    sweep_dp = design.add_design_point("sweep_point", Point3D([1, 0, 0], UNITS.m))
+    curves = modeler.geometry_commands.sweep_points(sweep_dp, trajectory, Distance(0.5, UNITS.m))
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+    assert curves[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+
+
+def test_sweep_points_multiple_trajectories(modeler: Modeler):
+    """Test sweeping a design point along multiple trajectory curves.
+
+    Provides two edges as trajectories and verifies the operation succeeds.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_points_multi_traj")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Use two different edges from the same face as trajectories
+    edge1 = box.faces[0].edges[0]
+    edge2 = box.faces[0].edges[1]
+
+    sx, sy, sz = edge1.start[0], edge1.start[1], edge1.start[2]
+    dp = design.add_design_point("point1", Point3D([sx, sy, sz], UNITS.m))
+    curves = modeler.geometry_commands.sweep_points(dp, [edge1, edge2], Distance(0.5, UNITS.m))
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+
+def test_sweep_points_trimmed_curve_trajectories(modeler: Modeler):
+    """Test sweeping a design point along TrimmedCurve trajectories.
+
+    Covers three sub-cases:
+      1. Scalar TrimmedCurve passed directly.
+      2. TrimmedCurve wrapped in a list (list code path).
+      3. Mixing TrimmedCurve with an Edge raises ValueError.
+
+    TrimmedCurve trajectories require backend version 27R1 or later; sub-cases
+    1 and 2 assert a ValueError with an appropriate message on older backends.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+    from ansys.geometry.core.shapes.parameterization import Interval
+
+    is_pre_271 = modeler._grpc_client.backend_version < (27, 1, 0)
+
+    traj_line = Line(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]))
+    tc = TrimmedCurve(
+        geometry=traj_line,
+        start=Point3D([0, 0, 0]),
+        end=Point3D([1, 0, 0]),
+        interval=Interval(0, 1),
+        length=Quantity(1, UNITS.m),
+    )
+
+    # --- scalar TrimmedCurve ---
+    design1 = modeler.create_design("sweep_points_tc_scalar")
+    dp1 = design1.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
+    if is_pre_271 or modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        with pytest.raises(ValueError, match="not supported when using a backend"):
+            modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
+    else:
+        curves1 = modeler.geometry_commands.sweep_points(dp1, tc, Distance(0.5, UNITS.m))
+        assert len(curves1) == 1
+        assert isinstance(curves1[0], DesignCurve)
+        assert curves1[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+        assert np.allclose(curves1[0].start, Point3D([0, 0, 0]), atol=1e-6)
+        assert np.allclose(curves1[0].end, Point3D([0.5, 0, 0]), atol=1e-6)
+
+    # --- list[TrimmedCurve] (same geometry, exercises the list input path) ---
+    design2 = modeler.create_design("sweep_points_tc_list")
+    dp2 = design2.add_design_point("sweep_pt", Point3D([0, 0, 0], UNITS.m))
+    if is_pre_271 or modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        with pytest.raises(ValueError, match="not supported when using a backend"):
+            modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
+    else:
+        curves2 = modeler.geometry_commands.sweep_points(dp2, [tc], Distance(0.5, UNITS.m))
+        assert len(curves2) == 1
+        assert isinstance(curves2[0], DesignCurve)
+        assert curves2[0].length.value.m == pytest.approx(0.5, rel=1e-5)
+        assert np.allclose(curves2[0].start, Point3D([0, 0, 0]), atol=1e-6)
+        assert np.allclose(curves2[0].end, Point3D([0.5, 0, 0]), atol=1e-6)
+
+    # --- mixed TrimmedCurve + Edge raises ValueError (always) ---
+    design3 = modeler.create_design("sweep_points_tc_mixed_error")
+    box = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = box.faces[0].edges[0]
+    sx, sy, sz = edge.start[0], edge.start[1], edge.start[2]
+    dp3 = design3.add_design_point("sweep_pt", Point3D([sx, sy, sz], UNITS.m))
+    with pytest.raises(ValueError, match="cannot mix TrimmedCurve"):
+        modeler.geometry_commands.sweep_points(dp3, [edge, tc], Distance(0.5, UNITS.m))
+
+
+def test_split_edge_by_proportion(modeler: Modeler):
+    """Test splitting edges by proportion, including error cases."""
+    design = modeler.create_design("split_edge_proportion")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: proportions not provided
+    with pytest.raises(
+        ValueError, match="Proportion must be provided when splitting by proportions."
+    ):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION)
+
+    # Error: proportion value out of range (boundary values are excluded)
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=0.0)
+    with pytest.raises(ValueError, match="Proportion should be between 0 and 1."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_PROPORTION, proportion=1.0)
+
+    # Split a single edge at its midpoint
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(
+        edge, SplitEdgeType.BY_PROPORTION, proportion=0.5
+    )
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
+    assert len(body.edges) == 13
+
+    # Split a single edge 25/75
+    success = modeler.geometry_commands.split_edge(
+        body.edges[1], SplitEdgeType.BY_PROPORTION, proportion=0.25
+    )
+    assert success
+    assert body.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[13].length.m == pytest.approx(0.25, rel=1e-6)
+    assert len(body.edges) == 14
+
+
+def test_split_edge_by_point(modeler: Modeler):
+    """Test splitting edges by point, including error cases."""
+    design = modeler.create_design("split_edge_point")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: points not provided
+    with pytest.raises(ValueError, match="Point must be provided when splitting by points."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT)
+
+    # Compute the geometric midpoint of the edge from its start and end vertices
+    midpoint = Point3D(
+        [
+            (edge.start.x.m + edge.end.x.m) / 2,
+            (edge.start.y.m + edge.end.y.m) / 2,
+            (edge.start.z.m + edge.end.z.m) / 2,
+        ]
+    )
+
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_POINT, point=midpoint)
+    assert success
+    assert body.edges[11].length.m == body.edges[12].length.m == pytest.approx(0.5, rel=1e-6)
+    assert len(body.edges) == 13
+
+
+def test_split_edge_by_length(modeler: Modeler):
+    """Test splitting edges by length, including error cases and reference direction."""
+    design = modeler.create_design("split_edge_length")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+
+    # Error: lengths not provided
+    with pytest.raises(ValueError, match="Length must be provided when splitting by lengths."):
+        modeler.geometry_commands.split_edge(edge, SplitEdgeType.BY_LENGTH)
+
+    # Split at 0.25 m measured from the start of the edge
+    assert len(body.edges) == 12
+    success = modeler.geometry_commands.split_edge(
+        edge,
+        SplitEdgeType.BY_LENGTH,
+        length=Distance(0.25),
+        reference=SplitEdgeReference.START,
+    )
+    assert success
+    assert body.edges[11].length.m == pytest.approx(0.75, rel=1e-6)
+    assert body.edges[12].length.m == pytest.approx(0.25, rel=1e-6)
+    assert len(body.edges) == 13
+
+    # Split at 0.25 m measured from the end of the edge (equivalent to 0.75 m from start)
+    design2 = modeler.create_design("split_edge_length_end")
+    body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    success = modeler.geometry_commands.split_edge(
+        body2.edges[0],
+        SplitEdgeType.BY_LENGTH,
+        length=Distance(0.25),
+        reference=SplitEdgeReference.END,
+    )
+    assert success
+    assert body2.edges[11].length.m == pytest.approx(0.25, rel=1e-6)
+    assert body2.edges[12].length.m == pytest.approx(0.75, rel=1e-6)
+    assert len(body2.edges) == 13
+
+
+def test_split_face_errors(modeler: Modeler):
+    """Test that split_face raises ValueError for missing required arguments."""
+    design = modeler.create_design("split_face_errors")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    face = body.faces[0]
+
+    # BY_PARAMETER requires both split_parameter and parameter_type
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_PARAMETER)
+
+    with pytest.raises(
+        ValueError,
+        match="Split parameter must be provided when splitting by parameter.",
+    ):
+        modeler.geometry_commands.split_face(
+            face,
+            SplitFaceType.BY_PARAMETER,
+            parameter_type=SplitFaceParameterType.UV,
+        )
+
+    # BY_TWO_POINTS requires both split_start and split_end
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_start=Point3D([-0.5, 0, 1])
+        )
+
+    with pytest.raises(
+        ValueError, match="Split start and end must be provided when splitting by point."
+    ):
+        modeler.geometry_commands.split_face(
+            face, SplitFaceType.BY_TWO_POINTS, split_end=Point3D([0.5, 0, 1])
+        )
+
+    # BY_CURVES requires split_curves
+    with pytest.raises(ValueError, match="Split curves must be provided when splitting by curve."):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CURVES)
+
+    # BY_CUTTER requires face_cutter
+    with pytest.raises(ValueError, match="Face cutter must be provided when splitting by cutter."):
+        modeler.geometry_commands.split_face(face, SplitFaceType.BY_CUTTER)
+
+
+def test_split_face_by_two_points(modeler: Modeler):
+    """Test splitting a face into two halves using two points."""
+    design = modeler.create_design("split_face_two_points")
+
+    # Box from (-0.5, -0.5, 0) to (0.5, 0.5, 1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split from the midpoint of the left edge to the midpoint of the right edge
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_TWO_POINTS,
+        split_start=Point3D([-0.5, 0, 1]),
+        split_end=Point3D([0.5, 0, 1]),
+    )
+    assert success
+    assert body.faces[5].area.m == body.faces[6].area.m == 0.5
+    assert len(body.faces) == 7
+
+
+def test_split_face_by_parameter(modeler: Modeler):
+    """Test splitting a face at its UV midpoint using BY_PARAMETER."""
+    skip_if_linux(
+        modeler,
+        test_split_face_by_parameter.__name__,
+        "Causes service to crash on Linux",
+    )
+
+    design = modeler.create_design("split_face_parameter")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Split at the centre of the top face along the U direction
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_PARAMETER,
+        split_parameter=Point3D([0, 0, 1]),
+        parameter_type=SplitFaceParameterType.UV,
+    )
+
+    assert success
+    assert (
+        body.faces[5].area.m
+        == body.faces[6].area.m
+        == body.faces[7].area.m
+        == body.faces[8].area.m
+        == 0.25
+    )
+    assert len(body.faces) == 9
+
+
+def test_split_face_by_cutter(modeler: Modeler):
+    """Test splitting a face using another face as a cutter."""
+    design = modeler.create_design("split_face_cutter")
+
+    # Main body: 2x2x1 box from (-1,-1,0) to (1,1,1)
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(body.faces) == 6
+
+    # Find the top face: normal points in +Z
+    top_face = next(f for f in body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Cutter: a very thin wall (0.001 x 2) extruded 3 m in Z, centred at x=0
+    # Its large YZ-plane faces (area ≈ 2*3 = 6 m²) will cross the top face at x ≈ 0
+    cutter_body = design.extrude_sketch("wall", Sketch().box(Point2D([0, 0]), 0.001, 2), 3)
+    # Pick the large face (normal ≈ ±X, area ≫ thin-edge faces)
+    cutter_face = next(f for f in cutter_body.faces if f.area.m > 4.0)
+
+    success = modeler.geometry_commands.split_face(
+        top_face,
+        SplitFaceType.BY_CUTTER,
+        face_cutter=cutter_face,
+    )
+    assert success
+    assert body.faces[5].area.m == pytest.approx(1.999, rel=1e-6)
+    assert body.faces[6].area.m == pytest.approx(2.001, rel=1e-6)
+    assert len(body.faces) == 7
+
+
+def test_project_to_solid_face_onto_face(modeler: Modeler):
+    """Test projecting a surface face onto a target face imprints new edges."""
+    design = modeler.create_design("project_to_solid_face")
+
+    # Target: 2x2x1 box
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    assert len(target.faces) == 6
+
+    # Source: small 1x1 surface 5 m above the target
+    source = design.create_surface(
+        "source",
+        Sketch(Plane(Point3D([0, 0, 5]))).box(Point2D([0, 0]), 1, 1),
+    )
+    assert source.is_surface
+
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    success = modeler.geometry_commands.project_to_solid(source.faces[0], top_target)
+    assert success
+    # The 1x1 imprint splits the 2x2 top face into two pieces: 5 sides + 2 top = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.0, rel=1e-6)  # 1x1 imprint
+    assert top_faces[1].area.m == pytest.approx(3.0, rel=1e-6)  # 2x2 - 1x1 remainder
+
+
+def test_project_to_solid_edge_onto_face(modeler: Modeler):
+    """Test projecting an edge spanning the full width of a target face splits it."""
+    design = modeler.create_design("project_to_solid_edge")
+
+    # Target: 2x2x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 2, 2), 0.01)
+    assert len(target.faces) == 6
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Source: 2x0.1 box suspended above – its 2 m-long bottom edge spans the full
+    # width of the target top face, so the projection cleanly splits it in two.
+    source = design.extrude_sketch("source", Sketch().box(Point2D([0, 0]), 2, 0.1), 5)
+    bottom_face = next(f for f in source.faces if np.allclose(f.normal(0, 0), -UNITVECTOR3D_Z))
+    spanning_edge = next(e for e in bottom_face.edges if abs(e.length.m - 2.0) < 0.01)
+
+    success = modeler.geometry_commands.project_to_solid(spanning_edge, top_target)
+    assert success
+    # The 2 m edge splits the 2x2 top face: 5 sides + 2 top pieces = 7
+    assert len(target.faces) == 7
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 2
+    assert top_faces[0].area.m == pytest.approx(1.9, rel=1e-6)  # 2x0.95 (edge at y=+0.05)
+    assert top_faces[1].area.m == pytest.approx(2.1, rel=1e-6)  # 2x1.05
+
+
+def test_project_to_solid_multiple_sources(modeler: Modeler):
+    """Test projecting a list of faces onto a list of target faces."""
+    design = modeler.create_design("project_to_solid_multi")
+
+    # Target: 4x4x0.01 slab
+    target = design.extrude_sketch("target", Sketch().box(Point2D([0, 0]), 4, 4), 0.01)
+    top_target = next(f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+
+    # Two small surface bodies at different positions above the slab
+    src_a = design.create_surface(
+        "src_a",
+        Sketch(Plane(Point3D([-1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+    src_b = design.create_surface(
+        "src_b",
+        Sketch(Plane(Point3D([1, 0, 1]))).box(Point2D([0, 0]), 0.5, 0.5),
+    )
+
+    success = modeler.geometry_commands.project_to_solid(
+        [src_a.faces[0], src_b.faces[0]], top_target
+    )
+    assert success
+    # Two 0.5x0.5 imprints split the 4x4 top face into 3 pieces: 5 sides + 3 top = 8
+    assert len(target.faces) == 8
+    top_faces = sorted(
+        [f for f in target.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z)],
+        key=lambda f: f.area.m,
+    )
+    assert len(top_faces) == 3
+    assert top_faces[0].area.m == pytest.approx(0.25, rel=1e-6)  # first 0.5x0.5 imprint
+    assert top_faces[1].area.m == pytest.approx(0.25, rel=1e-6)  # second 0.5x0.5 imprint
+    assert top_faces[2].area.m == pytest.approx(15.5, rel=1e-6)  # 4x4 - 2*(0.5x0.5) remainder
+
+
+def test_sweep_edges_basic(modeler: Modeler):
+    """Test sweeping a single edge along an edge trajectory with all distance types.
+
+    Creates a box body (for the trajectory) and a separate 1x1 surface body
+    positioned away from the box. Picks one edge from the surface and uses a
+    vertical edge from the box as the trajectory. Exercises Distance, Quantity,
+    raw float, and no-distance inputs in a single test.
+    """
+
+    def _vert_edge(box):
+        """Return one vertical (constant-x, constant-y) edge of an extruded box."""
+        return next(e for e in box.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_edges_distance")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf1 = design1.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    edge1 = surf1.edges[0]
+    trajectory1 = _vert_edge(box1)
+
+    bodies1 = modeler.geometry_commands.sweep_edges(edge1, trajectory1, Distance(0.5, UNITS.m))
+    assert len(design1.get_all_bodies()) == 2
+    assert len(bodies1) == 1
+    assert bodies1[0].is_surface
+    assert len(bodies1[0].faces) == 2
+    areas1 = sorted(f.area.m for f in bodies1[0].faces)
+    assert areas1 == pytest.approx([0.5, 1.0], rel=1e-4)
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_edges_quantity")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf2 = design2.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    edge2 = surf2.edges[0]
+    trajectory2 = _vert_edge(box2)
+
+    bodies2 = modeler.geometry_commands.sweep_edges(edge2, trajectory2, Quantity(0.5, UNITS.m))
+    assert len(bodies2) == 1
+    assert bodies2[0].is_surface
+    assert len(bodies2[0].faces) == 2
+    areas2 = sorted(f.area.m for f in bodies2[0].faces)
+    assert areas2 == pytest.approx([0.5, 1.0], rel=1e-4)
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_edges_float")
+    box3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf3 = design3.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    edge3 = surf3.edges[0]
+    trajectory3 = _vert_edge(box3)
+
+    bodies3 = modeler.geometry_commands.sweep_edges(edge3, trajectory3, 0.5)
+    assert len(bodies3) == 1
+    assert bodies3[0].is_surface
+    assert len(bodies3[0].faces) == 2
+    areas3 = sorted(f.area.m for f in bodies3[0].faces)
+    assert areas3 == pytest.approx([0.5, 1.0], rel=1e-4)
+
+    # --- No distance (full trajectory length = 1 m) ---
+    design4 = modeler.create_design("sweep_edges_no_distance")
+    box4 = design4.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf4 = design4.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    edge4 = surf4.edges[0]
+    trajectory4 = _vert_edge(box4)
+
+    bodies4 = modeler.geometry_commands.sweep_edges(edge4, trajectory4)
+    assert len(bodies4) == 1
+    assert bodies4[0].is_surface
+    assert len(bodies4[0].faces) == 2
+    areas4 = sorted(f.area.m for f in bodies4[0].faces)
+    assert areas4 == pytest.approx([1.0, 1.0], rel=1e-4)
+
+
+def test_sweep_edges_multiple_edges(modeler: Modeler):
+    """Test sweeping multiple edges along a trajectory.
+
+    Creates a box body (for the trajectory) and two separate 1x1 surface bodies
+    positioned away from the box. Sweeps one edge from each surface along a
+    vertical edge of the box. Expects exactly two result bodies, each with two
+    faces: the original 1 m² flat face and the 0.5 m² swept extension.
+    """
+    design = modeler.create_design("sweep_edges_multi")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf_a = design.create_surface("surf_a", Sketch().box(Point2D([-3, 0]), 1, 1))
+    surf_b = design.create_surface("surf_b", Sketch().box(Point2D([-6, 0]), 1, 1))
+    edges = [surf_a.edges[0], surf_b.edges[0]]
+    trajectory = next(e for e in box.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+
+    bodies = modeler.geometry_commands.sweep_edges(edges, trajectory, Distance(0.5, UNITS.m))
+    assert len(bodies) == 2
+    for body in bodies:
+        assert body.is_surface
+        assert len(body.faces) == 2
+        areas = sorted(f.area.m for f in body.faces)
+        assert areas == pytest.approx([0.5, 1.0], rel=1e-4)
+
+
+def test_sweep_edges_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping an edge along a DesignCurve trajectory.
+
+    Uses revolve_points to create a quarter-arc DesignCurve (radius = 1 m).
+    A 0.5 x 0.5 m surface body is created near the arc start point; its top
+    edge (edge[3], length = 0.5 m) is swept along the full arc. The swept
+    result is a single curved-surface body with one face whose area equals
+    the integral of edge-length over the arc (≈ 0.9148 m²).
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_edges_dc_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Create a quarter-arc DesignCurve to act as trajectory
+    traj_dp = design.add_design_point("traj_point", Point3D([1, 0, 0], UNITS.m))
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1
+    trajectory = traj_curves[0]
+    assert isinstance(trajectory, DesignCurve)
+
+    # Surface body near the arc start; edge[3] is the 0.5 m top edge at y = 0.25
+    surface = design.create_surface("surf", Sketch().box(Point2D([1, 0]), 0.5, 0.5))
+    edge = surface.edges[3]
+    assert edge.length.m == pytest.approx(0.5, rel=1e-4)
+
+    bodies = modeler.geometry_commands.sweep_edges(
+        edge,
+        trajectory,
+        trajectory.length,
+    )
+    assert len(bodies) == 1
+    assert bodies[0].is_surface
+    assert len(bodies[0].faces) == 1
+    assert bodies[0].faces[0].area.m == pytest.approx(0.9148, rel=1e-3)
+
+
+def test_sweep_edges_multiple_trajectories(modeler: Modeler):
+    """Test sweeping an edge along multiple trajectory edges.
+
+    Creates a box body (for the trajectories) and a separate 1x1 surface body.
+    Provides two vertical box edges as trajectories and verifies the operation
+    produces exactly one result body with two faces: the original 1 m² flat face
+    and the 0.5 m² swept extension.
+    """
+    design = modeler.create_design("sweep_edges_multi_traj")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf = design.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    edge = surf.edges[0]
+    vert_edges = [e for e in box.edges if e.start.x == e.end.x and e.start.y == e.end.y]
+    trajectories = vert_edges[:2]
+
+    bodies = modeler.geometry_commands.sweep_edges(edge, trajectories, Distance(0.5, UNITS.m))
+    assert len(bodies) == 1
+    assert bodies[0].is_surface
+    assert len(bodies[0].faces) == 2
+    areas = sorted(f.area.m for f in bodies[0].faces)
+    assert areas == pytest.approx([0.5, 1.0], rel=1e-4)
+
+
+def test_sweep_faces_basic(modeler: Modeler):
+    """Test sweeping a single face along an edge trajectory with all distance input types.
+
+    Creates a box body for the trajectory and a separate surface body positioned to the
+    left of the box. Sweeps the surface's face along an edge of the box. Exercises
+    Distance, Quantity, raw float, and no-distance inputs in a single test.
+    """
+    # --- Distance type ---
+    design1 = modeler.create_design("sweep_faces_distance")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf1 = design1.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face1 = surf1.faces[0]
+    trajectory1 = next(e for e in box1.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies1 = modeler.geometry_commands.sweep_faces(face1, trajectory1, Distance(0.5, UNITS.m))
+    assert len(bodies1) == 1
+
+    # --- Quantity type ---
+    design2 = modeler.create_design("sweep_faces_quantity")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf2 = design2.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face2 = surf2.faces[0]
+    trajectory2 = next(e for e in box2.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies2 = modeler.geometry_commands.sweep_faces(face2, trajectory2, Quantity(0.5, UNITS.m))
+    assert len(bodies2) == 1
+
+    # --- Raw float (SI metres) ---
+    design3 = modeler.create_design("sweep_faces_float")
+    box3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf3 = design3.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face3 = surf3.faces[0]
+    trajectory3 = next(e for e in box3.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies3 = modeler.geometry_commands.sweep_faces(face3, trajectory3, 0.5)
+    assert len(bodies3) == 1
+
+    # --- No distance (full trajectory length) ---
+    design4 = modeler.create_design("sweep_faces_no_distance")
+    box4 = design4.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    surf4 = design4.create_surface("surf", Sketch().box(Point2D([-3, 0]), 1, 1))
+    face4 = surf4.faces[0]
+    trajectory4 = next(e for e in box4.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+    bodies4 = modeler.geometry_commands.sweep_faces(face4, trajectory4)
+    assert len(bodies4) == 1
+
+
+def test_sweep_faces_multiple_faces(modeler: Modeler):
+    """Test sweeping multiple faces along a trajectory edge.
+
+    Creates a box body for the trajectory and a separate smaller box to the left as
+    the face source. Sweeps two faces from the face-source box along an edge of the
+    trajectory box.
+    """
+    design = modeler.create_design("sweep_faces_multi")
+    traj_box = design.extrude_sketch("traj_box", Sketch().box(Point2D([0, 0]), 2, 2), 1.0)
+    face1 = design.create_surface("face1", Sketch().box(Point2D([-4, 0]), 1, 1)).faces[0]
+    face2 = design.create_surface("face1", Sketch().box(Point2D([-8, 0]), 1, 1)).faces[0]
+    faces = [face1, face2]
+    trajectory = next(e for e in traj_box.edges if e.start.x == e.end.x and e.start.y == e.end.y)
+
+    bodies = modeler.geometry_commands.sweep_faces(faces, trajectory, Distance(0.5, UNITS.m))
+    assert len(bodies) == 2
+
+
+def test_sweep_faces_design_curve_trajectory(modeler: Modeler):
+    """Test sweeping a face along a DesignCurve trajectory.
+
+    Revolves a design point to create a circular arc DesignCurve, then sweeps a face
+    from a separate surface body (positioned away from the arc) along that curve.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("sweep_faces_dc_traj")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Y)
+
+    # Create a quarter-arc DesignCurve at radius 3 to act as trajectory
+    traj_dp = design.add_design_point("traj_point", Point3D([3, 0, 0], UNITS.m))
+    traj_curves = modeler.geometry_commands.revolve_points(
+        traj_dp, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(traj_curves) == 1
+    trajectory = traj_curves[0]
+    assert isinstance(trajectory, DesignCurve)
+
+    # Create a surface body to the left of the arc as the face source
+    surf = design.create_surface("surf", Sketch().box(Point2D([-1, 0]), 0.5, 0.5))
+    face = surf.faces[0]
+
+    bodies = modeler.geometry_commands.sweep_faces(face, trajectory, Distance(0.5, UNITS.m))
+    assert len(bodies) == 1
+
+
+def test_fill_edge_loops(modeler: Modeler):
+    """Test fill_edge_loops with the inner boundary loop of a box face with a cylindrical hole.
+
+    Creates a 2x2x1 box, subtracts a cylinder (radius=0.5) to produce a through-hole,
+    then passes the inner loop of the top face to fill_edge_loops. Also exercises the
+    list[FaceLoop] input path using the same inner loop.
+    """
+    from ansys.geometry.core.designer.face import FaceLoopType
+
+    # --- single FaceLoop input ---
+    design1 = modeler.create_design("fill_edge_loops_single")
+    box1 = design1.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    hole1 = design1.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 1)
+    box1.subtract(hole1)
+
+    # Top face (z=1 normal) has one outer loop and one inner loop (the hole boundary)
+    top_face1 = next(f for f in box1.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    loops1 = top_face1.loops
+    inner_loops1 = [lp for lp in loops1 if lp.type == FaceLoopType.INNER_LOOP]
+    assert len(inner_loops1) == 1
+    inner_loop1 = inner_loops1[0]
+
+    n_bodies_before = len(design1.bodies)
+    new_bodies = modeler.geometry_commands.fill_edge_loops(inner_loop1)
+
+    # The fill should succeed and return a list
+    assert isinstance(new_bodies, list)
+    # A circular cap (pi * 0.5^2 ≈ 0.7854 m²) is created as a new surface body
+    assert len(new_bodies) == 1
+    assert new_bodies[0].is_surface
+    assert new_bodies[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
+    assert len(design1.bodies) == n_bodies_before + 1
+
+    # --- list[FaceLoop] input ---
+    design2 = modeler.create_design("fill_edge_loops_list")
+    box2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 1)
+    hole2 = design2.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.5), 1)
+    box2.subtract(hole2)
+
+    top_face2 = next(f for f in box2.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    inner_loops2 = [lp for lp in top_face2.loops if lp.type == FaceLoopType.INNER_LOOP]
+    assert len(inner_loops2) == 1
+
+    new_bodies2 = modeler.geometry_commands.fill_edge_loops([inner_loops2[0]])
+    assert isinstance(new_bodies2, list)
+    assert len(new_bodies2) == 1
+    assert new_bodies2[0].is_surface
+    assert new_bodies2[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)

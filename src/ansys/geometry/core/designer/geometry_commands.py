@@ -28,6 +28,7 @@ from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
@@ -61,11 +62,11 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
-    from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.face import Face, FaceLoop
+    from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
 @unique
@@ -107,6 +108,41 @@ class DraftSide(Enum):
     THIS = 1
     OTHER = 2
     BACK = 3
+
+
+@unique
+class SplitEdgeType(Enum):
+    """Provides values for types of edge splits."""
+
+    BY_PROPORTION = 0
+    BY_POINT = 1
+    BY_LENGTH = 2
+
+
+@unique
+class SplitEdgeReference(Enum):
+    """Provides values for references when splitting edges."""
+
+    START = 0
+    END = 1
+
+
+@unique
+class SplitFaceType(Enum):
+    """Provides values for types of face splits."""
+
+    BY_PARAMETER = 0
+    BY_TWO_POINTS = 1
+    BY_CURVES = 2
+    BY_CUTTER = 3
+
+
+@unique
+class SplitFaceParameterType(Enum):
+    """Provides values for parameters when splitting faces."""
+
+    UV = 0
+    PERPENDICULAR = 1
 
 
 class GeometryCommands:
@@ -559,6 +595,57 @@ class GeometryCommands:
             self._grpc_client.log.info("Failed to extrude edges.")
             return []
 
+    @min_backend_version(27, 1, 0)
+    def fill_edge_loops(
+        self,
+        loops: Union["FaceLoop", list["FaceLoop"]],
+    ) -> list["Body"]:
+        """Fill the surfaces bounded by the given edge loops.
+
+        Parameters
+        ----------
+        loops : FaceLoop | list[FaceLoop]
+            One or more edge loops defining the boundaries of the surfaces to fill.
+            Each ``FaceLoop`` contains the edges that form a closed loop.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the fill operation if any.
+
+        Raises
+        ------
+        ValueError
+            If ``loops`` is empty or contains no edges.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.face import FaceLoop
+
+        loops: list[FaceLoop] = loops if isinstance(loops, list) else [loops]
+        check_type_all_elements_in_iterable(loops, FaceLoop)
+
+        for loop in loops:
+            for edge in loop.edges:
+                edge.body._reset_tessellation_cache()
+
+        result = self._grpc_client.services.edges.fill_edge_loops(
+            loops=loops,
+        )
+
+        if result.get("success"):
+            design = get_design_from_edge(loops[0].edges[0])
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("created_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to fill edge loops.")
+            return []
+
     @min_backend_version(25, 2, 0)
     def rename_object(
         self,
@@ -633,8 +720,8 @@ class GeometryCommands:
 
         check_type_all_elements_in_iterable(selection, Face)
 
-        for object in selection:
-            object.body._reset_tessellation_cache()
+        for face in selection:
+            face.body._reset_tessellation_cache()
 
         if two_dimensional and None in (count_y, pitch_y):
             raise ValueError(
@@ -656,7 +743,7 @@ class GeometryCommands:
             pitch_y = Distance(0)
 
         result = self._grpc_client.services.patterns.create_linear_pattern(
-            selection_ids=[object.id for object in selection],
+            selection_ids=[face.id for face in selection],
             linear_direction_id=linear_direction.id,
             count_x=count_x,
             pitch_x=pitch_x,
@@ -1717,6 +1804,127 @@ class GeometryCommands:
 
         return response.get("success")
 
+    @min_backend_version(27, 1, 0)
+    def sweep_edges(
+        self,
+        edges: Union["Edge", list["Edge"]],
+        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        distance: Distance | Quantity | Real | None = None,
+    ) -> list["Body"]:
+        """Sweep edges along trajectory curves.
+
+        Parameters
+        ----------
+        edges : Edge | list[Edge]
+            Edges to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
+            Trajectory curve(s) to sweep along.
+        distance : Distance | Quantity | Real, default: None
+            Distance to sweep. If not provided, the full trajectory length is used.
+
+        Returns
+        -------
+        list[Body]
+            Bodies modified by the sweep operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.edge import Edge
+
+        edges: list[Edge] = edges if isinstance(edges, list) else [edges]
+        check_type_all_elements_in_iterable(edges, Edge)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve))
+
+        distance = (
+            distance if distance is None or isinstance(distance, Distance) else Distance(distance)
+        )
+
+        for edge in edges:
+            edge.body._reset_tessellation_cache()
+
+        design = get_design_from_edge(edges[0])
+        result = self._grpc_client.services.edges.sweep_edges(
+            edge_ids=[edge.id for edge in edges],
+            trajectory_ids=[traj.id for traj in trajectories],
+            distance=distance,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("modified_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to sweep edges.")
+            return []
+
+    @min_backend_version(27, 1, 0)
+    def sweep_faces(
+        self,
+        faces: Union["Face", list["Face"]],
+        trajectories: Union["Edge", "DesignCurve", list[Union["Edge", "DesignCurve"]]],
+        distance: Distance | Quantity | Real | None = None,
+    ) -> list["Body"]:
+        """Sweep faces along trajectory curves.
+
+        Parameters
+        ----------
+        faces : Face | list[Face]
+            Faces to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve]
+            Trajectory curve(s) to sweep along.
+        distance : Distance | Quantity | Real, default: None
+            Distance to sweep. If not provided, the full trajectory length is used.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the sweep operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve))
+
+        distance = (
+            distance if distance is None or isinstance(distance, Distance) else Distance(distance)
+        )
+
+        for face in faces:
+            face.body._reset_tessellation_cache()
+
+        design = get_design_from_face(faces[0])
+        result = self._grpc_client.services.faces.sweep_faces(
+            face_ids=[face.id for face in faces],
+            trajectory_ids=[traj.id for traj in trajectories],
+            distance=distance,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+            return get_bodies_from_ids(design, result.get("created_bodies"))
+        else:
+            self._grpc_client.log.info("Failed to sweep faces.")
+            return []
+
     @min_backend_version(26, 1, 0)
     def draft_faces(
         self,
@@ -2149,3 +2357,301 @@ class GeometryCommands:
         else:
             self._grpc_client.log.info("Failed to revolve design points by helix.")
             return []
+
+    @min_backend_version(25, 2, 0)
+    def sweep_points(
+        self,
+        selection: Union["DesignPoint", list["DesignPoint"]],
+        trajectories: Union[
+            "Edge",
+            "DesignCurve",
+            "TrimmedCurve",
+            list[Union["Edge", "DesignCurve"]],
+            list["TrimmedCurve"],
+        ],
+        distance: Distance | Quantity | Real,
+    ) -> list["DesignCurve"]:
+        """Sweep design points along a trajectory to create curves.
+
+        Parameters
+        ----------
+        selection : DesignPoint | list[DesignPoint]
+            Design point(s) to sweep.
+        trajectories : Edge | DesignCurve | list[Edge | DesignCurve] | TrimmedCurve | list[TrimmedCurve]
+            Trajectory curve(s) to sweep along. Provide either a list of
+            ``Edge`` / ``DesignCurve`` objects (resolved by entity ID) **or** a
+            list of ``TrimmedCurve`` objects (sent as explicit geometry). These
+            two types of trajectory are mutually exclusive and cannot be mixed.
+        distance : Distance | Quantity | Real
+            Distance to sweep the points.
+
+        Returns
+        -------
+        list[DesignCurve]
+            Curves created by the sweep operation.
+
+        Raises
+        ------
+        ValueError
+            If ``trajectories`` mixes ``TrimmedCurve`` with ``Edge`` or ``DesignCurve``.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        ``TrimmedCurve`` trajectories require Ansys release 27R1 and are not
+        supported when using v0 protos.
+        """  # noqa: E501
+        from ansys.geometry.core.designer.designcurve import DesignCurve
+        from ansys.geometry.core.designer.designpoint import DesignPoint
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
+
+        selection: list[DesignPoint] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, DesignPoint)
+
+        trajectories = trajectories if isinstance(trajectories, list) else [trajectories]
+        check_type_all_elements_in_iterable(trajectories, (Edge, DesignCurve, TrimmedCurve))
+
+        has_trimmed = any(isinstance(t, TrimmedCurve) for t in trajectories)
+        has_entity = any(isinstance(t, (Edge, DesignCurve)) for t in trajectories)
+        if has_trimmed and has_entity:
+            raise ValueError(
+                "trajectories cannot mix TrimmedCurve with Edge or DesignCurve. "
+                "Provide either entity-based trajectories or TrimmedCurve trajectories, not both."
+            )
+
+        if has_trimmed and (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            raise ValueError(
+                "TrimmedCurve trajectories are not supported when using a backend "
+                "version less than 27R1 or v0 protos. Please upgrade the backend or use Edge or "
+                "DesignCurve trajectories instead."
+            )
+
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
+
+        result = self._grpc_client._services.points.sweep_points(
+            selection_ids=[dp.id for dp in selection],
+            trajectory_ids=[] if has_trimmed else [traj.id for traj in trajectories],
+            distance=distance,
+            trajectory_curves=trajectories if has_trimmed else [],
+        )
+
+        design = get_design_from_component(selection[0].parent_component)
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
+            created_curves = []
+            for curve_info in result.get("created_curves", []):
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
+                dc = DesignCurve(
+                    curve_info.get("id"),
+                    curve_info.get("name"),
+                    curve_info.get("length"),
+                    curve_info.get("start_point"),
+                    curve_info.get("end_point"),
+                    self._grpc_client,
+                    parent,
+                )
+                parent._design_curves.append(dc)
+                created_curves.append(dc)
+            return created_curves
+        else:
+            self._grpc_client.log.info("Failed to sweep design points.")
+            return []
+
+    @min_backend_version(25, 2, 0)
+    def split_edge(
+        self,
+        edge: "Edge",
+        split_type: SplitEdgeType,
+        proportion: float | None = None,
+        point: Point3D | None = None,
+        length: Distance | Quantity | Real | None = None,
+        reference: SplitEdgeReference = SplitEdgeReference.START,
+    ) -> bool:
+        """Split an edge by a proportion, a point, or a length.
+
+        Parameters
+        ----------
+        edge : Edge
+            Edge to split.
+        split_type : SplitEdgeType
+            Type of split to perform.
+        proportion : float, default: None
+            Proportion to split the edge by. Value should be between 0 and 1 and will be
+            applied along the edge. Required if ``split_type`` is ``SplitEdgeType.BY_PROPORTION``.
+        point : Point3D, default: None
+            Point to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_POINT``.
+        length : Distance | Quantity | Real, default: None
+            Length to split the edge by. Required if ``split_type`` is ``SplitEdgeType.BY_LENGTH``.
+        reference : SplitEdgeReference, default: SplitEdgeReference.START
+            Reference point for splitting by lengths. Ignored for other split types.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        design = get_design_from_edge(edge)
+
+        if split_type == SplitEdgeType.BY_PROPORTION:
+            if proportion is None:
+                raise ValueError("Proportion must be provided when splitting by proportions.")
+            if not 0 < proportion < 1:
+                raise ValueError("Proportion should be between 0 and 1.")
+        elif split_type == SplitEdgeType.BY_POINT and point is None:
+            raise ValueError("Point must be provided when splitting by points.")
+        elif split_type == SplitEdgeType.BY_LENGTH and length is None:
+            raise ValueError("Length must be provided when splitting by lengths.")
+
+        if length is not None:
+            length = length if isinstance(length, Distance) else Distance(length)
+
+        result = self._grpc_client._services.edges.split_edges(
+            edge_id=edge.id,
+            split_type=split_type,
+            proportion=proportion,
+            point=point,
+            length=length,
+            reference=reference,
+        )
+
+        success = (
+            len(result.get("modified_bodies", [])) > 0
+            if self._grpc_client.services.version == GeometryApiProtos.V0
+            else result.get("success")
+        )
+
+        if success:
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return success
+
+    @min_backend_version(25, 2, 0)
+    def split_face(
+        self,
+        face: "Face",
+        split_type: SplitFaceType,
+        split_parameter: Union[Point3D, None] = None,
+        split_start: Union[Point3D, None] = None,
+        split_end: Union[Point3D, None] = None,
+        face_cutter: Union["Face", None] = None,
+        split_curves: Union[list["TrimmedCurve"], None] = None,
+        parameter_type: SplitFaceParameterType = SplitFaceParameterType.UV,
+    ) -> bool:
+        """Split faces by points, curves, or other faces.
+
+        Parameters
+        ----------
+        face : Face
+            Face to split.
+        split_type : SplitFaceType
+            Type of split to perform.
+        split_parameter : Point3D, default: None
+            Parameter to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
+        split_start : Point3D, default: None
+            Start point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
+        split_end : Point3D, default: None
+            End point to split the face by. Required if ``split_type`` is
+            ``SplitFaceType.BY_TWO_POINTS``.
+        face_cutter : Face, default: None
+            Face to split the original face with. Required if ``split_type`` is
+            ``SplitFaceType.BY_CUTTER``.
+        split_curves : list[TrimmedCurve], default: None
+            Curves to split the face by. Required if ``split_type`` is ``SplitFaceType.BY_CURVES``.
+        parameter_type : SplitFaceParameterType, default: SplitFaceParameterType.UV
+            Type of the split parameter. Required if ``split_type`` is
+            ``SplitFaceType.BY_PARAMETER``.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        design = get_design_from_face(face)
+
+        if split_type == SplitFaceType.BY_PARAMETER and split_parameter is None:
+            raise ValueError("Split parameter must be provided when splitting by parameter.")
+        elif split_type == SplitFaceType.BY_TWO_POINTS and (
+            split_start is None or split_end is None
+        ):
+            raise ValueError("Split start and end must be provided when splitting by point.")
+        elif split_type == SplitFaceType.BY_CURVES and split_curves is None:
+            raise ValueError("Split curves must be provided when splitting by curve.")
+        elif split_type == SplitFaceType.BY_CUTTER and face_cutter is None:
+            raise ValueError("Face cutter must be provided when splitting by cutter.")
+
+        result = self._grpc_client._services.faces.split_faces(
+            face_id=face.id,
+            split_type=split_type,
+            split_parameter=split_parameter,
+            split_start=split_start,
+            split_end=split_end,
+            face_cutter_id=face_cutter.id if face_cutter else None,
+            split_curves=split_curves,
+            parameter_type=parameter_type,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")
+
+    @min_backend_version(27, 1, 0)
+    def project_to_solid(
+        self,
+        selection: Union["Face", list["Face"], "Edge", list["Edge"]],
+        target_faces: Union["Face", list["Face"]],
+    ) -> bool:
+        """Project faces onto a target body to create new faces on the body.
+
+        Parameters
+        ----------
+        selection : Face | list[Face] | Edge | list[Edge]
+            Face(s) or edge(s) to project onto the target faces.
+        target_faces : Face | list[Face]
+            Face(s) to project the selection onto.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+        from ansys.geometry.core.designer.face import Face
+
+        selection: list[Face | Edge] = selection if isinstance(selection, list) else [selection]
+        check_type_all_elements_in_iterable(selection, (Face, Edge))
+
+        target_faces: list[Face] = (
+            target_faces if isinstance(target_faces, list) else [target_faces]
+        )
+        check_type_all_elements_in_iterable(target_faces, Face)
+
+        result = self._grpc_client._services.model_tools.project_to_solid(
+            selection_ids=[item.id for item in selection],
+            target_ids=[face.id for face in target_faces],
+        )
+
+        if result.get("success"):
+            design = get_design_from_face(target_faces[0])
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")

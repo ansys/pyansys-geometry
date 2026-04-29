@@ -9,6 +9,182 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.15.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.2>`_ - April 21, 2026
+===========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Implement missing design ribbon methods
+          - `#2658 <https://github.com/ansys/pyansys-geometry/pull/2658>`_
+
+        * - Centroid property
+          - `#2663 <https://github.com/ansys/pyansys-geometry/pull/2663>`_
+
+        * - Add skills for copilot
+          - `#2664 <https://github.com/ansys/pyansys-geometry/pull/2664>`_
+
+        * - Custom agents and test usage on revolve_point
+          - `#2670 <https://github.com/ansys/pyansys-geometry/pull/2670>`_
+
+        * - Revolve points by helix
+          - `#2678 <https://github.com/ansys/pyansys-geometry/pull/2678>`_
+
+        * - Find mappable faces
+          - `#2679 <https://github.com/ansys/pyansys-geometry/pull/2679>`_
+
+        * - Sweep points implementation
+          - `#2681 <https://github.com/ansys/pyansys-geometry/pull/2681>`_
+
+        * - Implement sweep edges and faces
+          - `#2704 <https://github.com/ansys/pyansys-geometry/pull/2704>`_
+
+        * - Adapt to sc and dsco
+          - `#2705 <https://github.com/ansys/pyansys-geometry/pull/2705>`_
+
+        * - Added arg for bypass token
+          - `#2709 <https://github.com/ansys/pyansys-geometry/pull/2709>`_
+
+        * - Fill edge loops
+          - `#2715 <https://github.com/ansys/pyansys-geometry/pull/2715>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.0.32 to 1.0.33
+          - `#2665 <https://github.com/ansys/pyansys-geometry/pull/2665>`_
+
+        * - Bump protobuf from 6.33.5 to 6.33.6 in the grpc-deps group
+          - `#2667 <https://github.com/ansys/pyansys-geometry/pull/2667>`_
+
+        * - Bump quarto-cli from 1.8.27 to 1.9.36
+          - `#2683 <https://github.com/ansys/pyansys-geometry/pull/2683>`_
+
+        * - Bump vtk from 9.6.0 to 9.6.1
+          - `#2684 <https://github.com/ansys/pyansys-geometry/pull/2684>`_
+
+        * - Bump pytest-cov from 7.0.0 to 7.1.0
+          - `#2685 <https://github.com/ansys/pyansys-geometry/pull/2685>`_
+
+        * - Bump ansys-api-discovery from 1.0.34 to 1.0.35
+          - `#2689 <https://github.com/ansys/pyansys-geometry/pull/2689>`_
+
+        * - Bump requests from 2.32.5 to 2.33.0
+          - `#2690 <https://github.com/ansys/pyansys-geometry/pull/2690>`_
+
+        * - Bump requests from 2.33.0 to 2.33.1
+          - `#2692 <https://github.com/ansys/pyansys-geometry/pull/2692>`_
+
+        * - Bump ansys-api-discovery from 1.0.36 to 1.0.37
+          - `#2706 <https://github.com/ansys/pyansys-geometry/pull/2706>`_
+
+        * - Bump pytest from 9.0.2 to 9.0.3
+          - `#2707 <https://github.com/ansys/pyansys-geometry/pull/2707>`_
+
+        * - Bump nbconvert from 7.17.0 to 7.17.1 in the docs-deps group
+          - `#2710 <https://github.com/ansys/pyansys-geometry/pull/2710>`_
+
+        * - Bump pyvista from 0.47.1 to 0.47.3
+          - `#2711 <https://github.com/ansys/pyansys-geometry/pull/2711>`_
+
+        * - Bump quarto-cli from 1.9.36 to 1.9.37
+          - `#2712 <https://github.com/ansys/pyansys-geometry/pull/2712>`_
+
+        * - Bump pytest-pyvista from 0.3.2 to 0.3.3
+          - `#2718 <https://github.com/ansys/pyansys-geometry/pull/2718>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bug in extrude_faces_up_to
+          - `#2672 <https://github.com/ansys/pyansys-geometry/pull/2672>`_
+
+        * - Make sure invalid proto versions are not passed
+          - `#2677 <https://github.com/ansys/pyansys-geometry/pull/2677>`_
+
+        * - Allow version as string for local installations
+          - `#2701 <https://github.com/ansys/pyansys-geometry/pull/2701>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.15.1
+          - `#2662 <https://github.com/ansys/pyansys-geometry/pull/2662>`_
+
+        * - Pre-commit automatic update
+          - `#2668 <https://github.com/ansys/pyansys-geometry/pull/2668>`_, `#2687 <https://github.com/ansys/pyansys-geometry/pull/2687>`_, `#2699 <https://github.com/ansys/pyansys-geometry/pull/2699>`_, `#2713 <https://github.com/ansys/pyansys-geometry/pull/2713>`_, `#2724 <https://github.com/ansys/pyansys-geometry/pull/2724>`_
+
+        * - Bump actions/cache from 5.0.3 to 5.0.4 in the actions group
+          - `#2673 <https://github.com/ansys/pyansys-geometry/pull/2673>`_
+
+        * - Bump vimtor/action-zip from 1.2 to 1.3 in the actions group
+          - `#2675 <https://github.com/ansys/pyansys-geometry/pull/2675>`_
+
+        * - Remove v0 testing
+          - `#2691 <https://github.com/ansys/pyansys-geometry/pull/2691>`_
+
+        * - Bump codecov/codecov-action from 5.5.2 to 6.0.0 in the actions group
+          - `#2693 <https://github.com/ansys/pyansys-geometry/pull/2693>`_
+
+        * - Bump github/codeql-action from 4.32.6 to 4.35.1 in the actions group
+          - `#2695 <https://github.com/ansys/pyansys-geometry/pull/2695>`_
+
+        * - Bump ansys/actions from 10.2.7 to 10.2.12 in the actions group
+          - `#2698 <https://github.com/ansys/pyansys-geometry/pull/2698>`_
+
+        * - Bump pypa/gh-action-pypi-publish from 1.13.0 to 1.14.0 in the actions group
+          - `#2700 <https://github.com/ansys/pyansys-geometry/pull/2700>`_
+
+        * - Bump docker/login-action from 4.0.0 to 4.1.0 in the actions group
+          - `#2703 <https://github.com/ansys/pyansys-geometry/pull/2703>`_
+
+        * - Run smoke tests with and without optional target
+          - `#2714 <https://github.com/ansys/pyansys-geometry/pull/2714>`_
+
+        * - Bump actions/upload-artifact from 7.0.0 to 7.0.1 in the actions group
+          - `#2720 <https://github.com/ansys/pyansys-geometry/pull/2720>`_
+
+        * - Bump actions/cache from 5.0.4 to 5.0.5 in the actions group across 1 directory
+          - `#2723 <https://github.com/ansys/pyansys-geometry/pull/2723>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Fix test_revolve_faces_by_helix and skip
+          - `#2674 <https://github.com/ansys/pyansys-geometry/pull/2674>`_
+
+        * - Increase tolerance
+          - `#2694 <https://github.com/ansys/pyansys-geometry/pull/2694>`_
+
+        * - Enable intersect curve and surface test
+          - `#2708 <https://github.com/ansys/pyansys-geometry/pull/2708>`_
+
+        * - Update baseline
+          - `#2722 <https://github.com/ansys/pyansys-geometry/pull/2722>`_
+
+
 `0.15.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.1>`_ - March 19, 2026
 ===========================================================================================
 

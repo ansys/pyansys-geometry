@@ -414,3 +414,10 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
                 for result in response.response_data
             ]
         }
+
+    @protect_grpc
+    def find_mappable_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.find_mappable_faces' is not "
+            "implemented in this protofile version."
+        )

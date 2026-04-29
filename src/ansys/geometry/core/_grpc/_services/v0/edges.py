@@ -245,6 +245,13 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
+    def fill_edge_loops(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.fill_edge_loops' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import MoveImprintEdgesRequest
 
@@ -282,8 +289,44 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
+    def sweep_edges(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.sweep_edges' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def get_centroid(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
             f"Method '{self.__class__.__name__}.get_centroid' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def split_edges(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import SplitEdgeRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SplitEdgeRequest(
+            selection=[build_grpc_id(kwargs["edge_id"])],
+            split_type=kwargs["split_type"].value,
+            proportions=[kwargs["proportion"]] if kwargs["proportion"] else None,
+            points=(
+                [from_point3d_to_grpc_point(kwargs["point"])]
+                if kwargs["point"] is not None
+                else None
+            ),
+            lengths=(
+                [from_measurement_to_server_length(kwargs["length"])] if kwargs["length"] else None
+            ),
+            reference=kwargs["reference"].value,
+        )
+
+        # Call the gRPC service
+        resp = self.commands_stub.SplitEdge(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "modified_bodies": [edge.id for edge in resp.modified_bodies],
+            "success": resp.success,
+        }
