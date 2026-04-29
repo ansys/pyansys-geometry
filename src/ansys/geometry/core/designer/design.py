@@ -1691,22 +1691,24 @@ class Design(Component):
 
             # Find the part that should contain this body
             parent_part_id = created_body_info.get("parent_id")
-            parent_part = created_parts_dict.get(parent_part_id) or self._find_existing_part(parent_part_id)
-            
+            parent_part = created_parts_dict.get(parent_part_id) or self._find_existing_part(
+                parent_part_id
+            )
+
             if not parent_part:
                 self._grpc_client.log.warning(
                     f"Could not find parent part (ID: {parent_part_id}) for body '{body_name}' (ID: {body_id})"
                 )
                 continue
-            
+
             # Create the body and add it to the part (just like __read_existing_design does)
             new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
             parent_part.bodies.append(new_body)
             created_bodies_dict[body_id] = new_body
-            
+
             # Clear cached bodies on all components that reference this part
             self._clear_body_cache_for_part(parent_part)
-            
+
             self._grpc_client.log.debug(
                 f"Added new body '{body_name}' (ID: {body_id}) to part (ID: {parent_part_id})"
             )
@@ -1827,23 +1829,27 @@ class Design(Component):
 
     def _clear_body_cache_for_part(self, part: Part) -> None:
         """Clear body cache on all components that reference a specific part.
-        
+
         Parameters
         ----------
         part : Part
             The part whose body cache should be cleared on all referencing components.
         """
         # Check root component
-        if (hasattr(self, '_master_component') and 
-            self._master_component and 
-            self._master_component.part == part):
+        if (
+            hasattr(self, "_master_component")
+            and self._master_component
+            and self._master_component.part == part
+        ):
             self._clear_cached_bodies()
-        
+
         # Check all child components recursively
         for component in self._get_all_components():
-            if (hasattr(component, '_master_component') and 
-                component._master_component and 
-                component._master_component.part == part):
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part == part
+            ):
                 component._clear_cached_bodies()
 
     def _find_and_add_component_to_design(
