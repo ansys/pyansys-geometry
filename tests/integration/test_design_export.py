@@ -383,10 +383,6 @@ def test_export_to_fmd_with_options(modeler: Modeler, tmp_path_factory: pytest.T
     Verifies that coarser mesh options produce a smaller file than finer mesh options
     when using the v1 protocol, where the options are actually sent to the server.
     """
-    skip_if_discovery(
-        modeler, test_export_to_fmd_with_options.__name__, "FMD format"
-    )  # Skip test on Discovery
-
     # Create a demo design
     design = _create_demo_design(modeler)
 
@@ -404,9 +400,7 @@ def test_export_to_fmd_with_options(modeler: Modeler, tmp_path_factory: pytest.T
     assert file_fine.exists()
     assert file_fine.stat().st_size > 0
 
-    # On v1 protocol options are sent to the server; finer mesh should yield a larger file.
-    if modeler._grpc_client._services.version != GeometryApiProtos.V0:
-        assert file_fine.stat().st_size > file_coarse.stat().st_size
+    assert file_fine.stat().st_size > file_coarse.stat().st_size
 
 
 def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
