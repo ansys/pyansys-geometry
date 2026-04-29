@@ -123,6 +123,8 @@ class LocalDockerInstance:
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    bypass_token : str | None, default: None
+        Bypass token to use to bypass license checks when connecting to the Geometry service.
     """
 
     __DOCKER_CLIENT__: "DockerClient" = None
@@ -183,6 +185,7 @@ class LocalDockerInstance:
         image: GeometryContainers | str | None = None,
         transport_mode: str | None = None,
         certs_dir: Path | str | None = None,
+        bypass_token: str | None = None,
     ) -> None:
         """``LocalDockerInstance`` constructor."""
         # Initialize instance variables
@@ -227,6 +230,7 @@ class LocalDockerInstance:
                 image=image,
                 transport_mode=transport_mode,
                 certs_dir=certs_dir,
+                bypass_token=bypass_token,
             )
         else:
             raise RuntimeError(f"Geometry service cannot be deployed on port {port}")
@@ -289,6 +293,7 @@ class LocalDockerInstance:
         image: GeometryContainers | str | None,
         transport_mode: str | None,
         certs_dir: Path | str | None,
+        bypass_token: str | None,
     ) -> None:
         """Handle the deployment of a Geometry service.
 
@@ -313,6 +318,8 @@ class LocalDockerInstance:
             By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment
             variable. If not found, it will use the "certs" folder assuming it is in the
             current working directory.
+        bypass_token : str | None
+            Bypass token to use to bypass license checks when connecting to the Geometry service.
 
         Raises
         ------
@@ -351,14 +358,16 @@ class LocalDockerInstance:
 
             final_image_name = f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{image.value[2]}"
 
-        # At this point, you are can deploy the Geometry service.
+        # At this point, you can deploy the Geometry service.
         #
         # Check if the license server env variable is available
         license_server = os.getenv("ANSRV_GEO_LICENSE_SERVER", None)
-        if not license_server:  # pragma: no cover
+        if not license_server and not bypass_token:  # pragma: no cover
             raise RuntimeError(
                 "No license server provided... Store its value under the following env variable: ANSRV_GEO_LICENSE_SERVER."  # noqa: E501
             )
+        if not license_server and bypass_token:
+            license_server = ""
 
         # Verify the transport mode
         if transport_mode:
@@ -418,6 +427,11 @@ class LocalDockerInstance:
                     "USE_DEBUG_MODE": os.getenv("ANSRV_GEO_USE_DEBUG_MODE", 0),
                     "SERVER_ENDPOINT": "50051@0.0.0.0",
                     "ANSYS_GRPC_CERTIFICATES": container_cert_path,
+                    **(
+                        {"ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN": bypass_token}
+                        if bypass_token
+                        else {}
+                    ),
                 },
                 command=f"--transport-mode={transport_mode}",
             )

@@ -30,6 +30,7 @@ from ..base.conversions import to_distance
 from ..base.edges import GRPCEdgesService
 from .conversions import (
     build_grpc_id,
+    from_face_loop_to_grpc_loop,
     from_float_to_grpc_quantity,
     from_grpc_curve_to_curve,
     from_grpc_point_to_point3d,
@@ -410,4 +411,24 @@ class GRPCEdgesServiceV1(GRPCEdgesService):
         return {
             "success": response.tracked_command_response.command_response.success,
             "tracked_response": serialized_response,
+        }
+
+    @protect_grpc
+    def fill_edge_loops(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import FillEdgeLoopsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FillEdgeLoopsRequest(
+            loops=[from_face_loop_to_grpc_loop(loop) for loop in kwargs["loops"]]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.edit_stub.FillEdgeLoops(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": tracked_response.get("success"),
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
         }

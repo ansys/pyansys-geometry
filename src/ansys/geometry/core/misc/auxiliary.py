@@ -476,3 +476,28 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
                         zipf.write(file, file.name)
 
     return temp_zip_path
+
+
+def extract_project_from_zip(file_path: Path, extract_to: Path) -> Path:
+    """Extract a zip file to a specified directory.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the zip file to be extracted.
+    extract_to : str
+        The path to the directory where the zip file should be extracted.
+
+    Returns
+    -------
+    Path
+        The path to the directory where the zip file was extracted.
+
+    """
+    from zipfile import ZipFile
+
+    # Extract zip archive
+    with ZipFile(file_path, "r") as zipf:
+        zipf.extractall(extract_to)
+
+    return extract_to

@@ -245,6 +245,13 @@ class GRPCEdgesServiceV0(GRPCEdgesService):
         }
 
     @protect_grpc
+    def fill_edge_loops(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.fill_edge_loops' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def move_imprint_edges(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import MoveImprintEdgesRequest
 
