@@ -1508,10 +1508,22 @@ def from_matrix_to_grpc_matrix(matrix: "Matrix44") -> GRPCMatrix:
         Converted gRPC matrix.
     """
     return GRPCMatrix(
-        m00=matrix[0, 0], m01=matrix[0, 1], m02=matrix[0, 2], m03=matrix[0, 3],
-        m10=matrix[1, 0], m11=matrix[1, 1], m12=matrix[1, 2], m13=matrix[1, 3],
-        m20=matrix[2, 0], m21=matrix[2, 1], m22=matrix[2, 2], m23=matrix[2, 3],
-        m30=matrix[3, 0], m31=matrix[3, 1], m32=matrix[3, 2], m33=matrix[3, 3],
+        m00=matrix[0, 0],
+        m01=matrix[0, 1],
+        m02=matrix[0, 2],
+        m03=matrix[0, 3],
+        m10=matrix[1, 0],
+        m11=matrix[1, 1],
+        m12=matrix[1, 2],
+        m13=matrix[1, 3],
+        m20=matrix[2, 0],
+        m21=matrix[2, 1],
+        m22=matrix[2, 2],
+        m23=matrix[2, 3],
+        m30=matrix[3, 0],
+        m31=matrix[3, 1],
+        m32=matrix[3, 2],
+        m33=matrix[3, 3],
     )
 
 
@@ -2362,9 +2374,7 @@ def from_grpc_any(any_msg: "any_pb2.Any"):
     from google.protobuf import any_pb2, wrappers_pb2
 
     if not isinstance(any_msg, any_pb2.Any):
-        raise TypeError(
-            f"Expected google.protobuf.Any, got {type(any_msg).__name__}."
-        )
+        raise TypeError(f"Expected google.protobuf.Any, got {type(any_msg).__name__}.")
 
     # Mapping of proto descriptor -> (message class, conversion callable)
     type_map = [

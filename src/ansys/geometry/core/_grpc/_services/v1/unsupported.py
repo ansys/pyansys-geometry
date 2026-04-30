@@ -104,10 +104,7 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
         return_value = from_grpc_any(response.return_value)
 
         # Return the response - formatted as a dictionary
-        return {
-            "return_value": return_value,
-            "command_response": response.command_response
-        }
+        return {"return_value": return_value, "command_response": response.command_response}
 
     @protect_grpc
     def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102
