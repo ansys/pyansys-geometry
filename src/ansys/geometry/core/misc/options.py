@@ -168,3 +168,82 @@ class TessellationOptions:
         Whether triangles on opposite sides of an edge should match.
         """
         return self._watertight
+
+
+class FMDExportOptions:
+    """Provides options for FMD export.
+
+    Parameters
+    ----------
+    deviation : Distance | Quantity | Real
+        The maximum deviation from the true surface position.
+        If a Real is provided, it is assumed to be in the default length unit.
+        Must be between 0.00003 m and 0.002 m.
+    angle : Angle | Quantity | Real
+        The maximum deviation from the true surface normal.
+        If a Real is provided, it is assumed to be in radians.
+        Must be between 0.05 degrees (≈ 8.727e-4 rad) and 30 degrees (≈ 0.5236 rad).
+    aspect_ratio : int, default=-3
+        The maximum aspect ratio of facets.
+    max_edge_length : Distance | Quantity | Real, default=0.0
+        The maximum facet edge length.
+    """
+
+    @check_input_types
+    def __init__(
+        self,
+        deviation: Distance | Quantity | Real,
+        angle: Angle | Quantity | Real,
+        aspect_ratio: int = -3,
+        max_edge_length: Distance | Quantity | Real = 0.0,
+    ):
+        """Initialize ``FMDExportOptions`` class."""
+        # Convert inputs to Distance and Angle objects
+        self._deviation = deviation if isinstance(deviation, Distance) else Distance(deviation)
+        _dev_m = self._deviation.value.m_as("m")
+        if not (0.00003 <= _dev_m <= 0.002):
+            raise ValueError(f"deviation must be between 0.00003 m and 0.002 m, got {_dev_m} m.")
+
+        self._angle = angle if isinstance(angle, Angle) else Angle(angle)
+        _ang_deg = self._angle.value.m_as("degree")
+        if not (0.05 <= _ang_deg <= 30.0):
+            raise ValueError(
+                f"angle must be between 0.05 degrees and 30 degrees, got {_ang_deg:.6f} degrees."
+            )
+
+        self._aspect_ratio = aspect_ratio
+        self._max_edge_length = (
+            max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
+        )
+
+    @property
+    def deviation(self) -> Distance:
+        """Deviation.
+
+        The maximum deviation from the true surface position.
+        """
+        return self._deviation
+
+    @property
+    def angle(self) -> Angle:
+        """Angle.
+
+        The maximum deviation from the true surface normal.
+        """
+        return self._angle
+
+    @property
+    def aspect_ratio(self) -> int:
+        """Aspect ratio.
+
+        The maximum aspect ratio of facets.
+        """
+        return self._aspect_ratio
+
+    @property
+    def max_edge_length(self) -> Distance:
+        """Maximum edge length.
+
+        The maximum facet edge length.
+        """
+        return self._max_edge_length
