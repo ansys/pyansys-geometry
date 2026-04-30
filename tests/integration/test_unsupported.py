@@ -21,9 +21,8 @@
 # SOFTWARE.
 """Testing of unsupported commands."""
 
+import os
 from pathlib import Path
-
-import pytest
 
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.modeler import Modeler
@@ -32,14 +31,18 @@ from ansys.geometry.core.sketch import Sketch
 from .conftest import FILES_DIR
 
 
-def _build_manifest(tmp_path: Path) -> Path:
-    """Write a manifest XML with the DLL path resolved to its absolute location.
+def _build_manifest(tmp_path: Path, dll_path: str | Path) -> Path:
+    """Write a manifest XML embedding the given server-side DLL path.
 
-    Because integration tests run against a local server, the absolute path to
-    the DLL (inside the repo's test-files directory) is valid on both the client
-    and the server, making this approach machine-agnostic.
+    Parameters
+    ----------
+    tmp_path : Path
+        Temporary directory provided by pytest.
+    dll_path : str | Path
+        Path to the DLL *as seen by the server process*.  For a local server
+        this is the host absolute path; for a Docker container this is the
+        container-internal path (e.g. ``C:/test-files/TestRemotePlugin.dll``).
     """
-    dll_path = (FILES_DIR / "TestRemotePlugin.dll").resolve()
     content = (
         '<?xml version="1.0" encoding="utf-8" ?>\n'
         "<AddIns>\n"
@@ -56,22 +59,32 @@ def _build_manifest(tmp_path: Path) -> Path:
     return manifest_path
 
 
-@pytest.mark.skip(reason="Requires the TestRemotePlugin DLL, which is not yet built in CI.")
 def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     """Test loading an add-in via XML manifest and invoking its methods.
 
-    On the v1 protocol the test:
-      1. Generates a manifest with the DLL resolved to its absolute path so the
-         test is machine-agnostic (no hardcoded env-var paths).
-      2. Loads the add-in from the generated manifest (``load_addin``).
+    The test:
+      1. Resolves the DLL path as seen by the server (container-internal path
+         when running against Docker in CI via ``ANSYS_GEOMETRY_TEST_FILES``,
+         or the host absolute path for a local server).
+      2. Generates a manifest embedding that path and loads the add-in
+         (``load_addin``).
       3. Invokes the no-argument "Health" method and checks the response dict.
       4. Invokes "TestCallingWithArgs" passing a body, a face, and a Point3D.
       5. Invokes "TestCallingWithReturnType" and asserts the returned face count
          equals the number of faces on the extruded box body (6).
     """
+    # In CI the pipeline copies test files into the container with ``docker cp``
+    # and sets ANSYS_GEOMETRY_TEST_FILES to the container-internal destination.
+    # For a local server the env var is absent and the host path is used instead.
+    container_test_files = os.getenv("ANSYS_GEOMETRY_TEST_FILES")
+    if container_test_files is not None:
+        dll_path = f"{container_test_files}/TestRemotePlugin.dll"
+    else:
+        dll_path = str((FILES_DIR / "TestRemotePlugin.dll").resolve())
+
     addin_path = "TestRemotePlugin.RemotePluginAddin"
 
-    manifest_path = _build_manifest(tmp_path)
+    manifest_path = _build_manifest(tmp_path, dll_path)
     # 1. Load the add-in from the dynamically generated manifest
     modeler.unsupported.load_addin(manifest_path=manifest_path)
 

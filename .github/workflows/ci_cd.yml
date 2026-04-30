@@ -267,6 +267,11 @@ jobs:
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Copy test files into the container so the addin test can find the DLL
+          $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
+          docker cp tests/integration/files $copyDest
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
@@ -448,6 +453,12 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+
+      - name: Copy test files into geometry service container
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          docker cp tests/integration/files ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'

@@ -156,6 +156,11 @@ jobs:
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Copy test files into the container so the addin test can find the DLL
+          $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
+          docker cp tests/integration/files $copyDest
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
           python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
 
@@ -241,6 +246,8 @@ jobs:
         run: |
           docker pull ${ANSRV_GEO_IMAGE_LINUX_CORE_TAG}
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_LINUX_CORE_TAG} ${TRANSPORT_MODE_SELECTION}
+          docker cp tests/integration/files ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
