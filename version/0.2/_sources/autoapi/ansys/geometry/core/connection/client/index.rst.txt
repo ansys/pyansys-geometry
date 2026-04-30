@@ -1,0 +1,317 @@
+:py:mod:`ansys.geometry.core.connection.client`
+===============================================
+
+.. py:module:: ansys.geometry.core.connection.client
+
+.. autoapi-nested-parse::
+
+   Provides a wrapped abstraction of the gRPC proto API definition and stubs.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.connection.client.GrpcClient
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.connection.client.wait_until_healthy
+
+
+
+.. py:function:: wait_until_healthy(channel: grpc.Channel, timeout: float)
+
+   
+   Wait until a channel is healthy before returning.
+
+
+   :Parameters:
+
+       **channel** : :obj:`~grpc.Channel`
+           Channel that must be established and healthy.
+
+       **timeout** : :class:`python:float`
+           Timeout in seconds. An attempt is made every 100 milliseconds
+           until the timeout is exceeded.
+
+
+
+
+
+   :Raises:
+
+       :obj:`TimeoutError`
+           Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: GrpcClient(host: beartype.typing.Optional[str] = DEFAULT_HOST, port: beartype.typing.Union[str, int] = DEFAULT_PORT, channel: beartype.typing.Optional[grpc.Channel] = None, remote_instance: beartype.typing.Optional[ansys.platform.instancemanagement.Instance] = None, local_instance: beartype.typing.Optional[ansys.geometry.core.connection.local_instance.LocalDockerInstance] = None, timeout: beartype.typing.Optional[ansys.geometry.core.typing.Real] = 60, logging_level: beartype.typing.Optional[int] = logging.INFO, logging_file: beartype.typing.Optional[beartype.typing.Union[pathlib.Path, str]] = None)
+
+
+   
+   Wraps the gRPC connection for the Geometry service.
+
+
+   :Parameters:
+
+       **host** : :class:`python:str`, default: :obj:`DEFAULT_HOST`
+           Host where the server is running.
+
+       **port** : :obj:`Union`\[:class:`python:str`, :class:`python:int`], default: :obj:`DEFAULT_PORT`
+           Port number where the server is running.
+
+       **channel** : :obj:`~grpc.Channel`, default: :data:`python:None`
+           gRPC channel for server communication.
+
+       **remote_instance** : :obj:`ansys.platform.instancemanagement.Instance`, default: :data:`python:None`
+           Corresponding remote instance when the Geometry service
+           is launched through PyPIM. This instance is deleted when calling the
+           :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method.
+
+       **local_instance** : :obj:`LocalDockerInstance`, default: :data:`python:None`
+           Corresponding local instance when the Geometry service is launched through
+           the ``launch_local_modeler()`` interface. This instance will be deleted
+           when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **timeout** : :obj:`real`, default: 60
+           Timeout in seconds to achieve the connection.
+
+       **logging_level** : :class:`python:int`, default: :obj:`INFO`
+           Logging level to apply to the client.
+
+       **logging_file** : :class:`python:str` or :obj:`Path`, default: :data:`python:None`
+           File to output the log to, if requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: channel
+      :type: grpc.Channel
+
+      
+      Client gRPC channel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: log
+      :type: ansys.geometry.core.logger.PyGeometryCustomAdapter
+
+      
+      Specific instance logger.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_closed
+      :type: bool
+
+      
+      Checks if the client connection is closed or not.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: healthy
+      :type: bool
+
+      
+      Check if the client channel if healthy.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the client as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: close()
+
+      
+      Close the channel.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      If an instance of the Geometry service was started using
+      PyPIM, this instance is deleted. Furthermore, if a local instance
+      of the Geometry service was started, it will be stopped.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: target() -> str
+
+      
+      Get the target of the channel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_name() -> str
+
+      
+      Get the target name of the connection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

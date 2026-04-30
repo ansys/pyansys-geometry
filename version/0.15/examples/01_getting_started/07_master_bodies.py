@@ -1,0 +1,187 @@
+# ---
+# jupyter:
+#   jupytext:
+#     default_lexer: ipython3
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.19.1
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %% [markdown]
+# # PyAnsys Geometry 101: MasterBodies and component occurrences
+#
+# In PyAnsys Geometry, a **MasterBody** is the underlying geometry definition shared
+# by one or more **Body** instances (occurrences). When a component is used as a template
+# to create additional components, every occurrence shares the same master geometry.
+# This means that modifications made to the master propagate automatically to all
+# occurrences, keeping the design consistent without requiring you to edit each
+# instance individually.
+#
+# This example builds a simple car assembly to illustrate these concepts:
+#
+# - A single **wheel** component is created once and reused as four occurrences
+#   positioned around the car chassis.
+# - A second car is created as an occurrence of the first car.
+# - A roof body added to the template component automatically appears on both cars.
+
+# %% [markdown]
+# ## Perform required imports
+
+# %%
+import numpy as np
+
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.math import (
+    Plane,
+    Point2D,
+    Point3D,
+    UnitVector3D,
+    Vector3D,
+)
+from ansys.geometry.core.sketch import Sketch
+
+# %% [markdown]
+# ## Launch a modeler session
+
+# %%
+modeler = launch_modeler()
+print(modeler)
+
+# %% [markdown]
+# ## Create the design
+
+# %%
+design = modeler.create_design("MasterBodiesDemo")
+
+# %% [markdown]
+# ## Build the car template
+#
+# Start by creating the top-level **Car1** component and organising its sub-structure.
+# The component tree for the template car is:
+#
+# ```
+# Car1
+# ├── A
+# │   └── Top          ← roof will be extruded here later
+# └── B
+#     ├── Base         ← car chassis
+#     ├── Wheel1       ← wheel master (used as template for Wheel2-4)
+#     ├── Wheel2       ← occurrence of Wheel1
+#     ├── Wheel3       ← occurrence of Wheel1
+#     └── Wheel4       ← occurrence of Wheel1
+# ```
+
+# %%
+# Top-level car component
+car1 = design.add_component("Car1")
+
+# Sub-components for the roof and the chassis/wheels
+top_comp = car1.add_component("A").add_component("Top")
+comp2 = car1.add_component("B")
+wheel1 = comp2.add_component("Wheel1")
+
+# %% [markdown]
+# ### Create the car chassis
+#
+# Extrude a rectangular sketch to form the base of the car.
+
+# %%
+chassis_sketch = Sketch().box(Point2D([5, 10]), 10, 20)
+comp2.add_component("Base").extrude_sketch("BaseBody", chassis_sketch, 5)
+
+# %% [markdown]
+# ### Create the wheel master (Wheel1)
+#
+# The wheel is a cylinder extruded from a plane rotated 90° so that the axis of
+# the cylinder aligns with the Y-axis (the side-to-side axis of the car).
+
+# %%
+wheel_plane = Plane(
+    direction_x=Vector3D([0, 1, 0]),
+    direction_y=Vector3D([0, 0, 1]),
+)
+wheel_sketch = Sketch(wheel_plane)
+wheel_sketch.circle(Point2D([0, 0]), 5)
+wheel1.extrude_sketch("WheelBody", wheel_sketch, -5)
+
+# %% [markdown]
+# ### Create wheel occurrences (Wheel2, Wheel3, Wheel4)
+#
+# Pass ``wheel1`` as the ``template`` argument to ``add_component`` to create
+# occurrences that share the same **MasterBody**.  Each occurrence is then
+# repositioned with ``modify_placement``.
+
+# %%
+rotation_origin = Point3D([0, 0, 0])
+rotation_axis = UnitVector3D([0, 0, 1])
+
+# Rear-left wheel (translated along Y)
+wheel2 = comp2.add_component("Wheel2", wheel1)
+wheel2.modify_placement(Vector3D([0, 20, 0]))
+
+# Front-right wheel (translated along X and rotated 180° so the flat side faces inward)
+wheel3 = comp2.add_component("Wheel3", wheel1)
+wheel3.modify_placement(Vector3D([10, 0, 0]), rotation_origin, rotation_axis, np.pi)
+
+# Rear-right wheel
+wheel4 = comp2.add_component("Wheel4", wheel1)
+wheel4.modify_placement(Vector3D([10, 20, 0]), rotation_origin, rotation_axis, np.pi)
+
+# %% [markdown]
+# ## Create a second car as an occurrence of Car1
+#
+# Passing ``car1`` as the ``template`` to ``add_component`` creates **Car2**
+# as a full occurrence of the car template — it shares the same master geometry as
+# **Car1** and is offset 30 units along the X-axis.
+
+# %%
+car2 = design.add_component("Car2", car1)
+car2.modify_placement(Vector3D([30, 0, 0]))
+
+# Plot the design so far — two identical cars without roofs yet
+design.plot()
+
+# %% [markdown]
+# ## Add the roof body — changes propagate to both cars
+#
+# Because **Car2** is an occurrence of **Car1**, any geometry added to the ``top_comp``
+# component of **Car1** will automatically appear on **Car2** as well.
+
+# %%
+roof_sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
+top_comp.extrude_sketch("TopBody", roof_sketch, 5)
+
+# Refresh the local design object to pick up server-side changes before plotting.
+# This is only needed in notebook examples - not in normal .py scripts.
+design._update_design_inplace()
+
+# Both cars now have a roof
+design.plot()
+
+# %% [markdown]
+# ## Verify the shared structure
+#
+# Because ``Wheel2``, ``Wheel3``, and ``Wheel4`` are all occurrences of ``Wheel1``,
+# they all share the same master geometry.  This means every occurrence has the same
+# body name (from the ``MasterBody``) and a unique component path (occurrence ID).
+
+# %%
+# Filter wheel components by name
+wheel_comps = [c for c in comp2.components if c.name.startswith("Wheel")]
+
+print("Wheel occurrences — body names come from the shared MasterBody:")
+for wc in wheel_comps:
+    body = wc.bodies[0]
+    print(f"  component '{wc.name}'  ->  body name: '{body.name}'  (occurrence id: {body.id})")
+
+# %% [markdown]
+# ## Close the modeler
+
+# %%
+modeler.close()

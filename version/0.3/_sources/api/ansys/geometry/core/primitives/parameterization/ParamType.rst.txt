@@ -1,0 +1,81 @@
+
+
+
+
+ParamType
+=========
+
+.. py:class:: ParamType
+   :canonical: ansys.geometry.core.primitives.parameterization.ParamType
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+ParamType enum class that defines the type of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ParamType
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~LINEAR`
+            - 
+          * - :py:attr:`~CIRCULAR`
+            - 
+          * - :py:attr:`~OTHER`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.parameterization import ParamType
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: LINEAR
+   :value: 1
+
+   
+
+.. py:attribute:: CIRCULAR
+   :value: 2
+
+   
+
+.. py:attribute:: OTHER
+   :value: 3
+
+   
+
+
+

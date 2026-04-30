@@ -1,0 +1,50 @@
+:py:mod:`ansys.geometry.core.sketch`
+====================================
+
+.. py:module:: ansys.geometry.core.sketch
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``sketch`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   arc/index.rst
+   box/index.rst
+   circle/index.rst
+   edge/index.rst
+   ellipse/index.rst
+   face/index.rst
+   gears/index.rst
+   polygon/index.rst
+   segment/index.rst
+   sketch/index.rst
+   slot/index.rst
+   trapezoid/index.rst
+   triangle/index.rst
+
+

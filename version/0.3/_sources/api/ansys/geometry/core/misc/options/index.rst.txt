@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``options.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.misc.options
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: options
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ImportOptions`
+            - Import options when opening a file.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 ImportOptions<ImportOptions>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides various option classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

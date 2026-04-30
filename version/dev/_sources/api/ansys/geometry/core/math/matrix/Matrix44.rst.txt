@@ -1,0 +1,311 @@
+
+
+
+
+
+
+:class:`Matrix44`
+=================
+
+
+.. py:class:: ansys.geometry.core.math.matrix.Matrix44(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+   Bases: :py:obj:`Matrix`
+
+
+   
+   Provides 4x4 matrix representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Matrix`, default: :obj:`DEFAULT_MATRIX44`
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+.. py:currentmodule:: Matrix44
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_translation`
+            - Create a matrix representing the specified translation.
+          * - :py:attr:`~create_rotation`
+            - Create a matrix representing the specified rotation.
+          * - :py:attr:`~create_matrix_from_rotation_about_axis`
+            - Create a matrix representing a rotation about a given axis.
+          * - :py:attr:`~create_matrix_from_mapping`
+            - Create a matrix representing the specified mapping.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_translation`
+            - Check if the matrix represents a translation.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.matrix import Matrix44
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_translation(translation: ansys.geometry.core.math.vector.Vector3D) -> Matrix44
+   :classmethod:
+
+
+   
+   Create a matrix representing the specified translation.
+
+
+   :Parameters:
+
+       **translation** : :obj:`Vector3D`
+           The translation vector representing the translation. The components of the vector
+           should be in meters.
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           A 4x4 matrix representing the translation.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   >>> translation_vector = Vector3D(1.0, 2.0, 3.0)
+   >>> translation_matrix = Matrix44.create_translation(translation_vector)
+   >>> print(translation_matrix)
+   [[1. 0. 0. 1.]
+    [0. 1. 0. 2.]
+    [0. 0. 1. 3.]
+    [0. 0. 0. 1.]]
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_translation(including_identity: bool = False) -> bool
+
+   
+   Check if the matrix represents a translation.
+
+   This method checks if the matrix represents a translation transformation.
+   A translation matrix has the following form:
+
+       [1 0 0 tx]
+       [0 1 0 ty]
+       [0 0 1 tz]
+       [0 0 0  1]
+
+   :Parameters:
+
+       **including_identity** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           If ``True``, the method will return ``True`` for the identity matrix as well.
+           If ``False``, the method will return ``False`` for the identity matrix.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the matrix represents a translation, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   >>> matrix = Matrix44([[1, 0, 0, 5], [0, 1, 0, 3], [0, 0, 1, 2], [0, 0, 0, 1]])
+   >>> matrix.is_translation()
+   True
+   >>> identity_matrix = Matrix44([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+   >>> identity_matrix.is_translation()
+   False
+   >>> identity_matrix.is_translation(including_identity=True)
+   True
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_rotation(direction_x: ansys.geometry.core.math.vector.Vector3D, direction_y: ansys.geometry.core.math.vector.Vector3D, direction_z: ansys.geometry.core.math.vector.Vector3D = None) -> Matrix44
+   :classmethod:
+
+
+   
+   Create a matrix representing the specified rotation.
+
+
+   :Parameters:
+
+       **direction_x** : :obj:`Vector3D`
+           The X direction vector.
+
+       **direction_y** : :obj:`Vector3D`
+           The Y direction vector.
+
+       **direction_z** : :obj:`Vector3D`, :obj:`optional`
+           The Z direction vector. If not provided, it will be calculated
+           as the cross product of direction_x and direction_y.
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           A 4x4 matrix representing the rotation.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   >>> direction_x = Vector3D(1.0, 0.0, 0.0)
+   >>> direction_y = Vector3D(0.0, 1.0, 0.0)
+   >>> rotation_matrix = Matrix44.create_rotation(direction_x, direction_y)
+   >>> print(rotation_matrix)
+   [[1. 0. 0. 0.]
+   [0. 1. 0. 0.]
+   [0. 0. 1. 0.]
+   [0. 0. 0. 1.]]
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_matrix_from_rotation_about_axis(axis: ansys.geometry.core.math.vector.Vector3D, angle: float) -> Matrix44
+   :classmethod:
+
+
+   
+   Create a matrix representing a rotation about a given axis.
+
+
+   :Parameters:
+
+       **axis** : :obj:`Vector3D`
+           The axis of rotation.
+
+       **angle** : :class:`python:float`
+           The angle of rotation in radians.
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           A 4x4 matrix representing the rotation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_matrix_from_mapping(frame: ansys.geometry.core.math.frame.Frame) -> Matrix44
+   :classmethod:
+
+
+   
+   Create a matrix representing the specified mapping.
+
+
+   :Parameters:
+
+       **frame** : :obj:`Frame`
+           The frame containing the origin and direction vectors.
+
+
+
+   :Returns:
+
+       :obj:`Matrix44`
+           A 4x4 matrix representing the translation and rotation defined by the frame.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

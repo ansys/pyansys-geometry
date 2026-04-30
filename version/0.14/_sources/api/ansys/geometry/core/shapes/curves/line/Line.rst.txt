@@ -1,0 +1,440 @@
+
+
+
+
+
+
+:class:`Line`
+=============
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.line.Line(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, direction: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.curves.curve.Curve`
+
+
+   
+   Provides 3D line representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Origin of the line.
+
+       **direction** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           Direction of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: Line
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the curve.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the curve.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~evaluate`
+            - Evaluate the line at a given parameter.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the line from a transformation matrix.
+          * - :py:attr:`~project_point`
+            - Project a point onto the line and evaluate the line.
+          * - :py:attr:`~is_coincident_line`
+            - Determine if the line is coincident with another line.
+          * - :py:attr:`~is_opposite_line`
+            - Determine if the line is opposite another line.
+          * - :py:attr:`~parameterization`
+            - Get the parametrization of the line.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the line.
+          * - :py:attr:`~direction`
+            - Direction of the line.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Line`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.line import Line
+
+Property detail
+---------------
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Origin of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Direction of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: object) -> bool
+
+   
+   Equals operator for the ``Line`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: float) -> LineEvaluation
+
+   
+   Evaluate the line at a given parameter.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`Real`
+           Parameter to evaluate the line at.
+
+
+
+   :Returns:
+
+       :obj:`LineEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Line
+
+   
+   Create a transformed copy of the line from a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4X4 transformation matrix to apply to the line.
+
+
+
+   :Returns:
+
+       :obj:`Line`
+           New line that is the transformed copy of the original line.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> LineEvaluation
+
+   
+   Project a point onto the line and evaluate the line.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the line.
+
+
+
+   :Returns:
+
+       :obj:`LineEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_coincident_line(other: Line) -> bool
+
+   
+   Determine if the line is coincident with another line.
+
+
+   :Parameters:
+
+       **other** : :obj:`Line`
+           Line to determine coincidence with.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the line is coincident with another line, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_opposite_line(other: Line) -> bool
+
+   
+   Determine if the line is opposite another line.
+
+
+   :Parameters:
+
+       **other** : :obj:`Line`
+           Line to determine opposition with.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the line is opposite to another line.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> ansys.geometry.core.shapes.parameterization.Parameterization
+
+   
+   Get the parametrization of the line.
+
+   The parameter of a line specifies the distance from the `origin` in the
+   direction of `direction`.
+
+
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how the line is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param: ansys.geometry.core.typing.Real) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the curve.
+
+   The point can either lie within the curve or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,214 @@
+
+
+
+
+
+
+:class:`Matrix`
+===============
+
+
+.. py:class:: ansys.geometry.core.math.matrix.Matrix(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+   Bases: :py:obj:`numpy.ndarray`
+
+
+   
+   Provides matrix representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray` | :obj:`RealSequence`
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: Matrix
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~determinant`
+            - Get the determinant of the matrix.
+          * - :py:attr:`~inverse`
+            - Provide the inverse of the matrix.
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__mul__`
+            - Get the multiplication of the matrix.
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Matrix`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Matrix`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.matrix import Matrix
+
+
+
+Method detail
+-------------
+
+.. py:method:: determinant() -> ansys.geometry.core.typing.Real
+
+   
+   Get the determinant of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: inverse() -> Matrix
+
+   
+   Provide the inverse of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __mul__(other: Union[Matrix, numpy.ndarray]) -> Matrix
+
+   
+   Get the multiplication of the matrix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __eq__(other: Matrix) -> bool
+
+   
+   Equals operator for the ``Matrix`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: Matrix) -> bool
+
+   
+   Not equals operator for the ``Matrix`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,420 @@
+
+
+
+
+
+
+:class:`SurfaceEvaluation`
+==========================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation(parameter: ansys.geometry.core.shapes.parameterization.ParamUV)
+
+   
+   Provides for evaluating a surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SurfaceEvaluation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+          * - :py:attr:`~position`
+            - Point on the surface, based on the evaluation.
+          * - :py:attr:`~normal`
+            - Normal to the surface.
+          * - :py:attr:`~u_derivative`
+            - First derivative with respect to the U parameter.
+          * - :py:attr:`~v_derivative`
+            - First derivative with respect to the V parameter.
+          * - :py:attr:`~uu_derivative`
+            - Second derivative with respect to the U parameter.
+          * - :py:attr:`~uv_derivative`
+            - The second derivative with respect to the U and V parameters.
+          * - :py:attr:`~vv_derivative`
+            - The second derivative with respect to v.
+          * - :py:attr:`~min_curvature`
+            - Minimum curvature.
+          * - :py:attr:`~min_curvature_direction`
+            - Minimum curvature direction.
+          * - :py:attr:`~max_curvature`
+            - Maximum curvature.
+          * - :py:attr:`~max_curvature_direction`
+            - Maximum curvature direction.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
+
+Property detail
+---------------
+
+.. py:property:: parameter
+   :type: ansys.geometry.core.shapes.parameterization.ParamUV
+
+   :abstractmethod:
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: position
+   :type: ansys.geometry.core.math.point.Point3D
+
+   :abstractmethod:
+
+
+   
+   Point on the surface, based on the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: normal
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+   :abstractmethod:
+
+
+   
+   Normal to the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: u_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   First derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: v_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   First derivative with respect to the V parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: uu_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   Second derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: uv_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   The second derivative with respect to the U and V parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: vv_derivative
+   :type: ansys.geometry.core.math.vector.Vector3D
+
+   :abstractmethod:
+
+
+   
+   The second derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_curvature
+   :type: ansys.geometry.core.typing.Real
+
+   :abstractmethod:
+
+
+   
+   Minimum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_curvature_direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+   :abstractmethod:
+
+
+   
+   Minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_curvature
+   :type: ansys.geometry.core.typing.Real
+
+   :abstractmethod:
+
+
+   
+   Maximum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_curvature_direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+   :abstractmethod:
+
+
+   
+   Maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``parts.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.parts
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: parts
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.parts.GRPCPartsService`
+            - Parts service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCPartsService</api/ansys/geometry/core/_grpc/_services/base/parts/GRPCPartsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the parts service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

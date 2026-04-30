@@ -1,0 +1,406 @@
+
+
+
+
+
+
+:class:`Logger`
+===============
+
+
+.. py:class:: ansys.geometry.core.logger.Logger(level=logging.DEBUG, to_file=False, to_stdout=True, filename=FILE_NAME)
+
+   
+   Provides the logger used for each PyAnsys Geometry session.
+
+   This class allows you to add handlers to the logger to output messages
+   to a file or to the standard output (stdout).
+
+   :Parameters:
+
+       **level** : :class:`python:int`, default: 10
+           Logging level to filter the message severity allowed in the logger.
+           The default is ``10``, in which case the ``logging.DEBUG`` level
+           is used.
+
+       **to_file** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to write log messages to a file.
+
+       **to_stdout** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to write log messages to the standard output.
+
+       **filename** : :class:`python:str`, default: "pyansys-geometry.log"
+           Name of the file to write log log messages to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Demonstrate logger usage from the ``Modeler`` instance, which is automatically
+   created when a Geometry service instance is created.
+
+   >>> from ansys.geometry.core import Modeler
+   >>> modeler = Modeler(loglevel="DEBUG")
+   >>> modeler._log.info("This is a useful message")
+   INFO -  -  <ipython-input-24-80df150fe31f> - <module> - This is LOG debug message.
+
+   Import the global PyAnsys Geometry logger and add a file output handler.
+
+   >>> import os
+   >>> from ansys.geometry.core import LOG
+   >>> file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
+   >>> LOG.log_to_file(file_path)
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Logger
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~log_to_file`
+            - Add a file handler to the logger.
+          * - :py:attr:`~log_to_stdout`
+            - Add the standard output handler to the logger.
+          * - :py:attr:`~setLevel`
+            - Change the log level of the object and the attached handlers.
+          * - :py:attr:`~add_child_logger`
+            - Add a child logger to the main logger.
+          * - :py:attr:`~add_instance_logger`
+            - Add a logger for a Geometry service instance.
+          * - :py:attr:`~add_handling_uncaught_expections`
+            - Redirect the output of an exception to a logger.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~file_handler`
+            - 
+          * - :py:attr:`~std_out_handler`
+            - 
+          * - :py:attr:`~logger`
+            - 
+          * - :py:attr:`~level`
+            - 
+          * - :py:attr:`~debug`
+            - 
+          * - :py:attr:`~info`
+            - 
+          * - :py:attr:`~warning`
+            - 
+          * - :py:attr:`~error`
+            - 
+          * - :py:attr:`~critical`
+            - 
+          * - :py:attr:`~log`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__getitem__`
+            - Overload the access method by item for the ``Logger`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.logger import Logger
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: file_handler
+   :value: None
+
+
+.. py:attribute:: std_out_handler
+   :value: None
+
+
+.. py:attribute:: logger
+
+.. py:attribute:: level
+   :value: 0
+
+
+.. py:attribute:: debug
+
+.. py:attribute:: info
+
+.. py:attribute:: warning
+
+.. py:attribute:: error
+
+.. py:attribute:: critical
+
+.. py:attribute:: log
+
+
+
+Method detail
+-------------
+
+.. py:method:: log_to_file(filename=FILE_NAME, level=LOG_LEVEL)
+
+   
+   Add a file handler to the logger.
+
+
+   :Parameters:
+
+       **filename** : :class:`python:str`, default: "pyansys-geometry.log"
+           Name of the file to write log messages to.
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Write to the ``"pyansys-geometry.log"`` file in the current working directory:
+
+   >>> from ansys.geometry.core import LOG
+   >>> import os
+   >>> file_path = os.path.join(os.getcwd(), "pyansys-geometry.log")
+   >>> LOG.log_to_file(file_path)
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: log_to_stdout(level=LOG_LEVEL)
+
+   
+   Add the standard output handler to the logger.
+
+
+   :Parameters:
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: setLevel(level='DEBUG')
+
+   
+   Change the log level of the object and the attached handlers.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_child_logger(suffix: str, level: str | None = None)
+
+   
+   Add a child logger to the main logger.
+
+   This logger is more general than an instance logger, which is designed to
+   track the state of Geometry service instances.
+
+   If the logging level is in the arguments, a new logger with a reference
+   to the ``_global`` logger handlers is created instead of a child logger.
+
+   :Parameters:
+
+       **suffix** : :class:`python:str`
+           Name of the child logger.
+
+       **level** : :class:`python:str`, default: :data:`python:None`
+           Level of logging.
+
+
+
+   :Returns:
+
+       :obj:`logging.Logger`
+           Logger class.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_instance_logger(name: str, client_instance: ansys.geometry.core.connection.client.GrpcClient, level: int | None = None) -> PyGeometryCustomAdapter
+
+   
+   Add a logger for a Geometry service instance.
+
+   The Geometry service instance logger is a logger with an adapter that adds
+   contextual information such as the Geometry service instance name. This logger is
+   returned, and you can use it to log events as a normal logger. It is
+   stored in the ``_instances`` field.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name for the new instance logger.
+
+       **client_instance** : :obj:`GrpcClient`
+           Geometry service GrpcClient object, which should contain the ``get_name`` method.
+
+       **level** : :class:`python:int`, default: :data:`python:None`
+           Level of logging.
+
+
+
+   :Returns:
+
+       :obj:`PyGeometryCustomAdapter`
+           Logger adapter customized to add Geometry service information to the
+           logs. You can use this class to log events in the same
+           way you would with the ``Logger`` class.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __getitem__(key)
+
+   
+   Overload the access method by item for the ``Logger`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_handling_uncaught_expections(logger)
+
+   
+   Redirect the output of an exception to a logger.
+
+
+   :Parameters:
+
+       **logger** : :class:`python:str`
+           Name of the logger.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

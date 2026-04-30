@@ -1,0 +1,94 @@
+
+
+
+
+DisplacementArrow
+=================
+
+.. py:class:: DisplacementArrow(plotter: pyvista.Plotter, direction: CameraPanDirection)
+   :canonical: ansys.geometry.core.plotting.widgets.displace_arrows.DisplacementArrow
+
+
+
+Bases: :py:obj:`ansys.geometry.core.plotting.widgets.button.Button`
+
+Defines the arrow to draw and what it is to do.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: DisplacementArrow
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - Move the camera in the direction defined by the button.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.displace_arrows import DisplacementArrow
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: callback(state: bool) -> None
+
+   
+   Move the camera in the direction defined by the button.
+
+
+   :Parameters:
+
+       **state** : :ref:`bool <python:bltin-boolean-values>`
+           State of the button, which is inherited from PyVista. The value is ``True``
+           if the button is active. However, this parameter is unused by this ``callback``
+           method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

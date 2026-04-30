@@ -1,0 +1,110 @@
+:py:mod:`ansys.geometry.core.plotting.widgets.ruler`
+====================================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.ruler
+
+.. autoapi-nested-parse::
+
+   Module containing the Ruler widget.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.widgets.ruler.Ruler
+
+
+
+
+.. py:class:: Ruler(plotter: pyvista.Plotter)
+
+
+   Bases: :py:obj:`ansys.geometry.core.plotting.widgets.widget.PlotterWidget`
+
+   
+   Ruler widget for the PyGeometry plotter class.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`~pyvista.Plotter`
+           The Plotter instance to which the widget will be added.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: callback(state: bool) -> None
+
+      
+      Remove/Add Ruler widget actor upon click.
+
+      Callback function for the Ruler widget.
+
+      :Parameters:
+
+          **state** : :ref:`bool <python:bltin-boolean-values>`
+              The value of the button. ``True`` if active.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      This method is called every time the Ruler widget is clicked.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: update() -> None
+
+      
+      Define the configuration and representation of the Ruler widget button.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

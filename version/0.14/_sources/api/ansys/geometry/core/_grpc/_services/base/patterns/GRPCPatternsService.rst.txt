@@ -1,0 +1,247 @@
+
+
+
+
+
+
+:class:`GRPCPatternsService`
+============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.patterns.GRPCPatternsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Patterns service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCPatternsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_linear_pattern`
+            - Create a linear pattern of entities.
+          * - :py:attr:`~modify_linear_pattern`
+            - Modify a linear pattern of entities.
+          * - :py:attr:`~create_circular_pattern`
+            - Create a circular pattern of entities.
+          * - :py:attr:`~modify_circular_pattern`
+            - Modify a circular pattern of entities.
+          * - :py:attr:`~create_fill_pattern`
+            - Create a fill pattern of entities.
+          * - :py:attr:`~update_fill_pattern`
+            - Update a fill pattern of entities.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.patterns import GRPCPatternsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_linear_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a linear pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_linear_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Modify a linear pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_circular_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a circular pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_circular_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Modify a circular pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_fill_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a fill pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update_fill_pattern(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Update a fill pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

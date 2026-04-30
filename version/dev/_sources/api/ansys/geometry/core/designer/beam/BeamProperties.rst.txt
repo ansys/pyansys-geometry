@@ -1,0 +1,313 @@
+
+
+
+
+
+
+:class:`BeamProperties`
+=======================
+
+
+.. py:class:: ansys.geometry.core.designer.beam.BeamProperties(area: float, centroid: ansys.geometry.core.shapes.parameterization.ParamUV, warping_constant: float, ixx: float, ixy: float, iyy: float, shear_center: ansys.geometry.core.shapes.parameterization.ParamUV, torsion_constant: float)
+
+   
+   Represents the properties of a beam.
+
+
+   :Parameters:
+
+       **area** : :class:`python:float`
+           The cross-sectional area of the beam.
+
+       **centroid** : :obj:`ParamUV`
+           The centroid of the beam section.
+
+       **warping_constant** : :class:`python:float`
+           The warping constant of the beam.
+
+       **ixx** : :class:`python:float`
+           The moment of inertia about the x-axis.
+
+       **ixy** : :class:`python:float`
+           The product of inertia.
+
+       **iyy** : :class:`python:float`
+           The moment of inertia about the y-axis.
+
+       **shear_center** : :obj:`ParamUV`
+           The shear center of the beam.
+
+       **torsion_constant** : :class:`python:float`
+           The torsion constant of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: BeamProperties
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~area`
+            - The cross-sectional area of the beam.
+          * - :py:attr:`~centroid`
+            - The centroid of the beam section.
+          * - :py:attr:`~warping_constant`
+            - The warping constant of the beam.
+          * - :py:attr:`~ixx`
+            - The moment of inertia about the x-axis.
+          * - :py:attr:`~ixy`
+            - The product of inertia.
+          * - :py:attr:`~iyy`
+            - The moment of inertia about the y-axis.
+          * - :py:attr:`~shear_center`
+            - The shear center of the beam.
+          * - :py:attr:`~torsion_constant`
+            - The torsion constant of the beam.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import BeamProperties
+
+Property detail
+---------------
+
+.. py:property:: area
+   :type: float
+
+
+   
+   The cross-sectional area of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: centroid
+   :type: ansys.geometry.core.shapes.parameterization.ParamUV
+
+
+   
+   The centroid of the beam section.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: warping_constant
+   :type: float
+
+
+   
+   The warping constant of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: ixx
+   :type: float
+
+
+   
+   The moment of inertia about the x-axis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: ixy
+   :type: float
+
+
+   
+   The product of inertia.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: iyy
+   :type: float
+
+
+   
+   The moment of inertia about the y-axis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: shear_center
+   :type: ansys.geometry.core.shapes.parameterization.ParamUV
+
+
+   
+   The shear center of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: torsion_constant
+   :type: float
+
+
+   
+   The torsion constant of the beam.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

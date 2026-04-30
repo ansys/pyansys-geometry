@@ -1,0 +1,100 @@
+
+
+
+
+
+
+The ``unsupported.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core.tools.unsupported
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: unsupported
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.unsupported.UnsupportedCommands`
+            - Provides unsupported commands for PyAnsys Geometry.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.unsupported.PersistentIdType`
+            - Type of persistent id.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> UnsupportedCommands</api/ansys/geometry/core/tools/unsupported/UnsupportedCommands>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> PersistentIdType</api/ansys/geometry/core/tools/unsupported/PersistentIdType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Unsupported functions for the PyAnsys Geometry library.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

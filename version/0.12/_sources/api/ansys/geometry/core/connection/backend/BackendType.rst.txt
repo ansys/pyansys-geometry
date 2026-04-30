@@ -1,0 +1,236 @@
+
+
+
+
+
+
+:class:`BackendType`
+====================
+
+
+.. py:class:: ansys.geometry.core.connection.backend.BackendType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides an enum holding the available backend types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: BackendType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~DISCOVERY`
+            - 
+          * - :py:attr:`~SPACECLAIM`
+            - 
+          * - :py:attr:`~WINDOWS_SERVICE`
+            - 
+          * - :py:attr:`~LINUX_SERVICE`
+            - 
+          * - :py:attr:`~CORE_WINDOWS`
+            - 
+          * - :py:attr:`~CORE_LINUX`
+            - 
+          * - :py:attr:`~DISCOVERY_HEADLESS`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_core_service`
+            - Determine whether the backend is CoreService based or not.
+          * - :py:attr:`~is_headless_service`
+            - Determine whether the backend is a headless service or not.
+          * - :py:attr:`~is_linux_service`
+            - Determine whether the backend is a Linux service or not.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.backend import BackendType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: DISCOVERY
+   :value: 0
+
+
+.. py:attribute:: SPACECLAIM
+   :value: 1
+
+
+.. py:attribute:: WINDOWS_SERVICE
+   :value: 2
+
+
+.. py:attribute:: LINUX_SERVICE
+   :value: 3
+
+
+.. py:attribute:: CORE_WINDOWS
+   :value: 4
+
+
+.. py:attribute:: CORE_LINUX
+   :value: 5
+
+
+.. py:attribute:: DISCOVERY_HEADLESS
+   :value: 6
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: is_core_service(backend_type: BackendType) -> bool
+   :staticmethod:
+
+
+   
+   Determine whether the backend is CoreService based or not.
+
+
+   :Parameters:
+
+       **backend_type** : :obj:`BackendType`
+           The backend type to check whether or not it's a CoreService type.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if the backend is CoreService based, False otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_headless_service(backend_type: BackendType) -> bool
+   :staticmethod:
+
+
+   
+   Determine whether the backend is a headless service or not.
+
+
+   :Parameters:
+
+       **backend_type** : :obj:`BackendType`
+           The backend type to check whether or not it's a headless service.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if the backend is a headless service, False otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_linux_service(backend_type: BackendType) -> bool
+   :staticmethod:
+
+
+   
+   Determine whether the backend is a Linux service or not.
+
+
+   :Parameters:
+
+       **backend_type** : :obj:`BackendType`
+           The backend type to check whether or not it's running on Linux.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if the backend is running on Linux, False otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

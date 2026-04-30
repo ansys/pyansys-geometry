@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``displace_arrows.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.displace_arrows
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: displace_arrows
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~DisplacementArrow`
+            - Defines the arrow to draw and what it is to do.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~CameraPanDirection`
+            - Provides an enum with the available movement directions of the camera.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 DisplacementArrow<DisplacementArrow>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ CameraPanDirection<CameraPanDirection>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the displacement arrows widget for the PyVista plotter.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

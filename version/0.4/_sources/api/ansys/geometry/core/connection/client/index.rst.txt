@@ -1,0 +1,129 @@
+
+
+
+
+
+The ``client.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.connection.client
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: client
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~GrpcClient`
+            - Wraps the gRPC connection for the Geometry service.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~wait_until_healthy`
+            - Wait until a channel is healthy before returning.
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 GrpcClient<GrpcClient>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module providing a wrapped abstraction of the gRPC PROTO API definition and stubs.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: wait_until_healthy(channel: grpc.Channel, timeout: float)
+
+   
+   Wait until a channel is healthy before returning.
+
+
+   :Parameters:
+
+       **channel** : :obj:`~grpc.Channel`
+           Channel that must be established and healthy.
+
+       **timeout** : :class:`python:float`
+           Timeout in seconds. An attempt is made every 100 milliseconds
+           until the timeout is exceeded.
+
+
+
+
+
+   :Raises:
+
+       :obj:`TimeoutError`
+           Raised when the total elapsed time exceeds the value for the ``timeout`` parameter.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

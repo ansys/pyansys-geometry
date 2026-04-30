@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``backend.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.connection.backend
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: backend
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.backend.BackendType`
+            - Provides an enum holding the available backend types.
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.backend.ApiVersions`
+            - Provides an enum for all the compatibles API versions.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> BackendType</api/ansys/geometry/core/connection/backend/BackendType>
+    <span class="nf nf-cod-symbol_enum"></span> ApiVersions</api/ansys/geometry/core/connection/backend/ApiVersions>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module providing definitions for the backend types.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+
+
+
+
+RepairToolMessage
+=================
+
+.. py:class:: RepairToolMessage(success: bool, created_bodies: beartype.typing.List[str], modified_bodies: beartype.typing.List[str])
+   :canonical: ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+
+
+
+
+   Provides return message for the repair tool methods.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: RepairToolMessage
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~success`
+            - The success of the repair operation.
+          * - :py:attr:`~created_bodies`
+            - The list of the created bodies after the repair operation.
+          * - :py:attr:`~modified_bodies`
+            - The list of the modified bodies after the repair operation.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+
+
+Property detail
+---------------
+.. py:property:: success
+   :canonical: ansys.geometry.core.tools.repair_tool_message.RepairToolMessage.success
+   :type: bool
+
+
+   
+   The success of the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: created_bodies
+   :canonical: ansys.geometry.core.tools.repair_tool_message.RepairToolMessage.created_bodies
+   :type: beartype.typing.List[str]
+
+
+   
+   The list of the created bodies after the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: modified_bodies
+   :canonical: ansys.geometry.core.tools.repair_tool_message.RepairToolMessage.modified_bodies
+   :type: beartype.typing.List[str]
+
+
+   
+   The list of the modified bodies after the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
