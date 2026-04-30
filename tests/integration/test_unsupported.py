@@ -56,6 +56,7 @@ def _build_manifest(tmp_path: Path) -> Path:
     return manifest_path
 
 
+@pytest.mark.skip(reason="Requires the TestRemotePlugin DLL, which is not yet built in CI.")
 def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     """Test loading an add-in via XML manifest and invoking its methods.
 
