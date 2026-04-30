@@ -179,6 +179,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         from .conversions import (
             _check_write_body_facets_input,
             from_design_file_format_to_grpc_file_export_format,
+            from_fmd_options_to_grpc_fmd_options,
         )
 
         _check_write_body_facets_input(kwargs["backend_version"], kwargs["write_body_facets"])
@@ -188,11 +189,16 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
+        options = kwargs.get("options")
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveRequest(
             format=from_design_file_format_to_grpc_file_export_format(kwargs["format"]),
             write_body_facets=kwargs["write_body_facets"],
             file_name=file_path.stem,
+            fmd_export_options=(
+                from_fmd_options_to_grpc_fmd_options(options) if options is not None else None
+            ),
         )
 
         # Call the gRPC service
