@@ -50,6 +50,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     DatumPointEntity as GRPCDesignPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
+    FMDExportOptions as GRPCFMDExportOptions,
     Geometries as GRPCGeometries,
     Knot as GRPCKnot,
     Loop as GRPCLoop,
@@ -101,7 +102,11 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
     from ansys.geometry.core.misc.measurements import Measurement
-    from ansys.geometry.core.misc.options import ImportOptionsDefinitions, TessellationOptions
+    from ansys.geometry.core.misc.options import (
+        FMDExportOptions,
+        ImportOptionsDefinitions,
+        TessellationOptions,
+    )
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
@@ -544,6 +549,35 @@ def from_tess_options_to_grpc_tess_options(
             value_in_geometry_units=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         ),
         watertight=options.watertight,
+    )
+
+
+def from_fmd_options_to_grpc_fmd_options(
+    options: "FMDExportOptions",
+) -> GRPCFMDExportOptions:
+    """Convert a v1 ``FMDExportOptions`` class to an FMD export options gRPC message.
+
+    Parameters
+    ----------
+    options : FMDExportOptions
+        Source FMD export options.
+
+    Returns
+    -------
+    GRPCFMDExportOptions
+        Geometry service gRPC FMD export options message.
+    """
+    return GRPCFMDExportOptions(
+        deviation=GRPCQuantity(
+            value_in_geometry_units=options.deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
+        angle=GRPCQuantity(
+            value_in_geometry_units=options.angle.value.m_as(DEFAULT_UNITS.SERVER_ANGLE)
+        ),
+        aspect_ratio=options.aspect_ratio,
+        max_edge_length=GRPCQuantity(
+            value_in_geometry_units=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
+        ),
     )
 
 
