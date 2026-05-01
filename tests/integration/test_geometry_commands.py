@@ -1250,6 +1250,77 @@ def test_move_translate_component(modeler: Modeler):
     assert np.isin(expected_vertices, translated_vertices).all()
 
 
+def test_move_translate_faces_and_edges(modeler: Modeler):
+    """Test move_translate with direct face and edge inputs (no NamedSelection)."""
+    is_v0 = modeler._grpc_client.services.version == GeometryApiProtos.V0
+    is_pre_271 = modeler._grpc_client.backend_version < (27, 1, 0)
+
+    # On v0 or pre-27.1 backends, passing faces/edges must raise ValueError.
+    if is_v0 or is_pre_271:
+        design = modeler.create_design("move_translate_guard")
+        body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+        with pytest.raises(ValueError, match="27R1"):
+            modeler.geometry_commands.move_translate(
+                body.faces[0], UNITVECTOR3D_Z, Distance(1, UNITS.m)
+            )
+        return
+
+    # --- Single face ---
+    design = modeler.create_design("move_translate_single_face")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Find the bottom face: all vertices at z=0
+    bottom_face = next(face for face in body.faces if face.normal(0, 0) == -UNITVECTOR3D_Z)
+    assert bottom_face is not None
+
+    # Translate the bottom face up by 1 m — compresses the box from height 2 to 1
+    success = modeler.geometry_commands.move_translate(
+        bottom_face, UNITVECTOR3D_Z, Distance(1, UNITS.m)
+    )
+    assert success
+
+    # The bottom face should now sit at z=1
+    new_verts = []
+    for edge in bottom_face.edges:
+        new_verts.extend([edge.start, edge.end])
+    assert all(pytest.approx(v[2], abs=1e-6) == 1.0 for v in new_verts)
+
+    # --- List of faces ---
+    design2 = modeler.create_design("move_translate_face_list")
+    body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Find the bottom face and one adjacent side face
+    bottom_face2 = next(face for face in body2.faces if face.normal(0, 0) == -UNITVECTOR3D_Z)
+    assert bottom_face2 is not None
+
+    # Translate both faces together
+    success = modeler.geometry_commands.move_translate(
+        [bottom_face2, body2.faces[1]], UNITVECTOR3D_Z, Distance(1, UNITS.m)
+    )
+    assert success
+
+    # --- Single edge ---
+    design3 = modeler.create_design("move_translate_single_edge")
+    body3 = design3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    # Pick an edge on the bottom face
+    bottom_edge = body3.faces[0].edges[0]
+    success = modeler.geometry_commands.move_translate(
+        bottom_edge, UNITVECTOR3D_Z, Distance(1, UNITS.m)
+    )
+    assert success
+
+    # --- List of edges ---
+    design4 = modeler.create_design("move_translate_edge_list")
+    body4 = design4.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    edges = [body4.faces[0].edges[0], body4.faces[0].edges[1]]
+    success = modeler.geometry_commands.move_translate(
+        edges, UNITVECTOR3D_Z, Distance(1, UNITS.m)
+    )
+    assert success
+
+
 def test_move_rotate(modeler: Modeler):
     design = modeler.create_design("move_rotate_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
