@@ -299,7 +299,7 @@ def test_combine_example(modeler: Modeler):
     )
 
     bottom_plate.subtract(part_one)
-    design._update_design_inplace()
+    # design._update_design_inplace()
 
     assert len(bottom_plate.faces) == 32
     assert len(bottom_plate.edges) == 81
@@ -653,7 +653,7 @@ def test_intersect_example(modeler: Modeler):
     modeler.geometry_commands.split_body(
         bodies=bodies_to_split, plane=plane, slicers=None, faces=None, extendfaces=False
     )
-    design._update_design_inplace()
+    # design._update_design_inplace()
 
     face_count_four = 0
     edge_count_four = 0

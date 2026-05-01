@@ -4245,7 +4245,7 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box2])
-    design._update_design_inplace()
+    # design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(1.75, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
@@ -4256,7 +4256,7 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box3])
-    design._update_design_inplace()
+    # design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
