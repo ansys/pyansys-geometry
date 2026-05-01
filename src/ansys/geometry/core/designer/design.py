@@ -1728,6 +1728,7 @@ class Design(Component):
             new_body = self._find_and_add_body(
                 created_body_info, self.components, created_parts_dict, created_components_dict
             )
+
             if not new_body:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self._master_component.part.bodies.append(new_body)
@@ -1852,6 +1853,31 @@ class Design(Component):
             return True
 
         return False
+
+    def _clear_body_cache_for_part(self, part: Part) -> None:
+        """Clear body cache on all components that reference a specific part.
+
+        Parameters
+        ----------
+        part : Part
+            The part whose body cache should be cleared on all referencing components.
+        """
+        # Check root component
+        if (
+            hasattr(self, "_master_component")
+            and self._master_component
+            and self._master_component.part == part
+        ):
+            self._clear_cached_bodies()
+
+        # Check all child components recursively
+        for component in self._get_all_components():
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part == part
+            ):
+                component._clear_cached_bodies()
 
     def _find_and_add_component_to_design(
         self,
@@ -2017,7 +2043,9 @@ class Design(Component):
 
                 component._master_component.part.bodies.append(new_master_body)
 
-                component._clear_cached_bodies()
+                # Clear cached bodies on all components that reference this part
+                self._clear_body_cache_for_part(component._master_component.part)
+
                 self._grpc_client.log.debug(
                     f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"
