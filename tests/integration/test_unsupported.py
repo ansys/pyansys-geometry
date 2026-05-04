@@ -49,7 +49,7 @@ def _build_manifest(tmp_path: Path, dll_path: str | Path) -> Path:
     dll_path : str | Path
         Path to the DLL *as seen by the server process*.  For a local server
         this is the host absolute path; for a Docker container this is the
-        container-internal path (e.g. ``C:/test-files/TestRemotePlugin.dll``).
+        container-internal path (e.g. ``/test-files/TestRemotePlugin.dll``).
     """
     content = (
         '<?xml version="1.0" encoding="utf-8" ?>\n'

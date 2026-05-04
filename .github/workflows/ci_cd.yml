@@ -275,7 +275,7 @@ jobs:
           Invoke-Expression $command.Line
           # Copy test files into the container so the addin test can find the DLL
           $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
-          docker cp tests/integration/files $copyDest
+          docker cp tests/integration/files/. $copyDest
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
@@ -470,7 +470,7 @@ jobs:
       - name: Copy test files into geometry service container
         if: env.SKIP_UNSTABLE == 'false'
         run: |
-          docker cp tests/integration/files ${GEO_CONT_NAME}:/test-files
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
           echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Restore images cache
