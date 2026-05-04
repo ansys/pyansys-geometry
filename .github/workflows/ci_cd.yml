@@ -276,6 +276,8 @@ jobs:
           # Copy test files into the container so the addin test can find the DLL
           $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
           docker cp tests/integration/files/. $copyDest
+          Write-Host "Copied test files to container path: $copyDest"
+          Write-Host "Source files: $(Get-ChildItem tests/integration/files/ | Select-Object -ExpandProperty Name)"
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
