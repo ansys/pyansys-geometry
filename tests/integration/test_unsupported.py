@@ -24,11 +24,19 @@
 import os
 from pathlib import Path
 
+import pytest
+
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
 from .conftest import FILES_DIR
+
+SKIP_ADDIN_LOAD_TESTS_CONDITION = (
+    os.getenv("IS_WORKFLOW_RUNNING") is None,
+    "Load add-in tests only run on workflow.",
+)
+"""Only run load add-in tests if running on workflow."""
 
 
 def _build_manifest(tmp_path: Path, dll_path: str | Path) -> Path:
@@ -59,6 +67,7 @@ def _build_manifest(tmp_path: Path, dll_path: str | Path) -> Path:
     return manifest_path
 
 
+@pytest.mark.skipif(SKIP_ADDIN_LOAD_TESTS_CONDITION[0], reason=SKIP_ADDIN_LOAD_TESTS_CONDITION[1])
 def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     """Test loading an add-in via XML manifest and invoking its methods.
 
