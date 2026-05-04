@@ -3,7 +3,7 @@
 <AddIns>
 	<AddIn name="TestRemotePlugin"
 	       description="TestRemotePlugin for ApiServer Runtime Addins"
-	       assembly="TestRemotePlugin.dll"
+	       assembly="/test-files/TestRemotePlugin.dll"
 	       typename="TestRemotePlugin.RemotePluginAddin"
 	       host="SameAppDomain"
 	       allowEmbedded="false"/>
