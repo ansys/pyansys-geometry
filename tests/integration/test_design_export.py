@@ -383,6 +383,9 @@ def test_export_to_fmd_with_options(modeler: Modeler, tmp_path_factory: pytest.T
     Verifies that coarser mesh options produce a smaller file than finer mesh options
     when using the v1 protocol, where the options are actually sent to the server.
     """
+    if modeler._grpc_client._services.version == GeometryApiProtos.V0:
+        pytest.skip("FMD export options are only supported in v1 of the geometry service API")
+
     # Create a demo design
     design = _create_demo_design(modeler)
 
