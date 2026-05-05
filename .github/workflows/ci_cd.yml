@@ -274,10 +274,10 @@ jobs:
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
           # Copy test files into the container so the addin test can find the DLL
+          # On Windows containers, the destination directory must exist before docker cp
+          docker exec $env:GEO_CONT_NAME powershell -command "New-Item -ItemType Directory -Force -Path C:\test-files"
           $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
           docker cp tests/integration/files/. $copyDest
-          Write-Host "Copied test files to container path: $copyDest"
-          Write-Host "Source files: $(Get-ChildItem tests/integration/files/ | Select-Object -ExpandProperty Name)"
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
