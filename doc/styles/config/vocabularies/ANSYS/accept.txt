@@ -1,4 +1,7 @@
-[Aa]dd[iI]n
+addin
+Addin
+addIn
+AddIn
 (?i)ansys
 (?i)api
 [Aa]xisymmetric
