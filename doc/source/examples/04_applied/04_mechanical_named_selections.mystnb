@@ -21,24 +21,41 @@ This example demonstrates a complete geometry-to-simulation workflow:
 4. Import the PMDB file into an embedded Mechanical session and verify that
    the named selections are preserved.
 
-The geometry used in this example is a two-car assembly (`twoCars.stp`) that
-ships alongside this notebook.
+The geometry used in this example is a two-car assembly (`twoCars.stp`)
+available in the PyAnsys Geometry integration-tests folder. It is downloaded
+at runtime rather than shipped alongside this notebook.
+
+## Download the STEP file
+
+The STEP file lives in the integration-tests folder of the PyAnsys Geometry
+repository. The following code downloads it at runtime so that no binary asset
+needs to ship alongside the notebook.
+
+```{code-cell} ipython3
+from pathlib import Path
+import requests
+
+STEP_URL = (
+    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main"
+    "/tests/integration/files/import/twoCars.stp"
+)
+
+step_file = Path.cwd() / "twoCars.stp"
+response = requests.get(STEP_URL)
+response.raise_for_status()
+step_file.write_bytes(response.content)
+print(f"Downloaded STEP file to: {step_file}")
+```
 
 ## Launch the Geometry service and open the STEP file
 
 The following code starts the Geometry service and opens the STEP file.
 
 ```{code-cell} ipython3
-import os
-from pathlib import Path
-
 from ansys.geometry.core import launch_modeler
 
 # Launch the Geometry service
 modeler = launch_modeler()
-
-# The STEP file ships in the same directory as this notebook
-step_file = Path(os.getcwd()) / "twoCars.stp"
 
 # Open the STEP file
 design = modeler.open_file(step_file)
@@ -46,14 +63,41 @@ design = modeler.open_file(step_file)
 
 ## Explore the imported design
 
-After opening the file, inspect the design to learn what bodies are available.
-This information is used when building the named selections.
+After opening the file, inspect the design hierarchy. In an imported STEP
+assembly the bodies are owned by *sub-components*, not by the root design
+object directly. The helper below walks the tree so that all bodies can be
+found regardless of how deeply they are nested.
 
 ```{code-cell} ipython3
-# Display a summary of the design
-print(f"Design name : {design.name}")
-print(f"Components  : {[c.name for c in design.components]}")
-print(f"Bodies      : {[b.name for b in design.bodies]}")
+def collect_all_bodies(component, indent=0):
+    """Recursively collect every body in a component tree.
+
+    Parameters
+    ----------
+    component : Component
+        The root component (or design) to start from.
+    indent : int, optional
+        Current indentation level used for the printed tree.
+
+    Returns
+    -------
+    list
+        Flat list of all bodies found in the tree.
+    """
+    prefix = "  " * indent
+    print(f"{prefix}[Component] {component.name}")
+    all_bodies = []
+    for body in component.bodies:
+        print(f"{prefix}  [Body] {body.name}")
+        all_bodies.append(body)
+    for child in component.components:
+        all_bodies.extend(collect_all_bodies(child, indent + 1))
+    return all_bodies
+
+
+print(f"Design: {design.name}")
+all_bodies = collect_all_bodies(design)
+print(f"\nTotal bodies found: {len(all_bodies)}")
 ```
 
 ```{code-cell} ipython3
@@ -69,18 +113,10 @@ they can be used directly as scoping targets for boundary conditions, contacts,
 mesh controls, and result probes.
 
 ```{code-cell} ipython3
-# Retrieve the two car bodies
-bodies = design.bodies
-print(f"Number of bodies found: {len(bodies)}")
-for i, body in enumerate(bodies):
-    print(f"  Body {i}: {body.name}")
-```
-
-```{code-cell} ipython3
-# Create one named selection per body so that each car can be
+# Create one named selection per body so that each part can be
 # addressed individually inside Mechanical.
-for i, body in enumerate(bodies):
-    ns_name = f"Car_{i + 1}"
+for i, body in enumerate(all_bodies):
+    ns_name = f"Part_{i + 1}"
     design.create_named_selection(ns_name, bodies=[body])
     print(f"Created named selection '{ns_name}' containing body '{body.name}'")
 ```
@@ -88,8 +124,8 @@ for i, body in enumerate(bodies):
 ```{code-cell} ipython3
 # Create a combined named selection that covers the entire assembly.
 # This is useful for applying global mesh settings or result scoping.
-design.create_named_selection("All_Cars", bodies=bodies)
-print("Created named selection 'All_Cars' containing all bodies")
+design.create_named_selection("All_Parts", bodies=all_bodies)
+print("Created named selection 'All_Parts' containing all bodies")
 ```
 
 ```{code-cell} ipython3
@@ -154,9 +190,9 @@ for child in ns_group.Children:
 app.close()
 ```
 
-The named selections (`Car_1`, `Car_2`, `All_Cars`) are now available inside
-Mechanical and can be used for mesh controls, boundary conditions, contacts,
-and result evaluation.
+The named selections (`Part_1`, `Part_2`, …, `All_Parts`) are now available
+inside Mechanical and can be used for mesh controls, boundary conditions,
+contacts, and result evaluation.
 
 ### References
 
