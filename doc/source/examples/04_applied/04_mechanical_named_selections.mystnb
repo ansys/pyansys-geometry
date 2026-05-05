@@ -12,7 +12,7 @@ kernelspec:
 ---
 # Applied: Import a STEP file, add named selections, and export to Mechanical
 
-This example demonstrates a complete geometry-to-simulation workflow on Linux:
+This example demonstrates a complete geometry-to-simulation workflow:
 
 1. Open a STEP file using the Geometry Core Service.
 2. Programmatically create named selections on the geometry using PyAnsys Geometry.
