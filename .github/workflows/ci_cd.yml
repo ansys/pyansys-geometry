@@ -278,9 +278,6 @@ jobs:
           docker exec $env:GEO_CONT_NAME powershell -command "New-Item -ItemType Directory -Force -Path C:\test-files"
           $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
           docker cp tests/integration/files/. $copyDest
-          # Verify the DLL landed in the container at the expected path
-          docker exec $env:GEO_CONT_NAME powershell -command "Get-ChildItem C:\test-files | Select-Object Name"
-          docker exec $env:GEO_CONT_NAME powershell -command "Test-Path C:\test-files\TestRemotePlugin.dll"
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
