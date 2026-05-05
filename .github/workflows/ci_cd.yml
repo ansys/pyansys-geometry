@@ -273,6 +273,13 @@ jobs:
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Copy test files into the container so the addin test can find the DLL
+          # On Windows containers, the destination directory must exist before docker cp
+          docker exec $env:GEO_CONT_NAME powershell -command "New-Item -ItemType Directory -Force -Path C:\test-files"
+          $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
+          docker cp tests/integration/files/. $copyDest
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
@@ -462,6 +469,12 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Copy test files into geometry service container
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
+
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
         uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
@@ -561,6 +574,11 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
+      - name: Copy test files into geometry service container
+        run: |
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
+
       - name: Run pytest
         run: |
           pytest -v
@@ -616,6 +634,11 @@ jobs:
           docker pull ${ANSRV_GEO_IMAGE_MINREQS}
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Copy test files into geometry service container
+        run: |
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Run pytest
         run: |

@@ -438,7 +438,7 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
 
     Parameters
     ----------
-    file_path : str
+    file_path : Path
         The path to the file to be zipped.
 
     Returns
