@@ -92,8 +92,8 @@ def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     else:
         dll_path = str((FILES_DIR / "TestRemotePlugin.dll").resolve())
 
-    logger.WARN(f"\n[DEBUG] ANSYS_GEOMETRY_TEST_FILES={container_test_files!r}")
-    logger.WARN(f"[DEBUG] dll_path sent to server: {dll_path!r}")
+    modeler.client.log.warning(f"\n[DEBUG] ANSYS_GEOMETRY_TEST_FILES={container_test_files!r}")
+    modeler.client.log.warning(f"[DEBUG] dll_path sent to server: {dll_path!r}")
 
     addin_path = "TestRemotePlugin.RemotePluginAddin"
 
