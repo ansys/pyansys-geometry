@@ -26,6 +26,7 @@ from pathlib import Path
 
 import pytest
 
+from ansys.geometry.core import logger
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
@@ -90,6 +91,9 @@ def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
         dll_path = f"{container_test_files}/TestRemotePlugin.dll"
     else:
         dll_path = str((FILES_DIR / "TestRemotePlugin.dll").resolve())
+
+    logger.warn(f"\n[DEBUG] ANSYS_GEOMETRY_TEST_FILES={container_test_files!r}")
+    logger.warn(f"[DEBUG] dll_path sent to server: {dll_path!r}")
 
     addin_path = "TestRemotePlugin.RemotePluginAddin"
 
