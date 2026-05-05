@@ -328,6 +328,7 @@ nbsphinx_thumbnails = {
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
+    "examples/04_applied/04_mechanical_named_selections": "_static/thumbnails/export_design.png",
     "examples/05_tools/repair_tools": "_static/thumbnails/repair_tools.png",
     "examples/05_tools/prepare_tools": "_static/thumbnails/prepare_tools.png",
     "examples/05_tools/measurement_tools": "_static/thumbnails/measurement_tools.png",

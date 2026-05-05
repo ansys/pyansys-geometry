@@ -1,0 +1,164 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+# Applied: Import a STEP file, add named selections, and export to Mechanical
+
+This example demonstrates a complete geometry-to-simulation workflow on Linux:
+
+1. Open a STEP file using the Geometry Core Service.
+2. Programmatically create named selections on the geometry using PyAnsys Geometry.
+3. Export the annotated geometry to a PMDB file — the recommended cross-platform format
+   for transferring geometry with named selections to Ansys Mechanical.
+4. Import the PMDB file into an embedded Mechanical session and verify that
+   the named selections are preserved.
+
+The geometry used in this example is a two-car assembly (`twoCars.stp`) that
+ships alongside this notebook.
+
+## Launch the Geometry service and open the STEP file
+
+The following code starts the Geometry service and opens the STEP file.
+
+```{code-cell} ipython3
+import os
+from pathlib import Path
+
+from ansys.geometry.core import launch_modeler
+
+# Launch the Geometry service
+modeler = launch_modeler()
+
+# The STEP file ships in the same directory as this notebook
+step_file = Path(os.getcwd()) / "twoCars.stp"
+
+# Open the STEP file
+design = modeler.open_file(step_file)
+```
+
+## Explore the imported design
+
+After opening the file, inspect the design to learn what bodies are available.
+This information is used when building the named selections.
+
+```{code-cell} ipython3
+# Display a summary of the design
+print(f"Design name : {design.name}")
+print(f"Components  : {[c.name for c in design.components]}")
+print(f"Bodies      : {[b.name for b in design.bodies]}")
+```
+
+```{code-cell} ipython3
+# Plot the design
+design.plot()
+```
+
+## Create named selections
+
+Named selections are labels that group bodies, faces, edges, or vertices.
+They pass through the PMDB format into Mechanical as *Named Selections*, where
+they can be used directly as scoping targets for boundary conditions, contacts,
+mesh controls, and result probes.
+
+```{code-cell} ipython3
+# Retrieve the two car bodies
+bodies = design.bodies
+print(f"Number of bodies found: {len(bodies)}")
+for i, body in enumerate(bodies):
+    print(f"  Body {i}: {body.name}")
+```
+
+```{code-cell} ipython3
+# Create one named selection per body so that each car can be
+# addressed individually inside Mechanical.
+for i, body in enumerate(bodies):
+    ns_name = f"Car_{i + 1}"
+    design.create_named_selection(ns_name, bodies=[body])
+    print(f"Created named selection '{ns_name}' containing body '{body.name}'")
+```
+
+```{code-cell} ipython3
+# Create a combined named selection that covers the entire assembly.
+# This is useful for applying global mesh settings or result scoping.
+design.create_named_selection("All_Cars", bodies=bodies)
+print("Created named selection 'All_Cars' containing all bodies")
+```
+
+```{code-cell} ipython3
+# Verify all named selections are registered in the design
+print(f"\nNamed selections in design ({len(design.named_selections)} total):")
+for ns in design.named_selections:
+    n_bodies = len(ns.bodies)
+    n_faces  = len(ns.faces)
+    print(f"  '{ns.name}' — {n_bodies} body/bodies, {n_faces} face(s)")
+```
+
+## Export to PMDB
+
+PMDB (Persistent Model Database) is the recommended format for transferring
+geometry **with named selections** from the Geometry service to Ansys Mechanical
+on both Windows and Linux.
+
+```{code-cell} ipython3
+# Export the annotated design to a PMDB file in the current working directory.
+pmdb_path = design.export_to_pmdb()
+print(f"Design exported to: {pmdb_path}")
+```
+
+## Close the Geometry service
+
+```{code-cell} ipython3
+modeler.close()
+```
+
+## Import the PMDB into Mechanical
+
+The PMDB file can now be imported into an embedded Mechanical session.
+The named selections created above will be preserved and appear in
+the Mechanical tree under **Named Selections**.
+
+The following code requires [PyMechanical](https://mechanical.docs.pyansys.com)
+and an Ansys Mechanical installation (2024 R1 or later).
+
+```python
+import ansys.mechanical.core as mech
+
+# Launch an embedded Mechanical session
+app = mech.App(version=261)
+
+# ---- geometry import ----
+geometry_import = app.Model.GeometryImportGroup.AddGeometryImport()
+
+# Enable named-selection transfer
+geometry_import.GeometryImportPreferences.ProcessNamedSelections = True
+geometry_import.GeometryImportPreferences.NameSelectionKey = ""
+
+# Import the PMDB produced in the previous step
+geometry_import.Import(str(pmdb_path))
+
+# ---- verify named selections ----
+ns_group = app.Model.NamedSelections
+print(f"Named selections imported ({ns_group.Children.Count} total):")
+for child in ns_group.Children:
+    print(f"  {child.Name}")
+
+# ---- clean up ----
+app.close()
+```
+
+The named selections (`Car_1`, `Car_2`, `All_Cars`) are now available inside
+Mechanical and can be used for mesh controls, boundary conditions, contacts,
+and result evaluation.
+
+### References
+
+- [PyMechanical documentation](https://mechanical.docs.pyansys.com)
+- [PMDB export API reference](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#ansys.geometry.core.designer.design.Design.export_to_pmdb)

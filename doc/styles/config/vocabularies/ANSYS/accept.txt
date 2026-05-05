@@ -20,11 +20,13 @@ Geometry models
 (?i)github
 GitHub Container Registry
 namespace
+PMDB
 Polydata
 PROTO
 Protobuf
 (?i)pyansys
 (?i)pyansys-geometry
+PyMechanical
 PyPI
 PyVista
 pytest
