@@ -1,7 +1,4 @@
-addin
-Addin
-addIn
-AddIn
+[Aa]dd[iI]n
 (?i)ansys
 (?i)api
 [Aa]xisymmetric
