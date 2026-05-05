@@ -26,7 +26,6 @@ from pathlib import Path
 
 import pytest
 
-from ansys.geometry.core import logger
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
