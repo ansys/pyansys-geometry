@@ -1270,7 +1270,9 @@ def test_move_translate_faces_and_edges(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
 
     # Find the bottom face: all vertices at z=0
-    bottom_face = next(face for face in body.faces if face.normal(0, 0) == -UNITVECTOR3D_Z)
+    bottom_face = next(
+        (face for face in body.faces if np.allclose(face.normal(0, 0), -UNITVECTOR3D_Z)), None
+    )
     assert bottom_face is not None
 
     # Translate the bottom face up by 1 m — compresses the box from height 2 to 1
@@ -1290,7 +1292,9 @@ def test_move_translate_faces_and_edges(modeler: Modeler):
     body2 = design2.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
 
     # Find the bottom face and one adjacent side face
-    bottom_face2 = next(face for face in body2.faces if face.normal(0, 0) == -UNITVECTOR3D_Z)
+    bottom_face2 = next(
+        (face for face in body2.faces if np.allclose(face.normal(0, 0), -UNITVECTOR3D_Z)), None
+    )
     assert bottom_face2 is not None
 
     # Translate both faces together
