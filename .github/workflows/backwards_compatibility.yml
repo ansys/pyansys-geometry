@@ -37,8 +37,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image-tag: "windows-24.1"
-            backend-version: "24.1"
           - image-tag: "windows-24.2"
             backend-version: "24.2"
           - image-tag: "windows-25.1"
