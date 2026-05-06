@@ -179,4 +179,4 @@ contacts, and result evaluation.
 ### References
 
 - [PyMechanical documentation](https://mechanical.docs.pyansys.com)
-- [PMDB export API reference](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#ansys.geometry.core.designer.design.Design.export_to_pmdb)
+- [PMDB export API reference](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design.export_to_pmdb)
