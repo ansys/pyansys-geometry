@@ -1315,9 +1315,7 @@ def test_move_translate_faces_and_edges(modeler: Modeler):
     body4 = design4.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
 
     edges = [body4.faces[0].edges[0], body4.faces[0].edges[1]]
-    success = modeler.geometry_commands.move_translate(
-        edges, UNITVECTOR3D_Z, Distance(1, UNITS.m)
-    )
+    success = modeler.geometry_commands.move_translate(edges, UNITVECTOR3D_Z, Distance(1, UNITS.m))
     assert success
 
 
