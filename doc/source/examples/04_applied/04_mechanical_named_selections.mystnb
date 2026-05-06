@@ -65,39 +65,21 @@ design = modeler.open_file(step_file)
 
 After opening the file, inspect the design hierarchy. In an imported STEP
 assembly the bodies are owned by *sub-components*, not by the root design
-object directly. The helper below walks the tree so that all bodies can be
-found regardless of how deeply they are nested.
+object directly. Use the built-in ``tree_print()`` method to visualise the
+full component/body tree, then ``get_all_bodies()`` to collect every body
+regardless of nesting depth.
 
 ```{code-cell} ipython3
-def collect_all_bodies(component, indent=0):
-    """Recursively collect every body in a component tree.
+# Print the component/body tree of the imported design
+design.tree_print()
+```
 
-    Parameters
-    ----------
-    component : Component
-        The root component (or design) to start from.
-    indent : int, optional
-        Current indentation level used for the printed tree.
-
-    Returns
-    -------
-    list
-        Flat list of all bodies found in the tree.
-    """
-    prefix = "  " * indent
-    print(f"{prefix}[Component] {component.name}")
-    all_bodies = []
-    for body in component.bodies:
-        print(f"{prefix}  [Body] {body.name}")
-        all_bodies.append(body)
-    for child in component.components:
-        all_bodies.extend(collect_all_bodies(child, indent + 1))
-    return all_bodies
-
-
-print(f"Design: {design.name}")
-all_bodies = collect_all_bodies(design)
-print(f"\nTotal bodies found: {len(all_bodies)}")
+```{code-cell} ipython3
+# Retrieve every body in the assembly (traverses all nested components)
+all_bodies = design.get_all_bodies()
+print(f"Total bodies found: {len(all_bodies)}")
+for body in all_bodies:
+    print(f"  {body.name}")
 ```
 
 ```{code-cell} ipython3
