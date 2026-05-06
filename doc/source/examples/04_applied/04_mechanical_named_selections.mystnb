@@ -111,12 +111,12 @@ print("Created named selection 'All_Parts' containing all bodies")
 ```
 
 ```{code-cell} ipython3
-# Verify all named selections are registered in the design
-print(f"\nNamed selections in design ({len(design.named_selections)} total):")
-for ns in design.named_selections:
+# Filter to only the named selections we created
+filtered_ns = [ns for ns in design.named_selections if ns.name == "All_Parts" or ns.name.startswith("Part_")]
+print(f"\nNamed selections in design {len(filtered_ns)}:")
+for ns in filtered_ns:
     n_bodies = len(ns.bodies)
-    n_faces  = len(ns.faces)
-    print(f"  '{ns.name}' — {n_bodies} body/bodies, {n_faces} face(s)")
+    print(f"  '{ns.name}' — {n_bodies} body/bodies")
 ```
 
 ## Export to PMDB
