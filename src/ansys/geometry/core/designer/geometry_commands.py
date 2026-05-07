@@ -1490,7 +1490,7 @@ class GeometryCommands:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
-        """
+        """  # noqa: E501
         distance = distance if isinstance(distance, Distance) else Distance(distance)
 
         if isinstance(selection, NamedSelection):
