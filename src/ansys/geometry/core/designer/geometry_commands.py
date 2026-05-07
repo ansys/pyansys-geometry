@@ -1451,7 +1451,17 @@ class GeometryCommands:
     @min_backend_version(25, 2, 0)
     def move_translate(
         self,
-        selection: Union[NamedSelection, "Face", list["Face"], "Edge", list["Edge"]],
+        selection: Union[
+            NamedSelection,
+            "Face",
+            list["Face"],
+            "Edge",
+            list["Edge"],
+            "Body",
+            list["Body"],
+            Component,
+            list[Component],
+        ],
         direction: UnitVector3D,
         distance: Distance | Quantity | Real,
     ) -> bool:
@@ -1459,8 +1469,8 @@ class GeometryCommands:
 
         Parameters
         ----------
-        selection : NamedSelection | Face | list[Face] | Edge | list[Edge]
-            Named selection, face, or edge(s) to move.
+        selection : NamedSelection | Face | list[Face] | Edge | list[Edge] | Body | list[Body] | Component | list[Component]
+            Named selection, face(s), edge(s), body or bodies, or component(s) to move.
         direction : UnitVector3D
             Direction to move in.
         distance : Distance | Quantity | Real
@@ -1474,8 +1484,8 @@ class GeometryCommands:
         Raises
         ------
         ValueError
-            If faces or edges are passed directly when connected to a v0 server or
-            a backend older than 27.1. Use a ``NamedSelection`` instead.
+            If faces, edges, bodies, or components are passed directly when connected to a
+            v0 server or a backend older than 27.1. Use a ``NamedSelection`` instead.
 
         Warnings
         --------
@@ -1490,8 +1500,8 @@ class GeometryCommands:
             is_pre_271 = self._grpc_client.backend_version < (27, 1, 0)
             if is_v0 or is_pre_271:
                 raise ValueError(
-                    "Passing faces or edges directly to move_translate requires v1 and "
-                    "Ansys release 27R1 or later. Use a NamedSelection instead."
+                    "Passing faces, edges, bodies, or components directly to move_translate "
+                    "requires v1 and Ansys release 27R1 or later. Use a NamedSelection instead."
                 )
             entities = selection if isinstance(selection, list) else [selection]
             selection_ids = [entity.id for entity in entities]

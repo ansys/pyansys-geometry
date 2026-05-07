@@ -1323,6 +1323,83 @@ def test_move_translate_faces_and_edges(modeler: Modeler):
     assert success
 
 
+def test_move_translate_bodies_and_components(modeler: Modeler):
+    """Test move_translate with direct body and component inputs (no NamedSelection)."""
+    is_v0 = modeler._grpc_client.services.version == GeometryApiProtos.V0
+    is_pre_271 = modeler._grpc_client.backend_version < (27, 1, 0)
+
+    # On v0 or pre-27.1 backends, passing bodies/components must raise ValueError.
+    if is_v0 or is_pre_271:
+        design = modeler.create_design("move_translate_body_guard")
+        body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+        with pytest.raises(ValueError, match="27R1"):
+            modeler.geometry_commands.move_translate(body, UNITVECTOR3D_Z, Distance(1, UNITS.m))
+        return
+
+    # --- Single body ---
+    design = modeler.create_design("move_translate_single_body")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    success = modeler.geometry_commands.move_translate(body, UNITVECTOR3D_Z, Distance(1, UNITS.m))
+    assert success
+
+    bottom_face = next(
+        (face for face in body.faces if np.allclose(face.normal(0, 0), -UNITVECTOR3D_Z)), None
+    )
+    assert bottom_face is not None
+    translated_vertices = []
+    for edge in bottom_face.edges:
+        translated_vertices.extend([edge.start, edge.end])
+    assert all(pytest.approx(v[2], abs=1e-6) == 1.0 for v in translated_vertices)
+
+    # --- List of bodies ---
+    design2 = modeler.create_design("move_translate_body_list")
+    body2a = design2.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2b = design2.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    success = modeler.geometry_commands.move_translate(
+        [body2a, body2b], UNITVECTOR3D_Z, Distance(2, UNITS.m)
+    )
+    assert success
+
+    # --- Single component ---
+    design3 = modeler.create_design("move_translate_single_component")
+    component3 = design3.add_component("MyComponent")
+    box3 = component3.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    success = modeler.geometry_commands.move_translate(
+        component3, UNITVECTOR3D_Z, Distance(2, UNITS.m)
+    )
+    assert success
+
+    expected_vertices = [
+        Point3D([-0.5, -0.5, 2.0]),
+        Point3D([0.5, -0.5, 2.0]),
+        Point3D([-0.5, 0.5, 2.0]),
+        Point3D([0.5, 0.5, 2.0]),
+        Point3D([-0.5, -0.5, 3.0]),
+        Point3D([0.5, -0.5, 3.0]),
+        Point3D([-0.5, 0.5, 3.0]),
+        Point3D([0.5, 0.5, 3.0]),
+    ]
+    translated_vertices = []
+    for edge in box3.edges:
+        translated_vertices.extend([edge.start, edge.end])
+    assert np.isin(expected_vertices, translated_vertices).all()
+
+    # --- List of components ---
+    design4 = modeler.create_design("move_translate_component_list")
+    comp4a = design4.add_component("CompA")
+    comp4b = design4.add_component("CompB")
+    comp4a.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    comp4b.extrude_sketch("box", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    success = modeler.geometry_commands.move_translate(
+        [comp4a, comp4b], UNITVECTOR3D_Z, Distance(1, UNITS.m)
+    )
+    assert success
+
+
 def test_move_rotate(modeler: Modeler):
     design = modeler.create_design("move_rotate_box")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
