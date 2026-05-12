@@ -26,6 +26,7 @@ import functools
 from typing import TYPE_CHECKING, Type
 import warnings
 
+from beartype import beartype as _beartype
 import numpy as np
 from pint import Unit
 import semver
@@ -84,6 +85,48 @@ def ensure_design_is_active(method):
     return wrapper
 
 
+def check_input_types(func):
+    """Conditionally apply runtime type checking based on a global flag.
+
+    When ``ansys.geometry.core.ENABLE_RUNTIME_TYPECHECKING`` is ``True``, the decorated
+    function performs runtime type validation. When ``False`` (default), the function is
+    called directly without type checking for improved performance.
+
+    The type-checked version is created once at decoration time, so toggling
+    the flag at runtime is supported without re-wrapping overhead.
+    """
+    _typed_func = _beartype(func)
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        import ansys.geometry.core as pyansys_geometry
+
+        if pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING:
+            return _typed_func(*args, **kwargs)
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def _skip_if_runtime_typechecking_disabled(func):
+    """Short-circuit all ``check_*`` functions when ``ENABLE_RUNTIME_TYPECHECKING`` is ``False``.
+
+    Since every ``check_*`` function returns ``None`` and only raises on invalid input,
+    skipping them entirely is safe when runtime type checking is disabled.
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        import ansys.geometry.core as pyansys_geometry
+
+        if not pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING:
+            return
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+@_skip_if_runtime_typechecking_disabled
 def check_is_float_int(param: object, param_name: str | None = None) -> None:
     """Check if a parameter has a float or integer value.
 
@@ -107,6 +150,7 @@ def check_is_float_int(param: object, param_name: str | None = None) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_float_int(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
 
@@ -135,6 +179,7 @@ def check_ndarray_is_float_int(param: np.ndarray, param_name: str | None = None)
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_not_none(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
 
@@ -160,6 +205,7 @@ def check_ndarray_is_not_none(param: np.ndarray, param_name: str | None = None) 
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_all_nan(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
@@ -183,6 +229,7 @@ def check_ndarray_is_all_nan(param: np.ndarray, param_name: str | None = None) -
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_non_zero(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
 
@@ -207,6 +254,7 @@ def check_ndarray_is_non_zero(param: np.ndarray, param_name: str | None = None) 
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """Check if input :class:`pint.Unit` is compatible with the expected input.
 
@@ -228,6 +276,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type_equivalence(input: object, expected: object) -> None:
     """Check if an input object is of the same class as an expected object.
 
@@ -249,6 +298,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
     """Check if an input object is of the same type as expected types.
 
@@ -270,6 +320,7 @@ def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type_all_elements_in_iterable(
     input: Iterable, expected_type: Type | tuple[Type, ...]
 ) -> None:
@@ -291,6 +342,7 @@ def check_type_all_elements_in_iterable(
         check_type(elem, expected_type)
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_nurbs_compatibility(
     backend_version: semver.Version,
     sketch: "Sketch" = None,

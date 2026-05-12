@@ -24,7 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
@@ -50,6 +49,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     check_type,
     check_type_all_elements_in_iterable,
     min_backend_version,

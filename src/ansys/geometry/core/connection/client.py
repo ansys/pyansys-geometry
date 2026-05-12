@@ -27,7 +27,6 @@ from pathlib import Path
 import time
 from typing import Optional
 
-from beartype import beartype as check_input_types
 import grpc
 from grpc._channel import _InactiveRpcError
 from grpc_health.v1 import health_pb2, health_pb2_grpc
@@ -39,6 +38,7 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
 
 try:

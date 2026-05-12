@@ -23,10 +23,13 @@
 
 from threading import Lock
 
-from beartype import beartype as check_input_types
 from pint import Quantity, Unit
 
-from ansys.geometry.core.misc.checks import check_is_float_int, check_pint_unit_compatibility
+from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    check_is_float_int,
+    check_pint_unit_compatibility,
+)
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 from ansys.geometry.core.typing import Real
 
