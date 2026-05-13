@@ -23,8 +23,9 @@
 
 import logging as deflogging  # Default logging
 
-import ansys.geometry.core as pyansys_geometry
 import pytest
+
+import ansys.geometry.core as pyansys_geometry
 
 # Define default pytest logging level to DEBUG and stdout
 from ansys.geometry.core import LOG
