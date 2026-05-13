@@ -52,3 +52,13 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     def intersect_curve_and_surface(self, **kwargs) -> dict:
         """Get intersection points of a curve and surface."""
         pass
+
+    @abstractmethod
+    def get(self, **kwargs) -> dict:
+        """Get curve object from id."""
+        pass
+
+    @abstractmethod
+    def get_interval(self, **kwargs) -> dict:
+        """Get the parametric interval (start and end parameter values) of a curve."""
+        pass

@@ -1513,6 +1513,69 @@ def test_plot_with_face_opacity(modeler: Modeler, verify_image_cache):
 
 
 @skip_no_xserver
+def test_plot_design_curve_alone(modeler: Modeler, verify_image_cache):
+    """Test plotting a DesignCurve via GeometryPlotter.
+
+    Creates a design curve by revolving a design point around the Z axis,
+    then verifies that both ``add_design_curve`` and the ``plot`` dispatch
+    path handle it without error and produce a screenshot.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("DesignCurvePlot")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Revolve a point at r=1 by pi/2 to produce a quarter-circle arc DesignCurve
+    dp = design.add_design_point("pt", Point3D([1, 0, 0], UNITS.m))
+    curves = modeler.geometry_commands.revolve_points(dp, axis, Angle(np.pi / 2, UNITS.rad))
+    assert len(curves) == 1
+    assert isinstance(curves[0], DesignCurve)
+
+    dc = curves[0]
+
+    # Test dispatch through plot()
+    pl = GeometryPlotter()
+    pl.plot(dc)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_curve_alone.png"))
+
+
+@skip_no_xserver
+def test_plot_design_with_curves(modeler: Modeler, verify_image_cache):
+    """Test that plotting a full Design renders both bodies and DesignCurves.
+
+    Creates a design that contains a box body and two DesignCurves (quarter-circle
+    arcs at different radii), then plots the whole design via ``GeometryPlotter.plot``
+    to exercise the ``add_component_by_body`` dispatch path.
+    """
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+    design = modeler.create_design("DesignWithCurves")
+    axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
+
+    # Add a box body so the design has solid geometry alongside the curves
+    box_sketch = Sketch()
+    box_sketch.box(Point2D([0, 0], UNITS.m), Quantity(1, UNITS.m), Quantity(1, UNITS.m))
+    design.extrude_sketch("Box", box_sketch, Quantity(2, UNITS.m))
+
+    # Add two quarter-circle DesignCurves at r=2 m and r=3 m
+    dp2 = design.add_design_point("pt2", Point3D([2, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points(
+        dp2, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    dp3 = design.add_design_point("pt3", Point3D([3, 0, 0], UNITS.m))
+    curves3 = modeler.geometry_commands.revolve_points(
+        dp3, axis, Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(curves2) == 1 and isinstance(curves2[0], DesignCurve)
+    assert len(curves3) == 1 and isinstance(curves3[0], DesignCurve)
+
+    # Plot the entire design — bodies and DesignCurves should both appear
+    pl = GeometryPlotter()
+    pl.plot(design)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_with_curves.png"))
+
+
+@skip_no_xserver
 def test_plot_datum_plane(modeler: Modeler, verify_image_cache):
     """Test plotting a datum plane."""
     # Create your design on the server side

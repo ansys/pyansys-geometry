@@ -50,6 +50,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.design import Design
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -409,9 +410,11 @@ class GeometryPlotter(PlotterInterface):
         This will allow to make use of the service colors. At the same time, it will be
         slower than the add_component method.
         """
-        # Recursively add the bodies and components
+        # Recursively add the bodies, design curves, and components
         for body in component.bodies:
             self.add_body(body, merge=merge_bodies, **plotting_options)
+        for design_curve in component.design_curves:
+            self.add_design_curve(design_curve, **plotting_options)
         for comp in component.components:
             self.add_component_by_body(comp, merge_bodies=merge_bodies, **plotting_options)
 
@@ -453,6 +456,25 @@ class GeometryPlotter(PlotterInterface):
 
         # get the actor for the DesignPoint
         self._backend.pv_interface.plot(design_point, **plotting_options)
+
+    def add_design_curve(self, design_curve: DesignCurve, **plotting_options) -> None:
+        """Add a DesignCurve object to the plotter.
+
+        Parameters
+        ----------
+        design_curve : DesignCurve
+            DesignCurve to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        shape = design_curve.shape
+        points = np.array(
+            [shape.evaluate_proportion(t).position for t in np.linspace(0, 1, 100)]
+        )
+        spline = pv.Spline(points)
+        dc_plot = MeshObjectPlot(custom_object=design_curve, mesh=spline)
+        self._backend.pv_interface.plot(dc_plot, **plotting_options)
 
     def plot_iter(
         self,
@@ -507,6 +529,8 @@ class GeometryPlotter(PlotterInterface):
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, DesignCurve):
+            self.add_design_curve(plottable_object, **plotting_options)
         elif isinstance(plottable_object, DatumPlane):
             self.add_plane(plottable_object.value, **plotting_options)
         elif isinstance(plottable_object, Sketch):

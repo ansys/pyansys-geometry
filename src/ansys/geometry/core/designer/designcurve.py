@@ -109,16 +109,14 @@ class DesignCurve:
         """
         if self._shape is None:
             self._grpc_client.log.debug(f"Requesting curve properties for {self._id} from server.")
+    
+            curve = self._grpc_client.services.curves.get(id=self._id)
+            geometry = curve.get("geometry")
+            start = curve.get("start_point")
+            end = curve.get("end_point")
+            length = curve.get("length")
 
-            geometry = self._grpc_client.services.edges.get_curve(id=self._id).get("curve")
-
-            response = self._grpc_client.services.edges.get_start_and_end_points(id=self._id)
-            start = response.get("start")
-            end = response.get("end")
-
-            length = self._grpc_client.services.edges.get_length(id=self._id).get("length")
-
-            response = self._grpc_client.services.edges.get_interval(id=self._id)
+            response = self._grpc_client.services.curves.get_interval(id=self._id)
             interval = Interval(response.get("start"), response.get("end"))
 
             self._shape = TrimmedCurve(geometry, start, end, interval, length.value)
@@ -135,6 +133,7 @@ class DesignCurve:
     @ensure_design_is_active
     def start(self) -> Point3D:
         """Start point of the design curve."""
+        print(self._start)
         return self._start
 
     @property
