@@ -621,11 +621,12 @@ class Modeler:
             return response.get("values"), self.read_existing_design()
         else:
             return response.get("values"), None
-        
-    @deprecated_method("run_script_file", 
-                       "use the run_script_file method instead",
-                       "0.15.2",
-                       "0.17.0",
+
+    @deprecated_method(
+        "run_script_file",
+        "use the run_script_file method instead",
+        "0.15.2",
+        "0.17.0",
     )
     def run_discovery_script_file(
         self,
@@ -635,7 +636,7 @@ class Modeler:
         api_version: int | str | ApiVersions | None = None,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a script file.
-        
+
         This is a deprecated method. Use ``run_script_file()`` instead.
         """
         self.client.log.warning(
