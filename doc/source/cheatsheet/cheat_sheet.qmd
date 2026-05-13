@@ -155,13 +155,13 @@ disco_path = design.export_to_disco()
 
 Ansys SpaceClaim and Ansys Discovery support product scripting, and
 so does the Ansys Geometry service. If you have a product script you
-want to run, you can use the `run_discovery_script_file` method available
+want to run, you can use the `run_script_file` method available
 on the `Modeler` object. The ``script_args`` parameter is optional and they
 will be made available to the script inside a dictionary called ``argsDict``.
 
 ```{python}
 #| eval: false
-result = modeler.run_discovery_script_file(
+result = modeler.run_script_file(
   file_path="path/to/script.py",
   script_args={"arg1": "value1", "arg2": "value2"},
 )
