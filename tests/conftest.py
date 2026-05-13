@@ -19,10 +19,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-""" "General testing fixtures."""
+"""General testing fixtures."""
 
 import logging as deflogging  # Default logging
 
+import ansys.geometry.core as pyansys_geometry
 import pytest
 
 # Define default pytest logging level to DEBUG and stdout
@@ -31,6 +32,14 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 
 LOG.setLevel(level="DEBUG")
 LOG.log_to_stdout()
+
+
+@pytest.fixture(autouse=True)
+def enable_runtime_typechecking():
+    """Enable runtime type checking for all tests."""
+    pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING = True
+    yield
+    pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING = False
 
 
 def pytest_addoption(parser):

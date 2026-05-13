@@ -101,7 +101,7 @@ def check_input_types(func):
     def wrapper(*args, **kwargs):
         import ansys.geometry.core as pyansys_geometry
 
-        if pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING:
+        if getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False):
             return _typed_func(*args, **kwargs)
         return func(*args, **kwargs)
 
@@ -119,7 +119,7 @@ def _skip_if_runtime_typechecking_disabled(func):
     def wrapper(*args, **kwargs):
         import ansys.geometry.core as pyansys_geometry
 
-        if not pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING:
+        if not getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False):
             return
         return func(*args, **kwargs)
 
