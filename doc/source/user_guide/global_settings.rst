@@ -24,7 +24,7 @@ can be toggled at any point during a Python session.
 Available flags
 ===============
 
-The following table summarises every flag, its default value, and its purpose.
+The following table summarizes every flag, its default value, and its purpose.
 
 .. list-table::
    :header-rows: 1
@@ -53,14 +53,14 @@ The following table summarises every flag, its default value, and its purpose.
 ``ENABLE_RUNTIME_TYPECHECKING``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default PyAnsys Geometry skips all runtime type validation to maximise performance.
+By default, PyAnsys Geometry skips all runtime type validation to maximize performance.
 Setting this flag to ``True`` activates two layers of checking:
 
-1. **Decorator-based checking** — every public method decorated with ``@check_input_types``
-   will validate its arguments using `beartype <https://beartype.readthedocs.io>`_ and
-   raise a ``BeartypeCallHintParamViolation`` on a type mismatch.
-2. **Helper-function checking** — all ``check_*`` helper functions (``check_type``,
-   ``check_is_float_int``, etc.) will execute their validation logic and raise ``TypeError``
+1. **Decorator-based checking**: every public method decorated with ``@check_input_types``
+   validates its arguments  using `beartype <https://beartype.readthedocs.io>`_,
+   and raises a ``BeartypeCallHintParamViolation`` on a type mismatch.
+2. **Helper-function checking**: all ``check_*`` helper functions (``check_type``,
+   ``check_is_float_int``, and so on) execute their validation logic and raise ``TypeError``
    or ``ValueError`` on invalid inputs.
 
 When the flag is ``False`` (default), both layers are bypassed entirely.
@@ -68,10 +68,10 @@ When the flag is ``False`` (default), both layers are bypassed entirely.
 **When to enable it**
 
 - During development and debugging to get immediate, descriptive type-error messages.
-- In test suites that explicitly verify type-checking behaviour.
+- In test suites that explicitly verify type-checking behavior.
 - When integrating with external data sources where the input types are not guaranteed.
 
-**When to leave it disabled (default)**
+**When to leave it turned off (default)**
 
 - In production workflows or performance-critical scripts where throughput matters.
 
@@ -81,7 +81,7 @@ When the flag is ``False`` (default), both layers are bypassed entirely.
     from ansys.geometry.core.math import Point3D
     from ansys.geometry.core.misc.checks import check_type
 
-    # --- with runtime type checking disabled (default) ---
+    # --- with runtime type checking turned off (default) ---
     check_type("not_a_point", Point3D)  # silently returns, no error raised
 
     # --- with runtime type checking enabled ---
@@ -107,7 +107,7 @@ the service for per-body colors before rendering.
 
     pyansys_geometry.USE_SERVICE_COLORS = True
 
-    # All subsequent plot() calls will use service-side colors
+    # All subsequent plot() calls use service-side colors
     body.plot()
     component.plot()
 
@@ -128,13 +128,13 @@ This guard verifies that the parent design has not been closed on the backend be
 each operation, preventing cryptic gRPC errors.
 
 In workflows where you are certain that all design objects remain valid for the lifetime
-of your script (for example, inside a tightly controlled batch job), you can disable
+of your script (for example, inside a tightly controlled batch job), you can turn off
 this check to eliminate its overhead.
 
 .. warning::
 
-   Only disable this check if you are fully in control of the design lifecycle.
-   Calling methods on objects that belong to a closed design will result in
+   Only turn off this check if you are fully in control of the design lifecycle.
+   Calling methods on objects that belong to a closed design results in
    unhandled gRPC errors.
 
 .. code:: python
@@ -153,12 +153,12 @@ this check to eliminate its overhead.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After boolean operations (``intersect``, ``subtract``, ``unite``), geometry commands and
-combine operations, PyAnsys Geometry must synchronise the local design tree with the state
+combine operations, PyAnsys Geometry must synchronize the local design tree with the state
 on the server. There are two strategies:
 
-- **Full refresh** (default, ``False``) — the entire design is re-fetched from the
+- **Full refresh** (default, ``False``): the entire design is re-fetched from the
   server and the local tree is rebuilt. This is the most robust approach.
-- **Tracker-based update** (``True``) — only the objects reported as changed by the
+- **Tracker-based update** (``True``): only the objects reported as changed by the
   server-side tracker are updated locally. This is faster for large assemblies, but
   requires server support.
 
