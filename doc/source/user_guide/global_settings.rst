@@ -92,7 +92,7 @@ When the flag is ``False`` (default), both layers are bypassed entirely.
 .. _ref_global_settings_use_service_colors:
 
 ``USE_SERVICE_COLORS``
-~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~
 
 When plotting bodies or components, PyAnsys Geometry can either use its own default
 color cycle (fast, no server round-trip) or retrieve the exact colors stored for each
@@ -121,7 +121,7 @@ the service for per-body colors before rendering.
 .. _ref_global_settings_disable_active_design_check:
 
 ``DISABLE_ACTIVE_DESIGN_CHECK``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Every method that modifies the geometry model is guarded by an *active-design* check.
 This guard verifies that the parent design has not been closed on the backend before
@@ -150,7 +150,7 @@ this check to eliminate its overhead.
 .. _ref_global_settings_use_tracker:
 
 ``USE_TRACKER_TO_UPDATE_DESIGN``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 After boolean operations (``intersect``, ``subtract``, ``unite``), geometry commands and
 combine operations, PyAnsys Geometry must synchronize the local design tree with the state
