@@ -74,7 +74,7 @@ doc = [
   "ansys-sphinx-theme[autoapi]==1.7.2",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.19.1",
+  "jupytext==1.19.2",
   "myst-parser==5.0.0",
   "nbconvert==7.17.1",
   "nbsphinx==0.9.8",
