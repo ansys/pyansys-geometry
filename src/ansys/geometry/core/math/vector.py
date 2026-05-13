@@ -24,14 +24,13 @@
 from io import UnsupportedOperation
 from typing import Union
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.misc.accuracy import Accuracy
-from ansys.geometry.core.misc.checks import check_ndarray_is_float_int
+from ansys.geometry.core.misc.checks import check_input_types, check_ndarray_is_float_int
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.typing import Real, RealSequence

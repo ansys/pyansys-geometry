@@ -27,7 +27,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from beartype import beartype as check_input_types
+from ansys.geometry.core.misc.checks import check_input_types
 
 try:
     from docker.client import DockerClient

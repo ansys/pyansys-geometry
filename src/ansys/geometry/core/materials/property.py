@@ -23,9 +23,9 @@
 
 from enum import Enum, unique
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
 
 

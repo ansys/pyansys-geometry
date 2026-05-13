@@ -24,13 +24,12 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from beartype import beartype as check_input_types
 import numpy as np
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (

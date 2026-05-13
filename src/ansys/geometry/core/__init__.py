@@ -73,3 +73,18 @@ DOCUMENTATION_BUILD: bool = os.environ.get("PYANSYS_GEOMETRY_DOC_BUILD", "false"
 
 USE_TRACKER_TO_UPDATE_DESIGN: bool = False
 """Global constant for checking whether to use the tracker to update designs."""
+
+ENABLE_RUNTIME_TYPECHECKING: bool = False
+"""Global flag for enabling runtime type checking on public API methods.
+
+When ``True``, all methods decorated with ``@check_input_types`` will perform
+runtime type validation, and all ``check_*`` helper functions will execute their
+validation logic. This is useful for debugging type errors, but comes with a
+runtime performance cost.
+When ``False`` (default), type checking is skipped for maximum performance.
+
+To enable::
+
+    import ansys.geometry.core as pyansys_geometry
+    pyansys_geometry.ENABLE_RUNTIME_TYPECHECKING = True
+"""

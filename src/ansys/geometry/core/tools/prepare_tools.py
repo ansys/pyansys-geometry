@@ -24,7 +24,6 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
@@ -40,7 +39,11 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea

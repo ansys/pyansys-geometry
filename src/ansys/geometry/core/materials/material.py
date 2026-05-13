@@ -23,10 +23,10 @@
 
 from collections.abc import Sequence
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.misc.checks import check_input_types
 
 
 class Material:

@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
@@ -52,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
