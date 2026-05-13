@@ -368,6 +368,14 @@ class LocalDockerInstance:
             )
         if not license_server and bypass_token:
             license_server = ""
+        # If license server contains localhost.. replace it with host.docker.internal for better
+        # compatibility with Docker on Windows and MacOS
+        if license_server and "localhost" in license_server:
+            license_server = license_server.replace("localhost", "host.docker.internal")
+            LOG.info(
+                "License server contained 'localhost'... Replacing it with "
+                "'host.docker.internal' for better compatibility with Docker on Windows and MacOS."
+            )
 
         # Verify the transport mode
         if transport_mode:
