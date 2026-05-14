@@ -28,6 +28,7 @@ import threading
 from grpc._channel import _InactiveRpcError, _MultiThreadedRendezvous
 
 from ansys.geometry.core.logger import LOG
+from ansys.geometry.core.misc.checks import _F
 
 SIGINT_TRACKER = []
 
@@ -59,7 +60,7 @@ def handler(sig, frame):  # pragma: no cover
     SIGINT_TRACKER.append(True)
 
 
-def protect_grpc(func):
+def protect_grpc(func: _F) -> _F:
     """Capture gRPC exceptions and raise a more succinct error message.
 
     This method captures the ``KeyboardInterrupt`` exception to avoid
@@ -112,4 +113,4 @@ def protect_grpc(func):
 
         return out
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]
