@@ -127,6 +127,14 @@ def skip_if_desktop_or_dms_geometry_service(
         )  # skip!
 
 
+def skip_if_linux(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Linux."""
+    if BackendType.is_linux_service(modeler.client.backend_type):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Linux services."
+        )  # skip!
+
+
 @pytest.fixture(scope="session")
 def docker_instance(use_existing_service, transport_mode):
     # This will only have a value in case that:

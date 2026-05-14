@@ -29,7 +29,11 @@ import semver
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.admin import GRPCAdminService
-from .conversions import from_grpc_backend_type_to_backend_type
+from .conversions import (
+    build_grpc_id,
+    from_grpc_backend_type_to_backend_type,
+    serialize_tracker_command_response,
+)
 
 
 class GRPCAdminServiceV0(GRPCAdminService):
@@ -48,8 +52,10 @@ class GRPCAdminServiceV0(GRPCAdminService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.dbu.v0.admin_pb2_grpc import AdminStub
+        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
 
         self.stub = AdminStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def get_backend(self, **kwargs) -> dict:  # noqa: D102
@@ -126,3 +132,45 @@ class GRPCAdminServiceV0(GRPCAdminService):
 
         # Convert the response to a dictionary
         return {"healthy": True if response.message == "I am healthy!" else False}
+
+    @protect_grpc
+    def get_tracker(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import GetTrackerRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetTrackerRequest(design_id=build_grpc_id(kwargs["design_id"]))
+
+        # Call the gRPC service
+        response = self.commands_stub.GetTracker(request=request)
+
+        # Convert the response to a dictionary
+        return {"design_id": response.tracker.design_id.id}
+
+    @protect_grpc
+    def get_tracker_changes(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import GetTrackerChangesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetTrackerChangesRequest(design_id=build_grpc_id(kwargs["design_id"]))
+
+        # Call the gRPC service
+        response = self.commands_stub.GetTrackerChanges(request=request)
+
+        # Convert the response to a dictionary
+        return serialize_tracker_command_response(response.changes)
+
+    @protect_grpc
+    def set_automatic_tracking_state(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import SetAutomaticTrackingStateRequest
+        from ansys.api.geometry.v0.models_pb2 import AutomaticTrackingState
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetAutomaticTrackingStateRequest(
+            state=AutomaticTrackingState.ON if kwargs["enabled"] else AutomaticTrackingState.OFF,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.SetAutomaticTrackingState(request=request)
+
+        # Convert the response to a dictionary
+        return {"success": response.success}

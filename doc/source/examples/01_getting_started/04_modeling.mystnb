@@ -4,7 +4,7 @@ jupytext:
     extension: .mystnb
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
@@ -111,8 +111,6 @@ sketch = Sketch()
 sketch.plot()
 ```
 
-+++
-
 ## Perform some modeling operations
 
 Now that the sketch is ready to be extruded, perform some modeling operations,
@@ -131,8 +129,6 @@ body = design.extrude_sketch(
 # Plot the body
 design.plot()
 ```
-
-+++
 
 ## Perform some operations on the body
 
@@ -166,6 +162,47 @@ body_copy = body.copy(parent=comp, name="Design_Component_Body")
 
 # Displace this new body by a certain distance (10m) in a certain direction (X-axis)
 body_copy.translate(direction=UNITVECTOR3D_X, distance=Distance(10, unit=UNITS.m))
+
+# Plot the result of the entire design
+design.plot()
+```
+
+Let's note the hierarchy of the design now:
+- Design
+    - Design_Body
+    - Component
+        - Design_Component_Body
+
+Now we will do an operation that changes the design.
+
+```{code-cell} ipython3
+# Extrude one of the faces of Design_Body
+modeler.geometry_commands.extrude_faces(body_copy.faces[12], Distance(5, unit=UNITS.m))
+
+# Plot the result of the entire design
+design.plot()
+```
+
+Because we stored the reference to Component in the variable `comp` and did an operation that changed the design, `comp` is now stale. Let's try to reference it in a copy.
+
+```{code-cell} ipython3
+from ansys.geometry.core.math import UNITVECTOR3D_Y
+
+# Copy body into the component and translate it again
+body_copy2 = body.copy(parent=comp, name="Design_Component_Body2")
+body_copy2.translate(direction=UNITVECTOR3D_Y, distance=Distance(5, unit=UNITS.m))
+
+# Plot the result of the entire design
+design.plot()
+```
+
+As you can see, there are still only 2 bodies in the design when there should be 3. This is because the extrude_faces command updates the design behind the scenes and your `comp` variable is no longer valid.
+
+The correct approach is to always reference design objects from the root part (`design`) as shown below:
+
+```{code-cell} ipython3
+body_copy2 = body.copy(parent=design.components[0], name="Design_Component_Body2")
+body_copy2.translate(direction=UNITVECTOR3D_Y, distance=Distance(5, unit=UNITS.m))
 
 # Plot the result of the entire design
 design.plot()
@@ -225,7 +262,6 @@ faces = body.faces
 ns = design.create_named_selection("MyNamedSelection", bodies=[body], faces=[faces[0], faces[-1]])
 print(f"This is a named selection called {ns.name} with ID (server-side): {ns.id}.")
 ```
-+++
 
 ## Perform deletions
 
@@ -255,7 +291,6 @@ print(f"Is the body alive? {body.is_alive}")
 # If you request a plot of the entire design, it is no longer visible.
 design.plot()
 ```
-+++
 
 ## Export files
 
@@ -270,17 +305,14 @@ Export files in SCDOCX and FMD formats.
 import os
 from pathlib import Path
 
-from ansys.geometry.core.designer import DesignFileFormat
-
-# Path to downloads directory
-file_dir = Path(os.getcwd(), "downloads")
+# Path to exports directory
+file_dir = Path(os.getcwd(), "exports")
 file_dir.mkdir(parents=True, exist_ok=True)
 
-# Download the model in different formats
-design.download(file_location=Path(file_dir, "ModelingDemo.scdocx"), format=DesignFileFormat.SCDOCX)
-design.download(file_location=Path(file_dir, "ModelingDemo.fmd"), format=DesignFileFormat.FMD)
+# Export the model in different formats
+design.export_to_scdocx(file_dir)
+design.export_to_fmd(file_dir)
 ```
-+++
 
 ## Close session
 

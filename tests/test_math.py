@@ -918,8 +918,6 @@ def test_create_matrix_from_rotation_about_axis_x():
     expected_matrix = Matrix44([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 0], [0, 0, 0, 1]])
 
     result_matrix = Matrix44.create_matrix_from_rotation_about_axis(axis, angle)
-
-    print(result_matrix)
     assert np.allclose(result_matrix, expected_matrix)
 
 

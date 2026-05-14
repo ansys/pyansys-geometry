@@ -59,7 +59,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -127,7 +127,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Install packages for testing
         run: |
@@ -135,7 +135,7 @@ jobs:
           pip install -e . --group tests
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -156,6 +156,11 @@ jobs:
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Copy test files into the container so the addin test can find the DLL
+          $copyDest = "$($env:GEO_CONT_NAME):C:/test-files"
+          docker cp tests/integration/files/. $copyDest
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
           python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
 
@@ -228,8 +233,13 @@ jobs:
       contents: read
       packages: read # Needs access to the Geometry docker image
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
       - name: Login in Github Container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -241,15 +251,18 @@ jobs:
         run: |
           docker pull ${ANSRV_GEO_IMAGE_LINUX_CORE_TAG}
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_LINUX_CORE_TAG} ${TRANSPORT_MODE_SELECTION}
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@3931ac9351b13ae11b1203c2ef6b51e5c75502ea # v10.2.5
+        uses: ansys/actions/tests-pytest@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
         env:
           ALLOW_PLOTTING: true
         with:
+          checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
           pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
@@ -302,7 +315,7 @@ jobs:
       packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -329,7 +342,7 @@ jobs:
       packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

@@ -263,8 +263,12 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         assert base_body.faces[1].id in [b.id for b in faces2]
         assert base_body.edges[1].id in [b.id for b in edges2]
 
-    file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
-    design.download(str(file))
+    if modeler.client.backend_type in (BackendType.SPACECLAIM, BackendType.WINDOWS_SERVICE):
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.scdocx"
+        design.download(str(file), DesignFileFormat.SCDOCX)
+    else:
+        file = tmp_path_factory.mktemp("test_design_import") / "two_cars.dsco"
+        design.download(str(file), DesignFileFormat.DISCO)
 
     # Pre-download the STEP file for comparison... once the design is closed, the
     # file is no longer available for download from the original design
@@ -305,8 +309,9 @@ def test_open_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
         assert len(design2.components[0].bodies) == 1
 
         # Stride
-        design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
-        assert len(design2.bodies) == 1
+        if modeler.client.backend_type != BackendType.DISCOVERY:
+            design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "sample_box.project"))
+            assert len(design2.bodies) == 1
 
         # SolidWorks
         design2 = modeler.open_file(Path(IMPORT_FILES_DIR, "partColor.SLDPRT"))
@@ -519,6 +524,14 @@ def test_design_import_inventor2026(modeler: Modeler):
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "Inventor/ai_param_dsdm_part1_2026.ipt"))
     assert len(design.bodies) == 1
     assert len(design.bodies[0].faces) == 9
+
+
+def test_design_import_pmdb(modeler: Modeler):
+    """Test importing a PMDB file."""
+    # Open the design
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "PMDB/box.pmdb"))
+    assert len(design.bodies) == 1
+    assert len(design.bodies[0].faces) == 6
 
 
 def test_design_import_stride_with_named_selections(modeler: Modeler):
@@ -753,3 +766,24 @@ def test_file_insert_import_named_selections_post_import(modeler: Modeler):
     assert set(actual_named_selections) == set(expected_named_selections), (
         f"Expected named selections {expected_named_selections}, but got {actual_named_selections}."
     )
+
+
+def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test that opening a file with an unsupported filetype raises an appropriate error."""
+    # Create a temporary file with an unsupported extension
+    temp_dir = tmp_path_factory.mktemp("test_unsupported")
+    unsupported_file = temp_dir / "test_file.unsupported"
+
+    # Write some dummy content to the file
+    with unsupported_file.open(mode="w") as f:
+        f.write("This is a test file with an unsupported extension.")
+
+    # Verify the file exists
+    assert unsupported_file.exists()
+
+    # Attempt to open the file and expect an error
+    # The backend should raise an error for unsupported file types
+    with pytest.raises(
+        match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
+    ):
+        modeler.open_file(unsupported_file)

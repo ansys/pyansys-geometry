@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
@@ -52,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
@@ -290,6 +290,21 @@ class IBody(ABC):
         -------
         BoundingBox
             Bounding box of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        return
+
+    @abstractmethod
+    def centroid(self) -> Point3D:
+        """Get the centroid of the body.
+
+        Returns
+        -------
+        Point3D
+            Centroid of the body.
 
         Warnings
         --------
@@ -1193,6 +1208,16 @@ class MasterBody(IBody):
             center=response.get("center"),
         )
 
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:  # noqa: D102
+        raise NotImplementedError(
+            """
+            Centroid is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
+        )
+
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
@@ -1682,9 +1707,21 @@ class MasterBody(IBody):
         check_type_all_elements_in_iterable(other, Body)
 
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
-        self._grpc_client.services.bodies.combine_merge(
+        response = self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
         )
+
+        if not response.get("success"):
+            self._grpc_client.log.warning(f"Failed to combine and merge body {self.id}.")
+            return
+
+        # Get the parent design from any of the bodies
+        parent_design = get_design_from_body(other[0] if other else self)
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def _combine_subtract(  # noqa: D102
         self,
@@ -1928,6 +1965,13 @@ class Body(IBody):
             max_corner=response.get("max"),
             center=response.get("center"),
         )
+
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
+        response = self._template._grpc_client.services.bodies.get_centroid(id=self.id)
+        return response.get("centroid")
 
     @min_backend_version(27, 1, 0)
     def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102

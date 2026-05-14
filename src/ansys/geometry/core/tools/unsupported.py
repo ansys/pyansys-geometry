@@ -23,11 +23,15 @@
 
 from dataclasses import dataclass
 from enum import Enum, unique
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.misc.auxiliary import get_all_bodies_from_design
+from ansys.geometry.core.misc.auxiliary import (
+    get_all_bodies_from_design,
+    prepare_file_for_server_upload,
+)
 from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
@@ -287,3 +291,107 @@ class UnsupportedCommands:
             for edge in body.edges
             if self.__is_occurrence(moniker, edge.id)
         ]
+
+    @min_backend_version(27, 1, 0)
+    def start_tracking(self) -> None:
+        """Start a tracking segment for the current design.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        design = self.__modeler.get_active_design()
+
+        # Disable automatic tracking and start tracking for the document
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=False, design_id=design.id
+        )
+        self._grpc_client.services.admin.get_tracker(design_id=design.id)
+
+    @min_backend_version(27, 1, 0)
+    def stop_tracking(self) -> dict:
+        """Stop the current tracking segment for the current design and return the tracked changes.
+
+        Returns
+        -------
+        dict
+            Dictionary containing the tracked changes.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        design = self.__modeler.get_active_design()
+        changes = self._grpc_client.services.admin.get_tracker_changes(design_id=design.id)
+
+        # Re-enable automatic tracking
+        self._grpc_client.services.admin.set_automatic_tracking_state(
+            enabled=True, design_id=design.id
+        )
+
+        return changes
+
+    @min_backend_version(27, 1, 0)
+    def run_addin_method(
+        self,
+        addin_name: str,
+        method_name: str,
+        arguments: list | None = None,
+    ) -> dict:
+        """Run a method on a previously loaded add-in.
+
+        Parameters
+        ----------
+        addin_name : str
+            Name of the add-in on which to invoke the method. This must match
+            the name used when the add-in was loaded via :meth:`load_addin`.
+        method_name : str
+            Name of the public method to invoke on the add-in instance.
+        arguments : list, optional
+            Arguments to pass to the add-in method.
+
+        Raises
+        ------
+        GeometryRuntimeError
+            If the gRPC call fails (e.g. the add-in is not loaded or the method
+            does not exist).
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        return self._grpc_client.services.unsupported.run_addin_method(
+            addin_name=addin_name,
+            method_name=method_name,
+            arguments=arguments or [],
+        )
+
+    @min_backend_version(27, 1, 0)
+    def load_addin(self, manifest_path: Path | str) -> None:
+        """Load an add-in to the current design.
+
+        Parameters
+        ----------
+        manifest_path : str | Path
+            Path to the add-in manifest file to load. The manifest file should
+            describe the add-in and its components.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        fp_path = Path(manifest_path).resolve()
+
+        try:
+            temp_zip_path = prepare_file_for_server_upload(fp_path)
+
+            # Pass the zip file path to the service
+            self._grpc_client.services.unsupported.load_addin(
+                manifest_path=temp_zip_path,
+                manifest_name=fp_path.name,
+            )
+
+        finally:
+            # Clean up the temporary zip file
+            if temp_zip_path.exists():
+                temp_zip_path.unlink()

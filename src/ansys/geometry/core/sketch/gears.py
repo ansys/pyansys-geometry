@@ -23,12 +23,11 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.arc import Arc

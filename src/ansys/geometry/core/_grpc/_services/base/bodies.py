@@ -282,3 +282,13 @@ class GRPCBodyService(ABC):  # pragma: no cover
     def copy_faces(self, **kwargs) -> dict:
         """Create a surface body from the faces provided."""
         pass
+
+    @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of a body."""
+        pass
+
+    @abstractmethod
+    def create_block_body(self, **kwargs) -> dict:
+        """Create a block body."""
+        pass

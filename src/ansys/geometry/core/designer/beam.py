@@ -24,14 +24,12 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
-
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
-from ansys.geometry.core.misc.checks import check_type
+from ansys.geometry.core.misc.checks import check_input_types, check_type
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import ParamUV

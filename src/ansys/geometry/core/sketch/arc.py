@@ -23,14 +23,13 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math.matrix import Matrix
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.math.vector import Vector2D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
@@ -178,13 +177,17 @@ class Arc(SketchEdge):
             pv_negative = False
 
         return pv.CircularArc(
-            [
+            pointa=[
                 self.start.x.m_as(DEFAULT_UNITS.LENGTH),
                 self.start.y.m_as(DEFAULT_UNITS.LENGTH),
                 0,
             ],
-            [self.end.x.m_as(DEFAULT_UNITS.LENGTH), self.end.y.m_as(DEFAULT_UNITS.LENGTH), 0],
-            [
+            pointb=[
+                self.end.x.m_as(DEFAULT_UNITS.LENGTH),
+                self.end.y.m_as(DEFAULT_UNITS.LENGTH),
+                0,
+            ],
+            center=[
                 self.center.x.m_as(DEFAULT_UNITS.LENGTH),
                 self.center.y.m_as(DEFAULT_UNITS.LENGTH),
                 0,
@@ -264,14 +267,14 @@ class Arc(SketchEdge):
 
         # Compute the two independent arcs
         arc_sub1 = pv.CircularArc(
-            start_point,
-            mid_point,
-            center_point,
+            pointa=start_point,
+            pointb=mid_point,
+            center=center_point,
         )
         arc_sub2 = pv.CircularArc(
-            mid_point,
-            end_point,
-            center_point,
+            pointa=mid_point,
+            pointb=end_point,
+            center=center_point,
         )
 
         return arc_sub1 + arc_sub2

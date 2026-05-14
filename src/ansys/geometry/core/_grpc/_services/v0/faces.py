@@ -40,6 +40,7 @@ from .conversions import (
     from_grpc_surface_to_surface,
     from_line_to_grpc_line,
     from_point3d_to_grpc_point,
+    from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
 )
 
@@ -551,6 +552,67 @@ class GRPCFacesServiceV0(GRPCFacesService):
 
         # Call the gRPC service
         response = self.commands_stub.FaceOffset(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success,
+        }
+
+    @protect_grpc
+    def sweep_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.sweep_faces' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_centroid' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def split_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import SplitFaceRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SplitFaceRequest(
+            selection=build_grpc_id(kwargs["face_id"]),
+            split_parameter=(
+                from_point3d_to_grpc_point(kwargs["split_parameter"])
+                if kwargs["split_parameter"] is not None
+                else None
+            ),
+            split_start=(
+                from_point3d_to_grpc_point(kwargs["split_start"])
+                if kwargs["split_start"] is not None
+                else None
+            ),
+            split_end=(
+                from_point3d_to_grpc_point(kwargs["split_end"])
+                if kwargs["split_end"] is not None
+                else None
+            ),
+            face_cutter=(
+                build_grpc_id(kwargs["face_cutter_id"])
+                if kwargs["face_cutter_id"] is not None
+                else None
+            ),
+            split_curves=(
+                [
+                    from_trimmed_curve_to_grpc_trimmed_curve(curve)
+                    for curve in kwargs["split_curves"]
+                ]
+                if kwargs["split_curves"] is not None
+                else None
+            ),
+            split_type=kwargs["split_type"].value,
+            parameter_type=kwargs["parameter_type"].value,
+        )
+
+        # Call the gRPC service
+        response = self.commands_stub.SplitFace(request=request)
 
         # Return the response - formatted as a dictionary
         return {

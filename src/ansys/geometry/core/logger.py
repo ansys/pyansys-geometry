@@ -129,8 +129,10 @@ these loggers.
 from copy import copy
 from datetime import datetime
 import logging
+import os
 import sys
 from typing import TYPE_CHECKING
+import warnings
 import weakref
 
 from ansys.geometry.core.misc.checks import check_type
@@ -650,3 +652,11 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 
 LOG = Logger(level=logging.WARNING, to_file=False, to_stdout=True)
 LOG.debug("Loaded logging module as LOG")
+
+# For documentation build
+if os.environ.get("PYANSYS_GEOMETRY_BUILD_EXAMPLES", "false") == "true":
+    LOG.setLevel(logging.ERROR)
+    # Skip UserWarning as well...
+    warnings.filterwarnings(
+        "ignore", category=UserWarning, message="Starting gRPC client without TLS .*"
+    )

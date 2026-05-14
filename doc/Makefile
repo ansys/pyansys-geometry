@@ -46,4 +46,9 @@ single-example:
 		exit 1; \
 	fi
 	@echo "Building single example --> $(example)"
-	@BUILD_API=False SKIP_BUILD_CHEAT_SHEET=True $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" -j 1 $(O) -D "include_patterns=index.rst,examples.rst,$(example)"
+	@BUILD_API=false BUILD_CHEATSHEET=false $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" -j 1 $(O) -D "include_patterns=index.rst,examples.rst,$(example)"
+
+# Basic docs target (skip examples and cheatsheet)
+basic-docs:
+	@echo "Building basic documentation (skipping examples and cheatsheet)..."
+	@BUILD_API=true BUILD_EXAMPLES=false BUILD_CHEATSHEET=false $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

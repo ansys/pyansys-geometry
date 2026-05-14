@@ -431,3 +431,23 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
                 for result in response.response_data
             ]
         }
+
+    @protect_grpc
+    def find_mappable_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import FindMappableFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FindMappableFacesRequest(
+            face_ids=[build_grpc_id(face) for face in kwargs["face_ids"]],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FindMappableFaces(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "results": [
+                {"face_id": item.face.id, "mappable": item.mappable}
+                for item in response.response_data
+            ]
+        }
