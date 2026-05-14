@@ -23,10 +23,11 @@
 
 from collections.abc import Callable, Iterable
 import functools
-from typing import TYPE_CHECKING, Any, Type, TypeVar, get_type_hints
+from typing import TYPE_CHECKING, Any, Type, TypeVar
 import warnings
 
 from beartype import beartype as _beartype
+from beartype.roar import BeartypeCallHintForwardRefException as _BeartypeForwardRefError
 import numpy as np
 from pint import Unit
 import semver
@@ -98,31 +99,29 @@ def check_input_types(func: _F) -> _F:
     The type-checked version is created once at decoration time, so toggling
     the flag at runtime is supported without re-wrapping overhead.
 
-    If any annotation contains a forward reference that cannot be resolved from
-    the function's module globals (e.g. due to circular imports), beartype is
-    skipped for that function to avoid ``NameError`` at call time.
+    If beartype encounters an unresolvable forward reference at call time (e.g. a type
+    that is only imported under ``TYPE_CHECKING``), beartype is disabled for that
+    function and the original is called without type checking.
     """
-    _typed_func = _beartype(func)
-    _use_beartype: bool | None = None  # None = not yet resolved
+    try:
+        _typed_func = _beartype(func)
+        _beartype_usable: bool = True
+    except Exception:
+        _typed_func = func
+        _beartype_usable = False
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        nonlocal _use_beartype
+        nonlocal _beartype_usable
         import ansys.geometry.core as pyansys_geometry
 
-        if getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False):
-            if _use_beartype is None:
-                # Defer resolution to first call: by then all modules are loaded,
-                # so self-referential forward refs (e.g. "Vector2D" inside Vector2D)
-                # are resolvable. Refs that are only under TYPE_CHECKING (e.g. "Body"
-                # in prepare_tools) remain unresolvable → skip beartype for those.
-                try:
-                    get_type_hints(func)
-                    _use_beartype = True
-                except Exception:
-                    _use_beartype = False
-            if _use_beartype:
+        if getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False) and _beartype_usable:
+            try:
                 return _typed_func(*args, **kwargs)
+            except _BeartypeForwardRefError:
+                # A forward reference that is only available under TYPE_CHECKING
+                # could not be resolved at call time; disable beartype for this function.
+                _beartype_usable = False
         return func(*args, **kwargs)
 
     return wrapper  # type: ignore[return-value]
