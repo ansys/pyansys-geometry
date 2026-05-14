@@ -638,10 +638,6 @@ class Modeler:
 
         This is a deprecated method. Use ``run_script_file()`` instead.
         """
-        self.client.log.warning(
-            "run_discovery_script_file() is deprecated and will be removed in a future release. "
-            "Use ``run_script_file()`` instead."
-        )
         return self.run_script_file(
             file_path=file_path,
             script_args=script_args,
