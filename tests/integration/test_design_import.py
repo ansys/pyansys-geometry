@@ -534,8 +534,6 @@ def test_design_import_pmdb(modeler: Modeler):
     assert len(design.bodies[0].faces) == 6
 
 
-
-
 def test_design_import_stride_with_named_selections(modeler: Modeler):
     """Test importing a .stride file with named selections."""
     # Open stride file
