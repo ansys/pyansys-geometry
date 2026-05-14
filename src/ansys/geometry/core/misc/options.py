@@ -23,9 +23,9 @@
 
 from dataclasses import asdict, dataclass
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.typing import Real
 

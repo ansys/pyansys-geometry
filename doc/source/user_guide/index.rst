@@ -16,6 +16,7 @@ sketches (2D basic shape elements), and model designs.
    primitives
    shapes
    designer
+   global_settings
 
 PyAnsys Geometry overview
 =========================
