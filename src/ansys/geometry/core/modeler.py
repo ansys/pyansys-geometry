@@ -623,10 +623,9 @@ class Modeler:
             return response.get("values"), None
 
     @deprecated_method(
-        "run_script_file",
-        "use the run_script_file method instead",
-        "0.15.2",
-        "0.17.0",
+        alternative="run_script_file",
+        version="0.15.2",
+        remove="0.17.0",
     )
     def run_discovery_script_file(
         self,
