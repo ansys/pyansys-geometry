@@ -63,6 +63,7 @@ from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.sketch.sketch import Sketch
 from ansys.geometry.core.typing import Real
 
@@ -70,7 +71,6 @@ if TYPE_CHECKING:  # pragma: no cover
     from pyvista import MultiBlock, PolyData
 
     from ansys.geometry.core.designer.selection import NamedSelection
-    from ansys.geometry.core.math.plane import Plane
 
 
 @unique
@@ -824,7 +824,7 @@ class Component:
         self,
         name: str,
         face: Face,
-        distance: Quantity | Distance,
+        distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """Extrude the face profile by a given distance to create a solid body.
@@ -1539,7 +1539,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(27, 1, 0)
-    def create_datum_plane(self, name: str, plane: "Plane") -> DatumPlane:
+    def create_datum_plane(self, name: str, plane: Plane) -> DatumPlane:
         """Create a datum plane on this component.
 
         Parameters

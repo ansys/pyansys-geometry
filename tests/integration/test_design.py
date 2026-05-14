@@ -148,7 +148,7 @@ def test_design_selection(modeler: Modeler):
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
     body = design.extrude_sketch("Box", sketch, Quantity(2, UNITS.m))
-    ns_edge = design.create_named_selection("The Edges", body.edges[0:2])
+    ns_edge = design.create_named_selection("The Edges", edges=body.edges[0:2])
     assert ns_edge.edges[0].start == Point3D([-5, -5, 2])
     assert ns_edge.edges[0].end == Point3D([5, -5, 2])
     assert ns_edge.edges[1].start == Point3D([-5, -5, 0])

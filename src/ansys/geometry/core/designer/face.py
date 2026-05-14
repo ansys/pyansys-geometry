@@ -391,7 +391,12 @@ class Face:
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_color(self, color: str | tuple[float, float, float]) -> None:
+    def set_color(
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
+    ) -> None:
         """Set the color of the face.
 
         Warnings
@@ -408,7 +413,7 @@ class Face:
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the face.
 
         Warnings

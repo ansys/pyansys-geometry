@@ -1351,7 +1351,10 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
@@ -1360,7 +1363,7 @@ class MasterBody(IBody):
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the body.
 
         Warnings
@@ -2140,7 +2143,10 @@ class Body(IBody):
 
     @ensure_design_is_active
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         return self._template.set_color(color)
 

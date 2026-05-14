@@ -507,7 +507,7 @@ class Modeler:
         file_path: str | Path,
         script_args: dict[str, str] | None = None,
         import_design: bool = False,
-        api_version: int | str | ApiVersions = None,
+        api_version: int | str | ApiVersions | None = None,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
