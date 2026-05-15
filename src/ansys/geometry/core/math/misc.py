@@ -21,10 +21,10 @@
 # SOFTWARE.
 """Provides auxiliary math functions for PyAnsys Geometry."""
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
 
 

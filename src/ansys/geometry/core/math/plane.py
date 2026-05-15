@@ -21,13 +21,13 @@
 # SOFTWARE.
 """Provides primitive representation of a 2D plane in 3D space."""
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import RealSequence
 
 

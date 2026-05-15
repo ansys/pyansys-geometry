@@ -190,7 +190,7 @@ def test_planar_surface():
     plane3 = plane0.transformed_copy(IDENTITY_MATRIX44)
     assert plane3.__eq__(plane0) is True
     plane_evaluation = plane0.evaluate(ParamUV(0.5, 0.5))
-    assert plane_evaluation.u_derivative == UNITVECTOR3D_Y
+    assert plane_evaluation.u_derivative == UNITVECTOR3D_X
     assert plane_evaluation.v_derivative == Vector3D([0.0, 0.0, -1.0])
     assert plane_evaluation.uu_derivative == Vector3D([0, 0, 0])
     assert plane_evaluation.uv_derivative == Vector3D([0, 0, 0])

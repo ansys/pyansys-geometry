@@ -27,7 +27,6 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.connection.client import GrpcClient
@@ -52,6 +51,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     check_nurbs_compatibility,
     ensure_design_is_active,
     graphics_required,

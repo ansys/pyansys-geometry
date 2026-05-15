@@ -24,14 +24,13 @@
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -200,7 +199,7 @@ class PlaneEvaluation(SurfaceEvaluation):
     @cached_property
     def u_derivative(self) -> Vector3D:
         """First derivative with respect to u."""
-        return self.plane.dir_z
+        return self.plane.dir_x
 
     @cached_property
     def v_derivative(self) -> Vector3D:
