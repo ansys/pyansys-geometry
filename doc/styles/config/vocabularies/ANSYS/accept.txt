@@ -6,6 +6,8 @@ AddIn
 (?i)api
 [Aa]xisymmetric
 [Bb]oolean
+(?i)beartype
+BeartypeCallHintParamViolation
 (?i)check
 [Cc]onda
 (?i)dependabot

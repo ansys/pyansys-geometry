@@ -25,7 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
@@ -59,6 +58,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     deprecated_method,
     ensure_design_is_active,
     min_backend_version,
