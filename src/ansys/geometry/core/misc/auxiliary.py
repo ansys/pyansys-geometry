@@ -459,8 +459,8 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
         zipf.write(file_path, file_path.name)
 
         # If it's an assembly format, add all files from the same directory
-        assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
-        if any(ext in str(file_path) for ext in assembly_extensions):
+        assembly_extensions = [".catproduct", ".asm", ".solution", ".sldasm"]
+        if any(ext in str(file_path).lower() for ext in assembly_extensions):
             dir_path = file_path.parent
             for file in dir_path.iterdir():
                 if file.is_file() and file != file_path:
