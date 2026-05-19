@@ -60,6 +60,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     NurbsCurve as GRPCNurbsCurve,
     NurbsSurface as GRPCNurbsSurface,
     PartEntity as GRPCPartEntity,
+    PMDBExportOptions as GRPCPMDBExportOptions,
     Surface as GRPCSurface,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
@@ -106,6 +107,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.misc.options import (
         FMDExportOptions,
         ImportOptionsDefinitions,
+        PMDBExportOptions,
         TessellationOptions,
     )
     from ansys.geometry.core.parameters.parameter import (
@@ -550,6 +552,57 @@ def from_tess_options_to_grpc_tess_options(
             value_in_geometry_units=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH)
         ),
         watertight=options.watertight,
+    )
+
+
+def from_pmdb_options_to_grpc_pmdb_options(
+    options: "PMDBExportOptions",
+) -> GRPCPMDBExportOptions:
+    """Convert a v1 ``PMDBExportOptions`` class to a PMDB export options gRPC message.
+
+    Parameters
+    ----------
+    options : PMDBExportOptions
+        Source PMDB export options.
+
+    Returns
+    -------
+    GRPCPMDBExportOptions
+        Geometry service gRPC PMDB export options message.
+    """
+    return GRPCPMDBExportOptions(
+        parameter_prefixes=options.parameter_prefixes,
+        cad_attribute_prefixes=options.cad_attribute_prefixes,
+        named_selection_prefixes=options.named_selection_prefixes,
+        analysis_type=options.analysis_type.value,
+        mixed_part_import_type=options.mixed_part_import_type.value,
+        attach_flattened_assembly=options.attach_flattened_assembly,
+        use_cad_mass_properties=options.use_cad_mass_properties,
+        plane_prefixes=options.plane_prefixes,
+        coordinate_system_prefixes=options.coordinate_system_prefixes,
+        advanced_geom_processing=options.advanced_geom_processing,
+        angular_deviation=options.angular_deviation,
+        attach_weight_class=options.attach_weight_class.value,
+        cad_associativity=options.cad_associativity,
+        cad_attribute_transfer=options.cad_attribute_transfer,
+        do_smart_update=options.do_smart_update,
+        geometry_deviation=options.geometry_deviation,
+        process_coordinate_sys=options.process_coordinate_sys,
+        process_planes=options.process_planes,
+        import_using_instances=options.import_using_instances,
+        process_work_points=options.process_work_points,
+        is_selective_update=options.is_selective_update,
+        material_properties=options.material_properties,
+        granta_material_properties=options.granta_material_properties,
+        max_facet_size=options.max_facet_size,
+        named_selection=options.named_selection,
+        parameter_processing_type=options.parameter_processing_type.value,
+        plug_in_facet_quality=options.plug_in_facet_quality.value,
+        process_enclosure_and_symmetry=options.process_enclosure_and_symmetry,
+        reader_save_part=options.reader_save_part,
+        target_application=options.target_application.value,
+        temp_directory=options.temp_directory,
+        process_physics_definition=options.process_physics_definition,
     )
 
 

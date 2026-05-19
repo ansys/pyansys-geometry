@@ -37,6 +37,7 @@ from .conversions import (
     from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
     from_grpc_quantity_to_distance,
+    from_pmdb_options_to_grpc_pmdb_options,
 )
 
 
@@ -198,6 +199,9 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             file_name=file_path.stem,
             fmd_export_options=(
                 from_fmd_options_to_grpc_fmd_options(options) if options is not None else None
+            ),
+            pmdb_export_options=(
+                from_pmdb_options_to_grpc_pmdb_options(options) if options is not None else None
             ),
         )
 
