@@ -442,7 +442,8 @@ class Modeler:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
-                ext in str(file_path).lower() for ext in [".catproduct", ".asm", ".solution", ".sldasm"]
+                ext in str(file_path).lower()
+                for ext in [".catproduct", ".asm", ".solution", ".sldasm"]
             ):
                 dir = fp_path.parent
                 for file in dir.iterdir():
