@@ -71,6 +71,7 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
         }
 
     @protect_grpc
@@ -104,6 +105,7 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
         }
 
     @protect_grpc

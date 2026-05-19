@@ -27,6 +27,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -36,6 +37,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
     get_components_from_ids,
+    get_design_curves_from_ids,
     get_design_points_from_ids,
     get_edges_from_ids,
     get_faces_from_ids,
@@ -77,6 +79,8 @@ class NamedSelection:
         All components to include in the named selection.
     vertices: list[Vertex], default: None
         All vertices to include in the named selection.
+    design_curves : list[DesignCurve], default: None
+        All design curves to include in the named selection.
     """
 
     def __init__(
@@ -91,6 +95,7 @@ class NamedSelection:
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
+        design_curves: list[DesignCurve] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
@@ -106,6 +111,7 @@ class NamedSelection:
         design_points = design_points if design_points is not None else []
         components = components if components is not None else []
         vertices = vertices if vertices is not None else []
+        design_curves = design_curves if design_curves is not None else []
 
         # Instantiate
         self._bodies = bodies
@@ -115,6 +121,7 @@ class NamedSelection:
         self._design_points = design_points
         self._components = components
         self._vertices = vertices
+        self._design_curves = design_curves
 
         # Store ids for later use... when verifying if the NS changed.
         self._ids_cached = {
@@ -125,6 +132,7 @@ class NamedSelection:
             "design_points": [dp.id for dp in design_points],
             "components": [component.id for component in components],
             "vertices": [vertex.id for vertex in vertices],
+            "design_curves": [dc.id for dc in design_curves],
         }
 
         if preexisting_id:
@@ -248,6 +256,24 @@ class NamedSelection:
 
         return self._vertices
 
+    @property
+    def design_curves(self) -> list[DesignCurve]:
+        """All design curves in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing design curves of named selections is only"
+                " consistent starting in version 2027 R1."
+            )
+            return []
+        if self._design_curves is None:
+            # Get all design curves from the named selection
+            self._design_curves = get_design_curves_from_ids(
+                self._design, self._ids_cached["design_curves"]
+            )
+
+        return self._design_curves
+
     def add_members(
         self,
         bodies: list[Body] | None = None,
@@ -257,25 +283,28 @@ class NamedSelection:
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
+        design_curves: list[DesignCurve] | None = None,
     ) -> "NamedSelection":
         """Add members to the named selection.
 
         Parameters
         ----------
         bodies : list[Body], default: None
-        All bodies to add to the named selection.
+            All bodies to add to the named selection.
         faces : list[Face], default: None
-        All faces to add to the named selection.
+            All faces to add to the named selection.
         edges : list[Edge], default: None
-        All edges to add to the named selection.
+            All edges to add to the named selection.
         beams : list[Beam], default: None
-        All beams to add to the named selection.
+            All beams to add to the named selection.
         design_points : list[DesignPoints], default: None
-        All design points to add to the named selection.
+            All design points to add to the named selection.
         components: list[Component], default: None
-        All components to add to the named selection.
+            All components to add to the named selection.
         vertices: list[Vertex], default: None
-        All vertices to add to the named selection.
+            All vertices to add to the named selection.
+        design_curves: list[DesignCurve], default: None
+            All design curves to add to the named selection.
 
         Returns
         -------
@@ -299,6 +328,7 @@ class NamedSelection:
         design_points = design_points if design_points is not None else []
         components = components if components is not None else []
         vertices = vertices if vertices is not None else []
+        design_curves = design_curves if design_curves is not None else []
 
         new_ns = NamedSelection(
             self._name,
@@ -311,6 +341,7 @@ class NamedSelection:
             design_points=design_points + self.design_points,
             components=components + self.components,
             vertices=vertices + self.vertices,
+            design_curves=design_curves + self.design_curves,
         )
 
         # Delete the old NS server-side
@@ -322,7 +353,7 @@ class NamedSelection:
 
     def remove_members(
         self,
-        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex]],
+        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex, DesignCurve]],
     ) -> "NamedSelection":
         """Remove members from the named selection.
 
@@ -348,6 +379,7 @@ class NamedSelection:
             + len(self.beams)
             + len(self.design_points)
             + len(self.components)
+            + len(self.design_curves)
             + len(self.vertices)
         )
         if len(members) >= total_members:
@@ -364,6 +396,7 @@ class NamedSelection:
             design_points=[dp for dp in self.design_points if dp not in members],
             components=[component for component in self.components if component not in members],
             vertices=[vertex for vertex in self.vertices if vertex not in members],
+            design_curves=[dc for dc in self.design_curves if dc not in members],
         )
 
         # Delete the old NS server-side
@@ -395,6 +428,7 @@ class NamedSelection:
             "design_points": response.get("design_points"),
             "components": response.get("components"),
             "vertices": response.get("vertices"),
+            "design_curves": response.get("design_curves"),
         }
 
         for key in ids:
@@ -416,4 +450,5 @@ class NamedSelection:
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {len(self.components)}")
         lines.append(f"  N Vertices           : {len(self.vertices)}")
+        lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
