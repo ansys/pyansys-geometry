@@ -97,6 +97,7 @@ class NamedSelection:
         self._name = name
         self._design = design
         self._grpc_client = grpc_client
+        self._verified = False
 
         # Convert None to empty lists
         bodies = bodies if bodies is not None else []
@@ -166,7 +167,9 @@ class NamedSelection:
     @property
     def bodies(self) -> list[Body]:
         """All bodies in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+            
         if self._bodies is None:
             # Get all bodies from the named selection
             self._bodies = get_bodies_from_ids(self._design, self._ids_cached["bodies"])
@@ -176,7 +179,9 @@ class NamedSelection:
     @property
     def faces(self) -> list[Face]:
         """All faces in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._faces is None:
             # Get all faces from the named selection
             self._faces = get_faces_from_ids(self._design, self._ids_cached["faces"])
@@ -186,7 +191,9 @@ class NamedSelection:
     @property
     def edges(self) -> list[Edge]:
         """All edges in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._edges is None:
             # Get all edges from the named selection
             self._edges = get_edges_from_ids(self._design, self._ids_cached["edges"])
@@ -196,7 +203,9 @@ class NamedSelection:
     @property
     def beams(self) -> list[Beam]:
         """All beams in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._beams is None:
             # Get all beams from the named selection
             self._beams = get_beams_from_ids(self._design, self._ids_cached["beams"])
@@ -206,7 +215,9 @@ class NamedSelection:
     @property
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._design_points is None:
             # Get all design points from the named selection
             self._design_points = get_design_points_from_ids(
@@ -219,7 +230,9 @@ class NamedSelection:
     @property
     def components(self) -> list[Component]:
         """All components in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._grpc_client.backend_version < (26, 1, 0):
             self._grpc_client.log.warning(
                 "Accessing components in named selections is only"
@@ -235,7 +248,9 @@ class NamedSelection:
     @property
     def vertices(self) -> list[Vertex]:
         """All vertices in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._grpc_client.backend_version < (26, 1, 0):
             self._grpc_client.log.warning(
                 "Accessing vertices of named selections is only"
@@ -290,6 +305,7 @@ class NamedSelection:
         """
         # Update cache
         self.__verify_ns()
+        self._verified = True
 
         # Convert None to empty lists
         bodies = bodies if bodies is not None else []
@@ -318,6 +334,7 @@ class NamedSelection:
 
         # Reassign the named selection to self so that changes are reflected
         self.__dict__.update(new_ns.__dict__)
+        self._verified = False
         return self
 
     def remove_members(
@@ -339,6 +356,7 @@ class NamedSelection:
         """
         # Update cache
         self.__verify_ns()
+        self._verified = True
 
         # Check to make sure NS will not be empty after removal
         total_members = (
@@ -371,6 +389,7 @@ class NamedSelection:
 
         # Reassign the named selection to self so that changes are reflected
         self.__dict__.update(new_ns.__dict__)
+        self._verified = False
 
         return self
 
@@ -406,6 +425,9 @@ class NamedSelection:
 
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
+        self.__verify_ns()
+        self._verified = True
+
         lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
         lines.append(f"  Name                 : {self._name}")
         lines.append(f"  Id                   : {self._id}")
@@ -416,4 +438,6 @@ class NamedSelection:
         lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Components         : {len(self.components)}")
         lines.append(f"  N Vertices           : {len(self.vertices)}")
+
+        self._verified = False
         return "\n".join(lines)
