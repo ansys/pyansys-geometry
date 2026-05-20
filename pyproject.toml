@@ -25,7 +25,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.1.4",
+  "ansys-api-discovery==1.1.5",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -67,7 +67,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.0",
-  "ty==0.0.36",
+  "ty==0.0.37",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -105,7 +105,7 @@ general-all = [
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.2",
-  "requests==2.34.0",
+  "requests==2.34.2",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
