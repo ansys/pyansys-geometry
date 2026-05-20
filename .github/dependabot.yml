@@ -21,7 +21,7 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "build"
+      prefix: "build(deps)"
     ignore:
       - dependency-name: "trame-vtk" # DO NOT UPDATE - issues observed with 2.11.X versions
         versions:
@@ -58,8 +58,27 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "ci"
+      prefix: "ci(actions)"
     groups:
       actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 7 # semver-* options are not applicable for pre-commit
+      exclude:
+        - "ansys/pre-commit-hooks/*"
+    labels:
+      - "maintenance"
+    assignees:
+      - "pyansys-ci-bot"
+    commit-message:
+      prefix: "chore(pre-commit)"
+    groups:
+      pre-commit-hooks:
         patterns:
           - "*"

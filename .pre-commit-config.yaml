@@ -1,13 +1,11 @@
 ci:
   autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
-  autoupdate_commit_msg: 'chore: pre-commit automatic update'
-  autoupdate_schedule: weekly
 
 exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: v0.21.0
+    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -17,25 +15,25 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.21.2
+    rev: a007bb7dd9043d022292401abc3061cb1906b4bc # frozen: v2.21.2
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.13
+    rev: 5e2fb545eba1ea9dc051f6f962d52fe8f76a9794 # frozen: v0.15.13
     hooks:
       - id: ruff-check
       - id: ruff-format
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.2
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
         args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "-w"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: debug-statements
@@ -43,7 +41,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.7.2
+    rev: ad4e7598809ad98cde5aaf52d80040c7ac56e7cf # frozen: v0.7.2
     hooks:
       - id: add-license-headers
         args:
@@ -51,12 +49,12 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.2
+    rev: 943377262562a12b57292fc98fabd7dbf81451fe # frozen: 0.37.2
     hooks:
       - id: check-github-workflows
 
   # this validates our pre-commit.ci configuration
   - repo: https://github.com/pre-commit-ci/pre-commit-ci-config
-    rev: v1.6.1
+    rev: 500543de231a91e6157db630075d70320709b834 # frozen: v1.6.1
     hooks:
       - id: check-pre-commit-ci-config
