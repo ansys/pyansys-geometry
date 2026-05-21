@@ -653,7 +653,7 @@ def test_add_member_to_named_selection(modeler: Modeler):
     box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
     design.create_named_selection("box_ns", bodies=[box])
-    # assert len(design.named_selections) == 1
+    assert len(design.named_selections) == 1
 
     # Add a member to the first named selection
     ns = design.named_selections[0]
