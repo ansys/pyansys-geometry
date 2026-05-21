@@ -25,11 +25,11 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle
+from ..base.conversions import from_measurement_to_server_angle, to_distance
 from ..base.curves import GRPCCurvesService
 from .conversions import (
+    build_grpc_id,
     from_curve_to_grpc_curve,
-    from_grpc_curve_to_curve,
     from_grpc_point_to_point3d,
     from_line_to_grpc_line,
     from_surface_to_grpc_surface,
@@ -127,11 +127,13 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
     @protect_grpc
     def get(self, **kwargs) -> dict:  # noqa: D102
         # Call the gRPC service
-        response = self.stub.Get(kwargs["id"])
+        response = self.stub.Get(build_grpc_id(kwargs["id"]))
 
         # Return the result - formatted as a dictionary
         return {
-            "curve": from_grpc_curve_to_curve(response),
+            "start_point": from_grpc_point_to_point3d(response.points[0]),
+            "end_point": from_grpc_point_to_point3d(response.points[1]),
+            "length": to_distance(response.length),
         }
 
     def get_interval(self, **kwargs) -> dict:  # noqa: D102

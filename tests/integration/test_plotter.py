@@ -1567,7 +1567,7 @@ def test_plot_design_with_curves(modeler: Modeler, verify_image_cache):
 
     # Plot the entire design — bodies and DesignCurves should both appear
     pl = GeometryPlotter()
-    plotting_options = {"line_width": 5, "line_color": (255, 0, 0)}
+    plotting_options = {"line_width": 5}
     pl.plot(design, **plotting_options)
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_design_with_curves.png"))
 
