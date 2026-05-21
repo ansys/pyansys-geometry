@@ -468,9 +468,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        shape = design_curve.shape
+        shape = design_curve.shape.geometry
         points = np.array(
-            [shape.evaluate_proportion(t).position for t in np.linspace(0, 1, 100)]
+            [shape.evaluate(t).position for t in np.linspace(0, 1, 100)]
         )
         spline = pv.Spline(points)
         dc_plot = MeshObjectPlot(custom_object=design_curve, mesh=spline)
