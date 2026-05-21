@@ -338,7 +338,7 @@ class NamedSelection:
 
         finally:
             self._verified = False
-        
+
         return self
 
     def remove_members(
@@ -394,7 +394,7 @@ class NamedSelection:
 
             # Reassign the named selection to self so that changes are reflected
             self.__dict__.update(new_ns.__dict__)
-        
+
         finally:
             self._verified = False
 
@@ -434,7 +434,7 @@ class NamedSelection:
         """Represent the ``NamedSelection`` as a string."""
         self.__verify_ns()
         self._verified = True
-        
+
         try:
             lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
             lines.append(f"  Name                 : {self._name}")
@@ -447,6 +447,6 @@ class NamedSelection:
             lines.append(f"  N Components         : {len(self.components)}")
             lines.append(f"  N Vertices           : {len(self.vertices)}")
             return "\n".join(lines)
-        
+
         finally:
             self._verified = False
