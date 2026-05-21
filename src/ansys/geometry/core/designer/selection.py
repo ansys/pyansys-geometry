@@ -425,19 +425,20 @@ class NamedSelection:
 
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
+        previous_verified = self._verified
         self.__verify_ns()
         self._verified = True
-
-        lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
-        lines.append(f"  Name                 : {self._name}")
-        lines.append(f"  Id                   : {self._id}")
-        lines.append(f"  N Bodies             : {len(self.bodies)}")
-        lines.append(f"  N Faces              : {len(self.faces)}")
-        lines.append(f"  N Edges              : {len(self.edges)}")
-        lines.append(f"  N Beams              : {len(self.beams)}")
-        lines.append(f"  N Design Points      : {len(self.design_points)}")
-        lines.append(f"  N Components         : {len(self.components)}")
-        lines.append(f"  N Vertices           : {len(self.vertices)}")
-
-        self._verified = False
-        return "\n".join(lines)
+        try:
+            lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
+            lines.append(f"  Name                 : {self._name}")
+            lines.append(f"  Id                   : {self._id}")
+            lines.append(f"  N Bodies             : {len(self.bodies)}")
+            lines.append(f"  N Faces              : {len(self.faces)}")
+            lines.append(f"  N Edges              : {len(self.edges)}")
+            lines.append(f"  N Beams              : {len(self.beams)}")
+            lines.append(f"  N Design Points      : {len(self.design_points)}")
+            lines.append(f"  N Components         : {len(self.components)}")
+            lines.append(f"  N Vertices           : {len(self.vertices)}")
+            return "\n".join(lines)
+        finally:
+            self._verified = previous_verified
