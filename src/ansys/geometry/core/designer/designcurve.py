@@ -109,7 +109,7 @@ class DesignCurve:
         """
         if self._shape is None:
             self._grpc_client.log.debug(f"Requesting curve properties for {self._id} from server.")
-    
+
             curve = self._grpc_client.services.curves.get(id=self._id)
             geometry = curve.get("geometry")
             start = curve.get("start_point")

@@ -45,9 +45,7 @@ def _create_curves(modeler: Modeler) -> tuple[DesignCurve, DesignCurve]:
     axis = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z)
 
     dp1 = design.add_design_point("curve_point1", Point3D([1, 0, 0], UNITS.m))
-    curve1 = modeler.geometry_commands.revolve_points(
-        dp1, axis, Angle(np.pi / 2, UNITS.rad)
-    )[0]
+    curve1 = modeler.geometry_commands.revolve_points(dp1, axis, Angle(np.pi / 2, UNITS.rad))[0]
 
     dp2 = design.add_design_point("curve_point2", Point3D([2, 0, 0], UNITS.m))
     curve2 = modeler.geometry_commands.revolve_points(dp2, axis, Angle(np.pi, UNITS.rad))[0]
@@ -134,4 +132,3 @@ def test_design_curve_repr(modeler: Modeler):
     assert "Length" in text
     assert "Start" in text
     assert "End" in text
-

@@ -469,9 +469,7 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         shape = design_curve.shape.geometry
-        points = np.array(
-            [shape.evaluate(t).position for t in np.linspace(0, 1, 100)]
-        )
+        points = np.array([shape.evaluate(t).position for t in np.linspace(0, 1, 100)])
         spline = pv.Spline(points)
         dc_plot = MeshObjectPlot(custom_object=design_curve, mesh=spline)
         self._backend.pv_interface.plot(dc_plot, **plotting_options)

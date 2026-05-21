@@ -146,7 +146,7 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
             "intersect": response.intersect,
             "points": [from_grpc_point_to_point3d(point) for point in response.points],
         }
-    
+
     @protect_grpc
     def get(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import EntityRequest

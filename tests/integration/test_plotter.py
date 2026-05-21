@@ -1559,13 +1559,9 @@ def test_plot_design_with_curves(modeler: Modeler, verify_image_cache):
 
     # Add two quarter-circle DesignCurves at r=2 m and r=3 m
     dp2 = design.add_design_point("pt2", Point3D([2, 0, 0], UNITS.m))
-    curves2 = modeler.geometry_commands.revolve_points(
-        dp2, axis, Angle(np.pi / 2, UNITS.rad)
-    )
+    curves2 = modeler.geometry_commands.revolve_points(dp2, axis, Angle(np.pi / 2, UNITS.rad))
     dp3 = design.add_design_point("pt3", Point3D([3, 0, 0], UNITS.m))
-    curves3 = modeler.geometry_commands.revolve_points(
-        dp3, axis, Angle(np.pi / 2, UNITS.rad)
-    )
+    curves3 = modeler.geometry_commands.revolve_points(dp3, axis, Angle(np.pi / 2, UNITS.rad))
     assert len(curves2) == 1 and isinstance(curves2[0], DesignCurve)
     assert len(curves3) == 1 and isinstance(curves3[0], DesignCurve)
 
