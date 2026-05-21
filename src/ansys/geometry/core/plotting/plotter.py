@@ -458,7 +458,6 @@ class GeometryPlotter(PlotterInterface):
         # get the actor for the DesignPoint
         self._backend.pv_interface.plot(design_point, **plotting_options)
 
-    @min_backend_version(27, 1, 0)
     def add_design_curve(self, design_curve: DesignCurve, **plotting_options) -> None:
         """Add a DesignCurve object to the plotter.
 
