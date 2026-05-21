@@ -67,14 +67,15 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.0",
+  "ty==0.0.37",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.7.2",
+  "ansys-sphinx-theme[autoapi]==1.8.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.19.2",
+  "jupytext==1.19.3",
   "myst-parser==5.0.0",
   "nbconvert==7.17.1",
   "nbsphinx==0.9.8",
@@ -103,8 +104,8 @@ general-all = [
   "pint==0.25.2",
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.48.2",
-  "requests==2.33.1",
+  "pyvista[jupyter]==0.48.3",
+  "requests==2.34.2",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",

@@ -27,7 +27,7 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from ansys.geometry.core.misc.checks import check_input_types
+from ansys.geometry.core.misc.checks import _F, check_input_types
 
 try:
     from docker.client import DockerClient
@@ -44,7 +44,7 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.logger import LOG
 
 
-def _docker_python_available(func):
+def _docker_python_available(func: _F) -> _F:
     """Check whether Docker is installed as a Python package.
 
     This function works as a decorator.
@@ -59,7 +59,7 @@ def _docker_python_available(func):
         else:
             return func(*args, **kwargs)
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]
 
 
 class GeometryContainers(Enum):

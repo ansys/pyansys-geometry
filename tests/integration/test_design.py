@@ -149,7 +149,7 @@ def test_design_selection(modeler: Modeler):
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
     body = design.extrude_sketch("Box", sketch, Quantity(2, UNITS.m))
-    ns_edge = design.create_named_selection("The Edges", body.edges[0:2])
+    ns_edge = design.create_named_selection("The Edges", edges=body.edges[0:2])
     assert ns_edge.edges[0].start == Point3D([-5, -5, 2])
     assert ns_edge.edges[0].end == Point3D([5, -5, 2])
     assert ns_edge.edges[1].start == Point3D([-5, -5, 0])
@@ -4267,7 +4267,6 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box2])
-    design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(1.75, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
@@ -4278,7 +4277,6 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box3])
-    design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 

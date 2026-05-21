@@ -917,10 +917,12 @@ class GRPCBodyServiceV0(GRPCBodyService):
         )
 
         # Call the gRPC service
-        _ = self.command_stub.CombineMergeBodies(request=request)
+        response = self.command_stub.CombineMergeBodies(request=request)
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "success": response.success,
+        }
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
