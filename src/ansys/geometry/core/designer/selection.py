@@ -169,7 +169,7 @@ class NamedSelection:
         """All bodies in the named selection."""
         if not self._verified:
             self.__verify_ns()
-            
+
         if self._bodies is None:
             # Get all bodies from the named selection
             self._bodies = get_bodies_from_ids(self._design, self._ids_cached["bodies"])
