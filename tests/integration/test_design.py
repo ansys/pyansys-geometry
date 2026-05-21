@@ -678,7 +678,10 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.design_points) == 3
     assert len(ns.faces) == 1
 
-    # Add a design curve
+    # Add a design curve if backend is 27R1 or newer
+    if modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        return
+    
     dc_pt = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
     dc = modeler.geometry_commands.revolve_points(
         dc_pt, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
@@ -858,6 +861,9 @@ def test_named_selection_contents(modeler: Modeler):
 
     assert len(ns.vertices) == 2
     assert (ns.vertices[0].id == vertices[0].id) and (ns.vertices[1].id == vertices[1].id)
+
+    if modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        return
 
     assert len(ns.design_curves) == 1
     assert ns.design_curves[0].id == design_curves[0].id
