@@ -58,6 +58,7 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.shapes.curves import Curve
 from ansys.geometry.core.shapes.surfaces import Surface
@@ -457,6 +458,7 @@ class GeometryPlotter(PlotterInterface):
         # get the actor for the DesignPoint
         self._backend.pv_interface.plot(design_point, **plotting_options)
 
+    @min_backend_version(27, 1, 0)
     def add_design_curve(self, design_curve: DesignCurve, **plotting_options) -> None:
         """Add a DesignCurve object to the plotter.
 
