@@ -133,7 +133,6 @@ class DesignCurve:
     @ensure_design_is_active
     def start(self) -> Point3D:
         """Start point of the design curve."""
-        print(self._start)
         return self._start
 
     @property
