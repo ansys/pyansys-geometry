@@ -681,7 +681,7 @@ def test_add_member_to_named_selection(modeler: Modeler):
     # Add a design curve if backend is 27R1 or newer
     if modeler._grpc_client.services.version == GeometryApiProtos.V0:
         return
-    
+
     dc_pt = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
     dc = modeler.geometry_commands.revolve_points(
         dc_pt, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
