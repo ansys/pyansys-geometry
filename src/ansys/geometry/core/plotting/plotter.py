@@ -58,7 +58,6 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
-from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.shapes.curves import Curve
 from ansys.geometry.core.shapes.surfaces import Surface
