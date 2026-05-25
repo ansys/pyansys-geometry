@@ -5,7 +5,7 @@ exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029  # frozen: v0.21.0
+    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -21,7 +21,7 @@ repos:
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 0c7b6c989466a93942def1f84baf36ddfcd60c83  # frozen: v0.15.14
+    rev: 0c7b6c989466a93942def1f84baf36ddfcd60c83 # frozen: v0.15.14
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -49,7 +49,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 943377262562a12b57292fc98fabd7dbf81451fe  # frozen: 0.37.2
+    rev: 943377262562a12b57292fc98fabd7dbf81451fe # frozen: 0.37.2
     hooks:
       - id: check-github-workflows
 
