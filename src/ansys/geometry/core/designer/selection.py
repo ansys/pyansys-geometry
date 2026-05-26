@@ -97,6 +97,7 @@ class NamedSelection:
         self._name = name
         self._design = design
         self._grpc_client = grpc_client
+        self._verified = False
 
         # Convert None to empty lists
         bodies = bodies if bodies is not None else []
@@ -166,7 +167,9 @@ class NamedSelection:
     @property
     def bodies(self) -> list[Body]:
         """All bodies in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._bodies is None:
             # Get all bodies from the named selection
             self._bodies = get_bodies_from_ids(self._design, self._ids_cached["bodies"])
@@ -176,7 +179,9 @@ class NamedSelection:
     @property
     def faces(self) -> list[Face]:
         """All faces in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._faces is None:
             # Get all faces from the named selection
             self._faces = get_faces_from_ids(self._design, self._ids_cached["faces"])
@@ -186,7 +191,9 @@ class NamedSelection:
     @property
     def edges(self) -> list[Edge]:
         """All edges in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._edges is None:
             # Get all edges from the named selection
             self._edges = get_edges_from_ids(self._design, self._ids_cached["edges"])
@@ -196,7 +203,9 @@ class NamedSelection:
     @property
     def beams(self) -> list[Beam]:
         """All beams in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._beams is None:
             # Get all beams from the named selection
             self._beams = get_beams_from_ids(self._design, self._ids_cached["beams"])
@@ -206,7 +215,9 @@ class NamedSelection:
     @property
     def design_points(self) -> list[DesignPoint]:
         """All design points in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._design_points is None:
             # Get all design points from the named selection
             self._design_points = get_design_points_from_ids(
@@ -219,7 +230,9 @@ class NamedSelection:
     @property
     def components(self) -> list[Component]:
         """All components in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._grpc_client.backend_version < (26, 1, 0):
             self._grpc_client.log.warning(
                 "Accessing components in named selections is only"
@@ -235,7 +248,9 @@ class NamedSelection:
     @property
     def vertices(self) -> list[Vertex]:
         """All vertices in the named selection."""
-        self.__verify_ns()
+        if not self._verified:
+            self.__verify_ns()
+
         if self._grpc_client.backend_version < (26, 1, 0):
             self._grpc_client.log.warning(
                 "Accessing vertices of named selections is only"
@@ -290,34 +305,40 @@ class NamedSelection:
         """
         # Update cache
         self.__verify_ns()
+        self._verified = True
 
-        # Convert None to empty lists
-        bodies = bodies if bodies is not None else []
-        faces = faces if faces is not None else []
-        edges = edges if edges is not None else []
-        beams = beams if beams is not None else []
-        design_points = design_points if design_points is not None else []
-        components = components if components is not None else []
-        vertices = vertices if vertices is not None else []
+        try:
+            # Convert None to empty lists
+            bodies = bodies if bodies is not None else []
+            faces = faces if faces is not None else []
+            edges = edges if edges is not None else []
+            beams = beams if beams is not None else []
+            design_points = design_points if design_points is not None else []
+            components = components if components is not None else []
+            vertices = vertices if vertices is not None else []
 
-        new_ns = NamedSelection(
-            self._name,
-            self._design,
-            self._grpc_client,
-            bodies=bodies + self.bodies,
-            faces=faces + self.faces,
-            edges=edges + self.edges,
-            beams=beams + self.beams,
-            design_points=design_points + self.design_points,
-            components=components + self.components,
-            vertices=vertices + self.vertices,
-        )
+            new_ns = NamedSelection(
+                self._name,
+                self._design,
+                self._grpc_client,
+                bodies=bodies + self.bodies,
+                faces=faces + self.faces,
+                edges=edges + self.edges,
+                beams=beams + self.beams,
+                design_points=design_points + self.design_points,
+                components=components + self.components,
+                vertices=vertices + self.vertices,
+            )
 
-        # Delete the old NS server-side
-        self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
+            # Delete the old NS server-side
+            self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
 
-        # Reassign the named selection to self so that changes are reflected
-        self.__dict__.update(new_ns.__dict__)
+            # Reassign the named selection to self so that changes are reflected
+            self.__dict__.update(new_ns.__dict__)
+
+        finally:
+            self._verified = False
+
         return self
 
     def remove_members(
@@ -339,38 +360,43 @@ class NamedSelection:
         """
         # Update cache
         self.__verify_ns()
+        self._verified = True
 
-        # Check to make sure NS will not be empty after removal
-        total_members = (
-            len(self.bodies)
-            + len(self.faces)
-            + len(self.edges)
-            + len(self.beams)
-            + len(self.design_points)
-            + len(self.components)
-            + len(self.vertices)
-        )
-        if len(members) >= total_members:
-            raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
+        try:
+            # Check to make sure NS will not be empty after removal
+            total_members = (
+                len(self.bodies)
+                + len(self.faces)
+                + len(self.edges)
+                + len(self.beams)
+                + len(self.design_points)
+                + len(self.components)
+                + len(self.vertices)
+            )
+            if len(members) >= total_members:
+                raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
 
-        new_ns = NamedSelection(
-            self._name,
-            self._design,
-            self._grpc_client,
-            bodies=[body for body in self.bodies if body not in members],
-            faces=[face for face in self.faces if face not in members],
-            edges=[edge for edge in self.edges if edge not in members],
-            beams=[beam for beam in self.beams if beam not in members],
-            design_points=[dp for dp in self.design_points if dp not in members],
-            components=[component for component in self.components if component not in members],
-            vertices=[vertex for vertex in self.vertices if vertex not in members],
-        )
+            new_ns = NamedSelection(
+                self._name,
+                self._design,
+                self._grpc_client,
+                bodies=[body for body in self.bodies if body not in members],
+                faces=[face for face in self.faces if face not in members],
+                edges=[edge for edge in self.edges if edge not in members],
+                beams=[beam for beam in self.beams if beam not in members],
+                design_points=[dp for dp in self.design_points if dp not in members],
+                components=[component for component in self.components if component not in members],
+                vertices=[vertex for vertex in self.vertices if vertex not in members],
+            )
 
-        # Delete the old NS server-side
-        self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
+            # Delete the old NS server-side
+            self._grpc_client.services.named_selection.delete_named_selection(id=self._id)
 
-        # Reassign the named selection to self so that changes are reflected
-        self.__dict__.update(new_ns.__dict__)
+            # Reassign the named selection to self so that changes are reflected
+            self.__dict__.update(new_ns.__dict__)
+
+        finally:
+            self._verified = False
 
         return self
 
@@ -406,14 +432,21 @@ class NamedSelection:
 
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
-        lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
-        lines.append(f"  Name                 : {self._name}")
-        lines.append(f"  Id                   : {self._id}")
-        lines.append(f"  N Bodies             : {len(self.bodies)}")
-        lines.append(f"  N Faces              : {len(self.faces)}")
-        lines.append(f"  N Edges              : {len(self.edges)}")
-        lines.append(f"  N Beams              : {len(self.beams)}")
-        lines.append(f"  N Design Points      : {len(self.design_points)}")
-        lines.append(f"  N Components         : {len(self.components)}")
-        lines.append(f"  N Vertices           : {len(self.vertices)}")
-        return "\n".join(lines)
+        self.__verify_ns()
+        self._verified = True
+
+        try:
+            lines = [f"ansys.geometry.core.designer.selection.NamedSelection {hex(id(self))}"]
+            lines.append(f"  Name                 : {self._name}")
+            lines.append(f"  Id                   : {self._id}")
+            lines.append(f"  N Bodies             : {len(self.bodies)}")
+            lines.append(f"  N Faces              : {len(self.faces)}")
+            lines.append(f"  N Edges              : {len(self.edges)}")
+            lines.append(f"  N Beams              : {len(self.beams)}")
+            lines.append(f"  N Design Points      : {len(self.design_points)}")
+            lines.append(f"  N Components         : {len(self.components)}")
+            lines.append(f"  N Vertices           : {len(self.vertices)}")
+            return "\n".join(lines)
+
+        finally:
+            self._verified = False
