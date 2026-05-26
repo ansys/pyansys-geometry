@@ -1123,7 +1123,6 @@ class MasterBody(IBody):
     def faces(self) -> list[Face]:  # noqa: D102
         return self._get_faces_from_id(self)
 
-
     def _get_faces_from_id(self, body: Union["Body", "MasterBody"]) -> list[Face]:
         """Retrieve faces from a body ID."""
         self._grpc_client.log.debug(f"Retrieving faces for body {body.id} from server.")
