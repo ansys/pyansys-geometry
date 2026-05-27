@@ -29,10 +29,11 @@ from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
-from ansys.geometry.core.designer.face import Face
+from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
+    get_all_bodies_from_design,
     get_beams_from_ids,
     get_bodies_from_ids,
     get_components_from_ids,
@@ -127,6 +128,15 @@ class NamedSelection:
             "components": [component.id for component in components],
             "vertices": [vertex.id for vertex in vertices],
         }
+        self._faces_meta_cached = [
+            {
+                "id": face.id,
+                "surface_type": face.surface_type.value,
+                "is_reversed": face.is_reversed,
+                "body_id": face.body.id,
+            }
+            for face in faces
+        ]
 
         if preexisting_id:
             self._id = preexisting_id
@@ -183,8 +193,10 @@ class NamedSelection:
             self.__verify_ns()
 
         if self._faces is None:
-            # Get all faces from the named selection
-            self._faces = get_faces_from_ids(self._design, self._ids_cached["faces"])
+            self._faces = self.__build_faces_from_metadata()
+            if self._faces is None:
+                # Get all faces from the named selection
+                self._faces = get_faces_from_ids(self._design, self._ids_cached["faces"])
 
         return self._faces
 
@@ -423,12 +435,54 @@ class NamedSelection:
             "vertices": response.get("vertices"),
         }
 
+        faces_meta = response.get("faces_meta") or []
+        if faces_meta != self._faces_meta_cached:
+            self._faces = None
+            self._faces_meta_cached = faces_meta
+
         for key in ids:
             if ids[key] != self._ids_cached[key]:
                 # Clear the cache for that specific entity
                 setattr(self, f"_{key}", None)
                 # Update the cache
                 self._ids_cached[key] = ids[key]
+
+    def __build_faces_from_metadata(self) -> list[Face] | None:
+        """Build faces directly from named selection metadata when available."""
+        if not self._faces_meta_cached:
+            return None
+
+        face_meta_by_id = {face_meta.get("id"): face_meta for face_meta in self._faces_meta_cached}
+
+        body_ids = {face_meta.get("body_id") for face_meta in self._faces_meta_cached}
+        body_map = {}
+
+        def _index_body(candidate_body: Body) -> None:
+            """Index a body by both occurrence and master/template IDs when available."""
+            body_map.setdefault(candidate_body.id, candidate_body)
+
+            # Body occurrences use candidate_body.id while faces_meta can carry master IDs.
+            template = getattr(candidate_body, "_template", None)
+            template_id = getattr(template, "id", None)
+            if template_id:
+                body_map.setdefault(template_id, candidate_body)
+
+        for body in get_bodies_from_ids(self._design, list(body_ids)):
+            _index_body(body)
+        if len(body_map) != len(body_ids):
+            for body in get_all_bodies_from_design(self._design):
+                _index_body(body)
+
+        return [
+            Face(
+                face_id,
+                SurfaceType(face_meta_by_id[face_id].get("surface_type")),
+                body_map[face_meta_by_id[face_id].get("body_id")],
+                self._grpc_client,
+                face_meta_by_id[face_id].get("is_reversed", False),
+            )
+            for face_id in self._ids_cached["faces"]
+        ]
 
     def __repr__(self) -> str:
         """Represent the ``NamedSelection`` as a string."""
