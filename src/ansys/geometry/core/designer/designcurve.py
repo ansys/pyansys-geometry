@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -131,12 +131,14 @@ class DesignCurve:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def start(self) -> Point3D:
         """Start point of the design curve."""
         return self._start
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def end(self) -> Point3D:
         """End point of the design curve."""
         return self._end
