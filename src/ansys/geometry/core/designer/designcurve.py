@@ -102,6 +102,7 @@ class DesignCurve:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def shape(self) -> TrimmedCurve:
         """Underlying trimmed curve geometry of the design curve.
 
