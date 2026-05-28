@@ -467,11 +467,10 @@ class NamedSelection:
             if template_id:
                 body_map.setdefault(template_id, candidate_body)
 
-        for body in get_bodies_from_ids(self._design, list(body_ids)):
+        for body in get_all_bodies_from_design(self._design):
             _index_body(body)
-        if len(body_map) != len(body_ids):
-            for body in get_all_bodies_from_design(self._design):
-                _index_body(body)
+        if not body_ids.issubset(body_map):
+            return None
 
         return [
             Face(
