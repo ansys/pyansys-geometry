@@ -25,7 +25,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.1.5",
+  "ansys-api-discovery==1.1.7",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -67,12 +67,12 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.0",
-  "ty==0.0.37",
+  "ty==0.0.39",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.8.1",
+  "ansys-sphinx-theme[autoapi]==1.8.2",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.3",
@@ -92,7 +92,7 @@ doc = [
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
   "ansys-tools-common==0.5.0",
-  "ansys-tools-visualization-interface==0.13.1",
+  "ansys-tools-visualization-interface==0.13.3",
   "beartype==0.22.9",
   "docker==7.1.0",
   "geomdl==5.4.0",
@@ -104,14 +104,14 @@ general-all = [
   "pint==0.25.2",
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.48.3",
+  "pyvista[jupyter]==0.48.4",
   "requests==2.34.2",
   "scipy==1.15.3; python_version<'3.11'",
   "scipy==1.16.3; python_version>='3.11'",
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
-  "vtk==9.6.1",
+  "vtk==9.6.2",
 ]
 tests = [
   { include-group = "general-all" },
