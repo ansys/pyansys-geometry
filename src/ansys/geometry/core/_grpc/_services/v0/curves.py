@@ -131,8 +131,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
 
         # Return the result - formatted as a dictionary
         return {
-            "start_point": from_grpc_point_to_point3d(response.points[0]),
-            "end_point": from_grpc_point_to_point3d(response.points[1]),
+            "end_point": from_grpc_point_to_point3d(response.points[0]),
             "length": to_distance(response.length),
         }
 
