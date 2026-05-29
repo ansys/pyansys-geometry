@@ -190,7 +190,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
-        options = kwargs.get("options")
+        fmd_options = kwargs.get("fmd_options")
+        pmdb_options = kwargs.get("pmdb_options")
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveRequest(
@@ -198,10 +199,14 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             write_body_facets=kwargs["write_body_facets"],
             file_name=file_path.stem,
             fmd_export_options=(
-                from_fmd_options_to_grpc_fmd_options(options) if options is not None else None
+                from_fmd_options_to_grpc_fmd_options(fmd_options)
+                if fmd_options is not None
+                else None
             ),
             pmdb_export_options=(
-                from_pmdb_options_to_grpc_pmdb_options(options) if options is not None else None
+                from_pmdb_options_to_grpc_pmdb_options(pmdb_options)
+                if pmdb_options is not None
+                else None
             ),
         )
 

@@ -489,7 +489,8 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filename=file_location,
-                    options=fmd_options,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -502,7 +503,8 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filepath=file_location,
-                    options=fmd_options,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
         else:
             self._grpc_client.log.warning(
