@@ -43,7 +43,7 @@ The following wheelhouse files are available for download:
     {{ "^" * os_name|length }}
 
     {%- for link in download_links %}
-    * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys-geometry-core-{{ link.latest_released_version }}-all-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
+    * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys_geometry_core-{{ link.latest_released_version }}-all-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
     {%- endfor %}
 
     {%- endfor %}
