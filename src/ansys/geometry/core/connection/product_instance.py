@@ -168,7 +168,10 @@ class ProductInstance:
     def close(self) -> bool:
         """Close the process associated to the pid."""
         try:
-            os.kill(self._pid, signal.SIGTERM)
+            if os.name == "nt":
+                os.kill(self._pid, signal.CTRL_BREAK_EVENT)
+            else:
+                os.kill(self._pid, signal.SIGTERM)
         except OSError as oserr:
             LOG.error(str(oserr))
             return False

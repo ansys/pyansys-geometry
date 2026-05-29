@@ -44,6 +44,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
@@ -677,6 +678,24 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.design_points) == 3
     assert len(ns.faces) == 1
 
+    # Add a design curve if backend is 27R1 or newer
+    if (
+        modeler._grpc_client.services.version == GeometryApiProtos.V0
+        or modeler._grpc_client.backend_version < (27, 1, 0)
+    ):
+        return
+
+    dc_pt = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
+    dc = modeler.geometry_commands.revolve_points(
+        dc_pt, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(dc) == 1 and isinstance(dc[0], DesignCurve)
+
+    ns.add_members(design_curves=dc)
+
+    assert len(ns.design_curves) == 1
+    assert ns.design_curves[0].id == dc[0].id
+
 
 def test_add_member_to_imported_named_selection(modeler: Modeler):
     """Test for adding members to an imported ``NamedSelection``."""
@@ -812,6 +831,13 @@ def test_named_selection_contents(modeler: Modeler):
     # Pick vertices from the box to add to the named selection
     vertices = box.vertices[0:2]
 
+    # Create a design curve by revolving a design point
+    dp = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
+    design_curves = modeler.geometry_commands.revolve_points(
+        dp, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(design_curves) == 1 and isinstance(design_curves[0], DesignCurve)
+
     # Create the NamedSelection
     ns = design.create_named_selection(
         "MyNamedSelection",
@@ -820,6 +846,7 @@ def test_named_selection_contents(modeler: Modeler):
         edges=[edge],
         beams=[beam],
         vertices=vertices,
+        design_curves=design_curves,
     )
 
     # Check that the named selection has everything
@@ -839,6 +866,16 @@ def test_named_selection_contents(modeler: Modeler):
 
     assert len(ns.vertices) == 2
     assert (ns.vertices[0].id == vertices[0].id) and (ns.vertices[1].id == vertices[1].id)
+
+    # Add a design curve if backend is 27R1 or newer
+    if (
+        modeler._grpc_client.services.version == GeometryApiProtos.V0
+        or modeler._grpc_client.backend_version < (27, 1, 0)
+    ):
+        return
+
+    assert len(ns.design_curves) == 1
+    assert ns.design_curves[0].id == design_curves[0].id
 
 
 def test_add_component_with_instance_name(modeler: Modeler):

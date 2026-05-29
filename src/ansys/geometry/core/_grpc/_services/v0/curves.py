@@ -25,9 +25,10 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle
+from ..base.conversions import from_measurement_to_server_angle, to_distance
 from ..base.curves import GRPCCurvesService
 from .conversions import (
+    build_grpc_id,
     from_curve_to_grpc_curve,
     from_grpc_point_to_point3d,
     from_line_to_grpc_line,
@@ -52,8 +53,10 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+        from ansys.api.geometry.v0.curves_pb2_grpc import CurvesStub
 
-        self.stub = CommandsStub(channel)
+        self.stub = CurvesStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -68,7 +71,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        _ = self.stub.RevolveCurves(request)
+        _ = self.commands_stub.RevolveCurves(request)
 
         # Return the result - formatted as a dictionary
         return {}
@@ -84,7 +87,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        response = self.stub.IntersectCurves(request)
+        response = self.commands_stub.IntersectCurves(request)
 
         # Return the result - formatted as a dictionary
         return {
@@ -113,10 +116,27 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        response = self.stub.IntersectCurveAndSurface(request).response_data[0]
+        response = self.commands_stub.IntersectCurveAndSurface(request).response_data[0]
 
         # Return the result - formatted as a dictionary
         return {
             "intersect": response.intersect,
             "points": [from_grpc_point_to_point3d(point) for point in response.points],
         }
+
+    @protect_grpc
+    def get(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        response = self.stub.Get(build_grpc_id(kwargs["id"]))
+
+        # Return the result - formatted as a dictionary
+        return {
+            "end_point": from_grpc_point_to_point3d(response.points[0]),
+            "length": to_distance(response.length),
+        }
+
+    def get_interval(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_interval' is not "
+            "implemented in this protofile version."
+        )

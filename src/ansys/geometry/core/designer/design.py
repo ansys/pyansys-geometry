@@ -779,6 +779,7 @@ class Design(Component):
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
+        design_curves: list[DesignCurve] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -800,6 +801,8 @@ class Design(Component):
             All components to include in the named selection.
         vertices : list[Vertex], default: None
             All vertices to include in the named selection.
+        design_curves : list[DesignCurve], default: None
+            All design curves to include in the named selection.
 
         Returns
         -------
@@ -813,10 +816,13 @@ class Design(Component):
             one of the optional parameters must be provided.
         """
         # Verify that at least one entity is provided
-        if not any([bodies, faces, edges, beams, design_points, components, vertices]):
+        if not any(
+            [bodies, faces, edges, beams, design_points, components, vertices, design_curves]
+        ):
             raise ValueError(
                 "At least one of the following must be provided: "
-                "bodies, faces, edges, beams, design_points, components, or vertices."
+                "bodies, faces, edges, beams, design_points, components, vertices, "
+                "or design_curves."
             )
 
         named_selection = NamedSelection(
@@ -830,6 +836,7 @@ class Design(Component):
             design_points=design_points,
             components=components,
             vertices=vertices,
+            design_curves=design_curves,
         )
 
         self._named_selections[named_selection.name] = named_selection
