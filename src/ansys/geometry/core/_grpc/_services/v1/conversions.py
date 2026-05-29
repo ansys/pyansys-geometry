@@ -575,7 +575,7 @@ def from_pmdb_options_to_grpc_pmdb_options(
         cad_attribute_prefixes=options.cad_attribute_prefixes,
         named_selection_prefixes=options.named_selection_prefixes,
         analysis_type=options.analysis_type.value,
-        mixed_part_import_type=options.mixed_part_import_type.value,
+        mixed_part_export_type=options.mixed_part_export_type.value,
         attach_flattened_assembly=options.attach_flattened_assembly,
         use_cad_mass_properties=options.use_cad_mass_properties,
         plane_prefixes=options.plane_prefixes,
@@ -603,6 +603,9 @@ def from_pmdb_options_to_grpc_pmdb_options(
         target_application=options.target_application.value,
         temp_directory=options.temp_directory,
         process_physics_definition=options.process_physics_definition,
+        process_solid_bodies=options.process_solid_bodies,
+        process_surface_bodies=options.process_surface_bodies,
+        process_line_bodies=options.process_line_bodies,
     )
 
 

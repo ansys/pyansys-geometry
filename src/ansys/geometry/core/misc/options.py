@@ -259,8 +259,8 @@ class AnalysisType(Enum):
 
 
 @unique
-class MixedPartImportType(Enum):
-    """Provides values for the mixed-part import type used during PMDB export."""
+class MixedPartExportType(Enum):
+    """Provides values for the mixed-part export type used during PMDB export."""
 
     NONE = 0
     SOLID = 1
@@ -338,8 +338,8 @@ class PMDBExportOptions:
         Prefixes used to filter named selections for export.
     analysis_type : AnalysisType, default: AnalysisType.THREE_D
         The analysis type (2D or 3D).
-    mixed_part_import_type : MixedPartImportType, default: MixedPartImportType.NONE
-        The type of mixed parts to import.
+    mixed_part_export_type : MixedPartExportType, default: MixedPartExportType.NONE
+        The type of mixed parts to export.
     attach_flattened_assembly : bool, default: False
         Whether to attach the assembly in a flattened structure.
     use_cad_mass_properties : bool, default: False
@@ -394,13 +394,19 @@ class PMDBExportOptions:
         Temporary directory path used during export.
     process_physics_definition : bool, default: False
         Whether to process physics definitions.
+    process_solid_bodies : bool, default: False
+        Whether to process solid bodies.
+    process_surface_bodies : bool, default: False
+        Whether to process surface bodies.
+    process_line_bodies : bool, default: False
+        Whether to process line bodies.
     """
 
     parameter_prefixes: str = ""
     cad_attribute_prefixes: str = ""
     named_selection_prefixes: str = ""
     analysis_type: AnalysisType = AnalysisType.THREE_D
-    mixed_part_import_type: MixedPartImportType = MixedPartImportType.NONE
+    mixed_part_export_type: MixedPartExportType = MixedPartExportType.NONE
     attach_flattened_assembly: bool = False
     use_cad_mass_properties: bool = False
     plane_prefixes: str = ""
@@ -428,3 +434,6 @@ class PMDBExportOptions:
     target_application: TargetApplication = TargetApplication.PARTMGR
     temp_directory: str = ""
     process_physics_definition: bool = False
+    process_solid_bodies: bool = False
+    process_surface_bodies: bool = False
+    process_line_bodies: bool = False

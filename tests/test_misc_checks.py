@@ -45,7 +45,16 @@ from ansys.geometry.core.misc import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Angle, Distance
-from ansys.geometry.core.misc.options import FMDExportOptions
+from ansys.geometry.core.misc.options import (
+    AnalysisType,
+    AttachWeightClass,
+    FMDExportOptions,
+    ImportParameterType,
+    MixedPartExportType,
+    PlugInFacetQuality,
+    PMDBExportOptions,
+    TargetApplication,
+)
 
 
 def test_tessellation_options():
@@ -643,3 +652,156 @@ def test_kwargs_passed_not_accepted_decorator_order():
         "method 'my_method_diff_order': arg3.",
     ):
         my_method_diff_order(arg1=1, arg2=2, arg3=3)
+
+
+def test_pmdb_export_options_defaults():
+    """Test that PMDBExportOptions defaults are set correctly."""
+    opts = PMDBExportOptions()
+
+    assert opts.parameter_prefixes == ""
+    assert opts.cad_attribute_prefixes == ""
+    assert opts.named_selection_prefixes == ""
+    assert opts.analysis_type is AnalysisType.THREE_D
+    assert opts.mixed_part_export_type is MixedPartExportType.NONE
+    assert opts.attach_flattened_assembly is False
+    assert opts.use_cad_mass_properties is False
+    assert opts.plane_prefixes == ""
+    assert opts.coordinate_system_prefixes == ""
+    assert opts.advanced_geom_processing is False
+    assert opts.angular_deviation == 0.0
+    assert opts.attach_weight_class is AttachWeightClass.HEAVYWEIGHT
+    assert opts.cad_associativity is False
+    assert opts.cad_attribute_transfer is False
+    assert opts.do_smart_update is False
+    assert opts.geometry_deviation == 0.0
+    assert opts.process_coordinate_sys is False
+    assert opts.process_planes is False
+    assert opts.import_using_instances is False
+    assert opts.process_work_points is False
+    assert opts.is_selective_update is False
+    assert opts.material_properties is False
+    assert opts.granta_material_properties is False
+    assert opts.max_facet_size == 0.0
+    assert opts.named_selection is False
+    assert opts.parameter_processing_type is ImportParameterType.NONE
+    assert opts.plug_in_facet_quality is PlugInFacetQuality.NONE
+    assert opts.process_enclosure_and_symmetry is False
+    assert opts.reader_save_part is False
+    assert opts.target_application is TargetApplication.PARTMGR
+    assert opts.temp_directory == ""
+    assert opts.process_physics_definition is False
+    assert opts.process_solid_bodies is False
+    assert opts.process_surface_bodies is False
+    assert opts.process_line_bodies is False
+
+
+def test_pmdb_export_options_custom_values():
+    """Test that PMDBExportOptions accepts and stores non-default values correctly."""
+    opts = PMDBExportOptions(
+        parameter_prefixes="DS_",
+        cad_attribute_prefixes="attr_",
+        named_selection_prefixes="ns_",
+        analysis_type=AnalysisType.TWO_D,
+        mixed_part_export_type=MixedPartExportType.SOLID_SHEET,
+        attach_flattened_assembly=True,
+        use_cad_mass_properties=True,
+        plane_prefixes="pl_",
+        coordinate_system_prefixes="cs_",
+        advanced_geom_processing=True,
+        angular_deviation=1.5,
+        attach_weight_class=AttachWeightClass.LIGHTWEIGHT,
+        cad_associativity=True,
+        cad_attribute_transfer=True,
+        do_smart_update=True,
+        geometry_deviation=0.001,
+        process_coordinate_sys=True,
+        process_planes=True,
+        import_using_instances=True,
+        process_work_points=True,
+        is_selective_update=True,
+        material_properties=True,
+        granta_material_properties=True,
+        max_facet_size=0.5,
+        named_selection=True,
+        parameter_processing_type=ImportParameterType.ALL,
+        plug_in_facet_quality=PlugInFacetQuality.FINE,
+        process_enclosure_and_symmetry=True,
+        reader_save_part=True,
+        target_application=TargetApplication.FLUENTMESHING,
+        temp_directory="/tmp/pmdb",
+        process_physics_definition=True,
+        process_solid_bodies=True,
+        process_surface_bodies=True,
+        process_line_bodies=True,
+    )
+
+    assert opts.parameter_prefixes == "DS_"
+    assert opts.cad_attribute_prefixes == "attr_"
+    assert opts.named_selection_prefixes == "ns_"
+    assert opts.analysis_type is AnalysisType.TWO_D
+    assert opts.mixed_part_export_type is MixedPartExportType.SOLID_SHEET
+    assert opts.attach_flattened_assembly is True
+    assert opts.use_cad_mass_properties is True
+    assert opts.plane_prefixes == "pl_"
+    assert opts.coordinate_system_prefixes == "cs_"
+    assert opts.advanced_geom_processing is True
+    assert opts.angular_deviation == 1.5
+    assert opts.attach_weight_class is AttachWeightClass.LIGHTWEIGHT
+    assert opts.cad_associativity is True
+    assert opts.cad_attribute_transfer is True
+    assert opts.do_smart_update is True
+    assert opts.geometry_deviation == 0.001
+    assert opts.process_coordinate_sys is True
+    assert opts.process_planes is True
+    assert opts.import_using_instances is True
+    assert opts.process_work_points is True
+    assert opts.is_selective_update is True
+    assert opts.material_properties is True
+    assert opts.granta_material_properties is True
+    assert opts.max_facet_size == 0.5
+    assert opts.named_selection is True
+    assert opts.parameter_processing_type is ImportParameterType.ALL
+    assert opts.plug_in_facet_quality is PlugInFacetQuality.FINE
+    assert opts.process_enclosure_and_symmetry is True
+    assert opts.reader_save_part is True
+    assert opts.target_application is TargetApplication.FLUENTMESHING
+    assert opts.temp_directory == "/tmp/pmdb"
+    assert opts.process_physics_definition is True
+    assert opts.process_solid_bodies is True
+    assert opts.process_surface_bodies is True
+    assert opts.process_line_bodies is True
+
+
+def test_pmdb_export_options_enum_values():
+    """Test all enum classes used by PMDBExportOptions have expected members and values."""
+    # AnalysisType
+    assert AnalysisType.THREE_D.value == 0
+    assert AnalysisType.TWO_D.value == 1
+
+    # MixedPartExportType — spot-check key members
+    assert MixedPartExportType.NONE.value == 0
+    assert MixedPartExportType.SOLID.value == 1
+    assert MixedPartExportType.SOLID_SHEET.value == 5
+    assert MixedPartExportType.ALL.value == 15
+    assert len(MixedPartExportType) == 16
+
+    # AttachWeightClass
+    assert AttachWeightClass.HEAVYWEIGHT.value == 0
+    assert AttachWeightClass.FEATHERWEIGHT.value == 3
+    assert len(AttachWeightClass) == 4
+
+    # ImportParameterType
+    assert ImportParameterType.NONE.value == 0
+    assert ImportParameterType.INDEPENDENT.value == 1
+    assert ImportParameterType.ALL.value == 2
+    assert len(ImportParameterType) == 3
+
+    # PlugInFacetQuality
+    assert PlugInFacetQuality.NONE.value == 0
+    assert PlugInFacetQuality.USER_DEFINED.value == 7
+    assert len(PlugInFacetQuality) == 8
+
+    # TargetApplication
+    assert TargetApplication.PARTMGR.value == 0
+    assert TargetApplication.SPACECLAIM.value == 4
+    assert len(TargetApplication) == 5
