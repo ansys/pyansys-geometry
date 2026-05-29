@@ -137,7 +137,7 @@ class GRPCModelToolsServiceV0(GRPCModelToolsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveTranslateRequest(
-            selection=[build_grpc_id(kwargs["selection_id"])],
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]],
             direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
             distance=from_measurement_to_server_length(kwargs["distance"]),
         )

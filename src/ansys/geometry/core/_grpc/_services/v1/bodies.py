@@ -1143,10 +1143,15 @@ class GRPCBodyServiceV1(GRPCBodyService):
         )
 
         # Call the gRPC service
-        _ = self.edit_stub.CombineMergeBodies(request=request)
+        response = self.edit_stub.CombineMergeBodies(request=request)
+
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_response,
+        }
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102

@@ -23,14 +23,17 @@
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity
 
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
-from ansys.geometry.core.misc.checks import check_ndarray_is_all_nan, graphics_required
+from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    check_ndarray_is_all_nan,
+    graphics_required,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.sketch.edge import SketchEdge

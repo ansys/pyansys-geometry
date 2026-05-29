@@ -24,7 +24,6 @@
 from enum import Enum, unique
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
@@ -45,6 +44,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
 )
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
@@ -391,7 +391,12 @@ class Face:
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_color(self, color: str | tuple[float, float, float]) -> None:
+    def set_color(
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
+    ) -> None:
         """Set the color of the face.
 
         Warnings
@@ -408,7 +413,7 @@ class Face:
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the face.
 
         Warnings

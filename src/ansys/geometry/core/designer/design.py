@@ -25,7 +25,6 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
@@ -59,11 +58,14 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
+    FMDExportOptions,
     ImportOptions,
     ImportOptionsDefinitions,
     TessellationOptions,
@@ -264,6 +266,12 @@ class Design(Component):
 
     @check_input_types
     @ensure_design_is_active
+    @deprecated_method(
+        "export_to_*",
+        "use the export_to_* or download methods instead",
+        "0.15.2",
+        "0.17.0",
+    )
     def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
         """Save a design to disk on the active Geometry server instance.
 
@@ -293,6 +301,7 @@ class Design(Component):
         file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
         write_body_facets: bool = False,
+        fmd_options: FMDExportOptions | None = None,
     ) -> None:
         """Export and download the design from the server.
 
@@ -304,6 +313,8 @@ class Design(Component):
             Format for the file to save to.
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        fmd_options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
         """
         from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
 
@@ -331,7 +342,10 @@ class Design(Component):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(
-                format=format, write_body_facets=write_body_facets, file_location=file_location
+                format=format,
+                write_body_facets=write_body_facets,
+                file_location=file_location,
+                fmd_options=fmd_options,
             )
 
         # Write to file
@@ -341,9 +355,13 @@ class Design(Component):
         ):
             file_location.write_bytes(received_bytes)
         elif self._grpc_client.services.version == GeometryApiProtos.V1:
-            zipped_file = file_location.parent.joinpath(file_location.stem + ".zip")
+            # In v1 - the file is sent as a zip containing the main file
+            zipped_file = file_location.parent / f"{file_location.stem}.zip"
             zipped_file.write_bytes(received_bytes)
+            # Extract the main file from the zip and save to the specified location
             extract_project_from_zip(zipped_file, file_location.parent)
+            # If extraction is successful, remove the zip file
+            zipped_file.unlink()
         else:  # pragma: no cover
             # This should never happen as the version is set in the constructor
             raise ValueError(f"Unsupported version: {self.version}")
@@ -417,6 +435,7 @@ class Design(Component):
         format: DesignFileFormat,
         write_body_facets: bool = False,
         file_location: Union[Path, str] = None,
+        fmd_options: FMDExportOptions | None = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -424,6 +443,13 @@ class Design(Component):
         ----------
         format : DesignFileFormat
             Format for the file to save to.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        file_location : ~pathlib.Path | str, optional
+            Location on disk to save the file to.
+        fmd_options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
+
 
         Returns
         -------
@@ -450,6 +476,7 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filename=file_location,
+                    options=fmd_options,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -462,6 +489,7 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filepath=file_location,
+                    options=fmd_options,
                 )
         else:
             self._grpc_client.log.warning(
@@ -628,7 +656,11 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Path | str | None = None) -> Path:
+    def export_to_fmd(
+        self,
+        location: Path | str | None = None,
+        options: FMDExportOptions | None = None,
+    ) -> Path:
         """Export the design to an FMD file.
 
         Parameters
@@ -636,17 +668,32 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        options : FMDExportOptions, optional
+            Options for FMD export. If None, default options will be used.
 
         Returns
         -------
         ~pathlib.Path
             The path to the saved file.
+
+        Warnings
+        --------
+        FMD export options are only available in Ansys 27.1 and later products. If options are
+        provided but the backend version does not support them, a warning will be issued and the
+        options will be ignored.
         """
         # Define the file location
         file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
-        self.download(file_location, DesignFileFormat.FMD)
+        if options and self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "FMD export options are only supported in Ansys 27.1 and later products."
+                " Ignoring provided options and exporting with default settings."
+            )
+            options = None
+
+        self.download(file_location, DesignFileFormat.FMD, fmd_options=options)
 
         # Return the file location
         return file_location
@@ -732,6 +779,7 @@ class Design(Component):
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
+        design_curves: list[DesignCurve] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -753,6 +801,8 @@ class Design(Component):
             All components to include in the named selection.
         vertices : list[Vertex], default: None
             All vertices to include in the named selection.
+        design_curves : list[DesignCurve], default: None
+            All design curves to include in the named selection.
 
         Returns
         -------
@@ -766,10 +816,13 @@ class Design(Component):
             one of the optional parameters must be provided.
         """
         # Verify that at least one entity is provided
-        if not any([bodies, faces, edges, beams, design_points, components, vertices]):
+        if not any(
+            [bodies, faces, edges, beams, design_points, components, vertices, design_curves]
+        ):
             raise ValueError(
                 "At least one of the following must be provided: "
-                "bodies, faces, edges, beams, design_points, components, or vertices."
+                "bodies, faces, edges, beams, design_points, components, vertices, "
+                "or design_curves."
             )
 
         named_selection = NamedSelection(
@@ -783,6 +836,7 @@ class Design(Component):
             design_points=design_points,
             components=components,
             vertices=vertices,
+            design_curves=design_curves,
         )
 
         self._named_selections[named_selection.name] = named_selection
@@ -1681,6 +1735,7 @@ class Design(Component):
             new_body = self._find_and_add_body(
                 created_body_info, self.components, created_parts_dict, created_components_dict
             )
+
             if not new_body:
                 new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
                 self._master_component.part.bodies.append(new_body)
@@ -1805,6 +1860,31 @@ class Design(Component):
             return True
 
         return False
+
+    def _clear_body_cache_for_part(self, part: Part) -> None:
+        """Clear body cache on all components that reference a specific part.
+
+        Parameters
+        ----------
+        part : Part
+            The part whose body cache should be cleared on all referencing components.
+        """
+        # Check root component
+        if (
+            hasattr(self, "_master_component")
+            and self._master_component
+            and self._master_component.part == part
+        ):
+            self._clear_cached_bodies()
+
+        # Check all child components recursively
+        for component in self._get_all_components():
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part == part
+            ):
+                component._clear_cached_bodies()
 
     def _find_and_add_component_to_design(
         self,
@@ -1970,7 +2050,9 @@ class Design(Component):
 
                 component._master_component.part.bodies.append(new_master_body)
 
-                component._clear_cached_bodies()
+                # Clear cached bodies on all components that reference this part
+                self._clear_body_cache_for_part(component._master_component.part)
+
                 self._grpc_client.log.debug(
                     f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"

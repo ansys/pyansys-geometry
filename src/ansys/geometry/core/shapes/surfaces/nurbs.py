@@ -24,14 +24,13 @@
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.math import ZERO_POINT3D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -149,7 +148,7 @@ class NURBSSurface(Surface):
         knots_u: list[Real],
         knots_v: list[Real],
         control_points: list[Point3D],
-        weights: list[Real] = None,
+        weights: list[Real] | None = None,
         origin: Point3D = ZERO_POINT3D,
         reference: UnitVector3D = UNITVECTOR3D_X,
         axis: UnitVector3D = UNITVECTOR3D_Z,
@@ -192,7 +191,7 @@ class NURBSSurface(Surface):
         nurbs_surface._nurbs_surface.ctrlpts_size_v = len(knots_v) - degree_v - 1
 
         # If no weights are provided, set all weights to 1.0
-        if not weights:
+        if weights is None:
             weights = [1.0] * len(control_points)
         ctrlpts_homogenous = [[*pt, w] for (pt, w) in zip(control_points, weights)]
 
@@ -275,7 +274,7 @@ class NURBSSurface(Surface):
 
         return nurbs_surface
 
-    def __eq__(self, other: "NURBSSurface") -> bool:
+    def __eq__(self, other: Surface) -> bool:
         """Determine if two surfaces are equal."""
         if not isinstance(other, NURBSSurface):
             return False
@@ -425,7 +424,7 @@ class NURBSSurface(Surface):
 
         return mesh
 
-    def contains_param(self, param: ParamUV) -> bool:  # noqa: D102
+    def contains_param(self, param_uv: ParamUV) -> bool:  # noqa: D102
         raise NotImplementedError("contains_param() is not implemented.")
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102

@@ -21,10 +21,9 @@
 # SOFTWARE.
 """Provides for handling units homogeneously throughout PyAnsys Geometry."""
 
-from beartype import beartype as check_input_types
 from pint import Quantity, Unit, UnitRegistry, set_application_registry
 
-from ansys.geometry.core.misc.checks import check_pint_unit_compatibility
+from ansys.geometry.core.misc.checks import check_input_types, check_pint_unit_compatibility
 from ansys.geometry.core.typing import Real
 
 UNITS = UnitRegistry()

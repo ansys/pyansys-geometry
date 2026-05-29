@@ -21,11 +21,13 @@
 # SOFTWARE.
 """Provides functions for performing common checks."""
 
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 import functools
-from typing import TYPE_CHECKING, Type
+from typing import TYPE_CHECKING, Any, Type, TypeVar
 import warnings
 
+from beartype import beartype as _beartype
+from beartype.roar import BeartypeCallHintForwardRefException as _BeartypeForwardRefError
 import numpy as np
 from pint import Unit
 import semver
@@ -36,8 +38,10 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
     from ansys.geometry.core.sketch.sketch import Sketch
 
+_F = TypeVar("_F", bound=Callable[..., Any])
 
-def ensure_design_is_active(method):
+
+def ensure_design_is_active(method: _F) -> _F:
     """Make sure that the design is active before executing a method.
 
     This function is necessary to be called whenever we do any operation
@@ -46,13 +50,14 @@ def ensure_design_is_active(method):
     """
 
     @functools.wraps(method)
-    def wrapper(self, *args, **kwargs):
+    def wrapper(*args, **kwargs):
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.errors import GeometryRuntimeError
 
+        self = args[0]
         if pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK:
             # If the user has disabled the check, then we can skip it
-            return method(self, *args, **kwargs)
+            return method(*args, **kwargs)
 
         # Check if the current design is active... otherwise activate it
         def get_design_ref(obj) -> "Design":
@@ -79,11 +84,68 @@ def ensure_design_is_active(method):
             )
 
         # Finally, call method
-        return method(self, *args, **kwargs)
+        return method(*args, **kwargs)
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]
 
 
+def check_input_types(func: _F) -> _F:
+    """Conditionally apply runtime type checking based on a global flag.
+
+    When ``ansys.geometry.core.ENABLE_RUNTIME_TYPECHECKING`` is ``True``, the decorated
+    function performs runtime type validation. When ``False`` (default), the function is
+    called directly without type checking for improved performance.
+
+    The type-checked version is created once at decoration time, so toggling
+    the flag at runtime is supported without re-wrapping overhead.
+
+    If beartype encounters an unresolvable forward reference at call time (e.g. a type
+    that is only imported under ``TYPE_CHECKING``), beartype is disabled for that
+    function and the original is called without type checking.
+    """
+    try:
+        _typed_func = _beartype(func)
+        _beartype_usable: bool = True
+    except Exception:
+        _typed_func = func
+        _beartype_usable = False
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        nonlocal _beartype_usable
+        import ansys.geometry.core as pyansys_geometry
+
+        if getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False) and _beartype_usable:
+            try:
+                return _typed_func(*args, **kwargs)
+            except _BeartypeForwardRefError:
+                # A forward reference that is only available under TYPE_CHECKING
+                # could not be resolved at call time; disable beartype for this function.
+                _beartype_usable = False
+        return func(*args, **kwargs)
+
+    return wrapper  # type: ignore[return-value]
+
+
+def _skip_if_runtime_typechecking_disabled(func: _F) -> _F:
+    """Short-circuit all ``check_*`` functions when ``ENABLE_RUNTIME_TYPECHECKING`` is ``False``.
+
+    Since every ``check_*`` function returns ``None`` and only raises on invalid input,
+    skipping them entirely is safe when runtime type checking is disabled.
+    """
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs) -> None:
+        import ansys.geometry.core as pyansys_geometry
+
+        if not getattr(pyansys_geometry, "ENABLE_RUNTIME_TYPECHECKING", False):
+            return
+        return func(*args, **kwargs)
+
+    return wrapper  # type: ignore[return-value]
+
+
+@_skip_if_runtime_typechecking_disabled
 def check_is_float_int(param: object, param_name: str | None = None) -> None:
     """Check if a parameter has a float or integer value.
 
@@ -107,6 +169,7 @@ def check_is_float_int(param: object, param_name: str | None = None) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_float_int(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` has float/integer types.
 
@@ -135,6 +198,7 @@ def check_ndarray_is_float_int(param: np.ndarray, param_name: str | None = None)
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_not_none(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all ``None``.
 
@@ -160,6 +224,7 @@ def check_ndarray_is_not_none(param: np.ndarray, param_name: str | None = None) 
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_all_nan(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
 
@@ -183,6 +248,7 @@ def check_ndarray_is_all_nan(param: np.ndarray, param_name: str | None = None) -
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_ndarray_is_non_zero(param: np.ndarray, param_name: str | None = None) -> None:
     """Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
 
@@ -207,6 +273,7 @@ def check_ndarray_is_non_zero(param: np.ndarray, param_name: str | None = None) 
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
     """Check if input :class:`pint.Unit` is compatible with the expected input.
 
@@ -228,6 +295,7 @@ def check_pint_unit_compatibility(input: Unit, expected: Unit) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type_equivalence(input: object, expected: object) -> None:
     """Check if an input object is of the same class as an expected object.
 
@@ -249,6 +317,7 @@ def check_type_equivalence(input: object, expected: object) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
     """Check if an input object is of the same type as expected types.
 
@@ -270,6 +339,7 @@ def check_type(input: object, expected_type: Type | tuple[Type, ...]) -> None:
         )
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_type_all_elements_in_iterable(
     input: Iterable, expected_type: Type | tuple[Type, ...]
 ) -> None:
@@ -291,11 +361,12 @@ def check_type_all_elements_in_iterable(
         check_type(elem, expected_type)
 
 
+@_skip_if_runtime_typechecking_disabled
 def check_nurbs_compatibility(
     backend_version: semver.Version,
-    sketch: "Sketch" = None,
-    curves: list["TrimmedCurve"] = None,
-    surfaces: list["TrimmedSurface"] = None,
+    sketch: "Sketch | None" = None,
+    curves: "list[TrimmedCurve] | None" = None,
+    surfaces: "list[TrimmedSurface] | None" = None,
 ) -> None:
     """Check if the inputs require NURBS functionality and it is available.
 
@@ -367,10 +438,11 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     from ansys.geometry.core.errors import GeometryRuntimeError
     from ansys.geometry.core.logger import LOG
 
-    def backend_version_decorator(method):
+    def backend_version_decorator(method: _F) -> _F:
         @functools.wraps(method)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(*args, **kwargs):
             method_version = semver.Version(major, minor, service_pack)
+            self = args[0]
             if hasattr(self, "_grpc_client"):
                 if self._grpc_client is None:
                     raise GeometryRuntimeError(
@@ -393,11 +465,11 @@ def min_backend_version(major: int, minor: int, service_pack: int):
                                 + f"{self._grpc_client.backend_version}."
                             )
                     else:
-                        return method(self, *args, **kwargs)
+                        return method(*args, **kwargs)
             else:
                 LOG.warning("This object does not have a connection with the backend.")
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return backend_version_decorator
 
@@ -423,7 +495,7 @@ def deprecated_method(
         Version where the method will be removed.
     """
 
-    def deprecated_decorator(method):
+    def deprecated_decorator(method: _F) -> _F:
         @functools.wraps(method)
         def wrapper(*args, **kwargs):
             msg = f"The method '{method.__name__}' is deprecated."
@@ -438,7 +510,7 @@ def deprecated_method(
             warnings.warn(msg, DeprecationWarning)
             return method(*args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return deprecated_decorator
 
@@ -467,7 +539,7 @@ def deprecated_argument(
         Version where the method will be removed.
     """
 
-    def deprecated_decorator(method):
+    def deprecated_decorator(method: _F) -> _F:
         @functools.wraps(method)
         def wrapper(*args, **kwargs):
             if arg in kwargs and kwargs[arg] is not None:
@@ -484,7 +556,7 @@ def deprecated_argument(
 
             return method(*args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     return deprecated_decorator
 
@@ -520,7 +592,7 @@ def run_if_graphics_required():
         raise ImportError(ERROR_GRAPHICS_REQUIRED)
 
 
-def graphics_required(method):
+def graphics_required(method: _F) -> _F:
     """Decorate a method as requiring graphics.
 
     Parameters
@@ -539,10 +611,10 @@ def graphics_required(method):
         run_if_graphics_required()
         return method(*args, **kwargs)
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]
 
 
-def kwargs_passed_not_accepted(method):
+def kwargs_passed_not_accepted(method: _F) -> _F:
     """Check that no unexpected kwargs are passed to the method.
 
     This decorator will raise a TypeError if any keyword arguments are passed
@@ -616,4 +688,4 @@ def kwargs_passed_not_accepted(method):
 
         return method(*args, **kwargs)
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]

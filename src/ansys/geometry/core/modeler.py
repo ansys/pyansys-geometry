@@ -33,7 +33,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
-from ansys.geometry.core.misc.checks import check_type, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -442,7 +442,8 @@ class Modeler:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
-                ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
+                ext in str(file_path).lower()
+                for ext in [".catproduct", ".asm", ".solution", ".sldasm"]
             ):
                 dir = fp_path.parent
                 for file in dir.iterdir():
@@ -502,12 +503,12 @@ class Modeler:
         lines.append(str(self.client))
         return "\n".join(lines)
 
-    def run_discovery_script_file(
+    def run_script_file(
         self,
         file_path: str | Path,
         script_args: dict[str, str] | None = None,
         import_design: bool = False,
-        api_version: int | str | ApiVersions = None,
+        api_version: int | str | ApiVersions | None = None,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
@@ -621,6 +622,29 @@ class Modeler:
             return response.get("values"), self.read_existing_design()
         else:
             return response.get("values"), None
+
+    @deprecated_method(
+        alternative="run_script_file",
+        version="0.15.2",
+        remove="0.17.0",
+    )
+    def run_discovery_script_file(
+        self,
+        file_path: str | Path,
+        script_args: dict[str, str] | None = None,
+        import_design: bool = False,
+        api_version: int | str | ApiVersions | None = None,
+    ) -> tuple[dict[str, str], Optional["Design"]]:
+        """Run a script file.
+
+        This is a deprecated method. Use ``run_script_file()`` instead.
+        """
+        return self.run_script_file(
+            file_path=file_path,
+            script_args=script_args,
+            import_design=import_design,
+            api_version=api_version,
+        )
 
     @property
     def repair_tools(self) -> RepairTools:

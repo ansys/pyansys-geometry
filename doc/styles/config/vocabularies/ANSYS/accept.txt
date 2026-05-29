@@ -1,7 +1,13 @@
+addin
+Addin
+addIn
+AddIn
 (?i)ansys
 (?i)api
 [Aa]xisymmetric
 [Bb]oolean
+(?i)beartype
+BeartypeCallHintParamViolation
 (?i)check
 [Cc]onda
 (?i)dependabot
@@ -16,11 +22,13 @@ Geometry models
 (?i)github
 GitHub Container Registry
 namespace
+PMDB
 Polydata
 PROTO
 Protobuf
 (?i)pyansys
 (?i)pyansys-geometry
+PyMechanical
 PyPI
 PyVista
 pytest

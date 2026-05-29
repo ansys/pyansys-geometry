@@ -27,7 +27,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
@@ -52,6 +51,8 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    _F,
+    check_input_types,
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
@@ -1021,7 +1022,7 @@ class MasterBody(IBody):
         self._fill_style = FillStyle.DEFAULT
         self._color = None
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -1041,7 +1042,7 @@ class MasterBody(IBody):
             self._raw_tessellation = None
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     @property
     def id(self) -> str:  # noqa: D102
@@ -1351,7 +1352,10 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
@@ -1360,7 +1364,7 @@ class MasterBody(IBody):
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the body.
 
         Warnings
@@ -1707,9 +1711,21 @@ class MasterBody(IBody):
         check_type_all_elements_in_iterable(other, Body)
 
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
-        self._grpc_client.services.bodies.combine_merge(
+        response = self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
         )
+
+        if not response.get("success"):
+            self._grpc_client.log.warning(f"Failed to combine and merge body {self.id}.")
+            return
+
+        # Get the parent design from any of the bodies
+        parent_design = get_design_from_body(other[0] if other else self)
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def _combine_subtract(  # noqa: D102
         self,
@@ -1786,7 +1802,7 @@ class Body(IBody):
         self._template = template
         self._grpc_client = template._grpc_client
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1805,7 +1821,7 @@ class Body(IBody):
             self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
@@ -2128,7 +2144,10 @@ class Body(IBody):
 
     @ensure_design_is_active
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         return self._template.set_color(color)
 

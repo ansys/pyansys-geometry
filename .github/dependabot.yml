@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "daily"
     cooldown:
-      default-days: 5 # Fallback cooldown if no specific rule applies
+      default-days: 7 # Fallback cooldown if no specific rule applies
       semver-major-days: 30 # Cooldown for major version updates
       semver-minor-days: 7 # Cooldown for minor version updates
       semver-patch-days: 3 # Cooldown for patch updates
@@ -21,7 +21,7 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "build"
+      prefix: "build(deps)"
     ignore:
       - dependency-name: "trame-vtk" # DO NOT UPDATE - issues observed with 2.11.X versions
         versions:
@@ -58,8 +58,27 @@ updates:
     assignees:
       - "pyansys-ci-bot"
     commit-message:
-      prefix: "ci"
+      prefix: "ci(actions)"
     groups:
       actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    cooldown:
+      default-days: 7 # semver-* options are not applicable for pre-commit
+      exclude:
+        - "ansys/pre-commit-hooks/*"
+    labels:
+      - "maintenance"
+    assignees:
+      - "pyansys-ci-bot"
+    commit-message:
+      prefix: "chore(pre-commit)"
+    groups:
+      pre-commit-hooks:
         patterns:
           - "*"

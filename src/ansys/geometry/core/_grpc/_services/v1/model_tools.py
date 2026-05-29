@@ -162,7 +162,7 @@ class GRPCModelToolsServiceV1(GRPCModelToolsService):
         request = MoveTranslateRequest(
             request_data=[
                 MoveTranslateRequestData(
-                    selection_ids=[build_grpc_id(kwargs["selection_id"])],
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
                     direction=from_unit_vector_to_grpc_direction(kwargs["direction"]),
                     distance=from_length_to_grpc_quantity(kwargs["distance"]),
                 )
