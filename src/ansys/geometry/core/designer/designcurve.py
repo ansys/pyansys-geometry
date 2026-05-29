@@ -25,7 +25,7 @@ from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.math.point import Point3D
-from ansys.geometry.core.misc.checks import ensure_design_is_active
+from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
@@ -102,6 +102,7 @@ class DesignCurve:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def shape(self) -> TrimmedCurve:
         """Underlying trimmed curve geometry of the design curve.
 
@@ -110,15 +111,13 @@ class DesignCurve:
         if self._shape is None:
             self._grpc_client.log.debug(f"Requesting curve properties for {self._id} from server.")
 
-            geometry = self._grpc_client.services.edges.get_curve(id=self._id).get("curve")
+            curve = self._grpc_client.services.curves.get(id=self._id)
+            geometry = curve.get("geometry")
+            start = curve.get("start_point")
+            end = curve.get("end_point")
+            length = curve.get("length")
 
-            response = self._grpc_client.services.edges.get_start_and_end_points(id=self._id)
-            start = response.get("start")
-            end = response.get("end")
-
-            length = self._grpc_client.services.edges.get_length(id=self._id).get("length")
-
-            response = self._grpc_client.services.edges.get_interval(id=self._id)
+            response = self._grpc_client.services.curves.get_interval(id=self._id)
             interval = Interval(response.get("start"), response.get("end"))
 
             self._shape = TrimmedCurve(geometry, start, end, interval, length.value)
@@ -133,12 +132,14 @@ class DesignCurve:
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def start(self) -> Point3D:
         """Start point of the design curve."""
         return self._start
 
     @property
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def end(self) -> Point3D:
         """End point of the design curve."""
         return self._end
