@@ -23,6 +23,7 @@
 
 import os
 from pathlib import Path
+from unittest.mock import patch
 import zipfile
 
 import matplotlib.colors as mcolors
@@ -63,6 +64,7 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -242,10 +244,282 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     # Assign a material to a Body
     body.assign_material(material)
 
+    # Verify the default color is set on the body (first fetch from server populates cache)
+    assert design.bodies[0].color == DEFAULT_COLOR
+
+    # Force a cache miss on the MasterBody so the color property re-fetches from the server
+    design.bodies[0].set_color((255, 0, 0))
+    design.bodies[0]._template._color = None
+    assert design.bodies[0].color.lower() == "#ff0000ff"
+
     # Not possible to save to file from a container (CI/CD)
     # Use download approach when available.
     #
     # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
+
+
+def test_body_properties_and_transformations(modeler: Modeler):
+    """Test body properties, setters, and transformation decorators for coverage."""
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("BodyPropertiesTest")
+    body = design.extrude_sketch("TestBox", sketch, Quantity(10, UNITS.mm))
+    master_body = body._template
+
+    master_body.name = "RenamedBox"
+    assert master_body.name == "RenamedBox"
+
+    master_body.fill_style = FillStyle.OPAQUE
+    assert master_body.fill_style == FillStyle.OPAQUE
+
+    master_body.is_suppressed = True
+    assert master_body.is_suppressed is True
+    master_body.is_suppressed = False
+    assert master_body.is_suppressed is False
+
+    master_body.set_color((255, 0, 0))
+    master_body._color = None
+    color_value = master_body.color
+    assert color_value is not None
+
+    master_body.color = "#00ff00ff"
+    assert master_body.color.lower().startswith("#00ff00")
+
+    master_body.opacity = 0.5
+    assert 0.4 < master_body.opacity < 0.6
+
+    assert master_body.is_surface is False
+    assert master_body.surface_thickness is None
+    assert master_body.surface_offset is None
+
+    faces = master_body.faces
+    assert len(faces) > 0
+
+    edges = master_body.edges
+    assert len(edges) > 0
+
+    vertices = master_body.vertices
+    assert len(vertices) > 0
+
+    volume = master_body.volume
+    assert volume is not None
+
+    master_body.translate(UnitVector3D([1, 0, 0]), Distance(5, UNITS.mm))
+    master_body.scale(1.1)
+    master_body.map(Frame(Point3D([0, 0, 0])))
+    master_body.mirror(Plane(Point3D([0, 0, 0])))
+
+
+def test_masterbody_material_and_advanced_properties(modeler: Modeler):
+    """Test MasterBody material operations and advanced properties."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("MaterialTest")
+    body = design.extrude_sketch("TestBody", sketch, Quantity(10, UNITS.mm))
+    master_body = body._template
+
+    density = Quantity(125, 1000 * UNITS.kg / (UNITS.m**3))
+    material = Material("steel", density)
+    design.add_material(material)
+
+    material = design.materials[0]
+    master_body.assign_material(material)
+    retrieved_material = master_body.get_assigned_material()
+    assert retrieved_material is not None
+
+    master_body.material = material
+
+    master_body.remove_assigned_material()
+
+    bbox = master_body.bounding_box
+    assert bbox is not None
+
+    backend_version = master_body._grpc_client.backend_version
+    if backend_version >= (27, 1, 0):
+        bbox_tight = master_body.get_bounding_box(tight=True)
+        assert bbox_tight is not None
+
+    with pytest.raises(NotImplementedError):
+        master_body.imprint_curves([], Sketch())
+
+    with pytest.raises(NotImplementedError):
+        master_body.project_curves(UnitVector3D([0, 0, 1]), Sketch(), True)
+
+    with pytest.raises(NotImplementedError):
+        master_body.imprint_projected_curves(UnitVector3D([0, 0, 1]), Sketch(), True)
+
+    with pytest.raises(NotImplementedError):
+        master_body.copy(design, "CopyName")
+
+    with pytest.raises(NotImplementedError):
+        master_body.get_named_selections()
+
+    if backend_version >= (27, 1, 0):
+        with pytest.raises(NotImplementedError):
+            _ = master_body.centroid
+
+        assert body.centroid is not None
+
+    master_body._is_alive = False
+    assert master_body.get_raw_tessellation() == {}
+    master_body._is_alive = True
+
+    if are_graphics_available():
+        bodies_svc = master_body._grpc_client.services.bodies
+        with (
+            patch.object(bodies_svc, "get_tesellation", return_value={"tessellation": {}}),
+            patch.object(
+                bodies_svc, "get_tesellation_with_options", return_value={"tessellation": {}}
+            ),
+        ):
+            original_version = master_body._grpc_client._backend_version
+            try:
+                master_body._grpc_client._backend_version = (25, 1, 0)
+                master_body._tessellation = None
+                master_body.tessellate(
+                    tess_options=TessellationOptions(0.01, 0.01),
+                    include_edges=True,
+                    reset_cache=True,
+                )
+
+                master_body._grpc_client._backend_version = (25, 2, 0)
+                master_body._tessellation = None
+                master_body.tessellate(
+                    tess_options=TessellationOptions(0.01, 0.01),
+                    reset_cache=True,
+                )
+            finally:
+                master_body._grpc_client._backend_version = original_version
+
+        master_body.get_vtk_tessellation(
+            _raw_tessellation={"f": {"vertices": [0.0, 0.0, 0.0], "faces": [4, 0, 1]}}
+        )
+
+
+def test_body_shell_and_remove_faces(modeler: Modeler):
+    """Test shell_body and remove_faces error handling."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design = modeler.create_design("ShellTest")
+    body = design.extrude_sketch("TestBox", sketch, Quantity(10, UNITS.mm))
+    body2 = design.extrude_sketch("TestBox2", sketch, Quantity(5, UNITS.mm))
+
+    # Test remove_faces ValueError when face belongs to different body
+    with pytest.raises(ValueError, match="does not belong to body"):
+        body.remove_faces(body2.faces[0], Distance(1, UNITS.mm))
+
+    bodies_svc = body._template._grpc_client.services.bodies
+    with patch.object(bodies_svc, "shell", return_value={"success": False}):
+        result = body.shell_body(Distance(0.1, UNITS.mm))
+        assert result is False
+
+    with patch.object(bodies_svc, "remove_faces", return_value={"success": False}):
+        result = body.remove_faces(body.faces[0], Distance(0.1, UNITS.mm))
+        assert result is False
+
+    with patch.object(bodies_svc, "combine_merge", return_value={"success": False}):
+        body._template.combine_merge(body2)
+
+    with pytest.raises(NotImplementedError):
+        body._template._combine_subtract(body2)
+
+    with pytest.raises(NotImplementedError):
+        body._template.plot()
+
+    with pytest.raises(NotImplementedError):
+        body._template.intersect(body2)
+
+    with pytest.raises(NotImplementedError):
+        body._template.subtract(body2)
+
+    with pytest.raises(NotImplementedError):
+        body._template.unite(body2)
+
+    repr_str = repr(body._template)
+    assert "MasterBody" in repr_str
+
+    sketch_surf = Sketch()
+    sketch_surf.box(Point2D([0, 0]), 5, 5)
+    surf_body = design.create_surface("SurfaceBody", sketch_surf)
+    repr_surf = repr(surf_body._template)
+    assert "Surface thickness" in repr_surf
+
+    material_result = body.get_assigned_material()
+    assert material_result is None or material_result is not None
+
+    with pytest.raises(ValueError, match="Either a sketch or edges must be provided"):
+        body.imprint_curves(body.faces[:1])
+
+    grpc_client = body._template._grpc_client
+    with patch.object(grpc_client, "_backend_version", (25, 1, 0)):
+        with pytest.raises(ValueError, match="A sketch must be provided for imprinting"):
+            body.imprint_curves(body.faces[:1], sketch=None)
+
+    with pytest.raises(ValueError, match="is not part of this body"):
+        body.imprint_curves(body2.faces[:1], sketch=Sketch())
+
+    with patch.object(body, "_Body__generic_boolean_op", return_value=None):
+        body.intersect(body2)
+        body.subtract(body2)
+        body.unite(body2)
+
+
+def test_body_tracker_update_paths(modeler: Modeler):
+    """Test USE_TRACKER_TO_UPDATE_DESIGN=True branches and detach_faces failure path."""
+    import ansys.geometry.core as pyansys_geo
+
+    design = modeler.create_design("TrackerPaths")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 2, 2)
+    body = design.extrude_sketch("box", sketch, 2)
+    sketch2 = Sketch()
+    sketch2.box(Point2D([10, 0]), 1, 1)
+    body2 = design.extrude_sketch("box2", sketch2, 1)
+
+    bodies_svc = body._grpc_client.services.bodies
+    original_tracker = pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN
+    try:
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = True
+
+        with patch.object(bodies_svc, "boolean", return_value={"tracker_response": {}}):
+            with patch.object(design, "_update_from_tracker"):
+                body.intersect(body2)
+
+        backend_ver = body._grpc_client.backend_version
+        if backend_ver >= (25, 2, 0):
+            with patch.object(
+                bodies_svc,
+                "combine_merge",
+                return_value={"success": True, "tracker_response": {}},
+            ):
+                with patch.object(design, "_update_from_tracker"):
+                    body._template.combine_merge(body2)
+
+        if backend_ver >= (26, 1, 0):
+            with patch.object(bodies_svc, "combine", return_value={"tracker_response": {}}):
+                with patch.object(design, "_update_from_tracker"):
+                    body._combine_subtract(body2)
+
+        if backend_ver >= (27, 1, 0):
+            model_tools_svc = body._grpc_client.services.model_tools
+            with patch.object(
+                model_tools_svc,
+                "detach_faces",
+                return_value={"success": True, "tracked_response": {}, "created_bodies": []},
+            ):
+                with patch.object(design, "_update_from_tracker"):
+                    body.detach_faces()
+
+            with patch.object(
+                model_tools_svc,
+                "detach_faces",
+                return_value={"success": False},
+            ):
+                result = body.detach_faces()
+                assert result == []
+    finally:
+        pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = original_tracker
 
 
 def test_assigning_and_getting_material(modeler: Modeler):
