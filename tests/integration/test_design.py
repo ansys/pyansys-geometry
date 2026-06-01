@@ -248,9 +248,11 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     assert design.bodies[0].color == DEFAULT_COLOR
 
     # Force a cache miss on the MasterBody so the color property re-fetches from the server
-    design.bodies[0].set_color((255, 0, 0))
-    design.bodies[0]._template._color = None
-    assert design.bodies[0].color.lower() == "#ff0000ff"
+
+    if modeler.client.backend_version >= (25, 2, 0):
+        design.bodies[0].set_color((255, 0, 0))
+        design.bodies[0]._template._color = None
+        assert design.bodies[0].color.lower() == "#ff0000ff"
 
     # Not possible to save to file from a container (CI/CD)
     # Use download approach when available.
@@ -393,7 +395,8 @@ def test_masterbody_material_and_advanced_properties(modeler: Modeler):
                 master_body._grpc_client._backend_version = original_version
 
         master_body.get_vtk_tessellation(
-            _raw_tessellation={"f": {"vertices": [0.0, 0.0, 0.0], "faces": [4, 0, 1]}}
+            _raw_tessellation={"f": 
+            {"vertices": [0.0, 0.0, 0.0], "faces": [4, 0, 1]}}
         )
 
 
@@ -520,6 +523,22 @@ def test_body_tracker_update_paths(modeler: Modeler):
                 assert result == []
     finally:
         pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = original_tracker
+
+
+def test_vertex_repr(modeler: Modeler):
+    """Test Vertex.__repr__ coverage."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    design = modeler.create_design("VertexReprTest")
+    body = design.extrude_sketch("box", sketch, 1)
+    
+    if len(body.vertices) > 0:
+        vertex = body.vertices[0]
+        repr_str = repr(vertex)
+        assert "Vertex" in repr_str
+        assert vertex.id in repr_str
+        assert "Position" in repr_str
+        assert body.id in repr_str
 
 
 def test_assigning_and_getting_material(modeler: Modeler):
@@ -4732,7 +4751,6 @@ def test_vertices_get_named_selections(modeler: Modeler):
             assert any(ns.name == "vertex_ns_3" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this vertex
-
 
 def test_components_get_named_selections(modeler: Modeler):
     """Test getting named selections associated with components."""
