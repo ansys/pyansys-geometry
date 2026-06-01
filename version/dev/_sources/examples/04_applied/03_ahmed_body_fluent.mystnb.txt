@@ -1,0 +1,357 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+# Applied: Develop an external aerodynamic simulation model for Fluent analysis
+
+The Ahmed body is a simplified car model used to study airflow around vehicles. The wake (turbulent flow behind the body)
+ depends on the slant angle:
+
+ - Less than 12 degrees: The airflow stays attached to the slant, creating low drag and a mostly two-dimensional flow.
+ - 12 to 30 degrees: The flow becomes three-dimensional with strong c-pillar vortices, peaking at 30 degrees. This increases drag due to low-pressure areas on the rear surfaces.
+ - More than 30 degrees: The flow fully separates from the slant, reducing drag and weakening the c-pillar vortices.
+
+This example creates an Ahmed body with a slant angle of 20 degrees. It consists of these steps:
+ 1. Launch PyAnsys Geometry and define the default units.
+ 2. Create sketches for the Ahmed body, enclosure, and BOI (Body of Influence).
+ 3. Generate solid bodies from the sketches.
+ 4. Perform Boolean operations for region extraction.
+ 5. Group faces and define a named selection.
+ 6. Export model as a CAD file.
+ 7. Close session.
+
+### Define function for sorting planar face pairs along any axis
+
+This function is used to sort the planar faces along any of the coordinate axis. This is used primarily for sorting the faces to define
+the named selections.
+
+```{code-cell} ipython3
+def face_identifier(faces, axis):
+    """
+    Sort a pair of planar faces based on their positions along the specified coordinate axis.
+
+    Args:
+        faces : List[IFace, IFace]
+        List of planar face pairs.
+
+        axis : (string)
+        Axis to sort the face pair on. Options are "x", "y", or "z".
+
+    Returns:
+        IFace, IFace
+        - IFace: Face with the centroid positioned behind the other face along the specified axis.
+        - IFace: Face with the centroid positioned ahead of the other face along the specified axis.
+
+    """
+    min_face = ""
+    max_face = ""
+    if axis == "x":
+        position = 0
+    elif axis == "y":
+        position = 1
+    else:
+        position = 2
+    min_face_cor_val = faces[0].point(0.5, 0.5)[position]
+    min_face = faces[0]
+    max_face_cor_val = faces[0].point(0.5, 0.5)[position]
+    max_face = faces[0]
+    for face in faces[1:]:
+        if face.point(0.5, 0.5)[position] < min_face_cor_val:
+            min_face_cor_val = face.point(0.5, 0.5)[position]
+            min_face = face
+            continue
+        elif face.point(0.5, 0.5)[position] > max_face_cor_val:
+            max_face_cor_val = face.point(0.5, 0.5)[position]
+            max_face = face
+    return min_face, max_face
+
+```
+
+### Define function for calculating the vertical and horizontal distances based on the slant angle
+
+
+```{code-cell} ipython3
+def distance_calculator(hypo, slant_angle):
+    """
+    Calculate the horizontal and vertical distances based on the hypotenuse and slant angle.
+
+    Args:
+        hypo : int
+        Length of the hypotenuse in millimeters.
+
+        slant_angle : int
+        Slant angle in degrees.
+
+    Returns:
+        slant_x (float): Horizontal distance calculated using the sine of the slant angle.
+        slant_y (float): Vertical distance calculated using the cosine of the slant angle.
+
+    """
+    slant_x = hypo * math.cos(math.radians(slant_angle))
+    slant_y = hypo * math.sin(math.radians(slant_angle))
+    return slant_y, slant_x
+
+```
+
+### Launch PyAnsys geometry and define the default units
+Before you start creating the Ahmed body, you must import the necessary modules to create the model using PyAnsys Geometry.
+It's also a good practice to define the units before initiating the development of the sketch.
+
+```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.sketch import Sketch
+from ansys.geometry.core.math import (
+    Point2D,
+    Plane,
+    Point3D,
+    UNITVECTOR3D_X,
+    UNITVECTOR3D_Y,
+    UNITVECTOR3D_Z,
+)
+from ansys.geometry.core.misc import UNITS, DEFAULT_UNITS
+
+from ansys.geometry.core.plotting import GeometryPlotter
+import math
+import os
+
+modeler = launch_modeler()
+DEFAULT_UNITS.LENGTH = UNITS.mm
+DEFAULT_UNITS.angle = UNITS.degrees
+
+```
+
+### Create sketches for the Ahmed body, enclosure, and BOI
+
+Define the appropriate sketch planes parallel to the y-z and x-z planes, passing through the origin (namely `sketch_plane` and `sketch_plane_2` respectively).
+
+#### Define the sketch planes
+
+![Sketch Planes](../../_static/images/sketch_planes.jpg){width=500px, align=center}
+
+```{code-cell} ipython3
+
+# Define sketch plane on the y-z plane passing through the origin
+sketch_plane = Plane(
+        origin=Point3D([0, 0, 0]),
+        direction_x=UNITVECTOR3D_Y,
+        direction_y=UNITVECTOR3D_Z,
+    )
+
+# Define sketch plane on the x-z plane passing through the origin
+sketch_plane_2 = Plane(
+    origin=Point3D([0, 0, 0]),
+    direction_x=UNITVECTOR3D_X,
+    direction_y=UNITVECTOR3D_Z,
+)
+```
+#### Define the Ahmed body
+
+![Ahmed body schematic image](../../_static/images/ahmed_body_schematic.jpg){width=500px, align=center}
+
+```{code-cell} ipython3
+# Calculate the horizontal and vertical distance based on slant angle of 20 degrees
+slant_y, slant_x = distance_calculator(hypo=222, slant_angle=20)
+
+# Define sketch for the Ahmed body
+ahmed_body_sketch = Sketch(sketch_plane)
+ahmed_body_sketch.segment(
+    start=Point2D([50, 0]), end=Point2D([338 - slant_y, 0])
+).segment_to_point(Point2D([338, slant_x])).segment_to_point(
+    Point2D([338, 944])
+).arc_to_point(
+    end=Point2D([238, 1044]), center=Point2D([238, 944]), clockwise=False
+).segment_to_point(
+    Point2D([150, 1044])
+).arc_to_point(
+    end=Point2D([50, 944]), center=Point2D([150, 944]), clockwise=False
+).segment_to_point(
+    end=Point2D([50, 0])
+)
+ahmed_body_sketch.plot()
+```
+
+#### Define the enclosure
+
+![Enclosure schematic image](../../_static/images/enclosure_schematic.jpg){width=500px, align=center}
+
+
+```{code-cell} ipython3
+# Define sketch for enclosure
+enclosure_sketch = Sketch(plane=sketch_plane)
+enclosure_sketch.box(center=Point2D([1014 / 2, 0]), height=4176, width=1014)
+enclosure_sketch.plot()
+
+# Define sketch for mounting 1
+mount_sketch_1 = Sketch(sketch_plane_2)
+mount_sketch_1.circle(center=Point2D([163.5, 792]), radius=15)
+
+# Define sketch for mounting 2
+mount_sketch_2 = Sketch(sketch_plane_2)
+mount_sketch_2.circle(center=Point2D([163.5, 322]), radius=15)
+
+# Define sketch for the fillet
+ahmed_body_fillet_sketch = Sketch(sketch_plane_2)
+ahmed_body_fillet_sketch.segment(
+    start=Point2D([194.5, 944]), end=Point2D([194.5, 1044])
+).segment_to_point(Point2D([94.5, 1044])).arc_to_point(
+    Point2D([194.5, 944]), center=Point2D([94.5, 944]), clockwise=True
+)
+```
+
+#### Define the BOI
+
+![BOI schematic image](../../_static/images/boi_schematic.jpg){width=500px, align=center}
+
+```{code-cell} ipython3
+# Define sketch for BOI
+boi_sketch = Sketch(sketch_plane_2)
+boi_sketch.box(center=Point2D([0, -325]), width=1000, height=1450)
+boi_sketch.plot()
+```
+
+### Generate solid bodies from the sketches
+From the 2D sketches, generate 3D models by extruding the sketch. First create the design body (namely `ahmed_model`, which is the root part. A component named `Component1` is
+created under the root part. All the bodies generated as a part of sketch extrusion would be placed within `Component1`.
+
+```{code-cell} ipython3
+
+# Create design object
+design = modeler.create_design("ahmed_model")
+
+# Create component
+component_1 = design.add_component("Component1")
+
+# Create body `ahmed_body` by extrusion
+ahmed_body = component_1.extrude_sketch(
+    "ahmed_body", sketch=ahmed_body_sketch, distance=194.5
+)
+
+# Create body `ahmed_body_fillet` by cut extrusion
+ahmed_body_fillet = component_1.extrude_sketch(
+    "ahmed_body_fillet", sketch=ahmed_body_fillet_sketch, distance=-500, cut=True
+)
+
+# Create body `enclosure` by extrusion
+enclosure = component_1.extrude_sketch(
+    "Solid1", sketch=enclosure_sketch, distance=1167
+)
+
+# Create body `mounting_1` by extrusion
+mount_1 = component_1.extrude_sketch(
+    "mount_1", sketch=mount_sketch_1, distance=-100
+)
+
+# Create body `mounting_2` by extrusion
+mount_2 = component_1.extrude_sketch(
+    "mount_2", sketch=mount_sketch_2, distance=-100
+)
+
+# Create body `boi` by extrusion
+# The direction is negative since the sketch is created in X-Z plane, resulting in the direction of normal to be parallel to the -Y axis.
+boi_body = design.extrude_sketch(
+    "boi", sketch=boi_sketch, distance=500, direction="-"
+)
+```
+
+### Perform Boolean operations for region extraction
+
+```{code-cell} ipython3
+enclosure.subtract([ahmed_body, mount_1, mount_2])
+enclosure.plot()
+```
+
+### Group faces and define named selection
+
+
+```{code-cell} ipython3
+plane_surface = []
+cylindrical_surface = []
+
+# Group faces of enclosure based on topology
+for face in enclosure.faces:
+    if face.surface_type.name == "SURFACETYPE_PLANE":
+        plane_surface.append(face)
+    elif face.surface_type.name == "SURFACETYPE_CYLINDER":
+        cylindrical_surface.append(face)
+
+wall_mount = []
+
+# Identify faces associated with mounting
+for cyl_face in cylindrical_surface:
+    if cyl_face.point(0, 0.5)[1] < 0.050:
+        wall_mount.append(cyl_face)
+
+# Identify faces associated with enclosure extremes
+outlet_face, inlet_face = face_identifier(faces=plane_surface, axis="z")
+symmetry_face, symmetry_x_pos = face_identifier(faces=plane_surface, axis="x")
+ground, top = face_identifier(faces=plane_surface, axis="y")
+
+
+# Create named selection
+design.create_named_selection("wall_mount", faces=wall_mount)
+design.create_named_selection("inlet", faces=[inlet_face])
+design.create_named_selection("outlet", faces=[outlet_face])
+design.create_named_selection("wall_ground", faces=[ground])
+design.create_named_selection("symmetry_top", faces=[top])
+design.create_named_selection("symmetry_center_plane", faces=[symmetry_face])
+design.create_named_selection("symmetry_x_pos", faces=[symmetry_x_pos])
+design.create_named_selection(
+    "ahmed_body_20_0degree_boi_half-boi", faces=boi_body.faces
+)
+
+body_planar_surface = list(
+    set(plane_surface)
+    - set([outlet_face, inlet_face, symmetry_face, symmetry_x_pos, ground, top])
+)
+body_circular_surface = list(set(cylindrical_surface) - set(wall_mount))
+
+rear_surface, front_surface = face_identifier(faces=body_planar_surface, axis="z")
+bottom_surface, top_surface = face_identifier(faces=body_planar_surface, axis="y")
+side_suface, symmetry_surface = face_identifier(faces=body_planar_surface, axis="x")
+
+body_circular_surface.append(front_surface)
+
+design.create_named_selection("wall_ahmed_body_front", faces=body_circular_surface)
+design.create_named_selection(
+    "wall_ahmed_body_main",
+    faces=[symmetry_surface, bottom_surface, top_surface],
+)
+
+# Identify the face that forms a 20-degree angle with the y-axis.
+for face in body_planar_surface:
+    if round(math.degrees(math.acos(abs(face.normal().y)))) == 20:
+        hypo_face = face
+design.create_named_selection(
+    "wall_ahmed_body_rear", faces=[hypo_face, rear_surface]
+)
+```
+
+### Export model as a PMDB file
+
+Export the geometry into a Fluent-compatible format. The following code exports the geometry into a PMDB file, which retains the named selections.
+
+```{code-cell} ipython3
+
+# Save design
+file = design.export_to_pmdb()
+print(f"Design saved to {file}")
+```
+You can import the exported PMDB file into Fluent to set up the mesh and perform the simulation.
+For an example of how to set up the mesh and boundary conditions in Fluent, see the [Ahmed Body External Aerodynamics Simulation](https://examples.fluent.docs.pyansys.com/version/dev/examples/00-released_examples/00-ahmed_body_workflow.html) example in the Fluent documentation.
+
+### Close session
+
+```{code-cell} ipython3
+modeler.close()
+```
+
+### References
+[1] S.R. Ahmed, G. Ramm, Some Salient Features of the Time-Averaged Ground Vehicle Wake,SAE-Paper 840300,1984

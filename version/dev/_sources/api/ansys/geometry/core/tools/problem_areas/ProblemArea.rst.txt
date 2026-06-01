@@ -1,0 +1,186 @@
+
+
+
+
+
+
+:class:`ProblemArea`
+====================
+
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.ProblemArea(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+   
+   Represents problem areas.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the problem area.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: ProblemArea
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix problem area.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~build_repair_tool_message`
+            - Build a repair tool message from the service response.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - The id of the problem area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import ProblemArea
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   The id of the problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: fix()
+   :abstractmethod:
+
+
+   
+   Fix problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: build_repair_tool_message(response: dict) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Build a repair tool message from the service response.
+
+
+   :Parameters:
+
+       **response** : :class:`python:dict`
+           The response from the service containing information about the repair operation.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           A message containing the success status, created bodies, modified bodies,
+           number of found problem areas, and number of repaired problem areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

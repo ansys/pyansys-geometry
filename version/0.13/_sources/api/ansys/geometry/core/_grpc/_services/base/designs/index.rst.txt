@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``designs.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.designs
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: designs
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.designs.GRPCDesignsService`
+            - Designs service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCDesignsService</api/ansys/geometry/core/_grpc/_services/base/designs/GRPCDesignsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the designs service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

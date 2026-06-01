@@ -1,0 +1,247 @@
+
+
+
+
+
+
+:class:`GRPCAdminService`
+=========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.admin.GRPCAdminService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Admin service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCAdminService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_backend`
+            - Get server information.
+          * - :py:attr:`~get_logs`
+            - Get server logs.
+          * - :py:attr:`~get_service_status`
+            - Get server status (i.e. healthy or not).
+          * - :py:attr:`~get_tracker`
+            - Get tracker information.
+          * - :py:attr:`~get_tracker_changes`
+            - Get tracker changes.
+          * - :py:attr:`~set_automatic_tracking_state`
+            - Set automatic tracking state.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.admin import GRPCAdminService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_backend(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_logs(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server logs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_service_status(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server status (i.e. healthy or not).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_tracker(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get tracker information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_tracker_changes(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get tracker changes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_automatic_tracking_state(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set automatic tracking state.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

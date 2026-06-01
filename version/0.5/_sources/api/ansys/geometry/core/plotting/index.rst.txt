@@ -1,0 +1,125 @@
+
+
+
+
+
+
+The ``plotting`` package 
+============================
+
+.. py:module:: ansys.geometry.core.plotting
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotting
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets`
+            - Submodule providing widgets for the PyAnsys Geometry plotter.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.plotter`
+            - Provides plotting for various PyAnsys Geometry objects.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.plotter_helper`
+            - Provides a wrapper to aid in plotting.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.plotting_types`
+            - Data types for plotting.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.trame_gui`
+            - Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> widgets</api/ansys/geometry/core/plotting/widgets/index>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> plotter</api/ansys/geometry/core/plotting/plotter/index>
+    <span class="nf nf-fa-file"></span> plotter_helper</api/ansys/geometry/core/plotting/plotter_helper/index>
+    <span class="nf nf-fa-file"></span> plotting_types</api/ansys/geometry/core/plotting/plotting_types/index>
+    <span class="nf nf-fa-file"></span> trame_gui</api/ansys/geometry/core/plotting/trame_gui/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry plotting subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

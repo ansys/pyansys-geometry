@@ -1,0 +1,88 @@
+
+
+
+
+BackendType
+===========
+
+.. py:class:: BackendType
+   :canonical: ansys.geometry.core.connection.backend.BackendType
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum holding the available backend types.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: BackendType
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~DISCOVERY`
+            - 
+          * - :py:attr:`~SPACECLAIM`
+            - 
+          * - :py:attr:`~WINDOWS_SERVICE`
+            - 
+          * - :py:attr:`~LINUX_SERVICE`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.backend import BackendType
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: DISCOVERY
+   :value: 0
+
+   
+
+.. py:attribute:: SPACECLAIM
+   :value: 1
+
+   
+
+.. py:attribute:: WINDOWS_SERVICE
+   :value: 2
+
+   
+
+.. py:attribute:: LINUX_SERVICE
+   :value: 3
+
+   
+
+
+

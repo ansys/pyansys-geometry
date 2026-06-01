@@ -1,0 +1,240 @@
+
+
+
+
+DefaultUnitsClass
+=================
+
+.. py:class:: DefaultUnitsClass
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass
+
+
+
+
+Provides default units for the PyAnsys Geometry singleton design pattern.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: DefaultUnitsClass
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~LENGTH`
+            - Default length unit for PyAnsys Geometry.
+          * - :py:attr:`~ANGLE`
+            - Default angle unit for PyAnsys Geometry.
+          * - :py:attr:`~SERVER_LENGTH`
+            - Default length unit for supporting Geometry services for gRPC messages.
+          * - :py:attr:`~SERVER_AREA`
+            - Default area unit for supporting Geometry services for gRPC messages.
+          * - :py:attr:`~SERVER_VOLUME`
+            - Default volume unit for supporting Geometry services for gRPC messages.
+          * - :py:attr:`~SERVER_ANGLE`
+            - Default angle unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import DefaultUnitsClass
+
+
+Property detail
+---------------
+.. py:property:: LENGTH
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.LENGTH
+   :type: pint.Unit
+
+
+   
+   Default length unit for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: ANGLE
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.ANGLE
+   :type: pint.Unit
+
+
+   
+   Default angle unit for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: SERVER_LENGTH
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.SERVER_LENGTH
+   :type: pint.Unit
+
+
+   
+   Default length unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The default units on the server side are not modifiable yet.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: SERVER_AREA
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.SERVER_AREA
+   :type: pint.Unit
+
+
+   
+   Default area unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The default units on the server side are not modifiable yet.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: SERVER_VOLUME
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.SERVER_VOLUME
+   :type: pint.Unit
+
+
+   
+   Default volume unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The default units on the server side are not modifiable yet.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: SERVER_ANGLE
+   :canonical: ansys.geometry.core.misc.measurements.DefaultUnitsClass.SERVER_ANGLE
+   :type: pint.Unit
+
+
+   
+   Default angle unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The default units on the server side are not modifiable yet.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

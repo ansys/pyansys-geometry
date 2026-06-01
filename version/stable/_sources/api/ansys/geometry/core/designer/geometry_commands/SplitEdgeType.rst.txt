@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`SplitEdgeType`
+======================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.SplitEdgeType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for types of edge splits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SplitEdgeType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~BY_PROPORTION`
+            - 
+          * - :py:attr:`~BY_POINT`
+            - 
+          * - :py:attr:`~BY_LENGTH`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import SplitEdgeType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: BY_PROPORTION
+   :value: 0
+
+
+.. py:attribute:: BY_POINT
+   :value: 1
+
+
+.. py:attribute:: BY_LENGTH
+   :value: 2
+
+
+
+
+
+

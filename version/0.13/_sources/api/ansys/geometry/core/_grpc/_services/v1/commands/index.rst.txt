@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``commands.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.commands
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: commands
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.commands.GRPCCommandsServiceV1`
+            - Commands service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCCommandsServiceV1</api/ansys/geometry/core/_grpc/_services/v1/commands/GRPCCommandsServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the commands service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

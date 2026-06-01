@@ -1,0 +1,383 @@
+:py:mod:`ansys.geometry.core.sketch.arc`
+========================================
+
+.. py:module:: ansys.geometry.core.sketch.arc
+
+.. autoapi-nested-parse::
+
+   ``Arc`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.arc.Arc
+
+
+
+
+.. py:class:: Arc(center: ansys.geometry.core.math.Point2D, start: ansys.geometry.core.math.Point2D, end: ansys.geometry.core.math.Point2D, clockwise: beartype.typing.Optional[bool] = False)
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.edge.SketchEdge`
+
+   
+   Provides for modeling arcs.
+
+
+   :Parameters:
+
+       **center** : :obj:`Point2D`
+           A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+           the center of the arc.
+
+       **start** : :obj:`Point2D`
+           :class:`Point2D <ansys.geometry.core.math.point.Point2D>` class representing
+           the start of the arc.
+
+       **end** : :obj:`Point2D`
+           A :class:`Point2D <ansys.geometry.core.math.point.Point2D>` representing
+           the end of the arc.
+
+       **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the arc spans the clockwise angle between the start
+           and end points. By default, the arc spans the counter-clockwise angle. When
+           ``True``, the arc spands the clockwise angle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: start
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      2D point that is the start of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: end
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      2D point that is the end of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: length
+      :type: pint.Quantity
+
+      
+      Length of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: radius
+      :type: pint.Quantity
+
+      
+      Radius of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: center
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      2D point that is the center of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: angle
+      :type: pint.Quantity
+
+      
+      Angle of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_clockwise
+      :type: bool
+
+      
+      Whether the rotation of the angle is clockwise.
+
+
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              ``True`` if the sense of rotation is clockwise.
+              ``False`` if it is counter-clockwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: sector_area
+      :type: pint.Quantity
+
+      
+      Area of the sector of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for the PyVista visualization.
+
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Arc) -> bool
+
+      
+      Equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Arc) -> bool
+
+      
+      Not equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: from_three_points(start: ansys.geometry.core.math.Point2D, inter: ansys.geometry.core.math.Point2D, end: ansys.geometry.core.math.Point2D)
+      :classmethod:
+
+      
+      Create an Arc from three given points.
+
+
+      :Parameters:
+
+          **start** : :obj:`Point2D`
+              Point that is the start of the arc.
+
+          **inter** : :obj:`Point2D`
+              Point that is at an intermediate location of the arc.
+
+          **end** : :obj:`Point2D`
+              Point that is the end of the arc.
+
+      :Returns:
+
+          :obj:`Arc`
+              Arc generated from the three given points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

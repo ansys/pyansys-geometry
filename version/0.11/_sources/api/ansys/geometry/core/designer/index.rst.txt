@@ -1,0 +1,152 @@
+
+
+
+
+
+
+The ``designer`` package
+============================
+
+.. py:module:: ansys.geometry.core.designer
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: designer
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam`
+            - Provides for creating and managing a beam.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.body`
+            - Provides for managing a body.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.component`
+            - Provides for managing components.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.coordinate_system`
+            - Provides for managing a user-defined coordinate system.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.design`
+            - Provides for managing designs.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.designpoint`
+            - Module for creating and managing design points.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.edge`
+            - Module for managing an edge.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.face`
+            - Module for managing a face.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands`
+            - Provides tools for pulling geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.mating_conditions`
+            - Provides dataclasses for mating conditions.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.part`
+            - Module providing fundamental data of an assembly.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.selection`
+            - Module for creating a named selection.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.vertex`
+            - Module for managing a vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> beam</api/ansys/geometry/core/designer/beam/index>
+    <span class="nf nf-fa-file"></span> body</api/ansys/geometry/core/designer/body/index>
+    <span class="nf nf-fa-file"></span> component</api/ansys/geometry/core/designer/component/index>
+    <span class="nf nf-fa-file"></span> coordinate_system</api/ansys/geometry/core/designer/coordinate_system/index>
+    <span class="nf nf-fa-file"></span> design</api/ansys/geometry/core/designer/design/index>
+    <span class="nf nf-fa-file"></span> designpoint</api/ansys/geometry/core/designer/designpoint/index>
+    <span class="nf nf-fa-file"></span> edge</api/ansys/geometry/core/designer/edge/index>
+    <span class="nf nf-fa-file"></span> face</api/ansys/geometry/core/designer/face/index>
+    <span class="nf nf-fa-file"></span> geometry_commands</api/ansys/geometry/core/designer/geometry_commands/index>
+    <span class="nf nf-fa-file"></span> mating_conditions</api/ansys/geometry/core/designer/mating_conditions/index>
+    <span class="nf nf-fa-file"></span> part</api/ansys/geometry/core/designer/part/index>
+    <span class="nf nf-fa-file"></span> selection</api/ansys/geometry/core/designer/selection/index>
+    <span class="nf nf-fa-file"></span> vertex</api/ansys/geometry/core/designer/vertex/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry designer subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
