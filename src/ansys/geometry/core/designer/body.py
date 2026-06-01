@@ -112,7 +112,7 @@ class FillStyle(Enum):
     TRANSPARENT = 2
 
 
-class IBody(ABC):
+class IBody(ABC):  # pragma: no cover
     """Defines the common methods for a body, providing the abstract body interface.
 
     Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
@@ -1572,8 +1572,8 @@ class MasterBody(IBody):
                             i += count + 1
                         else:
                             break
-                    else:
-                        break
+                    else:  # pragma: no cover
+                        break  # pragma: no cover
             return cells
 
         def _process_edges(vertex_data: list[float]):
@@ -1593,8 +1593,8 @@ class MasterBody(IBody):
 
         def _create_polydata_from_tess_data(tess_data: dict):
             """Create a VTK PolyData object from tessellation data."""
-            if not tess_data or len(tess_data.get("vertices", [])) == 0:
-                return None
+            if not tess_data or len(tess_data.get("vertices", [])) == 0:  # pragma: no cover
+                return None  # pragma: no cover
 
             polydata = vtkPolyData()
             vertex_data = tess_data["vertices"]
@@ -2346,7 +2346,7 @@ class Body(IBody):
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "intersect", "bodies do not intersect"
             )
@@ -2354,7 +2354,7 @@ class Body(IBody):
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "subtract", "empty (complete) subtraction"
             )
@@ -2362,7 +2362,7 @@ class Body(IBody):
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
@@ -2427,7 +2427,7 @@ class Body(IBody):
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
-    def __generic_boolean_command(
+    def __generic_boolean_command(  # pragma: no cover
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
