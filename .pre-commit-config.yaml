@@ -5,7 +5,7 @@ exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: 21ca5323a9c87ee37a434e0ca908efc0a89daa07 # frozen: v0.21.0
+    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029  # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -15,14 +15,14 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: a007bb7dd9043d022292401abc3061cb1906b4bc # frozen: v2.21.2
+    rev: 3a8ef795727fa946dfcb21c5d07b1442c2362c09  # frozen: v2.23.0
     hooks:
       - id: pyproject-fmt
         additional_dependencies: [toml-fmt-common<1.3.3]
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 5e2fb545eba1ea9dc051f6f962d52fe8f76a9794 # frozen: v0.15.13
+    rev: 0671d8ab202c4ac093b78433ae5baf74f3fc7246  # frozen: v0.15.15
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -50,7 +50,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: f805888065fdb6162e1f800e50bb9460cbd223d6 # frozen: 0.37.2
+    rev: 943377262562a12b57292fc98fabd7dbf81451fe  # frozen: 0.37.2
     hooks:
       - id: check-github-workflows
 
