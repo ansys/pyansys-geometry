@@ -23,6 +23,8 @@
 
 from dataclasses import asdict, dataclass
 from enum import Enum, unique
+from pathlib import Path
+import tempfile
 
 from pint import Quantity
 
@@ -406,34 +408,34 @@ class PMDBExportOptions:
     cad_attribute_prefixes: str = ""
     named_selection_prefixes: str = ""
     analysis_type: AnalysisType = AnalysisType.THREE_D
-    mixed_part_export_type: MixedPartExportType = MixedPartExportType.NONE
-    attach_flattened_assembly: bool = False
-    use_cad_mass_properties: bool = False
+    mixed_part_export_type: MixedPartExportType = MixedPartExportType.ALL
+    attach_flattened_assembly: bool = True
+    use_cad_mass_properties: bool = True
     plane_prefixes: str = ""
     coordinate_system_prefixes: str = ""
     advanced_geom_processing: bool = False
     angular_deviation: float = 0.0
     attach_weight_class: AttachWeightClass = AttachWeightClass.HEAVYWEIGHT
     cad_associativity: bool = False
-    cad_attribute_transfer: bool = False
+    cad_attribute_transfer: bool = True
     do_smart_update: bool = False
     geometry_deviation: float = 0.0
-    process_coordinate_sys: bool = False
-    process_planes: bool = False
-    import_using_instances: bool = False
-    process_work_points: bool = False
+    process_coordinate_sys: bool = True
+    process_planes: bool = True
+    import_using_instances: bool = True
+    process_work_points: bool = True
     is_selective_update: bool = False
-    material_properties: bool = False
+    material_properties: bool = True
     granta_material_properties: bool = False
     max_facet_size: float = 0.0
-    named_selection: bool = False
-    parameter_processing_type: ImportParameterType = ImportParameterType.NONE
-    plug_in_facet_quality: PlugInFacetQuality = PlugInFacetQuality.NONE
-    process_enclosure_and_symmetry: bool = False
+    named_selection: bool = True
+    parameter_processing_type: ImportParameterType = ImportParameterType.ALL
+    plug_in_facet_quality: PlugInFacetQuality = PlugInFacetQuality.SOURCE
+    process_enclosure_and_symmetry: bool = True
     reader_save_part: bool = False
     target_application: TargetApplication = TargetApplication.PARTMGR
-    temp_directory: str = ""
-    process_physics_definition: bool = False
-    process_solid_bodies: bool = False
-    process_surface_bodies: bool = False
-    process_line_bodies: bool = False
+    temp_directory: str | Path = str(Path(tempfile.gettempdir()))
+    process_physics_definition: bool = True
+    process_solid_bodies: bool = True
+    process_surface_bodies: bool = True
+    process_line_bodies: bool = True
