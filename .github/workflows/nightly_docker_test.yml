@@ -100,7 +100,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -109,10 +108,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -216,7 +211,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -225,10 +219,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
