@@ -261,7 +261,7 @@ class AnalysisType(Enum):
 
 
 @unique
-class MixedPartExportType(Enum):
+class PMDBMixedPartExportType(Enum):
     """Provides values for the mixed-part export type used during PMDB export."""
 
     NONE = 0
@@ -283,7 +283,7 @@ class MixedPartExportType(Enum):
 
 
 @unique
-class AttachWeightClass(Enum):
+class PMDBAttachWeightClass(Enum):
     """Provides values for the attach weight class used during PMDB export."""
 
     HEAVYWEIGHT = 0
@@ -293,7 +293,7 @@ class AttachWeightClass(Enum):
 
 
 @unique
-class ImportParameterType(Enum):
+class PMDBImportParameterType(Enum):
     """Provides values for the parameter processing type used during PMDB export."""
 
     NONE = 0
@@ -302,7 +302,7 @@ class ImportParameterType(Enum):
 
 
 @unique
-class PlugInFacetQuality(Enum):
+class PMDBPlugInFacetQuality(Enum):
     """Provides values for the plug-in facet quality used during PMDB export."""
 
     NONE = 0
@@ -316,7 +316,7 @@ class PlugInFacetQuality(Enum):
 
 
 @unique
-class TargetApplication(Enum):
+class PMDBTargetApplication(Enum):
     """Provides values for the target application used during PMDB export."""
 
     PARTMGR = 0
@@ -340,7 +340,7 @@ class PMDBExportOptions:
         Prefixes used to filter named selections for export.
     analysis_type : AnalysisType, default: AnalysisType.THREE_D
         The analysis type (2D or 3D).
-    mixed_part_export_type : MixedPartExportType, default: MixedPartExportType.NONE
+    mixed_part_export_type : PMDBMixedPartExportType, default: PMDBMixedPartExportType.NONE
         The type of mixed parts to export.
     attach_flattened_assembly : bool, default: False
         Whether to attach the assembly in a flattened structure.
@@ -354,7 +354,7 @@ class PMDBExportOptions:
         Whether to enable advanced geometry processing.
     angular_deviation : float, default: 0.0
         Angular deviation for faceting (in degrees).
-    attach_weight_class : AttachWeightClass, default: AttachWeightClass.HEAVYWEIGHT
+    attach_weight_class : PMDBAttachWeightClass, default: PMDBAttachWeightClass.HEAVYWEIGHT
         The weight class for the attachment.
     cad_associativity : bool, default: False
         Whether to enable CAD associativity.
@@ -382,15 +382,15 @@ class PMDBExportOptions:
         Maximum facet size (in meters). Zero means no limit.
     named_selection : bool, default: False
         Whether to export named selections.
-    parameter_processing_type : ImportParameterType, default: ImportParameterType.NONE
+    parameter_processing_type : PMDBImportParameterType, default: PMDBImportParameterType.NONE
         The type of parameters to process.
-    plug_in_facet_quality : PlugInFacetQuality, default: PlugInFacetQuality.NONE
+    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.NONE
         The facet quality setting for plug-in readers.
     process_enclosure_and_symmetry : bool, default: False
         Whether to process enclosure and symmetry.
     reader_save_part : bool, default: False
         Whether the reader should save the part.
-    target_application : TargetApplication, default: TargetApplication.PARTMGR
+    target_application : PMDBTargetApplication, default: PMDBTargetApplication.PARTMGR
         The target application for the exported PMDB.
     temp_directory : str, default: ""
         Temporary directory path used during export.
@@ -408,14 +408,14 @@ class PMDBExportOptions:
     cad_attribute_prefixes: str = ""
     named_selection_prefixes: str = ""
     analysis_type: AnalysisType = AnalysisType.THREE_D
-    mixed_part_export_type: MixedPartExportType = MixedPartExportType.ALL
+    mixed_part_export_type: PMDBMixedPartExportType = PMDBMixedPartExportType.ALL
     attach_flattened_assembly: bool = True
     use_cad_mass_properties: bool = True
     plane_prefixes: str = ""
     coordinate_system_prefixes: str = ""
     advanced_geom_processing: bool = False
     angular_deviation: float = 0.0
-    attach_weight_class: AttachWeightClass = AttachWeightClass.HEAVYWEIGHT
+    attach_weight_class: PMDBAttachWeightClass = PMDBAttachWeightClass.HEAVYWEIGHT
     cad_associativity: bool = False
     cad_attribute_transfer: bool = True
     do_smart_update: bool = False
@@ -429,11 +429,11 @@ class PMDBExportOptions:
     granta_material_properties: bool = False
     max_facet_size: float = 0.0
     named_selection: bool = True
-    parameter_processing_type: ImportParameterType = ImportParameterType.ALL
-    plug_in_facet_quality: PlugInFacetQuality = PlugInFacetQuality.SOURCE
+    parameter_processing_type: PMDBImportParameterType = PMDBImportParameterType.ALL
+    plug_in_facet_quality: PMDBPlugInFacetQuality = PMDBPlugInFacetQuality.SOURCE
     process_enclosure_and_symmetry: bool = True
     reader_save_part: bool = False
-    target_application: TargetApplication = TargetApplication.PARTMGR
+    target_application: PMDBTargetApplication = PMDBTargetApplication.PARTMGR
     temp_directory: str | Path = str(Path(tempfile.gettempdir()))
     process_physics_definition: bool = True
     process_solid_bodies: bool = True
