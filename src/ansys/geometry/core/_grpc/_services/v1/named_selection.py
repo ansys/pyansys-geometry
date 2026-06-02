@@ -66,11 +66,21 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "name": response.name,
             "bodies": [body.id.id for body in response.bodies],
             "faces": [face.id.id for face in response.faces],
+            "faces_meta": [
+                {
+                    "id": face.id.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                    "body_id": face.parent.id.id,
+                }
+                for face in response.faces
+            ],
             "edges": [edge.id.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
         }
 
     @protect_grpc
@@ -104,6 +114,7 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
         }
 
     @protect_grpc
