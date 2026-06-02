@@ -395,8 +395,7 @@ def test_masterbody_material_and_advanced_properties(modeler: Modeler):
                 master_body._grpc_client._backend_version = original_version
 
         master_body.get_vtk_tessellation(
-            _raw_tessellation={"f": 
-            {"vertices": [0.0, 0.0, 0.0], "faces": [4, 0, 1]}}
+            _raw_tessellation={"f": {"vertices": [0.0, 0.0, 0.0], "faces": [4, 0, 1]}}
         )
 
 
@@ -531,7 +530,7 @@ def test_vertex_repr(modeler: Modeler):
     sketch.box(Point2D([0, 0]), 1, 1)
     design = modeler.create_design("VertexReprTest")
     body = design.extrude_sketch("box", sketch, 1)
-    
+
     if len(body.vertices) > 0:
         vertex = body.vertices[0]
         repr_str = repr(vertex)
@@ -4751,6 +4750,7 @@ def test_vertices_get_named_selections(modeler: Modeler):
             assert any(ns.name == "vertex_ns_3" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this vertex
+
 
 def test_components_get_named_selections(modeler: Modeler):
     """Test getting named selections associated with components."""
