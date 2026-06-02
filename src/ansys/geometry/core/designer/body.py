@@ -1594,7 +1594,7 @@ class MasterBody(IBody):
         def _create_polydata_from_tess_data(tess_data: dict):
             """Create a VTK PolyData object from tessellation data."""
             if not tess_data or len(tess_data.get("vertices", [])) == 0:  # pragma: no cover
-                return None  # pragma: no cover
+                return None
 
             polydata = vtkPolyData()
             vertex_data = tess_data["vertices"]
