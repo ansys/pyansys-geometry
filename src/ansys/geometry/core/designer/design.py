@@ -445,7 +445,7 @@ class Design(Component):
         self,
         format: DesignFileFormat,
         write_body_facets: bool = False,
-        file_location: Path | str | None= None,
+        file_location: Path | str | None = None,
         fmd_options: FMDExportOptions | None = None,
         pmdb_options: PMDBExportOptions | None = None,
     ) -> bytes:
