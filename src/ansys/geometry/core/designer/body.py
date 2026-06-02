@@ -1573,7 +1573,7 @@ class MasterBody(IBody):
                         else:
                             break
                     else:  # pragma: no cover
-                        break  # pragma: no cover
+                        break
             return cells
 
         def _process_edges(vertex_data: list[float]):
