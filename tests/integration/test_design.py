@@ -23,7 +23,7 @@
 
 import os
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import zipfile
 
 import matplotlib.colors as mcolors
@@ -64,7 +64,7 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
-from ansys.geometry.core.misc.options import TessellationOptions
+from ansys.geometry.core.misc.options import FMDExportOptions, TessellationOptions
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -417,7 +417,6 @@ def test_update_from_tracker_created_occurrence_components_missing_part(modeler:
     }
 
     with (
-        patch.object(design._grpc_client.log, "debug") as debug_spy,
         patch.object(design._grpc_client.log, "warning") as warning_spy,
         patch.object(design, "_find_existing_part", return_value=None),
     ):
@@ -499,7 +498,6 @@ def test_update_from_tracker_deleted_components_not_found(modeler: Modeler):
     }
 
     with (
-        patch.object(design._grpc_client.log, "debug") as debug_spy,
         patch.object(design._grpc_client.log, "warning") as warning_spy,
         patch.object(design, "_find_and_remove_component", return_value=False),
     ):
