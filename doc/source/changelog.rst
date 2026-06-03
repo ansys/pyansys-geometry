@@ -9,6 +9,80 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.15.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.4>`_ - June 03, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Pyproject-fmt hook error
+          - `#2813 <https://github.com/ansys/pyansys-geometry/pull/2813>`_
+
+        * - Release stage missing test files
+          - `#2814 <https://github.com/ansys/pyansys-geometry/pull/2814>`_
+
+        * - Asset links changed
+          - `#2815 <https://github.com/ansys/pyansys-geometry/pull/2815>`_
+
+        * - Add process isolation to startup
+          - `#2821 <https://github.com/ansys/pyansys-geometry/pull/2821>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update \`\`CONTRIBUTORS.md\`\` with the latest contributors
+          - `#2817 <https://github.com/ansys/pyansys-geometry/pull/2817>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.1.7 to 1.1.8
+          - `#2824 <https://github.com/ansys/pyansys-geometry/pull/2824>`_
+
+        * - Bump ty from 0.0.39 to 0.0.40
+          - `#2825 <https://github.com/ansys/pyansys-geometry/pull/2825>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.15.3
+          - `#2812 <https://github.com/ansys/pyansys-geometry/pull/2812>`_
+
+        * - Bump the actions group with 3 updates
+          - `#2816 <https://github.com/ansys/pyansys-geometry/pull/2816>`_
+
+        * - Remove v0 testing
+          - `#2823 <https://github.com/ansys/pyansys-geometry/pull/2823>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Expanded body coverage to 100%
+          - `#2818 <https://github.com/ansys/pyansys-geometry/pull/2818>`_
+
+
 `0.15.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.3>`_ - May 29, 2026
 =========================================================================================
 
