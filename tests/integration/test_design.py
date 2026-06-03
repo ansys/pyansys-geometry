@@ -15,7 +15,7 @@
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR git braOTHER
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
@@ -23,7 +23,7 @@
 
 import os
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 import zipfile
 
 import matplotlib.colors as mcolors
@@ -64,7 +64,7 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
-from ansys.geometry.core.misc.options import TessellationOptions
+from ansys.geometry.core.misc.options import FMDExportOptions, TessellationOptions
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
@@ -143,6 +143,819 @@ def test_design_is_close(modeler: Modeler):
         match="The design has been closed on the backend. Cannot perform any operations on it.",
     ):
         checks.ensure_design_is_active(design.bodies[0].edges)
+
+
+def test_design_close_handles_close_rpc_error(modeler: Modeler):
+    """Test Design.close() exception handling when RPC fails."""
+    design = modeler.create_design("close_error_path")
+    designs_svc = design._grpc_client.services.designs
+
+    with (
+        patch.object(designs_svc, "close", side_effect=RuntimeError("boom")),
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        design.close()
+
+        # Verify branch outcomes
+        assert design.is_closed
+        assert not design.is_active
+        warning_spy.assert_any_call(f"Design {design.name} could not be closed. Error: boom.")
+        warning_spy.assert_any_call("Ignoring response and assuming the design is closed.")
+
+
+def test_design_download_legacy_backend(modeler: Modeler, tmp_path):
+    """Test download() legacy backend path."""
+    design = modeler.create_design("download_test")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design.extrude_sketch("Box", sketch, 2)
+
+    file_path = tmp_path / "test_design.scdocx"
+
+    # Patch private backend version storage to trigger legacy path
+    with (
+        patch.object(modeler.client, "_backend_version", (25, 1, 0)),
+        patch.object(design, "_Design__export_and_download_legacy") as legacy_export,
+    ):
+        legacy_export.return_value = b"fake_bytes"
+        with patch.object(Path, "write_bytes"):
+            design.download(file_path)
+
+            legacy_export.assert_called_once_with(format=DesignFileFormat.SCDOCX)
+
+
+def test_design_download_v1_api(modeler: Modeler, tmp_path):
+    """Test download() V1 API zip extraction path."""
+    design = modeler.create_design("download_v1_test")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design.extrude_sketch("Box", sketch, 2)
+
+    file_path = tmp_path / "test_design.scdocx"
+
+    with (
+        patch.object(design._grpc_client.services, "version", GeometryApiProtos.V1),
+        patch.object(design, "_Design__export_and_download") as v1_export,
+        patch("ansys.geometry.core.misc.auxiliary.extract_project_from_zip") as extract_zip,
+    ):
+        v1_export.return_value = b"fake_zip_bytes"
+        with patch.object(Path, "write_bytes"), patch.object(Path, "unlink"):
+            design.download(file_path)
+
+            v1_export.assert_called_once()
+            extract_zip.assert_called_once()
+
+
+def test_export_and_download_legacy_supported_and_unsupported(modeler: Modeler):
+    """Cover legacy export branches for supported and unsupported formats."""
+    design = modeler.create_design("legacy_export_paths")
+    fake_services = Mock()
+    fake_services.designs.download_file.return_value = {"data": b"scdocx"}
+    fake_services.parts.export.return_value = {"data": b"step"}
+
+    with (
+        patch.object(design._grpc_client, "_services", fake_services),
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        scdocx_bytes = design._Design__export_and_download_legacy(DesignFileFormat.SCDOCX)
+        step_bytes = design._Design__export_and_download_legacy(DesignFileFormat.STEP)
+        invalid_bytes = design._Design__export_and_download_legacy(DesignFileFormat.INVALID)
+
+        assert scdocx_bytes == b"scdocx"
+        assert step_bytes == b"step"
+        assert invalid_bytes is None
+        fake_services.designs.download_file.assert_called_once()
+        fake_services.parts.export.assert_called_once_with(format=DesignFileFormat.STEP)
+        warning_spy.assert_called_with(
+            "INVALID format requested is not supported. Ignoring download request."
+        )
+
+
+def test_export_and_download_v1_unsupported_format_warns(modeler: Modeler):
+    """Cover unsupported format branch in __export_and_download()."""
+    design = modeler.create_design("export_unsupported")
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        result = design._Design__export_and_download(DesignFileFormat.INVALID)
+
+        assert result is None
+        warning_spy.assert_called_with(
+            "INVALID format requested is not supported. Ignoring download request."
+        )
+
+
+def test_export_to_fmd_ignores_options_on_old_backend(modeler: Modeler, tmp_path):
+    """Cover warning path when FMD options are used on unsupported backend."""
+    design = modeler.create_design("fmd_old_backend")
+    output_dir = tmp_path
+    options = FMDExportOptions(deviation=0.001, angle=0.1)
+
+    with (
+        patch.object(modeler.client, "_backend_version", (27, 0, 0)),
+        patch.object(design, "download") as download_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        result = design.export_to_fmd(output_dir, options=options)
+        expected_file = output_dir / f"{design.name}.fmd"
+
+        assert result == expected_file
+        warning_spy.assert_called_once_with(
+            "FMD export options are only supported in Ansys 27.1 and later products."
+            " Ignoring provided options and exporting with default settings."
+        )
+        download_spy.assert_called_once_with(expected_file, DesignFileFormat.FMD, fmd_options=None)
+
+
+def test_insert_file_v0_uses_upload_and_insert(modeler: Modeler, tmp_path):
+    """Cover v0 insert_file branch that uploads then inserts by server path."""
+    design = modeler.create_design("insert_v0_branch")
+    file_location = tmp_path / "to_insert.scdocx"
+    component = Component("mock_component", None, modeler.client)
+
+    with (
+        patch.object(design._grpc_client.services, "version", GeometryApiProtos.V0),
+        patch.object(modeler, "_upload_file", return_value="server/path/file.scdocx") as upload_spy,
+        patch.object(design._grpc_client.services.designs, "insert") as insert_spy,
+        patch.object(design, "_update_design_inplace"),
+        patch.object(design, "_components", [component]),
+    ):
+        inserted_component = design.insert_file(file_location)
+
+        upload_spy.assert_called_once()
+        insert_call_kwargs = insert_spy.call_args.kwargs
+        assert insert_call_kwargs["filepath"] == "server/path/file.scdocx"
+        assert "import_named_selections" in insert_call_kwargs
+        assert inserted_component is component
+
+
+def test_get_raw_tessellation_returns_empty_when_not_alive(modeler: Modeler):
+    design = modeler.create_design("dead_tessellation")
+    design._is_alive = False
+
+    assert design.get_raw_tessellation() == {}
+
+
+def test_activate_calls_put_active_when_not_after_creation(modeler: Modeler):
+    design = modeler.create_design("activate_normal")
+    design._is_active = False
+
+    with (
+        patch.object(design._grpc_client.services.designs, "put_active") as put_active_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._activate(called_after_design_creation=False)
+
+        put_active_spy.assert_called_once_with(design_id=design._design_id)
+        assert design._is_active is True
+        debug_spy.assert_called_with(f"Design {design.name} is activated.")
+
+
+def test_activate_skips_rpc_when_called_after_design_creation(modeler: Modeler):
+    design = modeler.create_design("activate_after_creation")
+    design._is_active = False
+
+    with (
+        patch.object(design._grpc_client.services.designs, "put_active") as put_active_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._activate(called_after_design_creation=True)
+
+        put_active_spy.assert_not_called()
+        assert design._is_active is True
+        debug_spy.assert_called_with(f"Design {design.name} is activated.")
+
+
+def test_read_existing_design_raises_when_no_active_design(modeler: Modeler):
+    design = modeler.create_design("read_existing_no_active")
+    with patch.object(design._grpc_client.services.designs, "get_active", return_value=None):
+        with pytest.raises(RuntimeError, match="No existing design available at service level"):
+            design._Design__read_existing_design()
+
+
+def test_update_from_tracker_created_parts(modeler: Modeler):
+    design = modeler.create_design("update_tracker_parts")
+
+    existing_part = Part("part_1", "ExistingPart", [], [])
+    tracker_response = {
+        "created_parts": [
+            {"id": "part_1", "name": "ExistingName"},
+            {"id": "part_2"},
+        ],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(
+            design,
+            "_find_existing_part",
+            side_effect=lambda pid: existing_part if pid == "part_1" else None,
+        ),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("already exists" in str(call) for call in debug_spy.call_args_list)
+        assert any("Created new part" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
+    design = modeler.create_design("update_tracker_deleted")
+
+    mock_part = Mock()
+    mock_part._is_alive = True
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [
+            {"id": "existing_part"},
+            {"id": "missing_part"},
+        ],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(
+            design,
+            "_find_existing_part",
+            side_effect=lambda pid: mock_part if pid == "existing_part" else None,
+        ),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        warning_spy.assert_called()
+        assert mock_part._is_alive is False
+        assert any(
+            "Could not find part to delete" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_occurrence_components_missing_part(modeler: Modeler):
+    design = modeler.create_design("update_tracker_occ_missing")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [
+            {
+                "id": "comp_occ",
+                "master_id": "other_id",
+                "name": "OccurrenceComp",
+                "part_master": {"id": "missing_part"},
+                "placement": None,
+            }
+        ],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(design, "_find_existing_part", return_value=None),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        assert any(
+            "Could not find part for Component" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_components(modeler: Modeler):
+    design = modeler.create_design("update_tracker_components")
+
+    test_part = Part("test_part", "TestPart", [], [])
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [
+            {
+                "id": "comp_1",
+                "master_id": "comp_1",
+                "name": "MasterComp1",
+                "part_master": {"id": "test_part"},
+                "placement": None,
+            }
+        ],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_existing_part", return_value=test_part),
+        patch.object(design, "_find_and_add_component_to_design") as add_comp_spy,
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Created new MasterComponent" in str(call) for call in debug_spy.call_args_list)
+        add_comp_spy.assert_called()
+
+
+def test_update_from_tracker_modified_and_deleted_components(modeler: Modeler):
+    design = modeler.create_design("update_tracker_mod_del")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [{"id": "comp_1", "name": "ModifiedComp1"}],
+        "deleted_components": [{"id": "comp_2"}],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_update_component", return_value=True) as update_spy,
+        patch.object(design, "_find_and_remove_component", return_value=True),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        update_spy.assert_called()
+        assert any(
+            "Processing modified component" in str(call) for call in debug_spy.call_args_list
+        )
+        assert any("Processing deleted component" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_components_not_found(modeler: Modeler):
+    design = modeler.create_design("update_tracker_del_notfound")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [{"id": "comp_missing"}],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(design, "_find_and_remove_component", return_value=False),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        assert any(
+            "Could not find component to delete" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_bodies_already_exist(modeler: Modeler):
+    design = modeler.create_design("update_tracker_bodies_exist")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    existing_body = design.extrude_sketch("existing", sketch, 1)
+    body_id = existing_body.id
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [{"id": body_id, "name": "ExistingBody", "is_surface": False}],
+        "modified_bodies": [],
+        "deleted_bodies": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_add_body", return_value=None),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("already exists at root level" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_created_bodies_fallback_creation(modeler: Modeler):
+    design = modeler.create_design("update_tracker_bodies_fallback")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [{"id": "body_new", "name": "NewBody", "is_surface": True}],
+        "modified_bodies": [],
+        "deleted_bodies": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_add_body", return_value=None),
+        patch.object(design, "_clear_cached_bodies"),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Added new body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_modified_bodies(modeler: Modeler):
+    design = modeler.create_design("update_tracker_mod_bodies")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    body = design.extrude_sketch("body1", sketch, 1)
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [{"id": body.id, "name": "ModifiedBody"}],
+        "deleted_bodies": [],
+    }
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Processing modified body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_bodies(modeler: Modeler):
+    design = modeler.create_design("update_tracker_del_bodies")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    body1 = design.extrude_sketch("body1", sketch, 1)
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [],
+        "deleted_bodies": [
+            {"id": body1.id},
+            {"id": "body_missing"},
+        ],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "info") as info_spy,
+        patch.object(design, "_find_and_remove_body", return_value=False),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        info_spy.assert_any_call(f"Deleted body (ID: {body1.id}) removed from root level.")
+        assert any("Processing deleted body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_bodies_fallback(modeler: Modeler):
+    design = modeler.create_design("update_tracker_del_bodies_fallback")
+
+    design.add_component("FallbackComp")
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [],
+        "deleted_bodies": [
+            {"id": "body_missing"},
+        ],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_remove_body", return_value=False) as remove_body_spy,
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        remove_body_spy.assert_called_once()
+        assert any("Processing deleted body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_find_and_update_part(modeler: Modeler):
+    design = modeler.create_design("find_update_part")
+
+    part_info = {"id": design._master_component.part.id, "name": "UpdatedPartName"}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_update_part(part_info)
+
+        assert result is True
+        assert design._master_component.part.name == "UpdatedPartName"
+        debug_spy.assert_called()
+        assert any("Updated part" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_find_and_update_part_not_found(modeler: Modeler):
+    design = modeler.create_design("find_update_part_notfound")
+
+    part_info = {"id": "nonexistent_part", "name": "ShouldNotUpdate"}
+
+    result = design._find_and_update_part(part_info)
+
+    assert result is False
+
+
+def test_find_and_remove_part(modeler: Modeler):
+    design = modeler.create_design("find_remove_part")
+
+    part_info = {"id": design._master_component.part.id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_part(part_info)
+
+        assert result is True
+        debug_spy.assert_any_call(f"Removed part (ID: {design._master_component.part.id})")
+
+
+def test_find_and_remove_part_not_found(modeler: Modeler):
+    design = modeler.create_design("find_remove_part_notfound")
+
+    part_info = {"id": "nonexistent_part"}
+
+    result = design._find_and_remove_part(part_info)
+
+    assert result is False
+
+
+def test_clear_body_cache_for_part(modeler: Modeler):
+    design = modeler.create_design("clear_body_cache")
+
+    part = design._master_component.part
+    matching_component = Mock()
+    matching_component._master_component = Mock()
+    matching_component._master_component.part = part
+    matching_component._clear_cached_bodies = Mock()
+
+    with (
+        patch.object(design, "_clear_cached_bodies") as clear_spy,
+        patch.object(design, "_get_all_components", return_value=[matching_component]),
+    ):
+        design._clear_body_cache_for_part(part)
+
+        clear_spy.assert_called_once()
+        matching_component._clear_cached_bodies.assert_called_once()
+
+
+def test_find_and_add_component_not_found_returns_none(modeler: Modeler):
+    design = modeler.create_design("add_comp_notfound")
+
+    component_info = {
+        "id": "comp_orphan_1",
+        "name": "OrphanComponent",
+        "parent_id": "nonexistent_parent",
+        "master_id": None,
+    }
+
+    result = design._find_and_add_component_to_design(component_info, [], None, None)
+
+    assert result is None
+
+
+def test_find_and_update_component_updates_name(modeler: Modeler):
+    design = modeler.create_design("update_comp_name")
+    comp = design.add_component("OriginalName")
+
+    component_info = {"id": comp.id, "name": "UpdatedName"}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_update_component(component_info, design.components)
+
+        assert result is True
+        debug_spy.assert_called()
+
+
+def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
+    design = modeler.create_design("remove_comp")
+    comp = design.add_component("ComponentToRemove")
+    comp_id = comp.id
+
+    component_info = {"id": comp_id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_component(component_info, design.components)
+
+        assert result is True
+        debug_spy.assert_called()
+
+
+def test_find_and_remove_component_recursive_with_parent(modeler: Modeler):
+    design = modeler.create_design("remove_comp_recursive")
+    parent_comp = design.add_component("ParentComp")
+    nested_comp = parent_comp.add_component("NestedComp")
+    nested_id = nested_comp.id
+
+    component_info = {"id": nested_id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_component(
+            component_info, design.components, parent_component=design
+        )
+
+        assert result is True
+        debug_spy.assert_called()
+        assert any(
+            "from root design" in str(call) or "from" in str(call)
+            for call in debug_spy.call_args_list
+        )
+
+
+def test_find_and_add_body_matching_part_id(modeler: Modeler):
+    design = modeler.create_design("add_body_part")
+    comp = design.add_component("BodyComponent")
+    part = comp._master_component.part
+
+    body_info = {
+        "id": "new_body_1",
+        "name": "NewBody",
+        "parent_id": part.id,
+        "is_surface": False,
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_clear_body_cache_for_part"),
+    ):
+        result = design._find_and_add_body(body_info, design.components, None, None)
+
+        assert result is not None
+        assert result.id == "new_body_1"
+        debug_spy.assert_called()
+        assert any("Added new body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_find_and_add_body_recursive_search(modeler: Modeler):
+    design = modeler.create_design("add_body_recursive")
+    parent_comp = design.add_component("ParentComp")
+    nested_comp = parent_comp.add_component("NestedComp")
+    part = nested_comp._master_component.part
+
+    body_info = {
+        "id": "nested_body_1",
+        "name": "NestedBody",
+        "parent_id": part.id,
+        "is_surface": True,
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_clear_body_cache_for_part"),
+    ):
+        result = design._find_and_add_body(body_info, design.components, None, None)
+
+        assert result is not None
+        assert result.id == "nested_body_1"
+        debug_spy.assert_called()
+
+
+def test_find_and_add_body_not_found_returns_none(modeler: Modeler):
+    design = modeler.create_design("add_body_notfound")
+
+    body_info = {
+        "id": "orphan_body_1",
+        "name": "OrphanBody",
+        "parent_id": "nonexistent_part",
+        "is_surface": False,
+    }
+
+    result = design._find_and_add_body(body_info, design.components, None, None)
+
+    assert result is None
+
+
+def test_find_and_add_body_empty_components(modeler: Modeler):
+    design = modeler.create_design("add_body_empty")
+
+    body_info = {
+        "id": "body_1",
+        "name": "Body1",
+        "parent_id": "any_part",
+        "is_surface": False,
+    }
+
+    result = design._find_and_add_body(body_info, [], None, None)
+
+    assert result is None
+
+
+def test_update_body_sets_properties(modeler: Modeler):
+    design = modeler.create_design("update_body_props")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    body = design.extrude_sketch("body1", sketch, 1)
+
+    body_info = {"id": body.id, "name": "UpdatedBodyName", "is_surface": True}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        design._update_body(body, body_info)
+
+        debug_spy.assert_called()
+
+
+@pytest.mark.parametrize(
+    "design_name,backend_version,service_version,shared_type,expect_planes_call,expect_debug_warning",
+    [
+        (
+            "read_existing_old_backend",
+            (25, 1, 0),
+            GeometryApiProtos.V1,
+            SharedTopologyType.SHARETYPE_SHARE,
+            False,
+            True,
+        ),
+        (
+            "read_existing_plane_service",
+            (26, 1, 0),
+            GeometryApiProtos.V1,
+            SharedTopologyType.SHARETYPE_MERGE,
+            True,
+            False,
+        ),
+    ],
+)
+def test_read_existing_design_plane_retrieval_paths(
+    modeler: Modeler,
+    design_name,
+    backend_version,
+    service_version,
+    shared_type,
+    expect_planes_call,
+    expect_debug_warning,
+):
+    design = modeler.create_design(design_name)
+    design_response = {
+        "design_id": "d1",
+        "main_part_id": "p_main",
+        "name": "existing_design",
+    }
+    assembly_response = {
+        "parts": [{"id": "p_main", "name": "Main"}],
+        "transformed_parts": [],
+        "components": [],
+        "bodies": [],
+        "materials": [],
+        "beams": [],
+        "named_selections": [],
+        "component_coordinate_systems": [],
+        "design_points": [],
+        "datum_planes": [],
+        "design_curves": [],
+        "component_shared_topologies": [
+            {"component_id": "p_main", "shared_topology_type": shared_type.value}
+        ],
+    }
+
+    with (
+        patch.object(
+            design._grpc_client.services.designs, "get_active", return_value=design_response
+        ),
+        patch.object(
+            design._grpc_client.services.designs,
+            "get_assembly",
+            return_value=assembly_response,
+        ),
+        patch.object(modeler.client, "_backend_version", backend_version),
+        patch.object(design._grpc_client.services, "version", service_version),
+        patch.object(
+            design._grpc_client.services.planes,
+            "get_all",
+            return_value={"planes": []},
+        ) as planes_get_all_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._Design__read_existing_design()
+
+        if expect_planes_call:
+            planes_get_all_spy.assert_called_once_with(parent_id=design.id)
+        else:
+            planes_get_all_spy.assert_not_called()
+
+        if expect_debug_warning:
+            debug_spy.assert_any_call(
+                "Backend version does not support datum planes. Skipping datum plane creation."
+            )
+
+        assert design.shared_topology == shared_type
 
 
 def test_design_selection(modeler: Modeler):
