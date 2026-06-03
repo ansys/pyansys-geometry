@@ -23,7 +23,7 @@
 
 import os
 from pathlib import Path
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import zipfile
 
 import matplotlib.colors as mcolors
@@ -64,7 +64,7 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
-from ansys.geometry.core.misc.options import FMDExportOptions, TessellationOptions
+from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
