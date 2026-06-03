@@ -294,7 +294,6 @@ backends:
       # No support before 27.1
       - tests/integration/test_design.py::test_design_download_v1_api
 
-
   - version: "25.1"
     incompatible_tests:
       # Model used is too new for this version
@@ -407,7 +406,6 @@ backends:
       # No support before 27.1
       - tests/integration/test_design.py::test_design_download_v1_api
 
-
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
@@ -468,7 +466,6 @@ backends:
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
       # No support before 27.1
       - tests/integration/test_design.py::test_design_download_v1_api
-
 
   - version: "26.1"
     incompatible_tests:
