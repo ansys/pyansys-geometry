@@ -155,7 +155,8 @@ jobs:
           docker cp tests/integration/files/. $copyDest
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
-          Start-Sleep -Seconds 10"
+          Start-Sleep -Seconds 10
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
