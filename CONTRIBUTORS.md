@@ -33,6 +33,7 @@
 * [Michael Janes](https://github.com/mdjanes)
 * [Mike Kaplan ](https://github.com/mlkaplan36)
 * [MikeJanes](https://github.com/MikeJanes)
+* [Muhammed Adedigba](https://github.com/moe-ad)
 * [Rajesh Meena](https://github.com/MeenaBytes)
 * [Revathy Venugopal](https://github.com/Revathyvenugopal162)
 * [Riccardo Manno](https://github.com/rmanno91)
