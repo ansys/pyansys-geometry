@@ -168,8 +168,7 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
-      }})
+    name: Testing and coverage (Windows) (${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -178,7 +177,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: ["v1", "v0"]
         use-tracker: ["no", "yes"]
         docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
@@ -192,10 +190,6 @@ jobs:
             experimental: false
           - docker-image: "core-windows-latest-unstable"
             experimental: true
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -291,16 +285,15 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
         env:
-          PROTO_VERSION: ${{ matrix.proto-version }}
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
+          pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
@@ -308,7 +301,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -317,7 +310,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           include-hidden-files: true
-          name: coverage-html-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: coverage-html-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: .cov/html
           retention-days: 7
 
@@ -380,8 +373,7 @@ jobs:
           docker rm ${GEO_CONT_NAME}
 
   testing-linux:
-    name: Testing and coverage (Linux) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
-      }})
+    name: Testing and coverage (Linux) (${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -390,7 +382,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: ["v1", "v0"]
         use-tracker: ["no", "yes"]
         docker-image: ["core-linux-latest", "core-linux-latest-unstable"]
         include:
@@ -404,10 +395,6 @@ jobs:
             experimental: false
           - docker-image: "core-linux-latest-unstable"
             experimental: true
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -486,7 +473,7 @@ jobs:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
+          pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
           checkout: false
           randomize: true
           group-dependencies-name: "tests"
@@ -503,7 +490,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
@@ -511,7 +498,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
           retention-days: 7
 

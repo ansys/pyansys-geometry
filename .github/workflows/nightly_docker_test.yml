@@ -100,7 +100,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -109,10 +108,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -149,7 +144,6 @@ jobs:
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
-          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
@@ -162,15 +156,14 @@ jobs:
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
-          python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
         env:
-          PROTO_VERSION: ${{ matrix.proto-version }}
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
+          pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
@@ -216,7 +209,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -225,10 +217,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -265,7 +253,7 @@ jobs:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
+          pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
         if: always()
