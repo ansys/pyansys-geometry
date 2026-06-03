@@ -24,7 +24,6 @@
 from dataclasses import asdict, dataclass
 from enum import Enum, unique
 from pathlib import Path
-import tempfile
 
 from pint import Quantity
 
