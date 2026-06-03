@@ -434,7 +434,7 @@ class PMDBExportOptions:
     process_enclosure_and_symmetry: bool = True
     reader_save_part: bool = False
     target_application: PMDBTargetApplication = PMDBTargetApplication.PARTMGR
-    temp_directory: str | Path = str(Path(tempfile.gettempdir()))
+    temp_directory: str | Path | None = None
     process_physics_definition: bool = True
     process_solid_bodies: bool = True
     process_surface_bodies: bool = True

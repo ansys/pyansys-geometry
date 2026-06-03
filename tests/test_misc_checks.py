@@ -47,13 +47,13 @@ from ansys.geometry.core.misc import (
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.options import (
     AnalysisType,
-    AttachWeightClass,
     FMDExportOptions,
-    ImportParameterType,
-    MixedPartExportType,
-    PlugInFacetQuality,
+    PMDBAttachWeightClass,
     PMDBExportOptions,
-    TargetApplication,
+    PMDBImportParameterType,
+    PMDBMixedPartExportType,
+    PMDBPlugInFacetQuality,
+    PMDBTargetApplication,
 )
 
 
@@ -662,14 +662,14 @@ def test_pmdb_export_options_defaults():
     assert opts.cad_attribute_prefixes == ""
     assert opts.named_selection_prefixes == ""
     assert opts.analysis_type is AnalysisType.THREE_D
-    assert opts.mixed_part_export_type is MixedPartExportType.NONE
+    assert opts.mixed_part_export_type is PMDBMixedPartExportType.NONE
     assert opts.attach_flattened_assembly is False
     assert opts.use_cad_mass_properties is False
     assert opts.plane_prefixes == ""
     assert opts.coordinate_system_prefixes == ""
     assert opts.advanced_geom_processing is False
     assert opts.angular_deviation == 0.0
-    assert opts.attach_weight_class is AttachWeightClass.HEAVYWEIGHT
+    assert opts.attach_weight_class is PMDBAttachWeightClass.HEAVYWEIGHT
     assert opts.cad_associativity is False
     assert opts.cad_attribute_transfer is False
     assert opts.do_smart_update is False
@@ -683,11 +683,11 @@ def test_pmdb_export_options_defaults():
     assert opts.granta_material_properties is False
     assert opts.max_facet_size == 0.0
     assert opts.named_selection is False
-    assert opts.parameter_processing_type is ImportParameterType.NONE
-    assert opts.plug_in_facet_quality is PlugInFacetQuality.NONE
+    assert opts.parameter_processing_type is PMDBImportParameterType.NONE
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.NONE
     assert opts.process_enclosure_and_symmetry is False
     assert opts.reader_save_part is False
-    assert opts.target_application is TargetApplication.PARTMGR
+    assert opts.target_application is PMDBTargetApplication.PARTMGR
     assert opts.temp_directory == ""
     assert opts.process_physics_definition is False
     assert opts.process_solid_bodies is False
