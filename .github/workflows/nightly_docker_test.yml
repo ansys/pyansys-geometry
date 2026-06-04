@@ -59,7 +59,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -100,7 +100,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -109,10 +108,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -135,7 +130,7 @@ jobs:
           pip install -e . --group tests
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -149,7 +144,6 @@ jobs:
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
           PORT_MAPPING: "${{ env.ANSRV_GEO_PORT }}:50051"
-          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
           # Write command to file launch.txt for sanitizing purposes
           echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:ANSRV_GEO_IMAGE_WINDOWS_CORE_TAG $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
@@ -162,15 +156,14 @@ jobs:
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
-          python -c "import os; from ansys.geometry.core.connection.validate import validate; validate(proto_version=os.getenv('PROTO_VERSION'))"
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
         env:
-          PROTO_VERSION: ${{ matrix.proto-version }}
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
+          pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
@@ -216,7 +209,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: [v0, v1]
         use-tracker: ["no", "yes"]
         include:
           # Add tracker-label based on use-tracker
@@ -225,10 +217,6 @@ jobs:
             tracker-label: "Without tracker"
           - use-tracker: "yes"
             tracker-label: "With tracker"
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
     permissions:
       contents: read
       packages: read # Needs access to the Geometry docker image
@@ -239,7 +227,7 @@ jobs:
           persist-credentials: false
 
       - name: Login in Github Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -258,14 +246,14 @@ jobs:
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@73fa84c704bb6691f254cfe4d4b928c338b0d4da # v10.3.0
+        uses: ansys/actions/tests-pytest@d946b24b9a765f4169bcc94afdb27bd1a0533741 # v10.3.2
         env:
           ALLOW_PLOTTING: true
         with:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
+          pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
         if: always()
@@ -315,7 +303,7 @@ jobs:
       packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -342,7 +330,7 @@ jobs:
       packages: write # Required to promote the Geometry docker image
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

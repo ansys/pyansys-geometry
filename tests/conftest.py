@@ -175,7 +175,6 @@ def use_existing_service(request):
 def use_tracker(request):
     """Fixture to enable or disable the tracker."""
     value: str = request.config.getoption("--use-tracker", default="no")  # Explicitly set default
-    import ansys.geometry.core as pyansys_geometry
 
     if value.lower() == "yes":
         pyansys_geometry.USE_TRACKER_TO_UPDATE_DESIGN = True

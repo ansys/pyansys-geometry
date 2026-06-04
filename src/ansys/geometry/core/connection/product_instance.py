@@ -168,7 +168,12 @@ class ProductInstance:
     def close(self) -> bool:
         """Close the process associated to the pid."""
         try:
-            os.kill(self._pid, signal.SIGTERM)
+            if os.name == "nt":
+                # The process was launched in its own process group, so
+                # CTRL_BREAK_EVENT targets only that group and not the parent.
+                os.kill(self._pid, signal.CTRL_BREAK_EVENT)
+            else:
+                os.kill(self._pid, signal.SIGTERM)
         except OSError as oserr:
             LOG.error(str(oserr))
             return False
@@ -722,6 +727,10 @@ def __start_program(
         stderr=subprocess.DEVNULL,
         env=local_env,
         cwd=server_working_dir,
+        # Isolate the child into its own process group on Windows so that
+        # CTRL_BREAK_EVENT in close() targets only this process and not the
+        # entire parent process group.
+        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0,
     )
 
 

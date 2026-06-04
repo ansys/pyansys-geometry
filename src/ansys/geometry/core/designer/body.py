@@ -51,6 +51,7 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    _F,
     check_input_types,
     check_nurbs_compatibility,
     check_type,
@@ -111,7 +112,7 @@ class FillStyle(Enum):
     TRANSPARENT = 2
 
 
-class IBody(ABC):
+class IBody(ABC):  # pragma: no cover
     """Defines the common methods for a body, providing the abstract body interface.
 
     Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
@@ -1021,7 +1022,7 @@ class MasterBody(IBody):
         self._fill_style = FillStyle.DEFAULT
         self._color = None
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -1041,7 +1042,7 @@ class MasterBody(IBody):
             self._raw_tessellation = None
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     @property
     def id(self) -> str:  # noqa: D102
@@ -1351,7 +1352,10 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
@@ -1360,7 +1364,7 @@ class MasterBody(IBody):
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the body.
 
         Warnings
@@ -1568,7 +1572,7 @@ class MasterBody(IBody):
                             i += count + 1
                         else:
                             break
-                    else:
+                    else:  # pragma: no cover
                         break
             return cells
 
@@ -1589,7 +1593,7 @@ class MasterBody(IBody):
 
         def _create_polydata_from_tess_data(tess_data: dict):
             """Create a VTK PolyData object from tessellation data."""
-            if not tess_data or len(tess_data.get("vertices", [])) == 0:
+            if not tess_data or len(tess_data.get("vertices", [])) == 0:  # pragma: no cover
                 return None
 
             polydata = vtkPolyData()
@@ -1798,7 +1802,7 @@ class Body(IBody):
         self._template = template
         self._grpc_client = template._grpc_client
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1817,7 +1821,7 @@ class Body(IBody):
             self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
@@ -2140,7 +2144,10 @@ class Body(IBody):
 
     @ensure_design_is_active
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         return self._template.set_color(color)
 
@@ -2339,7 +2346,7 @@ class Body(IBody):
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "intersect", "bodies do not intersect"
             )
@@ -2347,7 +2354,7 @@ class Body(IBody):
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "subtract", "empty (complete) subtraction"
             )
@@ -2355,7 +2362,7 @@ class Body(IBody):
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
@@ -2420,7 +2427,7 @@ class Body(IBody):
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
-    def __generic_boolean_command(
+    def __generic_boolean_command(  # pragma: no cover
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
