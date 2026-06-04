@@ -418,6 +418,10 @@ class Modeler:
             * SOLIDWORKS 2025
             * STEP AP242
         """
+        # Check if file exists
+        if not Path(file_path).exists():
+            raise GeometryRuntimeError(f"File {file_path} does not exist.")
+
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
