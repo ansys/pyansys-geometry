@@ -663,36 +663,36 @@ def test_pmdb_export_options_defaults():
     assert opts.named_selection_prefixes == ""
     assert opts.analysis_type is AnalysisType.THREE_D
     assert opts.mixed_part_export_type is PMDBMixedPartExportType.ALL
-    assert opts.attach_flattened_assembly is False
-    assert opts.use_cad_mass_properties is False
+    assert opts.attach_flattened_assembly is True
+    assert opts.use_cad_mass_properties is True
     assert opts.plane_prefixes == ""
     assert opts.coordinate_system_prefixes == ""
     assert opts.advanced_geom_processing is False
     assert opts.angular_deviation == 0.0
     assert opts.attach_weight_class is PMDBAttachWeightClass.HEAVYWEIGHT
     assert opts.cad_associativity is False
-    assert opts.cad_attribute_transfer is False
+    assert opts.cad_attribute_transfer is True
     assert opts.do_smart_update is False
     assert opts.geometry_deviation == 0.0
-    assert opts.process_coordinate_sys is False
-    assert opts.process_planes is False
-    assert opts.import_using_instances is False
-    assert opts.process_work_points is False
+    assert opts.process_coordinate_sys is True
+    assert opts.process_planes is True
+    assert opts.import_using_instances is True
+    assert opts.process_work_points is True
     assert opts.is_selective_update is False
-    assert opts.material_properties is False
+    assert opts.material_properties is True
     assert opts.granta_material_properties is False
     assert opts.max_facet_size == 0.0
-    assert opts.named_selection is False
+    assert opts.named_selection is True
     assert opts.parameter_processing_type is PMDBImportParameterType.ALL
     assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.SOURCE
-    assert opts.process_enclosure_and_symmetry is False
+    assert opts.process_enclosure_and_symmetry is True
     assert opts.reader_save_part is False
     assert opts.target_application is PMDBTargetApplication.PARTMGR
-    assert opts.temp_directory == ""
-    assert opts.process_physics_definition is False
-    assert opts.process_solid_bodies is False
-    assert opts.process_surface_bodies is False
-    assert opts.process_line_bodies is False
+    assert opts.temp_directory is None
+    assert opts.process_physics_definition is True
+    assert opts.process_solid_bodies is True
+    assert opts.process_surface_bodies is True
+    assert opts.process_line_bodies is True
 
 
 def test_pmdb_export_options_custom_values():
