@@ -702,14 +702,14 @@ def test_pmdb_export_options_custom_values():
         cad_attribute_prefixes="attr_",
         named_selection_prefixes="ns_",
         analysis_type=AnalysisType.TWO_D,
-        mixed_part_export_type=MixedPartExportType.SOLID_SHEET,
+        mixed_part_export_type=PMDBMixedPartExportType.SOLID_SHEET,
         attach_flattened_assembly=True,
         use_cad_mass_properties=True,
         plane_prefixes="pl_",
         coordinate_system_prefixes="cs_",
         advanced_geom_processing=True,
         angular_deviation=1.5,
-        attach_weight_class=AttachWeightClass.LIGHTWEIGHT,
+        attach_weight_class=PMDBAttachWeightClass.LIGHTWEIGHT,
         cad_associativity=True,
         cad_attribute_transfer=True,
         do_smart_update=True,
@@ -723,11 +723,11 @@ def test_pmdb_export_options_custom_values():
         granta_material_properties=True,
         max_facet_size=0.5,
         named_selection=True,
-        parameter_processing_type=ImportParameterType.ALL,
-        plug_in_facet_quality=PlugInFacetQuality.FINE,
+        parameter_processing_type=PMDBImportParameterType.ALL,
+        plug_in_facet_quality=PMDBPlugInFacetQuality.FINE,
         process_enclosure_and_symmetry=True,
         reader_save_part=True,
-        target_application=TargetApplication.FLUENTMESHING,
+        target_application=PMDBTargetApplication.FLUENTMESHING,
         temp_directory="/tmp/pmdb",
         process_physics_definition=True,
         process_solid_bodies=True,
@@ -739,14 +739,14 @@ def test_pmdb_export_options_custom_values():
     assert opts.cad_attribute_prefixes == "attr_"
     assert opts.named_selection_prefixes == "ns_"
     assert opts.analysis_type is AnalysisType.TWO_D
-    assert opts.mixed_part_export_type is MixedPartExportType.SOLID_SHEET
+    assert opts.mixed_part_export_type is PMDBMixedPartExportType.SOLID_SHEET
     assert opts.attach_flattened_assembly is True
     assert opts.use_cad_mass_properties is True
     assert opts.plane_prefixes == "pl_"
     assert opts.coordinate_system_prefixes == "cs_"
     assert opts.advanced_geom_processing is True
     assert opts.angular_deviation == 1.5
-    assert opts.attach_weight_class is AttachWeightClass.LIGHTWEIGHT
+    assert opts.attach_weight_class is PMDBAttachWeightClass.LIGHTWEIGHT
     assert opts.cad_associativity is True
     assert opts.cad_attribute_transfer is True
     assert opts.do_smart_update is True
@@ -760,11 +760,11 @@ def test_pmdb_export_options_custom_values():
     assert opts.granta_material_properties is True
     assert opts.max_facet_size == 0.5
     assert opts.named_selection is True
-    assert opts.parameter_processing_type is ImportParameterType.ALL
-    assert opts.plug_in_facet_quality is PlugInFacetQuality.FINE
+    assert opts.parameter_processing_type is PMDBImportParameterType.ALL
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.FINE
     assert opts.process_enclosure_and_symmetry is True
     assert opts.reader_save_part is True
-    assert opts.target_application is TargetApplication.FLUENTMESHING
+    assert opts.target_application is PMDBTargetApplication.FLUENTMESHING
     assert opts.temp_directory == "/tmp/pmdb"
     assert opts.process_physics_definition is True
     assert opts.process_solid_bodies is True
@@ -778,30 +778,30 @@ def test_pmdb_export_options_enum_values():
     assert AnalysisType.THREE_D.value == 0
     assert AnalysisType.TWO_D.value == 1
 
-    # MixedPartExportType — spot-check key members
-    assert MixedPartExportType.NONE.value == 0
-    assert MixedPartExportType.SOLID.value == 1
-    assert MixedPartExportType.SOLID_SHEET.value == 5
-    assert MixedPartExportType.ALL.value == 15
-    assert len(MixedPartExportType) == 16
+    # PMDBMixedPartExportType — spot-check key members
+    assert PMDBMixedPartExportType.NONE.value == 0
+    assert PMDBMixedPartExportType.SOLID.value == 1
+    assert PMDBMixedPartExportType.SOLID_SHEET.value == 5
+    assert PMDBMixedPartExportType.ALL.value == 15
+    assert len(PMDBMixedPartExportType) == 16
 
-    # AttachWeightClass
-    assert AttachWeightClass.HEAVYWEIGHT.value == 0
-    assert AttachWeightClass.FEATHERWEIGHT.value == 3
-    assert len(AttachWeightClass) == 4
+    # PMDBAttachWeightClass
+    assert PMDBAttachWeightClass.HEAVYWEIGHT.value == 0
+    assert PMDBAttachWeightClass.FEATHERWEIGHT.value == 3
+    assert len(PMDBAttachWeightClass) == 4
 
-    # ImportParameterType
-    assert ImportParameterType.NONE.value == 0
-    assert ImportParameterType.INDEPENDENT.value == 1
-    assert ImportParameterType.ALL.value == 2
-    assert len(ImportParameterType) == 3
+    # PMDBImportParameterType
+    assert PMDBImportParameterType.NONE.value == 0
+    assert PMDBImportParameterType.INDEPENDENT.value == 1
+    assert PMDBImportParameterType.ALL.value == 2
+    assert len(PMDBImportParameterType) == 3
 
-    # PlugInFacetQuality
-    assert PlugInFacetQuality.NONE.value == 0
-    assert PlugInFacetQuality.USER_DEFINED.value == 7
-    assert len(PlugInFacetQuality) == 8
+    # PMDBPlugInFacetQuality
+    assert PMDBPlugInFacetQuality.NONE.value == 0
+    assert PMDBPlugInFacetQuality.USER_DEFINED.value == 7
+    assert len(PMDBPlugInFacetQuality) == 8
 
-    # TargetApplication
-    assert TargetApplication.PARTMGR.value == 0
-    assert TargetApplication.SPACECLAIM.value == 4
-    assert len(TargetApplication) == 5
+    # PMDBTargetApplication
+    assert PMDBTargetApplication.PARTMGR.value == 0
+    assert PMDBTargetApplication.SPACECLAIM.value == 4
+    assert len(PMDBTargetApplication) == 5
