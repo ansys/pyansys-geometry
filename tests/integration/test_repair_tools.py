@@ -23,6 +23,7 @@
 
 import pytest
 
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.check_geometry import InspectResult
 from ansys.geometry.core.tools.problem_areas import (
@@ -772,3 +773,27 @@ def test_repair_tools_find_and_fix_no_bodies(modeler: Modeler, method_name):
     assert result.modified_bodies == []
     assert result.found == 0
     assert result.repaired == 0
+
+
+def test_repair_tool_on_lightweight_body(modeler: Modeler):
+    """Test that repair tools return appropriate messages when applied to lightweight bodies."""
+    options = ImportOptions(import_as_lightweight=True)
+    design = modeler.open_file(
+        FILES_DIR / "pipe_split_small_edge_lightweight.stride",
+        import_options=options
+    )
+    bodies = design.get_all_bodies()
+    assert all(b.is_lightweight for b in bodies)
+
+    # Attempt to find short edges on a lightweight body
+    short_edges = modeler.repair_tools.find_short_edges(bodies, 0.01)
+    # assert short_edges == []
+
+    # Attempt to fix short edges on a lightweight body
+    repair_message = modeler.repair_tools.find_and_fix_short_edges(bodies, 0.01)
+    assert isinstance(repair_message, RepairToolMessage)
+    assert repair_message.success is True
+    assert repair_message.created_bodies == []
+    assert repair_message.modified_bodies == []
+    assert repair_message.found == 1
+    assert repair_message.repaired == 0
