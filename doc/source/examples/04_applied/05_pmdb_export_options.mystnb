@@ -4,12 +4,13 @@ jupytext:
     extension: .mystnb
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.1
+    jupytext_version: 1.19.1
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
 ---
+
 # Applied: Fine-tune a PMDB export with PMDBExportOptions
 
 PMDB (Persistent Model Database) is the recommended format for transferring
@@ -116,7 +117,7 @@ beam_member = design.create_beam(
     Point3D([0.10, 0, -0.03]),
     profile,
 )
-print(f"Beam created        : '{beam_member.name}'")
+print(f"Beam created        : '{beam_member.id}'")
 ```
 
 ### Visualise the assembly
@@ -172,7 +173,8 @@ No options are passed, so ``export_to_pmdb()`` uses the ``PMDBExportOptions``
 defaults, which include all body types and named selections.
 
 ```{code-cell} ipython3
-path_default = design.export_to_pmdb(output_dir / "assembly_default.pmdb")
+path_default = design.export_to_pmdb(output_dir)
+print(path_default)
 print(f"Default export  → {path_default.name}  ({path_default.stat().st_size:,} bytes)")
 ```
 
