@@ -42,11 +42,8 @@ something visible to work with:
 |------|------|-------------|
 | `Solid_Box` | Solid | 50 × 30 × 20 mm extruded box |
 | `Surface_Panel` | Surface | 60 × 40 mm thin planar panel |
-| `Beam_Member` | Line | 100 mm long circular beam |
 
 ```{code-cell} ipython3
-from pint import Quantity
-
 from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -54,7 +51,6 @@ from ansys.geometry.core.math import (
     Point2D,
     Point3D,
 )
-from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import PlaneSurface
@@ -98,28 +94,6 @@ surface_panel = design.create_body_from_surface("Surface_Panel", trimmed)
 print(f"Surface body created: '{surface_panel.name}'  is_surface={surface_panel.is_surface}")
 ```
 
-### Add a line (beam) body
-
-Line bodies represent structural members such as beams, columns, or pipes.
-A ``BeamCircularProfile`` defines the cross-section; the body itself is a
-straight line segment.
-
-```{code-cell} ipython3
-# Circular cross-section: 5 mm radius
-profile = design.add_beam_circular_profile(
-    "CircularProfile_5mm",
-    radius=Quantity(5, UNITS.mm),
-)
-
-# 100 mm beam along the X-axis, placed 60 mm below the solid box
-beam_member = design.create_beam(
-    Point3D([0.00, 0, -0.03]),
-    Point3D([0.10, 0, -0.03]),
-    profile,
-)
-print(f"Beam created        : '{beam_member.id}'")
-```
-
 ### Visualise the assembly
 
 ```{code-cell} ipython3
@@ -135,7 +109,6 @@ can scope boundary conditions and mesh controls.
 ```{code-cell} ipython3
 design.create_named_selection("NS_Solid",   bodies=[solid_box])
 design.create_named_selection("NS_Surface", bodies=[surface_panel])
-design.create_named_selection("NS_Beam",    beams=[beam_member])
 design.create_named_selection("NS_All",     bodies=[solid_box, surface_panel])
 
 print("Named selections in design:")
@@ -150,9 +123,9 @@ The table below summarises the four exports performed in this section.
 | Scenario | Key options changed | Purpose |
 |----------|---------------------|---------|
 | **Default** | *(none)* | Baseline — everything exported |
-| **Solids only** | `process_surface_bodies=False`, `process_line_bodies=False` | Strip shells and beams |
+| **Solids only** | `process_surface_bodies=False` | Strip shells |
 | **No named selections** | `named_selection=False` | Clean-slate transfer |
-| **CFD target** | `target_application=PMDBTargetApplication.FLUENTMESHING`, `process_line_bodies=False` | Prepare for Fluent Meshing |
+| **CFD target** | `target_application=PMDBTargetApplication.FLUENTMESHING` | Prepare for Fluent Meshing |
 
 ```{code-cell} ipython3
 from pathlib import Path
@@ -180,14 +153,13 @@ print(f"Default export  → {path_default.name}  ({path_default.stat().st_size:,
 
 ### Scenario 2 — Solid bodies only
 
-Setting ``process_surface_bodies=False`` and ``process_line_bodies=False``
-tells the exporter to discard surface and beam bodies. Only the solid box
-(and its named selection) will be present in the resulting PMDB file.
+Setting ``process_surface_bodies=False`` tells the exporter to discard
+surface bodies. Only the solid box (and its named selection) will be
+present in the resulting PMDB file.
 
 ```{code-cell} ipython3
 opts_solids_only = PMDBExportOptions(
     process_surface_bodies=False,
-    process_line_bodies=False,
 )
 
 path_solids = design.export_to_pmdb(
@@ -218,13 +190,11 @@ print(f"No-NS export       → {path_no_ns.name}  ({path_no_ns.stat().st_size:,}
 ### Scenario 4 — CFD-ready: target Fluent Meshing
 
 Changing ``target_application`` to ``FLUENTMESHING`` configures the PMDB
-for import into Ansys Fluent Meshing.  Beam (line) bodies are irrelevant
-for CFD surface preparation, so they are excluded as well.
+for import into Ansys Fluent Meshing.
 
 ```{code-cell} ipython3
 opts_cfd = PMDBExportOptions(
     target_application=PMDBTargetApplication.FLUENTMESHING,
-    process_line_bodies=False,
 )
 
 path_cfd = design.export_to_pmdb(
@@ -260,8 +230,7 @@ for label, path in exports.items():
 
 - ``PMDBExportOptions`` is a plain Python dataclass — every field has a
   sensible default, so you only need to override what matters.
-- Use ``process_solid_bodies``, ``process_surface_bodies``, and
-  ``process_line_bodies`` to filter which body types reach the solver.
+- Use ``process_solid_bodies`` and ``process_surface_bodies`` to filter which body types reach the solver.
 - Use ``named_selection=False`` if the receiving tool should start without
   pre-defined named selections.
 - Use ``target_application`` to tailor the PMDB for a specific Ansys product
