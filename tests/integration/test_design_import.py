@@ -22,6 +22,7 @@
 """Test design import."""
 
 from pathlib import Path
+import re
 
 import numpy as np
 from pint import Quantity
@@ -31,6 +32,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
@@ -787,3 +789,30 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
     ):
         modeler.open_file(unsupported_file)
+
+
+def test_import_as_lightweight(modeler: Modeler):
+    """Test that opening a file with import_as_lightweight=True results in lightweight bodies.
+    """
+    # Open without lightweight option - bodies should be heavyweight
+    design_hw = modeler.open_file(Path(FILES_DIR, "lightweight_cube.stride"))
+    assert len(design_hw.get_all_bodies()) == 1
+    assert all(not body.is_lightweight for body in design_hw.bodies)
+
+    # Open with import_as_lightweight=True - bodies should be lightweight
+    design_lw = modeler.open_file(
+        Path(FILES_DIR, "lightweight_cube.stride"),
+        import_options=ImportOptions(import_as_lightweight=True),
+    )
+    assert len(design_lw.get_all_bodies()) == 1
+    assert all(body.is_lightweight for body in design_lw.bodies)
+
+
+def test_opening_nonexistent_path(modeler: Modeler):
+    """Test that opening a file from a nonexistent path raises an appropriate error."""
+    nonexistent_path = FILES_DIR / "nonexistent_file.scdocx"
+    with pytest.raises(
+        GeometryRuntimeError,
+        match=re.escape(f"File {nonexistent_path} does not exist."),
+    ):
+        modeler.open_file(nonexistent_path)
