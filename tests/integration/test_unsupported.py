@@ -143,3 +143,4 @@ def test_import_lightweight_and_convert(modeler: Modeler):
 
     result = modeler.unsupported.convert_to_heavyweight(bodies)
     assert result is True
+    assert all(not body.is_lightweight for body in bodies)

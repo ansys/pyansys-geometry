@@ -387,7 +387,12 @@ class UnsupportedCommands:
         result = self._grpc_client.services.unsupported.convert_to_heavyweight(
             ids=[body.id for body in bodies]
         )
-        return result["success"]
+
+        if result.get("success"):
+            for body in bodies:
+                body.is_lightweight = False
+            return True
+        return False
 
     @min_backend_version(27, 1, 0)
     def load_addin(self, manifest_path: Path | str) -> None:
