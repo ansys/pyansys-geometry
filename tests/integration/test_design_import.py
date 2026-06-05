@@ -791,22 +791,6 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         modeler.open_file(unsupported_file)
 
 
-def test_import_as_lightweight(modeler: Modeler):
-    """Test that opening a file with import_as_lightweight=True results in lightweight bodies."""
-    # Open without lightweight option - bodies should be heavyweight
-    design_hw = modeler.open_file(Path(FILES_DIR, "lightweight_cube.stride"))
-    assert len(design_hw.get_all_bodies()) == 1
-    assert all(not body.is_lightweight for body in design_hw.bodies)
-
-    # Open with import_as_lightweight=True - bodies should be lightweight
-    design_lw = modeler.open_file(
-        Path(FILES_DIR, "lightweight_cube.stride"),
-        import_options=ImportOptions(import_as_lightweight=True),
-    )
-    assert len(design_lw.get_all_bodies()) == 1
-    assert all(body.is_lightweight for body in design_lw.bodies)
-
-
 def test_opening_nonexistent_path(modeler: Modeler):
     """Test that opening a file from a nonexistent path raises an appropriate error."""
     nonexistent_path = FILES_DIR / "nonexistent_file.scdocx"

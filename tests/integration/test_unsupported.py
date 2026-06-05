@@ -27,6 +27,7 @@ from pathlib import Path
 import pytest
 
 from ansys.geometry.core.math import Point2D, Point3D
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
@@ -124,11 +125,21 @@ def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     assert ret_result.get("return_value") == 6
 
 
-def test_convert_to_heavyweight(modeler: Modeler):
-    """Test that convert_to_heavyweight converts a body to heavyweight."""
+def test_import_lightweight_and_convert(modeler: Modeler):
+    """Test that opening a file with import_as_lightweight=True results in lightweight bodies."""
+    # Open without lightweight option - bodies should be heavyweight
+    design_hw = modeler.open_file(Path(FILES_DIR, "lightweight_cube.stride"))
+    assert len(design_hw.get_all_bodies()) == 1
+    assert all(not body.is_lightweight for body in design_hw.bodies)
 
-    design = modeler.create_design("ConvertToHeavyweight")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    # Open with import_as_lightweight=True - bodies should be lightweight
+    design_lw = modeler.open_file(
+        Path(FILES_DIR, "lightweight_cube.stride"),
+        import_options=ImportOptions(import_as_lightweight=True),
+    )
+    bodies = design_lw.get_all_bodies()
+    assert len(bodies) == 1
+    assert all(body.is_lightweight for body in bodies)
 
-    result = modeler.unsupported.convert_to_heavyweight([body])
+    result = modeler.unsupported.convert_to_heavyweight(bodies)
     assert result is True
