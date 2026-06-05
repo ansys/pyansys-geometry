@@ -22,6 +22,8 @@
 """Provides various option classes."""
 
 from dataclasses import asdict, dataclass
+from enum import Enum, unique
+from pathlib import Path
 
 from pint import Quantity
 
@@ -247,3 +249,192 @@ class FMDExportOptions:
         The maximum facet edge length.
         """
         return self._max_edge_length
+
+
+@unique
+class AnalysisType(Enum):
+    """Provides values for the analysis type used during PMDB export."""
+
+    THREE_D = 0
+    TWO_D = 1
+
+
+@unique
+class PMDBMixedPartExportType(Enum):
+    """Provides values for the mixed-part export type used during PMDB export."""
+
+    NONE = 0
+    SOLID = 1
+    SHEET = 2
+    WIRE = 3
+    POINT = 4
+    SOLID_SHEET = 5
+    SOLID_WIRE = 6
+    SOLID_POINT = 7
+    SHEET_WIRE = 8
+    SHEET_POINT = 9
+    WIRE_POINT = 10
+    SHEET_WIRE_POINT = 11
+    SOLID_WIRE_POINT = 12
+    SOLID_SHEET_POINT = 13
+    SOLID_SHEET_WIRE = 14
+    ALL = 15
+
+
+@unique
+class PMDBAttachWeightClass(Enum):
+    """Provides values for the attach weight class used during PMDB export."""
+
+    HEAVYWEIGHT = 0
+    MIDDLEWEIGHT = 1
+    LIGHTWEIGHT = 2
+    FEATHERWEIGHT = 3
+
+
+@unique
+class PMDBImportParameterType(Enum):
+    """Provides values for the parameter processing type used during PMDB export."""
+
+    NONE = 0
+    INDEPENDENT = 1
+    ALL = 2
+
+
+@unique
+class PMDBPlugInFacetQuality(Enum):
+    """Provides values for the plug-in facet quality used during PMDB export."""
+
+    NONE = 0
+    VERY_COARSE = 1
+    COARSE = 2
+    NORMAL = 3
+    FINE = 4
+    VERY_FINE = 5
+    SOURCE = 6
+    USER_DEFINED = 7
+
+
+@unique
+class PMDBTargetApplication(Enum):
+    """Provides values for the target application used during PMDB export."""
+
+    PARTMGR = 0
+    DESIGNMODELER = 1
+    FLUENTMESHING = 2
+    AIM = 3
+    SPACECLAIM = 4
+
+
+@dataclass
+class PMDBExportOptions:
+    """Provides options for PMDB export.
+
+    Parameters
+    ----------
+    parameter_prefixes : str, default: ""
+        Prefixes used to filter parameters for export.
+    cad_attribute_prefixes : str, default: ""
+        Prefixes used to filter CAD attributes for export.
+    named_selection_prefixes : str, default: ""
+        Prefixes used to filter named selections for export.
+    analysis_type : AnalysisType, default: AnalysisType.THREE_D
+        The analysis type (2D or 3D).
+    mixed_part_export_type : PMDBMixedPartExportType, default: PMDBMixedPartExportType.NONE
+        The type of mixed parts to export.
+    attach_flattened_assembly : bool, default: False
+        Whether to attach the assembly in a flattened structure.
+    use_cad_mass_properties : bool, default: False
+        Whether to use CAD mass properties.
+    plane_prefixes : str, default: ""
+        Prefixes used to filter planes for export.
+    coordinate_system_prefixes : str, default: ""
+        Prefixes used to filter coordinate systems for export.
+    advanced_geom_processing : bool, default: False
+        Whether to enable advanced geometry processing.
+    angular_deviation : float, default: 0.0
+        Angular deviation for faceting (in degrees).
+    attach_weight_class : PMDBAttachWeightClass, default: PMDBAttachWeightClass.HEAVYWEIGHT
+        The weight class for the attachment.
+    cad_associativity : bool, default: False
+        Whether to enable CAD associativity.
+    cad_attribute_transfer : bool, default: False
+        Whether to transfer CAD attributes.
+    do_smart_update : bool, default: False
+        Whether to perform a smart update.
+    geometry_deviation : float, default: 0.0
+        Geometry deviation for faceting (in meters).
+    process_coordinate_sys : bool, default: False
+        Whether to process coordinate systems.
+    process_planes : bool, default: False
+        Whether to process planes.
+    import_using_instances : bool, default: False
+        Whether to import using instances.
+    process_work_points : bool, default: False
+        Whether to process work points.
+    is_selective_update : bool, default: False
+        Whether to perform a selective update.
+    material_properties : bool, default: False
+        Whether to include material properties.
+    granta_material_properties : bool, default: False
+        Whether to include Granta material properties.
+    max_facet_size : float, default: 0.0
+        Maximum facet size (in meters). Zero means no limit.
+    named_selection : bool, default: False
+        Whether to export named selections.
+    parameter_processing_type : PMDBImportParameterType, default: PMDBImportParameterType.NONE
+        The type of parameters to process.
+    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.NONE
+        The facet quality setting for plug-in readers.
+    process_enclosure_and_symmetry : bool, default: False
+        Whether to process enclosure and symmetry.
+    reader_save_part : bool, default: False
+        Whether the reader should save the part.
+    target_application : PMDBTargetApplication, default: PMDBTargetApplication.PARTMGR
+        The target application for the exported PMDB.
+    temp_directory : str, default: ""
+        Temporary directory path used during export.
+    process_physics_definition : bool, default: False
+        Whether to process physics definitions.
+    process_solid_bodies : bool, default: False
+        Whether to process solid bodies.
+    process_surface_bodies : bool, default: False
+        Whether to process surface bodies.
+    process_line_bodies : bool, default: False
+        Whether to process line bodies.
+    """
+
+    parameter_prefixes: str = ""
+    cad_attribute_prefixes: str = ""
+    named_selection_prefixes: str = ""
+    analysis_type: AnalysisType = AnalysisType.THREE_D
+    mixed_part_export_type: PMDBMixedPartExportType = PMDBMixedPartExportType.ALL
+    attach_flattened_assembly: bool = True
+    use_cad_mass_properties: bool = True
+    plane_prefixes: str = ""
+    coordinate_system_prefixes: str = ""
+    advanced_geom_processing: bool = False
+    angular_deviation: float = 0.0
+    attach_weight_class: PMDBAttachWeightClass = PMDBAttachWeightClass.HEAVYWEIGHT
+    cad_associativity: bool = False
+    cad_attribute_transfer: bool = True
+    do_smart_update: bool = False
+    geometry_deviation: float = 0.0
+    process_coordinate_sys: bool = True
+    process_planes: bool = True
+    import_using_instances: bool = True
+    process_work_points: bool = True
+    is_selective_update: bool = False
+    material_properties: bool = True
+    granta_material_properties: bool = False
+    max_facet_size: float = 0.0
+    named_selection: bool = True
+    parameter_processing_type: PMDBImportParameterType = PMDBImportParameterType.ALL
+    plug_in_facet_quality: PMDBPlugInFacetQuality = PMDBPlugInFacetQuality.SOURCE
+    process_enclosure_and_symmetry: bool = True
+    reader_save_part: bool = False
+    target_application: PMDBTargetApplication = PMDBTargetApplication.PARTMGR
+    temp_directory: str | Path | None = None
+    process_physics_definition: bool = True
+    process_solid_bodies: bool = True
+    process_surface_bodies: bool = True
+    process_line_bodies: bool = True
