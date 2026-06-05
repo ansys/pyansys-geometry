@@ -1758,7 +1758,13 @@ class Design(Component):
             )
 
             if not new_body:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface, is_lightweight=is_lightweight)
+                new_body = MasterBody(
+                    body_id,
+                    body_name,
+                    self._grpc_client,
+                    is_surface=is_surface,
+                    is_lightweight=is_lightweight,
+                )
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(

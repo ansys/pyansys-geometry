@@ -779,8 +779,7 @@ def test_repair_tool_on_lightweight_body(modeler: Modeler):
     """Test that repair tools return appropriate messages when applied to lightweight bodies."""
     options = ImportOptions(import_as_lightweight=True)
     design = modeler.open_file(
-        FILES_DIR / "pipe_split_small_edge_lightweight.stride",
-        import_options=options
+        FILES_DIR / "pipe_split_small_edge_lightweight.stride", import_options=options
     )
     bodies = design.get_all_bodies()
     assert all(b.is_lightweight for b in bodies)

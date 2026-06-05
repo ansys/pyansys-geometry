@@ -69,9 +69,7 @@ def test_v1_convert_to_heavyweight_returns_success_true():
 
     # Verify the request payload
     actual_request = service.stub.ConvertToHeavyweight.call_args[0][0]
-    expected_request = MultipleEntitiesRequest(
-        ids=[build_grpc_id("id-1"), build_grpc_id("id-2")]
-    )
+    expected_request = MultipleEntitiesRequest(ids=[build_grpc_id("id-1"), build_grpc_id("id-2")])
     assert actual_request == expected_request
 
 

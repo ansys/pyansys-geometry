@@ -792,8 +792,7 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
 
 
 def test_import_as_lightweight(modeler: Modeler):
-    """Test that opening a file with import_as_lightweight=True results in lightweight bodies.
-    """
+    """Test that opening a file with import_as_lightweight=True results in lightweight bodies."""
     # Open without lightweight option - bodies should be heavyweight
     design_hw = modeler.open_file(Path(FILES_DIR, "lightweight_cube.stride"))
     assert len(design_hw.get_all_bodies()) == 1
