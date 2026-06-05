@@ -19,7 +19,7 @@ solvers. By default ``export_to_pmdb()`` exports *everything* — solid bodies,
 surface bodies, line bodies, named selections, coordinate systems, planes, and
 more.
 
-``PMDBExportOptions`` lets you tailor exactly what ends up in the file.  This
+``PMDBExportOptions`` lets you tailor exactly what ends up in the file. This
 is useful when, for example:
 
 - You want to send **only solid bodies** to a structural solver and ignore the
@@ -29,13 +29,13 @@ is useful when, for example:
 - You want to strip named selections so that the receiving tool starts with a
   clean slate.
 
-This example builds a simple mixed-body assembly (solid box, surface panel,
-and a beam), attaches named selections, and then exports it three ways to
+This example builds a simple mixed-body assembly (a solid box and a surface 
+panel), attaches named selections, and then exports it three ways to
 illustrate the most commonly used options.
 
 ## Build the assembly
 
-The design contains three body types so that the body-filter options have
+The design contains two body types so that the body-filter options have
 something visible to work with:
 
 | Body | Type | Description |
