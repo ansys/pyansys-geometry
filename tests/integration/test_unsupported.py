@@ -122,3 +122,13 @@ def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     )
     assert isinstance(ret_result, dict)
     assert ret_result.get("return_value") == 6
+
+
+def test_convert_to_heavyweight(modeler: Modeler):
+    """Test that convert_to_heavyweight converts a body to heavyweight."""
+
+    design = modeler.create_design("ConvertToHeavyweight")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    result = modeler.unsupported.convert_to_heavyweight([body])
+    assert result is True
