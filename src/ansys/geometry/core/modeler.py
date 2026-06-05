@@ -439,6 +439,13 @@ class Modeler:
                 "and is not implemented in this protofile version."
             )
 
+        # Warn the user if importing as lightweight
+        if import_options.import_as_lightweight:
+            self.client.log.warning(
+                "Importing as lightweight bodies. "
+                "Some geometry operations are not supported with lightweight bodies."
+            )
+
         # Format-specific logic - upload the whole containing folder for assemblies. If backend's
         # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
         # supported.
