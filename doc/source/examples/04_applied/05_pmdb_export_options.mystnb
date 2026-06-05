@@ -29,7 +29,7 @@ is useful when, for example:
 - You want to strip named selections so that the receiving tool starts with a
   clean slate.
 
-This example builds a simple mixed-body assembly (a solid box and a surface 
+This example builds a simple mixed-body assembly (a solid box and a surface
 panel), attaches named selections, and then exports it three ways to
 illustrate the most commonly used options.
 
