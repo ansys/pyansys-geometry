@@ -22,6 +22,7 @@
 """Test design import."""
 
 from pathlib import Path
+import re
 
 import numpy as np
 from pint import Quantity
@@ -31,6 +32,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
@@ -787,3 +789,13 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
     ):
         modeler.open_file(unsupported_file)
+
+
+def test_opening_nonexistent_path(modeler: Modeler):
+    """Test that opening a file from a nonexistent path raises an appropriate error."""
+    nonexistent_path = FILES_DIR / "nonexistent_file.scdocx"
+    with pytest.raises(
+        GeometryRuntimeError,
+        match=re.escape(f"File {nonexistent_path} does not exist."),
+    ):
+        modeler.open_file(nonexistent_path)

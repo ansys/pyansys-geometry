@@ -63,3 +63,8 @@ class GRPCUnsupportedService(ABC):  # pragma: no cover
     def run_addin_method(self, **kwargs) -> dict:
         """Run a method on a loaded addin."""
         pass
+
+    @abstractmethod
+    def convert_to_heavyweight(self, **kwargs) -> dict:
+        """Convert lightweight bodies to heavyweight."""
+        pass
