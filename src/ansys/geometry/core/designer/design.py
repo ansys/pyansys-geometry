@@ -1916,11 +1916,11 @@ class Design(Component):
 
         # Find the master component for this component
         master_component = None
-        if created_master_components and master_id:  # pragma: no cover
+        if created_master_components and master_id:  
             master_component = created_master_components.get(master_id)
 
         # Check if this should be added to the root design
-        if new_component_parent_id == self.id:  # pragma: no cover
+        if new_component_parent_id == self.id:
             # Create the Component object with master_component
             new_component = Component(
                 parent_component=self,
@@ -1936,7 +1936,7 @@ class Design(Component):
             return new_component
 
         # Search through existing components for the parent
-        for component in parent_components:  # pragma: no cover
+        for component in parent_components:
             if component.id == new_component_parent_id:
                 new_component = Component(
                     name=component_info["name"],
@@ -1979,10 +1979,10 @@ class Design(Component):
 
             if self._find_and_update_component(
                 component_info, component.components
-            ):  # pragma: no cover
+            ):  
                 return True
 
-        return False  # pragma: no cover
+        return False 
 
     def _find_and_remove_component(self, component_info, components, parent_component=None):
         """Recursively find and remove a component from the hierarchy."""
@@ -2000,10 +2000,10 @@ class Design(Component):
 
             if self._find_and_remove_component(
                 component_info, component.components, component
-            ):  # pragma: no cover
+            ):
                 return True
 
-        return False  # pragma: no cover
+        return False 
 
     def _update_body(self, existing_body, body_info):
         """Update an existing body with new information from tracker response."""
@@ -2080,7 +2080,7 @@ class Design(Component):
                 or (body._template.id if hasattr(body, "_template") and body._template else None)
                 or body.id
             )
-            if body_master_id == body_info["id"]:  # pragma: no cover
+            if body_master_id == body_info["id"]:
                 self._update_body(body, body_info)
                 self._grpc_client.log.debug(
                     f"Updated body '{body.name}' (ID: {body.id}) in component "
@@ -2089,16 +2089,16 @@ class Design(Component):
                 return True
 
         for subcomponent in component.components:
-            if self._find_and_update_body(body_info, subcomponent):  # pragma: no cover
+            if self._find_and_update_body(body_info, subcomponent):
                 return True
 
-        return False  # pragma: no cover
+        return False
 
     def _find_and_remove_body(self, body_info, component):
         """Recursively find and remove a body from the component hierarchy."""
         for body in component.bodies:
             body_info_id = body_info["id"]
-            if body.id == f"{component.id}/{body_info_id}":  # pragma: no cover
+            if body.id == f"{component.id}/{body_info_id}":
                 body._is_alive = False
                 for bd in component._master_component.part.bodies:
                     if bd.id == body_info_id:
@@ -2112,7 +2112,7 @@ class Design(Component):
                 return True
 
         for subcomponent in component.components:
-            if self._find_and_remove_body(body_info, subcomponent):  # pragma: no cover
+            if self._find_and_remove_body(body_info, subcomponent):
                 return True
 
-        return False  # pragma: no cover
+        return False
