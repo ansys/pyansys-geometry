@@ -341,7 +341,7 @@ nbsphinx_epilog = """
 
     .. raw:: html
 
-        Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.
+        <p>Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.</p>
 
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
@@ -353,7 +353,7 @@ nbsphinx_prolog = """
 
     .. raw:: html
 
-        Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.
+        <p>Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.</p>
 
 ----
 """.format(
