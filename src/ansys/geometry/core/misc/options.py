@@ -54,6 +54,12 @@ class ImportOptions:
         Import points.
     import_named_selections : bool = True
         Import the named selections associated with the root component being inserted.
+    map_catia_sets_to_groups: bool = True
+        Whether to map CATIA sets to groups in SpaceClaim. This option is only applicable when
+        importing CATIA files.
+    publications_only_to_groups: bool = False
+        Whether to map only published CATIA sets to groups in SpaceClaim. This option is only
+        applicable when importing CATIA files.
     """
 
     cleanup_bodies: bool = False
@@ -64,7 +70,8 @@ class ImportOptions:
     import_planes: bool = False
     import_points: bool = False
     import_named_selections: bool = True
-
+    map_catia_sets_to_groups: bool = True
+    publications_only_to_groups: bool = False
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}
