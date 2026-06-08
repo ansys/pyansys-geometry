@@ -269,6 +269,10 @@ html_css_files = [
     "custom.css",
 ]
 
+html_js_files = [
+    "js/download_notebooks.js",
+]
+
 html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
@@ -339,25 +343,27 @@ nbsphinx_epilog = """
 
 .. admonition:: Download this example
 
-    .. raw:: html
-
-        <p>Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.</p>
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 nbsphinx_prolog = """
 
 .. admonition:: Download this example
 
-    .. raw:: html
-
-        <p>Download this example as a <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a> or as a <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.</p>
+    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
+    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
 
 ----
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
+    ipynb_file_loc="{{ env.docname }}.ipynb",
+    py_file_loc="{{ env.docname }}.py",
 )
 
 typehints_defaults = "comma"
