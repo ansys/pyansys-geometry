@@ -1916,7 +1916,7 @@ class Design(Component):
 
         # Find the master component for this component
         master_component = None
-        if created_master_components and master_id:  
+        if created_master_components and master_id:
             master_component = created_master_components.get(master_id)
 
         # Check if this should be added to the root design
@@ -1977,12 +1977,10 @@ class Design(Component):
                 )
                 return True
 
-            if self._find_and_update_component(
-                component_info, component.components
-            ):  
+            if self._find_and_update_component(component_info, component.components):
                 return True
 
-        return False 
+        return False
 
     def _find_and_remove_component(self, component_info, components, parent_component=None):
         """Recursively find and remove a component from the hierarchy."""
@@ -1998,12 +1996,10 @@ class Design(Component):
                 )
                 return True
 
-            if self._find_and_remove_component(
-                component_info, component.components, component
-            ):
+            if self._find_and_remove_component(component_info, component.components, component):
                 return True
 
-        return False 
+        return False
 
     def _update_body(self, existing_body, body_info):
         """Update an existing body with new information from tracker response."""
