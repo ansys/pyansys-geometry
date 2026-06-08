@@ -31,7 +31,10 @@ from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design, DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D, Vector3D
-from ansys.geometry.core.misc.options import FMDExportOptions
+from ansys.geometry.core.misc.options import (
+    FMDExportOptions,
+    PMDBExportOptions,
+)
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
@@ -86,6 +89,10 @@ def _create_demo_design(modeler: Modeler) -> Design:
     # Create top of car - applies to BOTH cars
     sketch = Sketch(Plane(Point3D([0, 5, 5]))).box(Point2D([5, 2.5]), 10, 5)
     comp1.extrude_sketch("Top", sketch, 5)
+
+    # Add a surface body (planar panel on the roof)
+    surface_sketch = Sketch(Plane(Point3D([0, 5, 10]))).box(Point2D([5, 2.5]), 10, 5)
+    comp1.create_surface("RoofPanel", surface_sketch)
 
     return design
 
@@ -420,9 +427,50 @@ def test_export_to_pmdb(modeler: Modeler, tmp_path_factory: pytest.TempPathFacto
 
     # Check the exported file
     assert file_location.exists()
-
     # TODO: Check the exported file content
     # https://github.com/ansys/pyansys-geometry/issues/1146
+
+
+def test_export_to_pmdb_with_options(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+    """Test PMDB export with process_surface_bodies toggled on and off.
+
+    The demo design contains both solid and surface bodies. When exported with
+    process_surface_bodies=True the re-imported design must contain a surface body;
+    when exported with process_surface_bodies=False it must not.
+    """
+    if modeler._grpc_client._services.version == GeometryApiProtos.V0:
+        pytest.skip("PMDB export options are only supported in v1 of the geometry service API")
+
+    design = _create_demo_design(modeler)
+
+    # Export both PMDB files before creating any new designs
+    loc_with = tmp_path_factory.mktemp("pmdb_with_surface")
+    design.export_to_pmdb(
+        loc_with,
+        PMDBExportOptions(process_solid_bodies=True, process_surface_bodies=True),
+    )
+    pmdb_with = loc_with / f"{design.name}.pmdb"
+    assert pmdb_with.exists()
+    assert pmdb_with.stat().st_size > 0
+
+    loc_without = tmp_path_factory.mktemp("pmdb_without_surface")
+    design.export_to_pmdb(
+        loc_without,
+        PMDBExportOptions(process_solid_bodies=True, process_surface_bodies=False),
+    )
+    pmdb_without = loc_without / f"{design.name}.pmdb"
+    assert pmdb_without.exists()
+    assert pmdb_without.stat().st_size > 0
+
+    # Re-import with surface bodies
+    reimport_with = modeler.open_file(pmdb_with)
+    all_bodies_with = reimport_with.get_all_bodies()
+    assert sum(1 for b in all_bodies_with if b.is_surface) == 2
+
+    # Re-import without surface bodies
+    reimport_without = modeler.open_file(pmdb_without)
+    all_bodies_without = reimport_without.get_all_bodies()
+    assert sum(1 for b in all_bodies_without if b.is_surface) == 0
 
 
 def test_import_export_reimport_design_scdocx(
