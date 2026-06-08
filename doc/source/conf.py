@@ -339,27 +339,31 @@ nbsphinx_epilog = """
 
 .. admonition:: Download this example
 
-    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
+    .. raw:: html
+
+        Download this example as a
+        <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a>
+        or as a
+        <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.
 
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
-    ipynb_file_loc="{{ env.docname }}.ipynb",
-    py_file_loc="{{ env.docname }}.py",
 )
 
 nbsphinx_prolog = """
 
 .. admonition:: Download this example
 
-    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
+    .. raw:: html
+
+        Download this example as a
+        <a href="{cname_pref}/{{{{ env.docname }}}}.ipynb" download>Jupyter Notebook</a>
+        or as a
+        <a href="{cname_pref}/{{{{ env.docname }}}}.py" download>Python script</a>.
 
 ----
 """.format(
     cname_pref=f"https://{cname}/version/{switcher_version}",
-    ipynb_file_loc="{{ env.docname }}.ipynb",
-    py_file_loc="{{ env.docname }}.py",
 )
 
 typehints_defaults = "comma"
