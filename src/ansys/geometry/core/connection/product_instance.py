@@ -461,8 +461,13 @@ def prepare_and_start_backend(
             pass  # Do nothing... the user has defined the license server.
         elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
+        elif "ANSYSLMD_LICENSE_FILE" in os.environ:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE")
         else:
-            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+            LOG.warning(
+                "No license server environment variable found. "
+                "The Geometry Service will use the information from Ansys Licensing Settings."
+            )
 
         # If token is provided, set the environment variable to bypass the license checkout process.
         if bypass_token:
