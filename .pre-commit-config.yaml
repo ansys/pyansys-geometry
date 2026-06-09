@@ -15,14 +15,14 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: a007bb7dd9043d022292401abc3061cb1906b4bc # frozen: v2.21.2
+    rev: 3a8ef795727fa946dfcb21c5d07b1442c2362c09 # frozen: v2.23.0
     hooks:
       - id: pyproject-fmt
         additional_dependencies: [toml-fmt-common<1.3.3]
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 5e2fb545eba1ea9dc051f6f962d52fe8f76a9794 # frozen: v0.15.13
+    rev: 0671d8ab202c4ac093b78433ae5baf74f3fc7246 # frozen: v0.15.15
     hooks:
       - id: ruff-check
       - id: ruff-format
