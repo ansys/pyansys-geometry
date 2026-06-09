@@ -73,7 +73,7 @@ jobs:
   doc-deploy-pr:
     name: "Deploy PR documentation"
     runs-on: ubuntu-latest
-    needs: [docs]
+    needs: [doc-build]
     permissions:
       contents: write # Required to push documentation to gh-pages branch
       pull-requests: write # Needed to comment on PR with documentation link
