@@ -279,6 +279,10 @@ class Vector3D(np.ndarray):
         The resulting 3D vector is always expressed in ``Point3D``
         base units.
         """
+        if isinstance(point_a, list) and isinstance(point_b, list):
+            if len(point_a) != 3 or len(point_b) != 3:
+                raise ValueError("Points must have three coordinates.")
+            return Vector3D([b - a for b, a in zip(point_b, point_a)])
         return Vector3D(point_b - point_a)
 
 
