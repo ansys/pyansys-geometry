@@ -379,7 +379,7 @@ def test_vector3d():
         ]
     )
 
-    # Create a 3D vector from 2 points
+    # Create a 3D vector from 2 Point3D objects (default units)
     point_a = Point3D([1, 2, 3])
     point_b = Point3D([1, 6, 3])
     vector_from_points = Vector3D.from_points(point_a, point_b)
@@ -387,13 +387,25 @@ def test_vector3d():
     assert vector_from_points.y == 4
     assert vector_from_points.z == 0
 
-    # Create a 3D vector from 2 points
+    # Create a 3D vector from 2 Point3D objects (mixed units)
     point_a = Point3D([1, 2, 3], UNITS.mm)
     point_b = Point3D([1, 6, 3], UNITS.cm)
     vector_from_points = Vector3D.from_points(point_a, point_b)
     assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
     assert abs(vector_from_points.z - 0.027) <= DOUBLE_EPS
+
+    # Create a 3D vector from 2 lists
+    vector_from_lists = Vector3D.from_points([1, 2, 3], [1, 6, 3])
+    assert vector_from_lists.x == 0
+    assert vector_from_lists.y == 4
+    assert vector_from_lists.z == 0
+
+    # Create a 3D vector from 2 numpy arrays
+    vector_from_arrays = Vector3D.from_points(np.array([1, 2, 3]), np.array([1, 6, 3]))
+    assert vector_from_arrays.x == 0
+    assert vector_from_arrays.y == 4
+    assert vector_from_arrays.z == 0
 
     # Compute the angle of two vectors when they are parallel
     pos_x = UNITVECTOR3D_X
