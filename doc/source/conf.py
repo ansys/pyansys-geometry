@@ -269,6 +269,10 @@ html_css_files = [
     "custom.css",
 ]
 
+html_js_files = [
+    "js/download_notebooks.js",
+]
+
 html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
