@@ -174,3 +174,10 @@ class GRPCAdminServiceV0(GRPCAdminService):
 
         # Convert the response to a dictionary
         return {"success": response.success}
+
+    @protect_grpc
+    def close(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.close' is not "
+            "implemented in this protofile version."
+        )

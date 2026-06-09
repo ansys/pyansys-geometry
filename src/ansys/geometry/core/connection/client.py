@@ -466,7 +466,13 @@ class GrpcClient:
                     "Geometry service was not shut down because it was already running..."
                 )
         elif self._product_instance:
-            self._product_instance.close()
+            try:
+                # Shutdown the server
+                self.services.admin.close()
+            except Exception as err:
+                self.log.debug(f"Shutdown call failed. Temporary files may be stranded: {err}")
+            finally:
+                self._product_instance.close()
 
         self._closed = True
         self._channel.close()
