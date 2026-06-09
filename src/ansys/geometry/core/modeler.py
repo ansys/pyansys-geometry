@@ -250,9 +250,6 @@ class Modeler:
         if close_design and self._design is not None:
             self._design.close()
 
-        # Shutdown the server
-        self.client.services.admin.close()
-
         # Close the client
         self.client.close()
 
