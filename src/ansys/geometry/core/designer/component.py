@@ -29,6 +29,7 @@ import uuid
 
 from pint import Quantity
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -1804,6 +1805,42 @@ class Component:
             face_ids=[face.id for face in faces],
         )
         return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def move_bodies_to_component(self, bodies: list[Body]) -> None:
+        """Move bodies to this component, changing the design hierarchy.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to move to this component.
+
+        Raises
+        ------
+        TypeError
+            If ``bodies`` is not a list of :class:`Body` objects.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(
+            f"Moving {len(bodies)} body/bodies to component {self.id}..."
+        )
+        
+        response = self._grpc_client._services.components.move_bodies_to_component(
+            body_ids=[body.id for body in bodies],
+            target_component_id=self.id,
+        )
+
+        design = get_design_from_component(self)
+        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+            design._update_from_tracker(response.get("tracked_changes"))
+
+        else:
+            design._update_design_inplace()
 
     def _kill_component_on_client(self) -> None:
         """Set the ``is_alive`` property of nested objects to ``False``.
