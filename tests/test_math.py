@@ -489,19 +489,29 @@ def test_vector2d():
     # Checking that scalar times vector also works
     assert abs(round((v1 * 3 - Vector2D([0, 3])).magnitude)) <= DOUBLE_EPS
 
-    # Create a 2D vector from 2 points
+    # Create a 2D vector from 2 points (default units)
     point_a = Point2D([1, 2])
     point_b = Point2D([1, 6])
     vector_from_points = Vector2D.from_points(point_a, point_b)
     assert vector_from_points.x == 0
     assert vector_from_points.y == 4
 
-    # Create a 2D vector from 2 points
+    # Create a 2D vector from 2 points (mixed units)
     point_a = Point2D([1, 2], UNITS.mm)
     point_b = Point2D([1, 6], UNITS.cm)
     vector_from_points = Vector2D.from_points(point_a, point_b)
     assert abs(vector_from_points.x - 0.009) <= DOUBLE_EPS
     assert abs(vector_from_points.y - 0.058) <= DOUBLE_EPS
+
+    # Create a 2D vector from 2 lists
+    vector_from_lists = Vector2D.from_points([1, 2], [1, 6])
+    assert vector_from_lists.x == 0
+    assert vector_from_lists.y == 4
+
+    # Create a 2D vector from 2 numpy arrays
+    vector_from_arrays = Vector2D.from_points(np.array([1, 2]), np.array([1, 6]))
+    assert vector_from_arrays.x == 0
+    assert vector_from_arrays.y == 4
 
     # Add two vectors
     # Compute the angle of two vectors when they are parallel
