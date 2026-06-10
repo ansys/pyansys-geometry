@@ -25,7 +25,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.1.8",
+  "ansys-api-discovery==1.1.9",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -67,7 +67,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.0",
-  "ty==0.0.40",
+  "ty==0.0.44",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -79,7 +79,7 @@ doc = [
   "myst-parser==5.0.0",
   "nbconvert==7.17.1",
   "nbsphinx==0.9.8",
-  "notebook==7.5.6",
+  "notebook==7.5.7",
   "numpydoc==1.10.0",
   "pdf2image==1.17.0",
   "quarto-cli==1.9.38",
@@ -161,11 +161,11 @@ lint.pydocstyle.convention = "numpy"
 
 [tool.pytest]
 ini_options.minversion = "7.1"
+ini_options.testpaths = [ "tests" ]
 ini_options.addopts = """\
   -ra --cov=ansys.geometry --cov-report html:.cov/html --cov-report xml:.cov/xml --cov-report term -vv \
   --image_cache_dir tests/integration/image_cache --add_missing_images\
   """
-ini_options.testpaths = [ "tests" ]
 
 [tool.coverage]
 run.source = [ "ansys.geometry" ]
@@ -174,8 +174,8 @@ report.show_missing = true
 [tool.towncrier]
 directory = "doc/changelog.d"
 filename = "doc/source/changelog.rst"
-template = "doc/changelog.d/changelog_template.jinja"
 start_string = ".. towncrier release notes start\n"
+template = "doc/changelog.d/changelog_template.jinja"
 title_format = "`{version} <https://github.com/ansys/pyansys-geometry/releases/tag/v{version}>`_ - {project_date}"
 issue_format = "`#{issue} <https://github.com/ansys/pyansys-geometry/pull/{issue}>`_"
 type = [

@@ -68,3 +68,8 @@ class GRPCAdminService(ABC):  # pragma: no cover
     def set_automatic_tracking_state(self, **kwargs) -> dict:
         """Set automatic tracking state."""
         pass
+
+    @abstractmethod
+    def close(self, **kwargs) -> dict:
+        """Shutdown the server."""
+        pass

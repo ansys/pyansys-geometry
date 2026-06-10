@@ -168,12 +168,7 @@ class ProductInstance:
     def close(self) -> bool:
         """Close the process associated to the pid."""
         try:
-            if os.name == "nt":
-                # The process was launched in its own process group, so
-                # CTRL_BREAK_EVENT targets only that group and not the parent.
-                os.kill(self._pid, signal.CTRL_BREAK_EVENT)
-            else:
-                os.kill(self._pid, signal.SIGTERM)
+            os.kill(self._pid, signal.SIGTERM)
         except OSError as oserr:
             LOG.error(str(oserr))
             return False
@@ -461,8 +456,13 @@ def prepare_and_start_backend(
             pass  # Do nothing... the user has defined the license server.
         elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
+        elif "ANSYSLMD_LICENSE_FILE" in os.environ:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE")
         else:
-            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+            LOG.warning(
+                "No license server environment variable found. "
+                "The Geometry Service will use the information from Ansys Licensing Settings."
+            )
 
         # If token is provided, set the environment variable to bypass the license checkout process.
         if bypass_token:
@@ -727,10 +727,6 @@ def __start_program(
         stderr=subprocess.DEVNULL,
         env=local_env,
         cwd=server_working_dir,
-        # Isolate the child into its own process group on Windows so that
-        # CTRL_BREAK_EVENT in close() targets only this process and not the
-        # entire parent process group.
-        creationflags=subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0,
     )
 
 
