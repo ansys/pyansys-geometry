@@ -9,6 +9,99 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.15.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.5>`_ - June 10, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Pmdb export options
+          - `#2822 <https://github.com/ansys/pyansys-geometry/pull/2822>`_
+
+        * - Remove the default value for LICENSE_SERVER
+          - `#2840 <https://github.com/ansys/pyansys-geometry/pull/2840>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Handle shutdown via api
+          - `#2841 <https://github.com/ansys/pyansys-geometry/pull/2841>`_
+
+        * - Create vector from list
+          - `#2843 <https://github.com/ansys/pyansys-geometry/pull/2843>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update \`\`CONTRIBUTORS.md\`\` with the latest contributors
+          - `#2833 <https://github.com/ansys/pyansys-geometry/pull/2833>`_
+
+        * - Fix download notebook and restrict to html
+          - `#2835 <https://github.com/ansys/pyansys-geometry/pull/2835>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.1.8 to 1.1.9
+          - `#2828 <https://github.com/ansys/pyansys-geometry/pull/2828>`_
+
+        * - Bump ty from 0.0.40 to 0.0.41
+          - `#2829 <https://github.com/ansys/pyansys-geometry/pull/2829>`_
+
+        * - Bump ty from 0.0.41 to 0.0.42
+          - `#2832 <https://github.com/ansys/pyansys-geometry/pull/2832>`_
+
+        * - Bump notebook from 7.5.6 to 7.5.7 in the docs-deps group
+          - `#2836 <https://github.com/ansys/pyansys-geometry/pull/2836>`_
+
+        * - Bump ty from 0.0.42 to 0.0.44
+          - `#2837 <https://github.com/ansys/pyansys-geometry/pull/2837>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.15.4
+          - `#2826 <https://github.com/ansys/pyansys-geometry/pull/2826>`_
+
+        * - Bump the pre-commit-hooks group with 2 updates
+          - `#2838 <https://github.com/ansys/pyansys-geometry/pull/2838>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2845 <https://github.com/ansys/pyansys-geometry/pull/2845>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Design coverage expanded
+          - `#2827 <https://github.com/ansys/pyansys-geometry/pull/2827>`_
+
+
 `0.15.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.4>`_ - June 03, 2026
 ==========================================================================================
 
