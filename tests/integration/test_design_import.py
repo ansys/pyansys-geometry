@@ -799,3 +799,32 @@ def test_opening_nonexistent_path(modeler: Modeler):
         match=re.escape(f"File {nonexistent_path} does not exist."),
     ):
         modeler.open_file(nonexistent_path)
+
+
+def test_importing_with_sc_colors(modeler: Modeler):
+    """Test importing a file with SpaceClaim colors."""
+    # Import the file without SC color tones
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+    
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#ff00ffff"
+    assert bodies[1].color == "#ff0000ff"
+    assert bodies[2].color == "#ff8000ff"
+    assert bodies[3].color == "#0080c0ff"
+
+    # Import the file with SC color tones
+    options = ImportOptions()
+    options.import_using_spaceclaim_colors = True
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"), import_options=options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+    
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#af8fafff"
+    assert bodies[1].color == "#af8f8fff"
+    assert bodies[2].color == "#af9f8fff"
+    assert bodies[3].color == "#8fa4afff"
