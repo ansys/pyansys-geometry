@@ -1122,7 +1122,7 @@ class MasterBody(IBody):
     @property
     def is_lightweight(self) -> bool:  # noqa: D102
         return self._is_lightweight
-    
+
     @is_lightweight.setter
     def is_lightweight(self, value: bool):  # noqa: D102
         self._is_lightweight = value
@@ -1939,7 +1939,7 @@ class Body(IBody):
     @property
     def is_lightweight(self) -> bool:  # noqa: D102
         return self._template.is_lightweight
-    
+
     @is_lightweight.setter
     def is_lightweight(self, value: bool):  # noqa: D102
         self._template.is_lightweight = value

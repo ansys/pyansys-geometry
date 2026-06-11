@@ -807,7 +807,7 @@ def test_importing_with_sc_colors(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"))
     assert len(design.components) == 1
     assert len(design.components[0].bodies) == 4
-    
+
     # Test the color values
     bodies = design.get_all_bodies()
     assert bodies[0].color == "#ff00ffff"
@@ -821,7 +821,7 @@ def test_importing_with_sc_colors(modeler: Modeler):
     design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"), import_options=options)
     assert len(design.components) == 1
     assert len(design.components[0].bodies) == 4
-    
+
     # Test the color values
     bodies = design.get_all_bodies()
     assert bodies[0].color == "#af8fafff"
