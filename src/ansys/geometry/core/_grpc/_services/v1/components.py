@@ -242,6 +242,4 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         tracked_changes = serialize_tracked_changes(response.tracked_changes)
 
         # Return empty dict - response contains only a CommandResponse
-        return {
-            "tracked_changes": tracked_changes
-        }
+        return {"tracked_changes": tracked_changes}

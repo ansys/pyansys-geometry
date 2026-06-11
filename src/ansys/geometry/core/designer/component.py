@@ -1826,10 +1826,8 @@ class Component:
         -----
         This method is only available starting on Ansys release 27R1.
         """
-        self._grpc_client.log.debug(
-            f"Moving {len(bodies)} body/bodies to component {self.id}..."
-        )
-        
+        self._grpc_client.log.debug(f"Moving {len(bodies)} body/bodies to component {self.id}...")
+
         response = self._grpc_client._services.components.move_bodies_to_component(
             body_ids=[body.id for body in bodies],
             target_component_id=self.id,
