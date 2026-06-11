@@ -367,6 +367,34 @@ class UnsupportedCommands:
         )
 
     @min_backend_version(27, 1, 0)
+    def convert_to_heavyweight(self, bodies: list["Body"]) -> bool:
+        """Convert lightweight bodies to heavyweight.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to convert to heavyweight.
+
+        Returns
+        -------
+        bool
+            ``True`` if the conversion was successful, ``False`` otherwise.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        result = self._grpc_client.services.unsupported.convert_to_heavyweight(
+            ids=[body.id for body in bodies]
+        )
+
+        if result.get("success"):
+            for body in bodies:
+                body.is_lightweight = False
+            return True
+        return False
+
+    @min_backend_version(27, 1, 0)
     def load_addin(self, manifest_path: Path | str) -> None:
         """Load an add-in to the current design.
 
