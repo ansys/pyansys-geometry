@@ -1,7 +1,7 @@
 ---
 description: "Syncs and reinstalls the local ansys-api-discovery proto package from the current ApiServer branch. Use when: updating proto definitions from ApiServer, refreshing local gRPC stubs after proto changes, syncing ansys-api-discovery with an ApiServer feature branch, or re-running pip install after proto edits."
 name: "Proto Reinstaller"
-tools: [execute, read, search]
+tools: [execute/runInTerminal, execute/getTerminalOutput, read/readFile, search]
 argument-hint: "Optionally specify the ApiServer base branch to diff against (default: origin/develop)"
 ---
 
