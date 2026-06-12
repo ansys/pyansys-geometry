@@ -373,7 +373,7 @@ def test_update_from_tracker_created_parts(modeler: Modeler):
 
 
 def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
-    """Test _update_from_tracker() marks deleted parts as inactive and logs warnings for missing parts."""
+    """Test deleted parts are marked inactive and missing parts are warned about."""
     design = modeler.create_design("update_tracker_deleted")
 
     mock_part = Mock()
@@ -770,7 +770,7 @@ def test_find_and_update_component_updates_name(modeler: Modeler):
 
 
 def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
-    """Test _find_and_remove_component() successfully marks component as removed and returns True."""
+    """Test _find_and_remove_component() marks a component as removed and returns True."""
     design = modeler.create_design("remove_comp")
     comp = design.add_component("ComponentToRemove")
     comp_id = comp.id
@@ -4975,7 +4975,7 @@ def _entity(entity_id: str) -> Mock:
     return entity
 
 
-def _named_selection(*, backend_version=(27, 1, 0), bodies=None) -> "NamedSelection":
+def _named_selection(*, backend_version=(27, 1, 0), bodies=None) -> object:
     from ansys.geometry.core.designer.selection import NamedSelection
 
     grpc_client = Mock()
@@ -5535,7 +5535,7 @@ def test_update_body_properties(modeler: Modeler):
     assert body._template._is_surface is True
 
 
-def test_clear_body_cache_for_part(modeler: Modeler):
+def test_clear_body_cache_for_part_component_bodies(modeler: Modeler):
     """Test _clear_body_cache_for_part clears caches for all matching components."""
     design = modeler.create_design("clear_body_cache_test")
 
@@ -6710,7 +6710,7 @@ def test_tracking_captures_face_extrude_changes(modeler: Modeler):
 
     modeler.unsupported.start_tracking()
 
-    # Extrude one face on each box â€” the tracker must capture these modifications
+    # Extrude one face on each box ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â the tracker must capture these modifications
     modeler.geometry_commands.extrude_faces(box1.faces[0], 0.1)
     modeler.geometry_commands.extrude_faces(box2.faces[0], 0.1)
 
