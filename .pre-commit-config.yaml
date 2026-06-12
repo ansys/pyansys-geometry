@@ -42,7 +42,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: ad4e7598809ad98cde5aaf52d80040c7ac56e7cf # frozen: v0.7.2
+    rev: 91e3cb7e0e89d7672629092878430f2729cbf37b
     hooks:
       - id: add-license-headers
         args:

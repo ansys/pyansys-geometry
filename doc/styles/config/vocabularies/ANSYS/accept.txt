@@ -34,4 +34,6 @@ PyVista
 pytest
 SciPy
 subpackage
+Synopsys
+synopsys
 launch_modeler_with_.*
