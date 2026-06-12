@@ -229,12 +229,15 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
     def move_bodies_to_component(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.geometry.component_pb2 import (
             MoveBodiesToComponentRequest,
+            MoveBodiesToComponentRequestData,
         )
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveBodiesToComponentRequest(
+            request_data=MoveBodiesToComponentRequestData(
             body_ids=[build_grpc_id(body_id) for body_id in kwargs["body_ids"]],
-            target_component_id=build_grpc_id(kwargs["target_component_id"]),
+                target_component_id=build_grpc_id(kwargs["target_component_id"]),
+            )
         )
 
         # Call the gRPC service
