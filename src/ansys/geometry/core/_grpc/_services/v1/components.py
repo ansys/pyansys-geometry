@@ -234,10 +234,10 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = MoveBodiesToComponentRequest(
-            request_data=MoveBodiesToComponentRequestData(
+            request_data=[MoveBodiesToComponentRequestData(
             body_ids=[build_grpc_id(body_id) for body_id in kwargs["body_ids"]],
                 target_component_id=build_grpc_id(kwargs["target_component_id"]),
-            )
+            )]
         )
 
         # Call the gRPC service
