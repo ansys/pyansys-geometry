@@ -7,7 +7,9 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service.
 
 Installation
 ============
-You can use `pip <https://pypi.org/project/pip/>`_ to install PyAnsys Geometry.
+You can use `pip <https://pypi.org/project/pip/>`_ to install PyAnsys Geometry. If
+`pip` is new to you, you should read the `Python Packaging User Guide Tutorial on pip <https://packaging.python.org/en/latest/tutorials/installing-packages/>`
+before proceeding.
 
 .. code:: bash
 
@@ -79,3 +81,15 @@ Any questions? Refer to :ref:`Q&A <ref_faq>` before submitting an issue.
    compatibility
    installation
    faq
+
+Ansys developer ecosystem resources
+-----------------------------------
+
+Ansys has an extensive developer ecosystem where you can find assistance for a variety of issues.
+
+- `Developer Portal <https://developer.ansys.com/>`: Blog posts, documentation, and guide
+  - `Developer Forum <https://discuss.ansys.com/>`: Scripting and usage support for PyAnsys and other Ansys developer tools
+- `Ansys Innovation Space <https://innovationspace.ansys.com/>`: Product support forum and training materials
+- `GitHub <https://github.com/ansys/pyansys-geometry>`: Development support, bug reporting, feature requests, and more.
+- `Ansys Learning Hub <https://learninghub.ansys.com/>`: Training, courses and learning plans
+
