@@ -241,5 +241,5 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
         response = self.stub.MoveBodiesToComponent(request=request)
         tracked_changes = serialize_tracked_changes(response.tracked_changes)
 
-        # Return empty dict - response contains only a CommandResponse
+        # Return tracked changes for client-side design updates
         return {"tracked_changes": tracked_changes}

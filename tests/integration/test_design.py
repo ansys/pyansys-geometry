@@ -6079,7 +6079,7 @@ def test_tracking_captures_boolean_operations(modeler: Modeler):
 
 
 def test_move_bodies_to_component(modeler: Modeler):
-    """Test Component.move_bodies_to_component happy paths and error handling.
+    """Test moving bodies between components.
 
     Covers:
     - Single body moved from a source component into a target component.
