@@ -29,7 +29,6 @@ import uuid
 
 from pint import Quantity
 
-import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -1826,6 +1825,7 @@ class Component:
         -----
         This method is only available starting on Ansys release 27R1.
         """
+        import ansys.geometry.core as pyansys_geo
         self._grpc_client.log.debug(f"Moving {len(bodies)} body/bodies to component {self.id}...")
 
         response = self._grpc_client._services.components.move_bodies_to_component(
