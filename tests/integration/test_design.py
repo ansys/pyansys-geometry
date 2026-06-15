@@ -6076,3 +6076,50 @@ def test_tracking_captures_boolean_operations(modeler: Modeler):
 
     assert len(unite_changes["modified_bodies"]) == 1
     assert len(unite_changes["deleted_bodies"]) == 1
+
+
+def test_move_bodies_to_component(modeler: Modeler):
+    """Test moving bodies between components.
+
+    Covers:
+    - Single body moved from a source component into a target component.
+    - Multiple bodies moved at once.
+    """
+    design = modeler.create_design("move_bodies_to_component")
+    source = design.add_component("source")
+    target = design.add_component("target")
+
+    body1 = source.extrude_sketch("Box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # --- Single body ---
+    assert len(source.bodies) == 1
+    assert len(target.bodies) == 0
+
+    target.move_bodies_to_component([body1])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source = design.components[0]  # Need to re-query source component if tracker is off
+        target = design.components[1]  # Need to re-query target component if tracker is off
+
+    assert len(target.bodies) == 1
+    assert target.bodies[0].name == "Box1"
+    assert len(source.bodies) == 0
+
+    # --- Multiple bodies ---
+    source2 = design.add_component("source2")
+    target2 = design.add_component("target2")
+
+    body_a = source2.extrude_sketch("BodyA", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_b = source2.extrude_sketch("BodyB", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    assert len(source2.bodies) == 2
+    assert len(target2.bodies) == 0
+
+    target2.move_bodies_to_component([body_a, body_b])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source2 = design.components[2]  # Need to re-query source component if tracker is off
+        target2 = design.components[3]  # Need to re-query target component if tracker is off
+
+    assert len(target2.bodies) == 2
+    moved_names = {b.name for b in target2.bodies}
+    assert moved_names == {"BodyA", "BodyB"}
+    assert len(source2.bodies) == 0
