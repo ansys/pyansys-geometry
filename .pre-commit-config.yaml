@@ -5,7 +5,7 @@ exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: 21ca5323a9c87ee37a434e0ca908efc0a89daa07 # frozen: v0.21.0
+    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029  # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -50,7 +50,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 5030dca3047414c338091455ac41803200ec1f0f # frozen: 0.37.3
+    rev: 8ef330cbb7204d388aa7a620f9549bcea8009663  # frozen: 0.37.3
     hooks:
       - id: check-github-workflows
 
