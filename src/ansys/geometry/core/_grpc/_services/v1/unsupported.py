@@ -160,3 +160,16 @@ class GRPCUnsupportedServiceV1(GRPCUnsupportedService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def convert_to_heavyweight(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
+
+        # Call the gRPC service
+        response = self.stub.ConvertToHeavyweight(request)
+
+        # Return the response - formatted as a dictionary
+        return {"success": response.command_response.success}
