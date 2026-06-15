@@ -72,3 +72,8 @@ class GRPCComponentsService(ABC):  # pragma: no cover
     def make_independent(self, **kwargs) -> dict:
         """Make a component independent."""
         pass
+
+    @abstractmethod
+    def move_bodies_to_component(self, **kwargs) -> dict:
+        """Move bodies to a target component."""
+        pass
