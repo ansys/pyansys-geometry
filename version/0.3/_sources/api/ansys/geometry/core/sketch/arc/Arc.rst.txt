@@ -1,0 +1,441 @@
+
+
+
+
+Arc
+===
+
+.. py:class:: Arc(center: ansys.geometry.core.math.point.Point2D, start: ansys.geometry.core.math.point.Point2D, end: ansys.geometry.core.math.point.Point2D, clockwise: beartype.typing.Optional[bool] = False)
+   :canonical: ansys.geometry.core.sketch.arc.Arc
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.edge.SketchEdge`
+
+Provides for modeling an arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Arc
+.. tab-set::
+
+
+    .. tab-item:: Constructors
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_three_points`
+            - Create an arc from three given points.
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start`
+            - Starting point of the arc line.
+          * - :py:attr:`~end`
+            - Ending point of the arc line.
+          * - :py:attr:`~length`
+            - Length of the arc.
+          * - :py:attr:`~radius`
+            - Radius of the arc.
+          * - :py:attr:`~center`
+            - Center point of the arc.
+          * - :py:attr:`~angle`
+            - Angle of the arc.
+          * - :py:attr:`~is_clockwise`
+            - Flag indicating whether the rotation of the angle is clockwise.
+          * - :py:attr:`~sector_area`
+            - Area of the sector of the arc.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Arc`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Arc`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.arc import Arc
+
+
+Property detail
+---------------
+.. py:property:: start
+   :canonical: ansys.geometry.core.sketch.arc.Arc.start
+   :type: Point2D
+
+
+   
+   Starting point of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :canonical: ansys.geometry.core.sketch.arc.Arc.end
+   :type: Point2D
+
+
+   
+   Ending point of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :canonical: ansys.geometry.core.sketch.arc.Arc.length
+   :type: pint.Quantity
+
+
+   
+   Length of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :canonical: ansys.geometry.core.sketch.arc.Arc.radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.arc.Arc.center
+   :type: Point2D
+
+
+   
+   Center point of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle
+   :canonical: ansys.geometry.core.sketch.arc.Arc.angle
+   :type: pint.Quantity
+
+
+   
+   Angle of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_clockwise
+   :canonical: ansys.geometry.core.sketch.arc.Arc.is_clockwise
+   :type: bool
+
+
+   
+   Flag indicating whether the rotation of the angle is clockwise.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the sense of rotation is clockwise.
+           ``False`` if the sense of rotation is counter-clockwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: sector_area
+   :canonical: ansys.geometry.core.sketch.arc.Arc.sector_area
+   :type: pint.Quantity
+
+
+   
+   Area of the sector of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.arc.Arc.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __eq__(other: Arc) -> bool
+
+   
+   Equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __ne__(other: Arc) -> bool
+
+   
+   Not equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: from_three_points(start: ansys.geometry.core.math.point.Point2D, inter: ansys.geometry.core.math.point.Point2D, end: ansys.geometry.core.math.point.Point2D)
+   :classmethod:
+
+   
+   Create an arc from three given points.
+
+
+   :Parameters:
+
+       **start** : :obj:`Point2D`
+           Starting point of the arc.
+
+       **inter** : :obj:`Point2D`
+           Intermediate point (location) of the arc.
+
+       **end** : :obj:`Point2D`
+           Ending point of the arc.
+
+   :Returns:
+
+       :obj:`Arc`
+           Arc generated from the three points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

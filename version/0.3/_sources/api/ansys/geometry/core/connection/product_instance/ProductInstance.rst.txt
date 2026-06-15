@@ -1,0 +1,87 @@
+
+
+
+
+ProductInstance
+===============
+
+.. py:class:: ProductInstance(pid: int)
+   :canonical: ansys.geometry.core.connection.product_instance.ProductInstance
+
+
+
+
+``ProductInstance`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ProductInstance
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~close`
+            - Close the process associated to the pid.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.product_instance import ProductInstance
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: close() -> bool
+
+   
+   Close the process associated to the pid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

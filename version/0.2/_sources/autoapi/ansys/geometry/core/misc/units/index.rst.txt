@@ -1,0 +1,136 @@
+:py:mod:`ansys.geometry.core.misc.units`
+========================================
+
+.. py:module:: ansys.geometry.core.misc.units
+
+.. autoapi-nested-parse::
+
+   Provides the ``Units`` class for PyGeometry.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.misc.units.PhysicalQuantity
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.misc.units.UNITS
+
+
+.. py:data:: UNITS
+
+   
+   Unit manager.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: PhysicalQuantity(unit: pint.Unit, expected_dimensions: beartype.typing.Optional[pint.Unit] = None)
+
+
+   
+   Provides the base class for handling units homogeneously throughout PyGeometry.
+
+
+   :Parameters:
+
+       **unit** : :obj:`~pint.Unit`
+           Units for the class.
+
+       **expected_dimensions** : :obj:`~pint.Unit`, default: :data:`python:None`
+           Units for the dimensionality of the physical quantity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: unit
+      :type: pint.Unit
+
+      
+      Unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: base_unit
+      :type: pint.Unit
+
+      
+      Base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

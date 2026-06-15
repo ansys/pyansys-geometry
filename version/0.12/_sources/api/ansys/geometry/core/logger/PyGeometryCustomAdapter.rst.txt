@@ -1,0 +1,241 @@
+
+
+
+
+
+
+:class:`PyGeometryCustomAdapter`
+================================
+
+
+.. py:class:: ansys.geometry.core.logger.PyGeometryCustomAdapter(logger, extra=None)
+
+   Bases: :py:obj:`logging.LoggerAdapter`
+
+
+   
+   Keeps the reference to the Geometry service instance name dynamic.
+
+   If you use the standard approach, which is supplying *extra* input
+   to the logger, you must input Geometry service instances each time
+   you do a log.
+
+   Using adapters, you only need to specify the Geometry service
+   instance that you are referring to once.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PyGeometryCustomAdapter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~process`
+            - Process the logging message and keyword arguments passed in to
+          * - :py:attr:`~log_to_file`
+            - Add a file handler to the logger.
+          * - :py:attr:`~log_to_stdout`
+            - Add a standard output handler to the logger.
+          * - :py:attr:`~setLevel`
+            - Change the log level of the object and the attached handlers.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~level`
+            - 
+          * - :py:attr:`~file_handler`
+            - 
+          * - :py:attr:`~stdout_handler`
+            - 
+          * - :py:attr:`~logger`
+            - 
+          * - :py:attr:`~std_out_handler`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.logger import PyGeometryCustomAdapter
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: level
+   :value: None
+
+
+.. py:attribute:: file_handler
+   :value: None
+
+
+.. py:attribute:: stdout_handler
+   :value: None
+
+
+.. py:attribute:: logger
+
+.. py:attribute:: std_out_handler
+
+
+
+Method detail
+-------------
+
+.. py:method:: process(msg, kwargs)
+
+   
+   Process the logging message and keyword arguments passed in to
+   a logging call to insert contextual information. You can either
+   manipulate the message itself, the keyword args or both. Return
+   the message and kwargs modified (or not) to suit your needs.
+
+   Normally, you'll only need to override this one method in a
+   LoggerAdapter subclass for your specific needs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: log_to_file(filename: str = FILE_NAME, level: int = LOG_LEVEL)
+
+   
+   Add a file handler to the logger.
+
+
+   :Parameters:
+
+       **filename** : :class:`python:str`, default: "pyansys-geometry.log"
+           Name of the file to write log messages to.
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: log_to_stdout(level=LOG_LEVEL)
+
+   
+   Add a standard output handler to the logger.
+
+
+   :Parameters:
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: setLevel(level='DEBUG')
+
+   
+   Change the log level of the object and the attached handlers.
+
+
+   :Parameters:
+
+       **level** : :class:`python:int`, default: 10
+           Level of logging. The default is ``10``, in which case the
+           ``logging.DEBUG`` level is used.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

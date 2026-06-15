@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``repair_tool_message.py`` module
+=====================================
+
+.. py:module:: ansys.geometry.core.tools.repair_tool_message
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: repair_tool_message
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~RepairToolMessage`
+            - Provides return message for the repair tool methods.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 RepairToolMessage<RepairToolMessage>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for repair tool message.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

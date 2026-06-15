@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``segment.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.sketch.segment
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: segment
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.segment.SketchSegment`
+            - Provides segment representation of a line.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SketchSegment</api/ansys/geometry/core/sketch/segment/SketchSegment>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a segment.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

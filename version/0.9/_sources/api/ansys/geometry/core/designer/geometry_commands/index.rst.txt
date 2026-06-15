@@ -1,0 +1,114 @@
+
+
+
+
+
+
+The ``geometry_commands.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.designer.geometry_commands
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: geometry_commands
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.GeometryCommands`
+            - Provides geometry commands for PyAnsys Geometry.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.ExtrudeType`
+            - Provides values for extrusion types.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.OffsetMode`
+            - Provides values for offset modes during extrusions.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.FillPatternType`
+            - Provides values for types of fill patterns.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GeometryCommands</api/ansys/geometry/core/designer/geometry_commands/GeometryCommands>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> ExtrudeType</api/ansys/geometry/core/designer/geometry_commands/ExtrudeType>
+    <span class="nf nf-cod-symbol_enum"></span> OffsetMode</api/ansys/geometry/core/designer/geometry_commands/OffsetMode>
+    <span class="nf nf-cod-symbol_enum"></span> FillPatternType</api/ansys/geometry/core/designer/geometry_commands/FillPatternType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for pulling geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,102 @@
+
+
+
+
+CameraPanDirection
+==================
+
+.. py:class:: CameraPanDirection
+   :canonical: ansys.geometry.core.plotting.widgets.displace_arrows.CameraPanDirection
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum with the available movement directions of the camera.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: CameraPanDirection
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~XUP`
+            - 
+          * - :py:attr:`~XDOWN`
+            - 
+          * - :py:attr:`~YUP`
+            - 
+          * - :py:attr:`~YDOWN`
+            - 
+          * - :py:attr:`~ZUP`
+            - 
+          * - :py:attr:`~ZDOWN`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.displace_arrows import CameraPanDirection
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: XUP
+   :value: (0, 'upxarrow.png', (5, 170))
+
+   
+
+.. py:attribute:: XDOWN
+   :value: (1, 'downarrow.png', (5, 130))
+
+   
+
+.. py:attribute:: YUP
+   :value: (2, 'upyarrow.png', (35, 170))
+
+   
+
+.. py:attribute:: YDOWN
+   :value: (3, 'downarrow.png', (35, 130))
+
+   
+
+.. py:attribute:: ZUP
+   :value: (4, 'upzarrow.png', (65, 170))
+
+   
+
+.. py:attribute:: ZDOWN
+   :value: (5, 'downarrow.png', (65, 130))
+
+   
+
+
+

@@ -1,0 +1,737 @@
+
+
+
+
+
+
+:class:`Face`
+=============
+
+
+.. py:class:: ansys.geometry.core.designer.face.Face(id: str, surface_type: SurfaceType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.client.GrpcClient, is_reversed: bool = False)
+
+   
+   Represents a single face of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **surface_type** : :obj:`SurfaceType`
+           Type of surface that the face forms.
+
+       **body** : :obj:`Body`
+           Parent body that the face constructs.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Face
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_color`
+            - Set the color of the face.
+          * - :py:attr:`~set_opacity`
+            - Set the opacity of the face.
+          * - :py:attr:`~normal`
+            - Get the normal direction to the face at certain UV coordinates.
+          * - :py:attr:`~point`
+            - Get a point of the face evaluated at certain UV coordinates.
+          * - :py:attr:`~create_isoparametric_curves`
+            - Create isoparametic curves at the given proportional parameter.
+          * - :py:attr:`~setup_offset_relationship`
+            - Create an offset relationship between two faces.
+          * - :py:attr:`~tessellate`
+            - Tessellate the face and return the geometry as triangles.
+          * - :py:attr:`~plot`
+            - Plot the face.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Face ID.
+          * - :py:attr:`~is_reversed`
+            - Flag indicating if the face is reversed.
+          * - :py:attr:`~body`
+            - Body that the face belongs to.
+          * - :py:attr:`~shape`
+            - Underlying trimmed surface of the face.
+          * - :py:attr:`~surface_type`
+            - Surface type of the face.
+          * - :py:attr:`~area`
+            - Calculated area of the face.
+          * - :py:attr:`~edges`
+            - List of all edges of the face.
+          * - :py:attr:`~vertices`
+            - List of all vertices of the face.
+          * - :py:attr:`~loops`
+            - List of all loops of the face.
+          * - :py:attr:`~color`
+            - Get the current color of the face.
+          * - :py:attr:`~opacity`
+            - Get the opacity of the face.
+          * - :py:attr:`~bounding_box`
+            - Get the bounding box for the face.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.face import Face
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   Face ID.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_reversed
+   :type: bool
+
+
+   
+   Flag indicating if the face is reversed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: body
+   :type: ansys.geometry.core.designer.body.Body
+
+
+   
+   Body that the face belongs to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: shape
+   :type: ansys.geometry.core.shapes.surfaces.trimmed_surface.TrimmedSurface
+
+
+   
+   Underlying trimmed surface of the face.
+
+   If the face is reversed, its shape is a ``ReversedTrimmedSurface`` type, which handles the
+   direction of the normal vector to ensure it is always facing outward.
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: surface_type
+   :type: SurfaceType
+
+
+   
+   Surface type of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :type: pint.Quantity
+
+
+   
+   Calculated area of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edges
+   :type: list[ansys.geometry.core.designer.edge.Edge]
+
+
+   
+   List of all edges of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: vertices
+   :type: list[ansys.geometry.core.designer.vertex.Vertex]
+
+
+   
+   List of all vertices of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: loops
+   :type: list[FaceLoop]
+
+
+   
+   List of all loops of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: color
+   :type: str
+
+
+   
+   Get the current color of the face.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: opacity
+   :type: float
+
+
+   
+   Get the opacity of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: bounding_box
+   :type: ansys.geometry.core.math.bbox.BoundingBox
+
+
+   
+   Get the bounding box for the face.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_color(color: str | tuple[float, float, float]) -> None
+
+   
+   Set the color of the face.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_opacity(opacity: float) -> None
+
+   
+   Set the opacity of the face.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: normal(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Get the normal direction to the face at certain UV coordinates.
+
+
+   :Parameters:
+
+       **u** : :class:`python:float`, default: 0.5
+           First coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+       **v** : :class:`python:float`, default: 0.5
+           Second coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           :class:`UnitVector3D` object evaluated at the given U and V coordinates.
+           This :class:`UnitVector3D` object is perpendicular to the surface at the
+           given UV coordinates.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   To properly use this method, you must handle UV coordinates. Thus, you must
+   know how these relate to the underlying Geometry service. It is an advanced
+   method for Geometry experts only.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: point(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.point.Point3D
+
+   
+   Get a point of the face evaluated at certain UV coordinates.
+
+
+   :Parameters:
+
+       **u** : :class:`python:float`, default: 0.5
+           First coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+       **v** : :class:`python:float`, default: 0.5
+           Second coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           :class:`Point3D` object evaluated at the given UV coordinates.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   To properly use this method, you must handle UV coordinates. Thus, you must
+   know how these relate to the underlying Geometry service. It is an advanced
+   method for Geometry experts only.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_isoparametric_curves(use_u_param: bool, parameter: float) -> list[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve]
+
+   
+   Create isoparametic curves at the given proportional parameter.
+
+   Typically, only one curve is created, but if the face has a hole, it is possible that
+   more than one curve is created.
+
+   :Parameters:
+
+       **use_u_param** : :ref:`bool <python:bltin-boolean-values>`
+           Whether the parameter is the ``u`` coordinate or ``v`` coordinate. If ``True``,
+           it is the ``u`` coordinate. If ``False``, it is the ``v`` coordinate.
+
+       **parameter** : :class:`python:float`
+           Proportional [0-1] parameter to create the one or more curves at.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`TrimmedCurve`]
+           list of curves that were created.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: setup_offset_relationship(other_face: Face, set_baselines: bool = False, process_adjacent_faces: bool = False) -> bool
+
+   
+   Create an offset relationship between two faces.
+
+
+   :Parameters:
+
+       **other_face** : :obj:`Face`
+           The face to setup an offset relationship with.
+
+       **set_baselines** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Automatically set baseline faces.
+
+       **process_adjacent_faces** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Look for relationships of the same offset on adjacent faces.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` when successful, ``False`` when failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: tessellate(tess_options: ansys.geometry.core.misc.options.TessellationOptions | None = None) -> pyvista.PolyData
+
+   
+   Tessellate the face and return the geometry as triangles.
+
+
+   :Parameters:
+
+       **tess_options** : :obj:`TessellationOptions` | :data:`python:None`, default: :data:`python:None`
+           A set of options to determine the tessellation quality.
+
+
+
+   :Returns:
+
+       :obj:`~pyvista.PolyData`
+           :class:`pyvista.PolyData` object holding the face.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The tessellation options are ONLY used if the face has not been tessellated before.
+   If the face has been tessellated before, the stored tessellation is returned.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: plot(screenshot: str | None = None, use_trame: bool | None = None, use_service_colors: bool | None = None, **plotting_options: dict | None) -> None
+
+   
+   Plot the face.
+
+
+   :Parameters:
+
+       **screenshot** : :class:`python:str`, default: :data:`python:None`
+           Path for saving a screenshot of the image that is being represented.
+
+       **use_trame** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:None`
+           Whether to enable the use of `trame <https://kitware.github.io/trame/index.html>`_.
+           The default is ``None``, in which case the
+           ``ansys.tools.visualization_interface.USE_TRAME`` global setting is used.
+
+       **use_service_colors** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:None`
+           Whether to use the colors assigned to the face in the service. The default
+           is ``None``, in which case the ``ansys.geometry.core.USE_SERVICE_COLORS``
+           global setting is used.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for plotting. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

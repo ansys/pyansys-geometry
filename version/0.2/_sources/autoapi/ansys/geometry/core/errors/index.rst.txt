@@ -1,0 +1,147 @@
+:py:mod:`ansys.geometry.core.errors`
+====================================
+
+.. py:module:: ansys.geometry.core.errors
+
+.. autoapi-nested-parse::
+
+   Provides PyGeometry-specific errors.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.errors.handler
+   ansys.geometry.core.errors.protect_grpc
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.errors.SIGINT_TRACKER
+
+
+.. py:data:: SIGINT_TRACKER
+   :value: []
+
+   
+
+.. py:exception:: GeometryRuntimeError
+
+
+   Bases: :py:obj:`RuntimeError`
+
+   
+   Error message to raise when the Geometry service passes a runtime error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:exception:: GeometryExitedError(msg='Geometry service has exited.')
+
+
+   Bases: :py:obj:`RuntimeError`
+
+   
+   Provides the error message to raise when the Geometry service has exited.
+
+
+   :Parameters:
+
+       **msg** : :class:`python:str`, default: "Geometry :obj:`service` :obj:`has` exited."
+           Message to raise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: handler(sig, frame)
+
+   
+   Pass signal to the custom interrupt handler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: protect_grpc(func)
+
+   
+   Capture gRPC exceptions and raise a more succinct error message.
+
+   This method captures the ``KeyboardInterrupt`` exception to avoid
+   segfaulting the Geometry service.
+
+   While this works some of the time, it does not work all of the time. For some
+   reason, gRPC still captures SIGINT.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

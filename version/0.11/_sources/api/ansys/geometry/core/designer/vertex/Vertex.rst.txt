@@ -1,0 +1,147 @@
+
+
+
+
+
+
+:class:`Vertex`
+===============
+
+
+.. py:class:: ansys.geometry.core.designer.vertex.Vertex(id: str, position: numpy.ndarray | ansys.geometry.core.typing.RealSequence)
+
+   Bases: :py:obj:`ansys.geometry.core.math.point.Point3D`
+
+
+   
+   Represents a single vertex of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           The unique identifier for the vertex.
+
+       **position** : :obj:`np.ndarray <numpy.ndarray>` or :obj:`RealSequence`
+           The position of the vertex in 3D space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Vertex
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Get the unique identifier of the vertex.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Return a string representation of the vertex.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.vertex import Vertex
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   Get the unique identifier of the vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Return a string representation of the vertex.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
