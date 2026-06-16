@@ -27,6 +27,7 @@ from pathlib import Path
 import pytest
 
 from ansys.geometry.core.math import Point2D, Point3D
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
@@ -141,7 +142,8 @@ def test_import_lightweight_and_convert(modeler: Modeler):
     assert len(bodies) == 1
     assert all(body.is_lightweight for body in bodies)
 
-    surface = design_lw.create_surface_from_face("surface", bodies[0].faces[0])
+    plane = Plane()
+    bodies[0].mirror(plane)
 
     result = modeler.unsupported.convert_to_heavyweight(bodies)
     assert result is True
