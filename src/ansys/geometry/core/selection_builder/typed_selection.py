@@ -32,6 +32,14 @@ class TypedSelection:
         """Get the current selection items."""
         return self._items
 
-    def union(self, other: "TypedSelection") -> "TypedSelection":
+    def __add__(self, other: "TypedSelection") -> "TypedSelection":
         """Return a new selection that is the union of this selection and another."""
         return TypedSelection(list(set(self.items) | set(other.items)))
+    
+    def __sub__(self, other: "TypedSelection") -> "TypedSelection":
+        """Return a new selection that is the difference of this selection and another."""
+        return TypedSelection(list(set(self.items) - set(other.items)))
+    
+    def __and__(self, other: "TypedSelection") -> "TypedSelection":
+        """Return a new selection that is the intersection of this selection and another."""
+        return TypedSelection(list(set(self.items) & set(other.items)))

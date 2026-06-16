@@ -28,6 +28,9 @@ from ansys.geometry.core.errors import protect_grpc
 from ..base.body_selection import GRPCBodySelectionService
 from .conversions import (
     build_grpc_id,
+    from_area_to_grpc_quantity,
+    from_length_to_grpc_quantity,
+    from_volume_to_grpc_quantity,
     serialize_body_group_response,
     serialize_body_selection_response,
 )
@@ -135,8 +138,8 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 GetBodiesFromNamedSelectionRequestData(
                     name=kwargs["name"],
-                    filter_type=kwargs.get("filter_type", 0),
-                    ignore_case=kwargs.get("ignore_case", False),
+                    filter_type=kwargs["filter_type"].value,
+                    ignore_case=kwargs["ignore_case"],
                 )
             ]
         )
@@ -153,8 +156,8 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 GetBodiesWithNameRequestData(
                     name=kwargs["name"],
-                    filter_type=kwargs.get("filter_type", 0),
-                    ignore_case=kwargs.get("ignore_case", False),
+                    filter_type=kwargs["filter_type"].value,
+                    ignore_case=kwargs["ignore_case"],
                 )
             ]
         )
@@ -167,9 +170,11 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             GetBodiesWithVolumeRequestData,
         )
 
-        data = GetBodiesWithVolumeRequestData(min=kwargs["min"])
-        if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+        data = GetBodiesWithVolumeRequestData(
+            min=from_volume_to_grpc_quantity(kwargs["min"]),
+            max=from_volume_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None
+        )
+
         return serialize_body_selection_response(
             self.stub.GetBodiesWithVolume(GetBodiesWithVolumeRequest(request_data=[data]))
         )
@@ -181,9 +186,11 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             GetBodiesWithSurfaceAreaRequestData,
         )
 
-        data = GetBodiesWithSurfaceAreaRequestData(min=kwargs["min"])
-        if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+        data = GetBodiesWithSurfaceAreaRequestData(
+            min=from_area_to_grpc_quantity(kwargs["min"]),
+            max=from_area_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None
+        )
+
         return serialize_body_selection_response(
             self.stub.GetBodiesWithSurfaceArea(
                 GetBodiesWithSurfaceAreaRequest(request_data=[data])
@@ -197,11 +204,12 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             GetBodiesWithLocationRequestData,
         )
 
-        data = GetBodiesWithLocationRequestData(range_type=kwargs.get("range_type", 0))
-        if kwargs.get("min") is not None:
-            data.min = kwargs["min"]
-        if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+        data = GetBodiesWithLocationRequestData(
+            min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
+            max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
+            range_type=kwargs["range_type"].value
+        )
+
         return serialize_body_selection_response(
             self.stub.GetBodiesWithXLocation(GetBodiesWithLocationRequest(request_data=[data]))
         )
@@ -213,11 +221,12 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             GetBodiesWithLocationRequestData,
         )
 
-        data = GetBodiesWithLocationRequestData(range_type=kwargs.get("range_type", 0))
-        if kwargs.get("min") is not None:
-            data.min = kwargs["min"]
-        if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+        data = GetBodiesWithLocationRequestData(
+            min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
+            max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
+            range_type=kwargs["range_type"].value
+        )
+
         return serialize_body_selection_response(
             self.stub.GetBodiesWithYLocation(GetBodiesWithLocationRequest(request_data=[data]))
         )
@@ -229,11 +238,12 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             GetBodiesWithLocationRequestData,
         )
 
-        data = GetBodiesWithLocationRequestData(range_type=kwargs.get("range_type", 0))
-        if kwargs.get("min") is not None:
-            data.min = kwargs["min"]
-        if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+        data = GetBodiesWithLocationRequestData(
+            min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
+            max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
+            range_type=kwargs["range_type"].value
+        )
+
         return serialize_body_selection_response(
             self.stub.GetBodiesWithZLocation(GetBodiesWithLocationRequest(request_data=[data]))
         )
@@ -263,7 +273,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 InvertBodySelectionRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    scope=kwargs.get("scope", 0),
+                    scope=kwargs["scope"].value,
                 )
             ]
         )
@@ -282,7 +292,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]], min=kwargs["min"]
         )
         if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+            data.max = from_volume_to_grpc_quantity(kwargs["max"])
         return serialize_body_selection_response(
             self.stub.FilterBodiesByVolume(FilterBodiesByVolumeRequest(request_data=[data]))
         )
@@ -310,7 +320,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]], min=kwargs["min"]
         )
         if kwargs.get("max") is not None:
-            data.max = kwargs["max"]
+            data.max = from_area_to_grpc_quantity(kwargs["max"])
         return serialize_body_selection_response(
             self.stub.FilterBodiesBySurfaceArea(
                 FilterBodiesBySurfaceAreaRequest(request_data=[data])

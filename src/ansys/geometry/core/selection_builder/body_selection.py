@@ -21,13 +21,15 @@
 # SOFTWARE.
 """Provides for creating a body selection."""
 
+from numbers import Real
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.designer.face import SurfaceType
-from ansys.geometry.core.misc.auxiliary import get_bodies_from_ids
+from ansys.geometry.core.misc.auxiliary import convert_color_to_hex, get_bodies_from_ids
 from ansys.geometry.core.misc.checks import min_backend_version
+from ansys.geometry.core.misc.measurements import Area, Distance, Volume
 from ansys.geometry.core.selection_builder.selection_builder import (
     ExtendScope,
     InvertScope,
@@ -37,6 +39,8 @@ from ansys.geometry.core.selection_builder.selection_builder import (
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 
 if TYPE_CHECKING:
+    from pint import Quantity
+
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.design import Design
 
@@ -73,40 +77,46 @@ class BodySelection(TypedSelection):
         )
 
     @min_backend_version(27, 1, 0)
-    def get_all_bodies(self) -> list["Body"]:
+    def get_all_bodies(self) -> "BodySelection":
         """Return all bodies in the active document.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             All bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_bodies()
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
-    def get_all_surface_bodies(self) -> list["Body"]:
+    def get_all_surface_bodies(self) -> "BodySelection":
         """Return all surface bodies in the active document.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             All surface bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_surface_bodies()
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
-    def get_all_solid_bodies(self) -> list["Body"]:
+    def get_all_solid_bodies(self) -> "BodySelection":
         """Return all solid bodies in the active document.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             All solid bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_solid_bodies()
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_from_named_selection(
@@ -114,7 +124,7 @@ class BodySelection(TypedSelection):
         name: str,
         filter_type: "StringFilterType" = StringFilterType.STRINGFILTERTYPE_TEXT,
         ignore_case: bool = False,
-    ) -> list["Body"]:
+    ) -> "BodySelection":
         """Return bodies belonging to a named selection.
 
         Parameters
@@ -128,7 +138,7 @@ class BodySelection(TypedSelection):
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies belonging to the matched named selection.
         """
         response = self._grpc_client.services.body_selection.get_bodies_from_named_selection(
@@ -136,7 +146,9 @@ class BodySelection(TypedSelection):
             filter_type=filter_type,
             ignore_case=ignore_case,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_name(
@@ -144,7 +156,7 @@ class BodySelection(TypedSelection):
         name: str,
         filter_type: StringFilterType = StringFilterType.STRINGFILTERTYPE_TEXT,
         ignore_case: bool = False,
-    ) -> list["Body"]:
+    ) -> "BodySelection":
         """Return bodies whose name matches a filter.
 
         Parameters
@@ -158,7 +170,7 @@ class BodySelection(TypedSelection):
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose name matches the filter.
         """
         response = self._grpc_client.services.body_selection.get_bodies_with_name(
@@ -166,166 +178,195 @@ class BodySelection(TypedSelection):
             filter_type=filter_type,
             ignore_case=ignore_case,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_volume(
         self,
-        min: float,
-        max: float = None,
-    ) -> list["Body"]:
+        min: Volume | "Quantity" | Real,
+        max: Volume | "Quantity" | Real | None = None,
+    ) -> "BodySelection":
         """Return bodies whose volume falls within a range.
 
         Parameters
         ----------
-        min : float
+        min : Volume | Quantity | Real
             Minimum volume (inclusive).
-        max : float, optional
+        max : Volume | Quantity | Real, optional
             Maximum volume (inclusive). If not provided, no upper bound is applied.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose volume is within the specified range.
         """
+        min = min if isinstance(min, Volume) else Volume(min)
+        max = (max if isinstance(max, Volume) else Volume(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.get_bodies_with_volume(
             min=min,
             max=max,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_surface_area(
         self,
-        min: float,
-        max: float = None,
-    ) -> list["Body"]:
+        min: Area | "Quantity" | Real,
+        max: Area | "Quantity" | Real | None = None,
+    ) -> "BodySelection":
         """Return bodies whose surface area falls within a range.
 
         Parameters
         ----------
-        min : float
+        min : Area | Quantity | Real
             Minimum surface area (inclusive).
-        max : float, optional
+        max : Area | Quantity | Real, optional
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose surface area is within the specified range.
         """
+        min = min if isinstance(min, Area) else Area(min)
+        max = (max if isinstance(max, Area) else Area(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.get_bodies_with_surface_area(
             min=min,
             max=max,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_x_location(
         self,
-        range_type: RangeType = RangeType.RANGETYPE_CONTAIN,
-        min: float = None,
-        max: float = None,
-    ) -> list["Body"]:
+        range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
+        min: Distance | "Quantity" | Real | None = None,
+        max: Distance | "Quantity" | Real | None = None,
+    ) -> "BodySelection":
         """Return bodies whose X-location centroid falls within a range.
 
         Parameters
         ----------
-        range_type : RangeType, default: RangeType.RANGETYPE_CONTAIN
+        range_type : RangeType, default: RangeType.RANGETYPE_INTERSECT
             Range type specifier.
-        min : float, optional
+        min : Distance | Quantity | Real, optional
             Minimum X-location. If not provided, no lower bound is applied.
-        max : float, optional
+        max : Distance | Quantity | Real, optional
             Maximum X-location. If not provided, no upper bound is applied.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose X-location is within the specified range.
         """
+        min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.get_bodies_with_x_location(
             range_type=range_type,
             min=min,
             max=max,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_y_location(
         self,
-        range_type: RangeType = RangeType.RANGETYPE_CONTAIN,
-        min: float = None,
-        max: float = None,
-    ) -> list["Body"]:
+        range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
+        min: Distance | "Quantity" | Real | None = None,
+        max: Distance | "Quantity" | Real | None = None,
+    ) -> "BodySelection":
         """Return bodies whose Y-location centroid falls within a range.
 
         Parameters
         ----------
-        range_type : RangeType, default: RangeType.RANGETYPE_CONTAIN
+        range_type : RangeType, default: RangeType.RANGETYPE_INTERSECT
             Range type specifier.
-        min : float, optional
+        min : Distance | Quantity | Real, optional
             Minimum Y-location. If not provided, no lower bound is applied.
-        max : float, optional
+        max : Distance | Quantity | Real, optional
             Maximum Y-location. If not provided, no upper bound is applied.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose Y-location is within the specified range.
         """
+        min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.get_bodies_with_y_location(
             range_type=range_type,
             min=min,
             max=max,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_z_location(
         self,
-        range_type: RangeType = RangeType.RANGETYPE_CONTAIN,
-        min: float = None,
-        max: float = None,
-    ) -> list["Body"]:
+        range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
+        min: Distance | "Quantity" | Real | None = None,
+        max: Distance | "Quantity" | Real | None = None,
+    ) -> "BodySelection":
         """Return bodies whose Z-location centroid falls within a range.
 
         Parameters
         ----------
-        range_type : RangeType, default: RangeType.RANGETYPE_CONTAIN
+        range_type : RangeType, default: RangeType.RANGETYPE_INTERSECT
             Range type specifier.
-        min : float, optional
+        min : Distance | Quantity | Real, optional
             Minimum Z-location. If not provided, no lower bound is applied.
-        max : float, optional
+        max : Distance | Quantity | Real, optional
             Maximum Z-location. If not provided, no upper bound is applied.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies whose Z-location is within the specified range.
         """
+        min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.get_bodies_with_z_location(
             range_type=range_type,
             min=min,
             max=max,
         )
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
-    def get_bodies_with_color(self, color: int) -> list["Body"]:
+    def get_bodies_with_color(
+        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+    ) -> "BodySelection":
         """Return bodies that match a specific color.
 
         Parameters
         ----------
-        color : int
-            ARGB color value to match.
+        color : str | tuple[float, float, float] | tuple[float, float, float, float]
+            Color to set the body to. This can be a string representing a color name
+            or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
 
         Returns
         -------
-        list[Body]
+        BodySelection
             Bodies with the specified color.
         """
-        response = self._grpc_client.services.body_selection.get_bodies_with_color(color=color)
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        response = self._grpc_client.services.body_selection.get_bodies_with_color(
+            color=convert_color_to_hex(color)
+        )
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     # ── Instance operations ───────────────────────────────────────────────────
 
@@ -361,8 +402,8 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_volume(
         self,
         bodies: list["Body"],
-        min: float,
-        max: float = None,
+        min: Volume | "Quantity" | Real,
+        max: Volume | "Quantity" | Real | None = None,
     ) -> list["Body"]:
         """Filter bodies whose volume falls within a range.
 
@@ -370,9 +411,9 @@ class BodySelection(TypedSelection):
         ----------
         bodies : list[Body]
             Bodies to filter.
-        min : float
+        min : Volume | Quantity | Real
             Minimum volume (inclusive).
-        max : float, optional
+        max : Volume | Quantity | Real, optional
             Maximum volume (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -380,6 +421,8 @@ class BodySelection(TypedSelection):
         list[Body]
             Bodies whose volume is within the specified range.
         """
+        min = min if isinstance(min, Volume) else Volume(min)
+        max = (max if isinstance(max, Volume) else Volume(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.filter_bodies_by_volume(
             bodies=[b.id for b in bodies],
             min=min,
@@ -429,8 +472,8 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_surface_area(
         self,
         bodies: list["Body"],
-        min: float,
-        max: float = None,
+        min: Area | "Quantity" | Real,
+        max: Area | "Quantity" | Real | None = None,
     ) -> list["Body"]:
         """Filter bodies whose surface area falls within a range.
 
@@ -438,9 +481,9 @@ class BodySelection(TypedSelection):
         ----------
         bodies : list[Body]
             Bodies to filter.
-        min : float
+        min : Area | Quantity | Real
             Minimum surface area (inclusive).
-        max : float, optional
+        max : Area | Quantity | Real, optional
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -448,6 +491,8 @@ class BodySelection(TypedSelection):
         list[Body]
             Bodies whose surface area is within the specified range.
         """
+        min = min if isinstance(min, Area) else Area(min)
+        max = (max if isinstance(max, Area) else Area(max)) if max is not None else None
         response = self._grpc_client.services.body_selection.filter_bodies_by_surface_area(
             bodies=[b.id for b in bodies],
             min=min,
@@ -1405,7 +1450,7 @@ class BodySelection(TypedSelection):
     def extend_nearby_bodies(
         self,
         bodies: list["Body"],
-        distance: float,
+        distance: Distance | "Quantity" | Real,
         scope: ExtendScope = ExtendScope.EXTENDSCOPE_ALL,
     ) -> list["Body"]:
         """Extend the selection with bodies within a given distance.
@@ -1414,8 +1459,8 @@ class BodySelection(TypedSelection):
         ----------
         bodies : list[Body]
             Seed bodies to measure proximity from.
-        distance : float
-            Maximum proximity distance (in meters).
+        distance : Distance | Quantity | Real
+            Maximum proximity distance.
         scope : ExtendScope, default: ExtendScope.EXTENDSCOPE_ALL
             Whether to search all bodies or only visible ones.
 
@@ -1424,6 +1469,7 @@ class BodySelection(TypedSelection):
         list[Body]
             Input bodies plus additional bodies within the specified distance.
         """
+        distance = distance if isinstance(distance, Distance) else Distance(distance)
         response = self._grpc_client.services.body_selection.extend_nearby_bodies(
             bodies=[b.id for b in bodies],
             distance=distance,
@@ -1721,7 +1767,3 @@ class BodySelection(TypedSelection):
             get_bodies_from_ids(self._design, group)
             for group in response["response_data"][0]["groups"]
         ]
-    
-    def __add__(self, other: "BodySelection") -> "BodySelection":
-        """Combine with another BodySelection using union logic."""
-        return self.union(other)

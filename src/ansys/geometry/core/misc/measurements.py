@@ -259,3 +259,21 @@ class Area(Measurement):
         # Delegates in Measurement ctor. forcing expected dimensions.
         unit = unit if unit else DEFAULT_UNITS.AREA
         super().__init__(value, unit, DEFAULT_UNITS.AREA)
+
+
+class Volume(Measurement):
+    """Provides the ``Measurement`` subclass for holding a volume.
+
+    Parameters
+    ----------
+    value : Real | ~pint.Quantity
+        Value of the volume.
+    unit : ~pint.Unit, default: DEFAULT_UNITS.VOLUME
+        Units for the volume.
+    """
+
+    def __init__(self, value: Real | Quantity, unit: Unit | None = None):
+        """Initialize the ``Volume`` class."""
+        # Delegates in Measurement ctor. forcing expected dimensions.
+        unit = unit if unit else DEFAULT_UNITS.VOLUME
+        super().__init__(value, unit, DEFAULT_UNITS.VOLUME)
