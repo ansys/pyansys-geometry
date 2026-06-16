@@ -44,7 +44,7 @@ if TYPE_CHECKING:
 class BodySelection(TypedSelection):
     """A builder for creating a body selection."""
 
-    def __init__(self, design: "Design"):
+    def __init__(self, design: "Design", items: list["Body"] = None):
         """Initialize the body selection builder.
 
         Parameters
@@ -54,21 +54,23 @@ class BodySelection(TypedSelection):
         """
         self._grpc_client = ClientProvider.get()
         self._design = design
-        self._items = []
+        self._items = items or []
 
     # ── Static factory (get) ─────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
-    def get_all_visible_bodies(self) -> list["Body"]:
+    def get_all_visible_bodies(self) -> "BodySelection":
         """Return all visible bodies in the active document.
 
         Returns
         -------
-        list[Body]
+        BodySelection
             All visible bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_visible_bodies()
-        return get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(
+            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        )
 
     @min_backend_version(27, 1, 0)
     def get_all_bodies(self) -> list["Body"]:
