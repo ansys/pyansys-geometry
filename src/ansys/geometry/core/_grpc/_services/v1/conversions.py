@@ -72,6 +72,10 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
 from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2 import (
     UpdateStatus as GRPCUpdateStatus,
 )
+from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
+    BodyGroupResponse as GRPCBodyGroupResponse,
+    BodySelectionQueryResponse as GRPCBodySelectionResponse,
+)
 from ansys.api.discovery.v1.geometryenums_pb2 import (
     SurfaceType as GRPCSurfaceType,
 )
@@ -2205,6 +2209,54 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
                 response.tracked_command_response.tracked_changes, "deleted_bodies", []
             )
         ],
+    }
+
+
+def serialize_body_selection_response(response: GRPCBodySelectionResponse) -> dict:
+    """Serialize a BodySelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCBodySelectionResponse
+        The gRPC BodySelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodySelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "bodies": [body.id.id for body in rd.bodies],
+                "command_response": rd.command_response,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_body_group_response(response: GRPCBodyGroupResponse) -> dict:
+    """Serialize a BodyGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCBodyGroupResponse
+        The gRPC BodyGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodyGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [[body.id.id for body in group.bodies] for group in rd.groups],
+                "command_response": rd.command_response,
+            }
+            for rd in response.response_data
+        ]
     }
 
 

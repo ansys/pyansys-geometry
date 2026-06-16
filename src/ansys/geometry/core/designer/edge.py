@@ -52,6 +52,8 @@ class CurveType(Enum):
     CURVETYPE_ELLIPSE = 3
     CURVETYPE_NURBS = 4
     CURVETYPE_PROCEDURAL = 5
+    CURVETYPE_HELIX = 6
+    CURVETYPE_SPLINECURVE = 7
 
 
 class Edge:

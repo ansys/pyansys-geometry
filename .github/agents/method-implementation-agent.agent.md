@@ -77,3 +77,6 @@ Once the implementation is complete, pass the task to the writing-tests agent us
 Do not search for a `.venv` directory. Instead, read the `PYANSYS_VENV` environment variable to obtain the path to the virtual environment, then activate it:
 - Windows: `& "$env:PYANSYS_VENV\Scripts\Activate.ps1"`
 - Linux/macOS: `source "$PYANSYS_VENV/bin/activate"`
+
+## Code style
+- **Maximum line length is 100 characters.** No generated line may exceed 100 characters. Wrap long lines by splitting arguments onto separate lines or extracting intermediate variables. After writing any file, verify with: `python -c "lines=open('path').readlines(); long=[(i+1,len(l.rstrip())) for i,l in enumerate(lines) if len(l.rstrip())>100]; print(long or 'OK')"` and fix any violations before completing the step.
