@@ -20,6 +20,7 @@
 * [Dominik Gresch](https://github.com/greschd)
 * [German](https://github.com/germa89)
 * [Jacob Kerstetter](https://github.com/jacobrkerstetter)
+* [James Derrick](https://github.com/jgd10)
 * [JasonWelling](https://github.com/JasonWelling)
 * [Jonah Boling](https://github.com/jonahrb)
 * [Jorge Martínez](https://github.com/jorgepiloto)

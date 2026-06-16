@@ -185,3 +185,10 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def move_bodies_to_component(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.move_bodies_to_component' is not "
+            "implemented in this protofile version."
+        )
