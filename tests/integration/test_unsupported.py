@@ -141,6 +141,8 @@ def test_import_lightweight_and_convert(modeler: Modeler):
     assert len(bodies) == 1
     assert all(body.is_lightweight for body in bodies)
 
+    surface = design_lw.create_surface_from_face("surface", bodies[0].faces[0])
+
     result = modeler.unsupported.convert_to_heavyweight(bodies)
     assert result is True
     assert all(not body.is_lightweight for body in bodies)
