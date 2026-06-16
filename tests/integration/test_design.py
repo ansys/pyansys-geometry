@@ -44,11 +44,6 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
-from ansys.geometry.core.designer.beam import (
-    BeamCrossSectionInfo,
-    BeamProperties,
-    SectionAnchorType,
-)
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
