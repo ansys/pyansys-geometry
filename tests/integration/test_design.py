@@ -6960,6 +6960,7 @@ def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
     matching_component._clear_cached_bodies.assert_called_once()
     non_matching_component._clear_cached_bodies.assert_not_called()
 
+
 def test_move_bodies_to_component(modeler: Modeler):
     """Test moving bodies between components.
 
