@@ -28,7 +28,7 @@ import matplotlib.colors as mcolors
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.vertex import Vertex
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -163,8 +163,6 @@ class Face:
         Type of surface that the face forms.
     body : Body
         Parent body that the face constructs.
-    grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
     """
 
     def __init__(
@@ -172,14 +170,13 @@ class Face:
         id: str,
         surface_type: SurfaceType,
         body: "Body",
-        grpc_client: GrpcClient,
         is_reversed: bool = False,
     ):
         """Initialize the ``Face`` class."""
         self._id = id
         self._surface_type = surface_type
         self._body = body
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._is_reversed = is_reversed
         self._shape = None
         self._color = None
@@ -254,7 +251,6 @@ class Face:
                 edge.get("id"),
                 CurveType(edge.get("curve_type")),
                 self._body,
-                self._grpc_client,
                 edge.get("is_reversed"),
             )
             for edge in response.get("edges")
@@ -299,7 +295,6 @@ class Face:
                         response_edge.get("id"),
                         CurveType(response_edge.get("curve_type")),
                         self._body,
-                        self._grpc_client,
                         response_edge.get("is_reversed"),
                     )
                 )
@@ -529,7 +524,6 @@ class Face:
                     curve.get("end"),
                     curve.get("interval"),
                     curve.get("length"),
-                    self._grpc_client,
                 )
             )
 

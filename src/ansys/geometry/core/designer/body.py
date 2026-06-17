@@ -31,7 +31,7 @@ import matplotlib.colors as mcolors
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.edge import CurveType, Edge
 from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.designer.vertex import Vertex
@@ -989,8 +989,6 @@ class MasterBody(IBody):
         User-defined label for the body.
     parent_component : Component
         Parent component to place the new component under within the design assembly.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     is_surface : bool, default: False
         Whether the master body is a surface or an 3D object (with volume). The default
         is ``False``, in which case the master body is a surface. When ``True``, the
@@ -1001,18 +999,16 @@ class MasterBody(IBody):
         self,
         id: str,
         name: str,
-        grpc_client: GrpcClient,
         is_surface: bool = False,
     ):
         """Initialize the ``MasterBody`` class."""
         check_type(id, str)
         check_type(name, str)
-        check_type(grpc_client, GrpcClient)
         check_type(is_surface, bool)
 
         self._id = id
         self._name = name
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._is_surface = is_surface
         self._surface_thickness = None
         self._surface_offset = None
@@ -1132,7 +1128,6 @@ class MasterBody(IBody):
                 face_resp.get("id"),
                 SurfaceType(face_resp.get("surface_type")),
                 body,
-                self._grpc_client,
                 face_resp.get("is_reversed"),
             )
             for face_resp in response.get("faces")
@@ -1151,7 +1146,6 @@ class MasterBody(IBody):
                 edge_resp.get("id"),
                 CurveType(edge_resp.get("curve_type")),
                 body,
-                self._grpc_client,
                 edge_resp.get("is_reversed"),
             )
             for edge_resp in response.get("edges")
@@ -2048,7 +2042,6 @@ class Body(IBody):
                 edge.get("id"),
                 CurveType(edge.get("curve_type")),
                 self,
-                self._template._grpc_client,
             )
             for edge in imprint_response.get("edges")
         ]
@@ -2058,7 +2051,6 @@ class Body(IBody):
                 face.get("id"),
                 SurfaceType(face.get("surface_type")),
                 self,
-                self._template._grpc_client,
             )
             for face in imprint_response.get("faces")
         ]
@@ -2090,7 +2082,6 @@ class Body(IBody):
                 face.get("id"),
                 SurfaceType(face.get("surface_type")),
                 self,
-                self._template._grpc_client,
             )
             for face in project_response.get("faces")
         ]
@@ -2123,7 +2114,6 @@ class Body(IBody):
                 face.get("id"),
                 SurfaceType(face.get("surface_type")),
                 self,
-                self._template._grpc_client,
             )
             for face in response.get("faces")
         ]
@@ -2200,7 +2190,6 @@ class Body(IBody):
         tb = MasterBody(
             response.get("master_id"),
             copy_name,
-            self._template._grpc_client,
             is_surface=self.is_surface,
         )
         parent._master_component.part.bodies.append(tb)

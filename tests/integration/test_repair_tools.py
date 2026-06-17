@@ -674,9 +674,8 @@ def test_design_import_check_geometry(modeler: Modeler):
 
 def test_repair_no_body(modeler: Modeler):
     """Test the repair method when body is None."""
-    grpc_client = modeler.client
     # Create an instance of InspectResult with body set to None
-    inspect_result = InspectResult(grpc_client=grpc_client, body=None, issues=[])
+    inspect_result = InspectResult(body=None, issues=[])
     # Call the repair method
     repair_message = inspect_result.repair()
     # Assert the returned RepairToolMessage
@@ -688,9 +687,8 @@ def test_repair_no_body(modeler: Modeler):
 
 def test_problem_area_fix_not_implemented(modeler: Modeler):
     """Test that the fix method in the ProblemArea base class raises NotImplementedError."""
-    grpc_client = modeler.client
     # Create an instance of ProblemArea
-    problem_area = ProblemArea(id="123", grpc_client=grpc_client)
+    problem_area = ProblemArea(id="123")
     # Assert that calling fix raises NotImplementedError
     with pytest.raises(
         NotImplementedError, match="Fix method is not implemented in the base class."
@@ -715,7 +713,7 @@ def test_problem_area_fix_not_implemented(modeler: Modeler):
 def test_problem_area_fix_no_data(modeler: Modeler, problem_area_class, kwargs):
     """Test the fix method for various ProblemArea subclasses when required attributes are empty."""
     grpc_client = modeler.client
-    problem_area = problem_area_class(id="123", grpc_client=grpc_client, **kwargs)
+    problem_area = problem_area_class(id="123", **kwargs)
     repair_message = problem_area.fix()
     assert isinstance(repair_message, RepairToolMessage)
     assert repair_message.success is False

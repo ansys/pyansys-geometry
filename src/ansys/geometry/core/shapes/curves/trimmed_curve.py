@@ -23,7 +23,7 @@
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -51,8 +51,6 @@ class TrimmedCurve:
         Parametric interval that bounds the curve.
     length : Quantity
         Length of the curve.
-    grpc_client : GrpcClient, default: None
-        gRPC client that is required for advanced functions such as ``intersect_curve()``.
     """
 
     def __init__(
@@ -62,7 +60,6 @@ class TrimmedCurve:
         end: Point3D,
         interval: Interval,
         length: Quantity,
-        grpc_client: GrpcClient = None,
     ):
         """Initialize ``TrimmedCurve`` class."""
         self._geometry = geometry
@@ -70,7 +67,7 @@ class TrimmedCurve:
         self._end = end
         self._interval = interval
         self._length = length
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @property
     def geometry(self) -> Curve:
@@ -254,8 +251,6 @@ class ReversedTrimmedCurve(TrimmedCurve):
         Parametric interval that bounds the curve.
     length : Quantity
         Length of the curve.
-    grpc_client : GrpcClient, default: None
-        gRPC client that is required for advanced functions such as `intersect_curve()`.
     """
 
     def __init__(
@@ -265,10 +260,9 @@ class ReversedTrimmedCurve(TrimmedCurve):
         end: Point3D,
         interval: Interval,
         length: Quantity,
-        grpc_client: GrpcClient = None,
     ):
         """Initialize an instance of a reversed trimmed curve."""
-        super().__init__(geometry, start, end, interval, length, grpc_client)
+        super().__init__(geometry, start, end, interval, length)
 
         # Swap start and end points
         temp = self._start

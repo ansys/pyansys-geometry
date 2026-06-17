@@ -29,7 +29,7 @@ import uuid
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCrossSectionInfo,
@@ -157,8 +157,6 @@ class Component:
     parent_component : Component or None
         Parent component to place the new component under within the design assembly. The
         default is ``None`` only when dealing with a ``Design`` object.
-    grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
     template : Component, default: None
         Template to create this component from. This creates an
         instance component that shares a master with the template component.
@@ -190,7 +188,6 @@ class Component:
         self,
         name: str,
         parent_component: Union["Component", None],
-        grpc_client: GrpcClient,
         template: Optional["Component"] = None,
         instance_name: Optional[str] = None,
         preexisting_id: str | None = None,
@@ -199,7 +196,7 @@ class Component:
     ):
         """Initialize the ``Component`` class."""
         # Initialize the client and stubs needed
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
         # Align instance name behavior with the server - empty string if None
         instance_name = instance_name if instance_name else ""
@@ -397,7 +394,6 @@ class Component:
             new = Component(
                 template_comp.name,
                 self,
-                self._grpc_client,
                 template=template_comp,
                 preexisting_id=new_id,
                 master_component=template_comp._master_component,
@@ -495,7 +491,7 @@ class Component:
             New component with no children in the design assembly.
         """
         new_comp = Component(
-            name, self, self._grpc_client, template=template, instance_name=instance_name
+            name, self, template=template, instance_name=instance_name
         )
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
@@ -505,7 +501,6 @@ class Component:
                     Component(
                         name,
                         comp,
-                        self._grpc_client,
                         template=template,
                         instance_name=instance_name,
                         preexisting_id=f"{comp.id}/{master_id}",
@@ -560,7 +555,6 @@ class Component:
         tb = MasterBody(
             response["master_id"],
             response["name"],
-            self._grpc_client,
             is_surface=response["is_surface"],
         )
         self._master_component.part.bodies.append(tb)
@@ -1199,7 +1193,7 @@ class Component:
         -------
         CoordinateSystem
         """
-        self._coordinate_systems.append(CoordinateSystem(name, frame, self, self._grpc_client))
+        self._coordinate_systems.append(CoordinateSystem(name, frame, self))
         return self._coordinate_systems[-1]
 
     @check_input_types

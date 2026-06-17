@@ -25,7 +25,7 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 import ansys.geometry.core as pyansys_geom
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection import ClientProvider
 from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
@@ -50,14 +50,12 @@ class ProblemArea:
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient):
+    def __init__(self, id: str):
         """Initialize a new instance of a problem area class."""
         self._id = id
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @property
     def id(self) -> str:
@@ -101,15 +99,13 @@ class DuplicateFaceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     faces : list[Face]
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
+    def __init__(self, id: str, faces: list["Face"]):
         """Initialize a new instance of the duplicate face problem areaclass."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.face import Face
 
@@ -155,15 +151,13 @@ class MissingFaceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+    def __init__(self, id: str, edges: list["Edge"]):
         """Initialize a new instance of the missing face problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.edge import Edge
 
@@ -209,15 +203,13 @@ class InexactEdgeProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+    def __init__(self, id: str, edges: list["Edge"]):
         """Initialize a new instance of the inexact edge problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.edge import Edge
 
@@ -264,15 +256,13 @@ class ExtraEdgeProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+    def __init__(self, id: str, edges: list["Edge"]):
         """Initialize a new instance of the extra edge problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.edge import Edge
 
@@ -318,15 +308,13 @@ class ShortEdgeProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+    def __init__(self, id: str, edges: list["Edge"]):
         """Initialize a new instance of the ``ShortEdgeProblemAreas`` class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.edge import Edge
 
@@ -372,15 +360,13 @@ class SmallFaceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     faces : list[Face]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
+    def __init__(self, id: str, faces: list["Face"]):
         """Initialize a new instance of the small face problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.face import Face
 
@@ -426,15 +412,13 @@ class SplitEdgeProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     edges : list[Edge]
         List of edges associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, edges: list["Edge"]):
+    def __init__(self, id: str, edges: list["Edge"]):
         """Initialize a new instance of the split edge problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.edge import Edge
 
@@ -480,15 +464,13 @@ class StitchFaceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     bodies : list[Body]
         List of bodies associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, bodies: list["Body"]):
+    def __init__(self, id: str, bodies: list["Body"]):
         """Initialize a new instance of the stitch face problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         from ansys.geometry.core.designer.body import Body
 
@@ -534,15 +516,13 @@ class UnsimplifiedFaceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     faces : list[Face]
         List of faces associated with the design.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, faces: list["Face"]):
+    def __init__(self, id: str, faces: list["Face"]):
         """Initialize a new instance of the unsimplified face problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         self._faces = faces
 
@@ -583,15 +563,13 @@ class InterferenceProblemAreas(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     bodies : list[Body]
         List of bodies in the problem area.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, bodies: list["Body"]):
+    def __init__(self, id: str, bodies: list["Body"]):
         """Initialize a new instance of the interference problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         self._bodies = bodies
 
@@ -639,15 +617,13 @@ class LogoProblemArea(ProblemArea):
     ----------
     id : str
         Server-defined ID for the problem area.
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     faces : list[str]
         List of faces defining the logo problem area.
     """
 
-    def __init__(self, id: str, grpc_client: GrpcClient, face_ids: list[str]):
+    def __init__(self, id: str, face_ids: list[str]):
         """Initialize a new instance of the logo problem area class."""
-        super().__init__(id, grpc_client)
+        super().__init__(id)
 
         self._face_ids = face_ids
 

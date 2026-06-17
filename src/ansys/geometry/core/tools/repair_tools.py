@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 import pint
 
 import ansys.geometry.core as pyansys_geometry
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
     get_bodies_from_ids,
@@ -69,8 +69,6 @@ class RepairTools:
 
     Parameters
     ----------
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     modeler : Modeler
         The parent modeler instance.
     _internal_use : bool, optional
@@ -89,7 +87,7 @@ class RepairTools:
     ``modeler.repair_tools`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
+    def __init__(self, modeler: "Modeler", _internal_use: bool = False):
         """Initialize a new instance of the ``RepairTools`` class."""
         if not _internal_use:
             raise GeometryRuntimeError(
@@ -97,7 +95,7 @@ class RepairTools:
                 "Use 'modeler.repair_tools' to access repair tools."
             )
         self._modeler = modeler
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     def find_split_edges(
         self,
@@ -147,7 +145,6 @@ class RepairTools:
         return [
             SplitEdgeProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_edges_from_ids(parent_design, res.get("edges")),
             )
             for res in response.get("problems")
@@ -179,7 +176,6 @@ class RepairTools:
         return [
             ExtraEdgeProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_edges_from_ids(parent_design, res.get("edges")),
             )
             for res in response.get("problems")
@@ -212,7 +208,6 @@ class RepairTools:
         return [
             InexactEdgeProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_edges_from_ids(parent_design, res.get("edges")),
             )
             for res in response.get("problems")
@@ -254,7 +249,6 @@ class RepairTools:
         return [
             ShortEdgeProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_edges_from_ids(parent_design, res.get("edges")),
             )
             for res in response.get("problems")
@@ -286,7 +280,6 @@ class RepairTools:
         return [
             DuplicateFaceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_faces_from_ids(parent_design, res.get("faces")),
             )
             for res in response.get("problems")
@@ -340,7 +333,6 @@ class RepairTools:
         return [
             MissingFaceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_edges_from_ids(parent_design, res.get("edges")),
             )
             for res in response.get("problems")
@@ -394,7 +386,6 @@ class RepairTools:
         return [
             SmallFaceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_faces_from_ids(parent_design, res.get("faces")),
             )
             for res in response.get("problems")
@@ -442,7 +433,6 @@ class RepairTools:
         return [
             StitchFaceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_bodies_from_ids(parent_design, res.get("bodies")),
             )
             for res in response.get("problems")
@@ -477,7 +467,6 @@ class RepairTools:
         return [
             UnsimplifiedFaceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_faces_from_ids(parent_design, res.get("bodies")),
             )
             for res in response.get("problems")
@@ -527,7 +516,6 @@ class RepairTools:
         return [
             InterferenceProblemAreas(
                 f"{res.get('id')}",
-                self._grpc_client,
                 get_bodies_from_ids(parent_design, res.get("bodies")),
             )
             for res in response.get("problems")
@@ -877,9 +865,7 @@ class RepairTools:
         for inspect_geometry_result in inspect_geometry_results:
             body = get_bodies_from_ids(design, [inspect_geometry_result["body"]["id"]])
             issues = self.__create_issues_from_response(inspect_geometry_result.get("issues"))
-            inspect_result = InspectResult(
-                grpc_client=self._grpc_client, body=body[0], issues=issues
-            )
+            inspect_result = InspectResult(body=body[0], issues=issues)
             inspect_results.append(inspect_result)
 
         return inspect_results

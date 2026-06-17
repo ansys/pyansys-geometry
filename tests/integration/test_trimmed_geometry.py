@@ -312,7 +312,6 @@ def test_trimmed_curve(modeler: Modeler):
         end=body.edges[0].shape.end,
         interval=body.edges[0].shape.interval,
         length=body.edges[0].shape.length,
-        grpc_client=modeler.client,  # Pass the gRPC client here
     )
     edge1 = TrimmedCurve(
         geometry=body.edges[1].shape.geometry,
@@ -320,7 +319,6 @@ def test_trimmed_curve(modeler: Modeler):
         end=body.edges[1].shape.end,
         interval=body.edges[1].shape.interval,
         length=body.edges[1].shape.length,
-        grpc_client=modeler.client,  # Pass the gRPC client here
     )
 
     edge2 = TrimmedCurve(
@@ -329,7 +327,6 @@ def test_trimmed_curve(modeler: Modeler):
         end=body.edges[4].shape.end,
         interval=body.edges[4].shape.interval,
         length=body.edges[4].shape.length,
-        grpc_client=modeler.client,  # Pass the gRPC client here
     )
 
     # Perform assertions and call intersect_curve

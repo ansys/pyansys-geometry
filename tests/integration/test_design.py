@@ -162,6 +162,12 @@ def test_design_close_handles_close_rpc_error(modeler: Modeler):
         warning_spy.assert_any_call(f"Design {design.name} could not be closed. Error: boom.")
         warning_spy.assert_any_call("Ignoring response and assuming the design is closed.")
 
+    # The patch prevented the real close from reaching the server. Reset _is_active so that
+    # the real close RPC is sent now, otherwise the server keeps a zombie open design that
+    # corrupts subsequent tests in the full suite.
+    design._is_active = True
+    design.close()
+
 
 def test_design_download_legacy_backend(modeler: Modeler, tmp_path):
     """Test download() legacy backend path."""
@@ -270,7 +276,7 @@ def test_insert_file_v0_uses_upload_and_insert(modeler: Modeler, tmp_path):
     """Cover v0 insert_file branch that uploads then inserts by server path."""
     design = modeler.create_design("insert_v0_branch")
     file_location = tmp_path / "to_insert.scdocx"
-    component = Component("mock_component", None, modeler.client)
+    component = Component("mock_component", None)
 
     with (
         patch.object(design._grpc_client.services, "version", GeometryApiProtos.V0),
@@ -972,8 +978,8 @@ def test_design_selection(modeler: Modeler):
 
 def test_design_part(modeler: Modeler):
     """Test to validate the designer part id, name, and setter for components and bodies."""
-    body1 = MasterBody(id="body1", name="First Only Body", grpc_client=modeler.client)
-    body2 = MasterBody(id="body2", name="Second Body in Component", grpc_client=modeler.client)
+    body1 = MasterBody(id="body1", name="First Only Body")
+    body2 = MasterBody(id="body2", name="Second Body in Component")
     bodies = [body1]
     part = Part(id="IDPart", name="NamePart", components=[], bodies=bodies)
     masterpart = MasterComponent(id="PartMaster", name="Part Master", part=part)
@@ -5286,21 +5292,20 @@ def test_updating_design_from_tracker(modeler: Modeler):
     }
     # Adding needed bodies and components that are modified
     design.bodies.append(
-        MasterBody("body100", "ExistingBody", design._grpc_client, is_surface=False)
+        MasterBody("body100", "ExistingBody", is_surface=False)
     )
     design.components[2].components.append(
-        Component("SubComponent", design.components[2], design._grpc_client, preexisting_id="sub1")
+        Component("SubComponent", design.components[2], preexisting_id="sub1")
     )
     design.components[2].components[0].components.append(
         Component(
             "SubComponent2",
             design.components[2].components[0],
-            design._grpc_client,
             preexisting_id="sub2",
         )
     )
     design.components[2].components[0].bodies.append(
-        MasterBody("test", "SubComponentBody", design._grpc_client, is_surface=True)
+        MasterBody("test", "SubComponentBody", is_surface=True)
     )
     # Changing the ids of the bodies to match those in the tracker response
     design.components[1].bodies[0]._id = "7"
@@ -5316,7 +5321,7 @@ def test_updating_design_from_tracker(modeler: Modeler):
         "parent_id": "sub1",
     }
     design._find_and_update_body(body_info, design.components[2])
-    top_component = Component("TopComponent", design, design._grpc_client, preexisting_id="top1")
+    top_component = Component("TopComponent", design, preexisting_id="top1")
     design.components.append(top_component)
     body_info = {
         "id": "body1",

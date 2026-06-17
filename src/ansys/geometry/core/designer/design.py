@@ -30,6 +30,7 @@ from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCircularProfile,
@@ -149,7 +150,7 @@ class Design(Component):
     @check_input_types
     def __init__(self, name: str, modeler: Modeler, read_existing_design: bool = False):
         """Initialize the ``Design`` class."""
-        super().__init__(name, None, modeler.client)
+        super().__init__(name, None)
 
         # Initialize needed instance variables
         self._materials = []
@@ -159,6 +160,7 @@ class Design(Component):
         self._is_active = False
         self._modeler = modeler
         self._design_tess = None
+        self._grpc_client = ClientProvider.get()
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -847,7 +849,6 @@ class Design(Component):
         named_selection = NamedSelection(
             name,
             self,
-            self._grpc_client,
             bodies=bodies,
             faces=faces,
             edges=edges,
@@ -1340,7 +1341,6 @@ class Design(Component):
             c = Component(
                 comp.get("name"),
                 parent,
-                self._grpc_client,
                 preexisting_id=comp.get("id"),
                 master_component=master,
                 read_existing_comp=True,
@@ -1354,7 +1354,6 @@ class Design(Component):
             tb = MasterBody(
                 body.get("id"),
                 body.get("name"),
-                self._grpc_client,
                 is_surface=body.get("is_surface"),
             )
             part.bodies.append(tb)
@@ -1472,7 +1471,6 @@ class Design(Component):
             new_ns = NamedSelection(
                 ns.get("name"),
                 self,
-                self._grpc_client,
                 preexisting_id=ns.get("id"),
             )
             self._named_selections[new_ns.name] = new_ns
@@ -1486,7 +1484,7 @@ class Design(Component):
             for cs in coordinate_systems:
                 frame = cs.get("frame")
                 new_cs = CoordinateSystem(
-                    cs.get("name"), frame, component, self._grpc_client, cs.get("id")
+                    cs.get("name"), frame, component, cs.get("id")
                 )
                 component.coordinate_systems.append(new_cs)
                 num_created_coord_systems += 1
@@ -1536,7 +1534,6 @@ class Design(Component):
                 dc.get("length"),
                 dc.get("start"),
                 dc.get("end"),
-                self._grpc_client,
                 created_components.get(dc.get("parent_id"), self),
             )
 
@@ -1756,7 +1753,7 @@ class Design(Component):
             )
 
             if not new_body:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                new_body = MasterBody(body_id, body_name, is_surface=is_surface)
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(
@@ -1945,7 +1942,6 @@ class Design(Component):
                 parent_component=self,
                 name=component_info["name"],
                 template=self,
-                grpc_client=self._grpc_client,
                 master_component=master_component,
                 preexisting_id=component_info["id"],
                 read_existing_comp=True,
@@ -1961,7 +1957,6 @@ class Design(Component):
                     name=component_info["name"],
                     parent_component=component,
                     template=component,
-                    grpc_client=self._grpc_client,
                     master_component=master_component,
                     preexisting_id=component_info["id"],
                     read_existing_comp=True,
@@ -2063,7 +2058,6 @@ class Design(Component):
                 new_master_body = MasterBody(
                     tracked_body_info["id"],
                     tracked_body_info["name"],
-                    self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
                 )
 

@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -91,13 +91,11 @@ class GeometryIssue:
 class InspectResult:
     """Provides the result of the inspect geometry operation."""
 
-    def __init__(self, grpc_client: GrpcClient, body: "Body", issues: list[GeometryIssue]):
+    def __init__(self, body: "Body", issues: list[GeometryIssue]):
         """Initialize a new instance of the result of the inspect geometry operation.
 
         Parameters
         ----------
-        grpc_client: GrpcClient
-            gRPC client to communicate with the server.
         body: Body
             Body for which issues are found.
         issues: list[GeometryIssue]
@@ -105,7 +103,7 @@ class InspectResult:
         """
         self._body = body
         self._issues = issues
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @property
     def body(self) -> "Body":

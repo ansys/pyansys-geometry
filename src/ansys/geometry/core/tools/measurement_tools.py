@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
@@ -58,8 +58,6 @@ class MeasurementTools:
 
     Parameters
     ----------
-    grpc_client : GrpcClient
-        gRPC client to use for the measurement tools.
     _internal_use : bool, optional
         Internal flag to prevent direct instantiation by users.
         This parameter is for internal use only.
@@ -76,14 +74,14 @@ class MeasurementTools:
     ``modeler.measurement_tools`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
+    def __init__(self, _internal_use: bool = False):
         """Initialize measurement tools class."""
         if not _internal_use:
             raise GeometryRuntimeError(
                 "MeasurementTools should not be instantiated directly. "
                 "Use 'modeler.measurement_tools' to access measurement tools."
             )
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @min_backend_version(24, 2, 0)
     def min_distance_between_objects(

@@ -27,8 +27,8 @@ from typing import TYPE_CHECKING
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
-from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.connection.backend import BackendType
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
@@ -87,8 +87,6 @@ class PrepareTools:
 
     Parameters
     ----------
-    grpc_client : GrpcClient
-        Active supporting geometry service instance for design modeling.
     _internal_use : bool, optional
         Internal flag to prevent direct instantiation by users.
         This parameter is for internal use only.
@@ -104,14 +102,14 @@ class PrepareTools:
     ``modeler.prepare_tools`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
+    def __init__(self, _internal_use: bool = False):
         """Initialize Prepare Tools class."""
         if not _internal_use:
             raise GeometryRuntimeError(
                 "PrepareTools should not be instantiated directly. "
                 "Use 'modeler.prepare_tools' to access prepare tools."
             )
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
@@ -565,14 +563,12 @@ class PrepareTools:
                         helix.get("trimmed_curve").get("end"),
                         helix.get("trimmed_curve").get("interval"),
                         helix.get("trimmed_curve").get("length"),
-                        grpc_client=self._grpc_client,
                     ),
                     "edges": [
                         Edge(
                             edge.get("id"),
                             CurveType(edge.get("curve_type")),
                             get_bodies_from_ids(parent_design, [edge.get("parent_id")])[0],
-                            self._grpc_client,
                             edge.get("is_reversed"),
                         )
                         for edge in helix.get("edges")

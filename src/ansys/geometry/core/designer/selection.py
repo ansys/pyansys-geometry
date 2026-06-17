@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING, Union
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
@@ -64,8 +64,6 @@ class NamedSelection:
         User-defined name for the named selection.
     design : Design
         Design instance to which the named selection belongs.
-    grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
     bodies : list[Body], default: None
         All bodies to include in the named selection.
     faces : list[Face], default: None
@@ -88,7 +86,6 @@ class NamedSelection:
         self,
         name: str,
         design: "Design",
-        grpc_client: GrpcClient,
         bodies: list[Body] | None = None,
         faces: list[Face] | None = None,
         edges: list[Edge] | None = None,
@@ -102,7 +99,7 @@ class NamedSelection:
         """Initialize the ``NamedSelection`` class."""
         self._name = name
         self._design = design
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._verified = False
 
         # Convert None to empty lists
@@ -362,7 +359,6 @@ class NamedSelection:
             new_ns = NamedSelection(
                 self._name,
                 self._design,
-                self._grpc_client,
                 bodies=bodies + self.bodies,
                 faces=faces + self.faces,
                 edges=edges + self.edges,
@@ -423,7 +419,6 @@ class NamedSelection:
             new_ns = NamedSelection(
                 self._name,
                 self._design,
-                self._grpc_client,
                 bodies=[body for body in self.bodies if body not in members],
                 faces=[face for face in self.faces if face not in members],
                 edges=[edge for edge in self.edges if edge not in members],
@@ -511,7 +506,6 @@ class NamedSelection:
                 face_id,
                 SurfaceType(face_meta_by_id[face_id].get("surface_type")),
                 body_map[face_meta_by_id[face_id].get("body_id")],
-                self._grpc_client,
                 face_meta_by_id[face_id].get("is_reversed", False),
             )
             for face_id in self._ids_cached["faces"]

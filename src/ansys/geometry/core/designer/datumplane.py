@@ -23,6 +23,7 @@
 
 from typing import TYPE_CHECKING
 
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import min_backend_version
@@ -52,6 +53,7 @@ class DatumPlane:
         self._name = name
         self._value = plane
         self._parent_component = parent_component
+        self._grpc_client = ClientProvider.get()
         self._is_alive = True
 
     @property
@@ -74,11 +76,6 @@ class DatumPlane:
     def parent_component(self) -> "Component":
         """Parent component of the datum plane."""
         return self._parent_component
-
-    @property
-    def _grpc_client(self):
-        """Access to the gRPC client through the parent component."""
-        return self._parent_component._grpc_client
 
     @property
     def is_alive(self) -> bool:

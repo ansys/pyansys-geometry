@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.checks import ensure_design_is_active, min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
@@ -53,8 +53,6 @@ class DesignCurve:
         Start point of the curve.
     end : Point3D
         End point of the curve.
-    grpc_client : GrpcClient
-        gRPC client for communicating with the server.
     parent_component : Component
         Parent component that the curve belongs to in the design assembly.
     """
@@ -66,7 +64,6 @@ class DesignCurve:
         length: Distance,
         start: Point3D,
         end: Point3D,
-        grpc_client: GrpcClient,
         parent_component: "Component",
     ):
         """Initialize the ``DesignCurve`` class."""
@@ -75,7 +72,7 @@ class DesignCurve:
         self._length = length
         self._start = start
         self._end = end
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._parent_component = parent_component
         self._is_alive = True
         self._shape = None

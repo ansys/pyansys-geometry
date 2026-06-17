@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING
 
 from pint import Quantity
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.bbox import BoundingBox
 from ansys.geometry.core.math.point import Point3D
@@ -67,8 +67,6 @@ class Edge:
         Type of curve that the edge forms.
     body : Body
         Parent body that the edge constructs.
-    grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
     is_reversed : bool
         Direction of the edge.
     """
@@ -78,14 +76,13 @@ class Edge:
         id: str,
         curve_type: CurveType,
         body: "Body",
-        grpc_client: GrpcClient,
         is_reversed: bool = False,
     ):
         """Initialize the ``Edge`` class."""
         self._id = id
         self._curve_type = curve_type
         self._body = body
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._is_reversed = is_reversed
         self._shape = None
 
@@ -167,7 +164,6 @@ class Edge:
                 face_resp.get("id"),
                 SurfaceType(face_resp.get("surface_type")),
                 self._body,
-                self._grpc_client,
                 face_resp.get("is_reversed"),
             )
             for face_resp in response.get("faces")

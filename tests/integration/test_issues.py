@@ -347,31 +347,31 @@ def test_issue_2184_prevent_raw_instantiation_of_tools_and_commands():
     with pytest.raises(
         GeometryRuntimeError, match="UnsupportedCommands should not be instantiated directly"
     ):
-        UnsupportedCommands(None, None)
+        UnsupportedCommands(None)
 
     # Test RepairTools
     with pytest.raises(
         GeometryRuntimeError, match="RepairTools should not be instantiated directly"
     ):
-        RepairTools(None, None)
+        RepairTools(None)
 
     # Test PrepareTools
     with pytest.raises(
         GeometryRuntimeError, match="PrepareTools should not be instantiated directly"
     ):
-        PrepareTools(None)
+        PrepareTools()
 
     # Test MeasurementTools
     with pytest.raises(
         GeometryRuntimeError, match="MeasurementTools should not be instantiated directly"
     ):
-        MeasurementTools(None)
+        MeasurementTools()
 
     # Test GeometryCommands
     with pytest.raises(
         GeometryRuntimeError, match="GeometryCommands should not be instantiated directly"
     ):
-        GeometryCommands(None)
+        GeometryCommands()
 
 
 def test_issue_2074_rounding_math_errors():

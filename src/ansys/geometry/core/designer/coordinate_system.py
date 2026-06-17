@@ -23,7 +23,7 @@
 
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.math.frame import Frame
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -44,8 +44,6 @@ class CoordinateSystem:
         Frame defining the coordinate system bounds.
     parent_component : Component, default: Component
         Parent component the coordinate system is assigned against.
-    grpc_client : GrpcClient
-        Active supporting Geometry service instance for design modeling.
     """
 
     def __init__(
@@ -53,12 +51,11 @@ class CoordinateSystem:
         name: str,
         frame: Frame,
         parent_component: "Component",
-        grpc_client: GrpcClient,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``CoordinateSystem`` class."""
         self._parent_component = parent_component
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self._is_alive = True
 
         # Create without going to server

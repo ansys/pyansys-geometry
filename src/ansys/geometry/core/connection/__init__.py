@@ -22,7 +22,7 @@
 """PyAnsys Geometry connection subpackage."""
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider, GrpcClient
 import ansys.geometry.core.connection.defaults as defaults
 from ansys.geometry.core.connection.docker_instance import (
     GeometryContainers,

@@ -146,11 +146,11 @@ class Modeler:
         self._design: Optional["Design"] = None
 
         # Enabling tools/commands for all: repair and prepare tools, geometry commands
-        self._measurement_tools = MeasurementTools(self._grpc_client, _internal_use=True)
-        self._repair_tools = RepairTools(self._grpc_client, self, _internal_use=True)
-        self._prepare_tools = PrepareTools(self._grpc_client, _internal_use=True)
-        self._geometry_commands = GeometryCommands(self._grpc_client, _internal_use=True)
-        self._unsupported = UnsupportedCommands(self._grpc_client, self, _internal_use=True)
+        self._measurement_tools = MeasurementTools(True)
+        self._repair_tools = RepairTools(self, True)
+        self._prepare_tools = PrepareTools(True)
+        self._geometry_commands = GeometryCommands(True)
+        self._unsupported = UnsupportedCommands(self, True)
 
     @property
     def client(self) -> GrpcClient:

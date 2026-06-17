@@ -28,7 +28,7 @@ from pint import Quantity
 
 import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core._grpc._version import GeometryApiProtos
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.designer.mating_conditions import (
     AlignCondition,
@@ -150,8 +150,6 @@ class GeometryCommands:
 
     Parameters
     ----------
-    grpc_client : GrpcClient
-        gRPC client to use for the geometry commands.
     _internal_use : bool, optional
         Internal flag to prevent direct instantiation by users.
         This parameter is for internal use only.
@@ -168,14 +166,14 @@ class GeometryCommands:
     ``modeler.geometry_commands`` instead.
     """
 
-    def __init__(self, grpc_client: GrpcClient, _internal_use: bool = False):
+    def __init__(self, _internal_use: bool = False):
         """Initialize an instance of the ``GeometryCommands`` class."""
         if not _internal_use:
             raise GeometryRuntimeError(
                 "GeometryCommands should not be instantiated directly. "
                 "Use 'modeler.geometry_commands' to access geometry commands."
             )
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
 
     @min_backend_version(25, 2, 0)
     def chamfer(
@@ -2289,7 +2287,6 @@ class GeometryCommands:
                     curve_info.get("length"),
                     curve_info.get("start_point"),
                     curve_info.get("end_point"),
-                    self._grpc_client,
                     parent,
                 )
                 parent._design_curves.append(dc)
@@ -2377,7 +2374,6 @@ class GeometryCommands:
                     curve_info.get("length"),
                     curve_info.get("start_point"),
                     curve_info.get("end_point"),
-                    self._grpc_client,
                     parent,
                 )
                 parent._design_curves.append(dc)
@@ -2487,7 +2483,6 @@ class GeometryCommands:
                     curve_info.get("length"),
                     curve_info.get("start_point"),
                     curve_info.get("end_point"),
-                    self._grpc_client,
                     parent,
                 )
                 parent._design_curves.append(dc)

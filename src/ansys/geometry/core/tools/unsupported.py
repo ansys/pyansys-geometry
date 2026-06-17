@@ -26,7 +26,7 @@ from enum import Enum, unique
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
     get_all_bodies_from_design,
@@ -65,8 +65,6 @@ class UnsupportedCommands:
 
     Parameters
     ----------
-    grpc_client : GrpcClient
-        gRPC client to use for the geometry commands.
     modeler : Modeler
         Modeler instance to use for the geometry commands.
     _internal_use : bool, optional
@@ -85,14 +83,14 @@ class UnsupportedCommands:
 
     """
 
-    def __init__(self, grpc_client: GrpcClient, modeler: "Modeler", _internal_use: bool = False):
+    def __init__(self, modeler: "Modeler", _internal_use: bool = False):
         """Initialize an instance of the ``UnsupportedCommands`` class."""
         if not _internal_use:
             raise GeometryRuntimeError(
                 "UnsupportedCommands should not be instantiated directly. "
                 "Use 'modeler.unsupported' to access unsupported commands."
             )
-        self._grpc_client = grpc_client
+        self._grpc_client = ClientProvider.get()
         self.__id_map = {}
         self.__modeler = modeler
         self.__current_design = modeler.get_active_design()
