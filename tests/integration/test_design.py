@@ -5408,8 +5408,6 @@ def test_clear_body_cache_for_part_nested(modeler: Modeler):
     non_matching_component._clear_cached_bodies.assert_not_called()
 
 
-
-
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
