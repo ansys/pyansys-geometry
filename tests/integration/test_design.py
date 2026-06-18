@@ -5292,9 +5292,7 @@ def test_updating_design_from_tracker(modeler: Modeler):
         ],
     }
     # Adding needed bodies and components that are modified
-    design.bodies.append(
-        MasterBody("body100", "ExistingBody", is_surface=False)
-    )
+    design.bodies.append(MasterBody("body100", "ExistingBody", is_surface=False))
     design.components[2].components.append(
         Component("SubComponent", design.components[2], preexisting_id="sub1")
     )

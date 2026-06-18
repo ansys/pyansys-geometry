@@ -491,9 +491,7 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        new_comp = Component(
-            name, self, template=template, instance_name=instance_name
-        )
+        new_comp = Component(name, self, template=template, instance_name=instance_name)
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
         for comp in self._master_component.occurrences:
