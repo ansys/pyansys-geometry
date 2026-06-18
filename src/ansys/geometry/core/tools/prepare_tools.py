@@ -435,7 +435,6 @@ class PrepareTools:
 
         return LogoProblemArea(
             id=response.get("id"),
-            grpc_client=self._grpc_client,
             face_ids=response.get("face_ids"),
         )
 

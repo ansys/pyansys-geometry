@@ -75,6 +75,7 @@ def test_client_through_channel(modeler: Modeler):
     assert "Connection" in client_repr
     assert target == client.target().lstrip("dns:///")
     assert client.channel
+    client.close()
 
 
 def test_client_close(client: GrpcClient):
