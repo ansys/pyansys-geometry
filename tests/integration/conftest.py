@@ -223,6 +223,11 @@ def session_modeler(docker_instance, proto_version, transport_mode):
 
 @pytest.fixture(scope="function")
 def modeler(session_modeler: Modeler):
+    # Ensure the session client is the active ClientProvider for this test.
+    from ansys.geometry.core.connection.client import ClientProvider
+
+    ClientProvider.set(session_modeler.client)
+
     # Yield the modeler
     yield session_modeler
 
