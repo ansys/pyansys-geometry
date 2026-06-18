@@ -690,7 +690,7 @@ wheels = [
 ]
 
 [[package]]
-name = "astroid"
+name = "asteroid"
 version = "4.1.2"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/da/fd/24475b7cfb70298e8921bc077adb46a3fe77887422545d8a061573e130ee/astroid-4.1.2.tar.gz", hash = "sha256:d6c4a52bfcda4bbeb7359dead642b0248b90f7d9a07e690230bd86fefd6d37f1", size = 414896, upload-time = "2026-03-22T19:16:42.075Z" }
@@ -3722,7 +3722,7 @@ name = "sphinx-autoapi"
 version = "3.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "astroid" },
+    { name = "asteroid" },
     { name = "jinja2" },
     { name = "pyyaml" },
     { name = "sphinx" },
