@@ -43,6 +43,34 @@ Then, to install PyAnsys Geometry, run this command:
 
    python -m pip install ansys-geometry-core
 
+Alternatively, using `uv <https://docs.astral.sh/uv/>`_:
+
+.. code:: bash
+
+   uv add ansys-geometry-core
+
+Optional extras
+~~~~~~~~~~~~~~~
+
+PyAnsys Geometry provides two optional extras for users who need additional capabilities:
+
+* ``graphics``: installs PyVista, VTK, and pygltflib for 3D visualization.
+* ``all``: installs all optional dependencies, including ``graphics`` and Docker support.
+
+Using ``pip``:
+
+.. code:: bash
+
+   pip install "ansys-geometry-core[graphics]"
+   pip install "ansys-geometry-core[all]"
+
+Using ``uv``:
+
+.. code:: bash
+
+   uv add "ansys-geometry-core[graphics]"
+   uv add "ansys-geometry-core[all]"
+
 
 Conda
 -----

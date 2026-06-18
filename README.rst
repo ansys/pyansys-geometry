@@ -83,6 +83,19 @@ Or, using `uv <https://docs.astral.sh/uv/>`_:
 
     uv add ansys-geometry-core
 
+For optional graphics support (PyVista, VTK, pygltflib), install the ``graphics`` extra.
+To include all optional dependencies, use the ``all`` extra instead:
+
+.. code:: bash
+
+    pip install "ansys-geometry-core[graphics]"
+    pip install "ansys-geometry-core[all]"
+
+.. code:: bash
+
+    uv add "ansys-geometry-core[graphics]"
+    uv add "ansys-geometry-core[all]"
+
 You can also install PyAnsys Geometry from `Conda-Forge <https://anaconda.org/conda-forge/ansys-geometry-core>`_:
 
 .. code:: bash

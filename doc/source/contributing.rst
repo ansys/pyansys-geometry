@@ -29,7 +29,7 @@ Using ``uv``:
 
     git clone https://github.com/ansys/pyansys-geometry
     cd pyansys-geometry
-    uv sync
+    uv sync --group dev
 
 
 Post issues

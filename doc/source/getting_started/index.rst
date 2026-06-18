@@ -15,6 +15,20 @@ before proceeding.
 
     pip install ansys-geometry-core
 
+Or, using `uv <https://docs.astral.sh/uv/>`_:
+
+.. code:: bash
+
+    uv add ansys-geometry-core
+
+For optional graphics support (PyVista, VTK, pygltflib), add the ``graphics`` extra.
+To include all optional dependencies, use ``all``:
+
+.. code:: bash
+
+    pip install "ansys-geometry-core[graphics]"
+    uv add "ansys-geometry-core[graphics]"
+
 Available modes
 ===============
 
