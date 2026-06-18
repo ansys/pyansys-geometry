@@ -637,7 +637,7 @@ jobs:
           echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Run pytest
-        run: uv run pytest -v -c pytest-nographics.ini
+        run: pytest -v -c pytest-nographics.ini
 
       - name: Stop the Geometry service
         if: always()
