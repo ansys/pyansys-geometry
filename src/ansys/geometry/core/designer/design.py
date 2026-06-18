@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing designs."""
 
 from enum import Enum, unique
@@ -1483,9 +1484,7 @@ class Design(Component):
             coordinate_systems = ccs.get("coordinate_systems")
             for cs in coordinate_systems:
                 frame = cs.get("frame")
-                new_cs = CoordinateSystem(
-                    cs.get("name"), frame, component, cs.get("id")
-                )
+                new_cs = CoordinateSystem(cs.get("name"), frame, component, cs.get("id"))
                 component.coordinate_systems.append(new_cs)
                 num_created_coord_systems += 1
 

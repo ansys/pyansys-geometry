@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing components."""
 
 from dataclasses import dataclass
@@ -490,9 +491,7 @@ class Component:
         Component
             New component with no children in the design assembly.
         """
-        new_comp = Component(
-            name, self, template=template, instance_name=instance_name
-        )
+        new_comp = Component(name, self, template=template, instance_name=instance_name)
         master = new_comp._master_component
         master_id = new_comp.id.split("/")[-1]
         for comp in self._master_component.occurrences:

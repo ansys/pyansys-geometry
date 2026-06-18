@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Test design interaction."""
 
 import os
@@ -5291,9 +5292,7 @@ def test_updating_design_from_tracker(modeler: Modeler):
         ],
     }
     # Adding needed bodies and components that are modified
-    design.bodies.append(
-        MasterBody("body100", "ExistingBody", is_surface=False)
-    )
+    design.bodies.append(MasterBody("body100", "ExistingBody", is_surface=False))
     design.components[2].components.append(
         Component("SubComponent", design.components[2], preexisting_id="sub1")
     )
