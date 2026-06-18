@@ -13,7 +13,7 @@ or from the `PyAnsys Geometry repository <https://github.com/ansys/pyansys-geome
 Package dependencies
 --------------------
 
-PyAnsys Geometry is supported on Python version 3.10 and later. As indicated in the
+PyAnsys Geometry is supported on Python version 3.12 and later. As indicated in the
 `Moving to require Python 3 <https://python3statement.github.io/>`_ statement,
 previous versions of Python are no longer supported.
 
@@ -87,17 +87,17 @@ archive for your corresponding machine architecture from the repository's `Relea
 <https://github.com/ansys/pyansys-geometry/releases>`_.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.10 to 3.14. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.12 to 3.14. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.10, unzip the wheelhouse archive and install it with these commands:
+For example, on Linux with Python 3.12, unzip the wheelhouse archive and install it with these commands:
 
 .. code:: bash
 
-    unzip ansys_geometry_core-v0.16.dev0-all-wheelhouse-ubuntu-3.10.zip wheelhouse
+    unzip ansys_geometry_core-v0.16.dev0-all-wheelhouse-ubuntu-3.12.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you are on Windows with Python 3.10, unzip the wheelhouse archive to a wheelhouse directory
+If you are on Windows with Python 3.12, unzip the wheelhouse archive to a wheelhouse directory
 and then install using the same ``pip install`` command as in the preceding example.
 
 Consider installing using a virtual environment. For more information, see `Creation of virtual
