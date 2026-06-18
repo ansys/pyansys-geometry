@@ -1603,7 +1603,7 @@ def test_failures_to_extrude(modeler: Modeler):
     sketch.segment(p4, p1)
     design = modeler.create_design("SimpleFaceDesign")
     surface = design.create_surface("SimpleFace", sketch)
-    grpc_client = modeler.client
+
     geometry_commands = GeometryCommands(_internal_use=True)
 
     # Failing to extrude single face

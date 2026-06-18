@@ -712,7 +712,6 @@ def test_problem_area_fix_not_implemented(modeler: Modeler):
 )
 def test_problem_area_fix_no_data(modeler: Modeler, problem_area_class, kwargs):
     """Test the fix method for various ProblemArea subclasses when required attributes are empty."""
-    grpc_client = modeler.client
     problem_area = problem_area_class(id="123", **kwargs)
     repair_message = problem_area.fix()
     assert isinstance(repair_message, RepairToolMessage)
