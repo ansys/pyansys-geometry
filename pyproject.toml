@@ -120,12 +120,12 @@ tests-minimal = [
   "pyyaml==6.0.3",
 ]
 
-[tool.uv]
-package = true
-default-groups = []
+[tool.hatch]
+build.targets.wheel.packages = [ "src/ansys" ]
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/ansys"]
+[tool.uv]
+default-groups = []
+package = true
 
 [tool.ruff]
 line-length = 100

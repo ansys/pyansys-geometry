@@ -219,7 +219,8 @@ jobs:
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
           PROTO_VERSION: ${{ matrix.proto-version }}
-        run: uv run pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=$env:PROTO_VERSION -rf
+        run: |
+          uv run pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=$env:PROTO_VERSION -rf
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
