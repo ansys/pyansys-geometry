@@ -128,12 +128,6 @@ class TrimmedCurve:
         list[Point3D]
             All points of intersection between the curves.
         """
-        if self._grpc_client is None:
-            raise ValueError(
-                """Because this trimmed curve was not initialized with a gRPC client,
-                the method cannot be called."""
-            )
-
         response = self._grpc_client.services.curves.intersect_curves(first=self, second=other)
 
         return [] if response.get("intersect") is False else response.get("points")

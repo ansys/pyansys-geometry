@@ -303,8 +303,7 @@ def test_trimmed_curve(modeler: Modeler):
     """Test Trimmed Curve class"""
     design = modeler.create_design("trimmed_curve_edges")
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    with pytest.raises(ValueError):
-        design.bodies[0].edges[0].shape.intersect_curve(design.bodies[0].edges[1].shape)
+
     # Retrieve edges and initialize TrimmedCurve objects with the gRPC client
     edge0 = TrimmedCurve(
         geometry=body.edges[0].shape.geometry,
