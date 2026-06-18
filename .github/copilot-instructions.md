@@ -9,17 +9,17 @@
 
 ## Installation
 - **Install (user)**:
-  - `pip install ansys-geometry-core`
+  - pip: `pip install ansys-geometry-core`
+  - uv: `uv add ansys-geometry-core`
 - **Install (developer)**:
-  - `python -m venv .venv && .venv\Scripts\Activate.ps1`
-  - `python -m pip install -U pip`
-  - `pip install -e . --group dev`
+  - pip: `python -m venv .venv && .venv\Scripts\Activate.ps1` then `pip install -e . --group dev`
+  - uv (preferred): `uv sync`
 
 ## Project Conventions
 - **Style:** Follows [PyAnsys Developer's Guide](https://dev.docs.pyansys.com/coding-style/index.html#coding-style); use pre-commit (configuration available on repository), to validate the style
 - **Tests:** Use `pytest` style; integration tests in `tests/integration/`
 - **Docs:** Sphinx, sources in `doc/source/`
-- **Editable install:** Always use `pip install -e . --group dev`
+- **Editable install:** `pip install -e . --group dev` or `uv sync`
 
 ## Examples & References
 - See `doc/source/contributing.rst` for detailed contribution guidelines.

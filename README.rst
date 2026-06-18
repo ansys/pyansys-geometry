@@ -77,6 +77,12 @@ You can use `pip <https://pypi.org/project/pip/>`_ to install PyAnsys Geometry.
 
     pip install ansys-geometry-core
 
+Or, using `uv <https://docs.astral.sh/uv/>`_:
+
+.. code:: bash
+
+    uv add ansys-geometry-core
+
 You can also install PyAnsys Geometry from `Conda-Forge <https://anaconda.org/conda-forge/ansys-geometry-core>`_:
 
 .. code:: bash
@@ -85,11 +91,21 @@ You can also install PyAnsys Geometry from `Conda-Forge <https://anaconda.org/co
 
 To install the latest development version, run these commands:
 
+Using ``pip``:
+
 .. code:: bash
 
    git clone https://github.com/ansys/pyansys-geometry
    cd pyansys-geometry
    pip install -e .
+
+Using ``uv``:
+
+.. code:: bash
+
+   git clone https://github.com/ansys/pyansys-geometry
+   cd pyansys-geometry
+   uv sync
 
 For more information, see `Getting Started`_.
 

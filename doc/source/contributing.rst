@@ -14,12 +14,22 @@ Clone the repository
 To clone and install the latest PyAnsys Geometry release in development mode, run
 these commands:
 
+Using ``pip``:
+
 .. code::
 
     git clone https://github.com/ansys/pyansys-geometry
     cd pyansys-geometry
     python -m pip install --upgrade pip
     pip install -e . --group dev
+
+Using ``uv``:
+
+.. code::
+
+    git clone https://github.com/ansys/pyansys-geometry
+    cd pyansys-geometry
+    uv sync
 
 
 Post issues
@@ -62,6 +72,10 @@ To ensure your code meets minimum code styling standards, run these commands::
 
   pip install pre-commit
   pre-commit run --all-files
+
+Alternatively, using ``uv``::
+
+  uv run pre-commit run --all-files
 
 You can also install this as a pre-commit hook by running this command::
 
@@ -107,6 +121,10 @@ To build the documentation locally, you must run this command to install the
 documentation dependencies::
 
   pip install -e . --group doc
+
+Alternatively, using ``uv``::
+
+  uv sync --group doc
 
 Then, navigate to the ``docs`` directory and run this command::
 
@@ -160,6 +178,10 @@ You can also test the correct build process of a new example by performing the f
 
     pip install -e . --group doc
 
+   Or, using ``uv``::
+
+    uv sync --group doc
+
 2. Navigate to the ``doc`` directory and run the following command::
 
     # On Linux or macOS
@@ -187,6 +209,10 @@ Prerequisites
 Prior to running the tests, you must run this command to install the test dependencies::
 
   pip install -e . --group tests
+
+Alternatively, using ``uv``::
+
+  uv sync --group tests
 
 Make sure to define the port and host of the service using the following environment variables::
 
