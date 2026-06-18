@@ -222,11 +222,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
+      - name: Setup UV
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -234,10 +235,7 @@ jobs:
 
       - name: Install packages for testing
         if: env.SKIP_UNSTABLE == 'false'
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade build wheel
-          pip install -e . --group tests
+        run: uv sync --group tests
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -270,7 +268,7 @@ jobs:
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          uv run python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
@@ -286,8 +284,7 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
-        run: |
-          pytest -v --use-tracker=$env:USE_TRACKER
+        run: uv run pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
@@ -555,15 +552,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           python-version: ${{ matrix.python-version }}
+          activate-environment: true
 
       - name: Install minimum requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[all] --group tests-minimal
+        run: uv sync --extra all --group tests-minimal
 
       - name: Start Geometry service and verify start
         env:
@@ -579,8 +575,7 @@ jobs:
           echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Run pytest
-        run: |
-          pytest -v
+        run: uv run pytest -v
 
       - name: Stop the Geometry service
         if: always()
@@ -640,8 +635,7 @@ jobs:
           echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Run pytest
-        run: |
-          pytest -v -c pytest-nographics.ini
+        run: uv run pytest -v -c pytest-nographics.ini
 
       - name: Stop the Geometry service
         if: always()
@@ -879,10 +873,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
@@ -898,17 +893,15 @@ jobs:
         run: |
           docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
-      - name: Validate connection using PyAnsys Geometry
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e . --group tests
+      - name: Install test dependencies
+        run: uv sync --group tests
 
       - name: Start Geometry service and verify start
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ghcr.io/ansys/geometry:linux-tmp ${TRANSPORT_MODE_SELECTION}
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          uv run python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Copy test files into geometry service container
         run: |
@@ -932,7 +925,7 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
-          group-dependencies-name: "tests"
+          skip-install: true
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3

@@ -116,18 +116,17 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Install packages for testing
-        run: |
-          pip install --upgrade build
-          pip install -e . --group tests
+        run: uv sync --group tests
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4.2.0
@@ -156,14 +155,14 @@ jobs:
           # Make the container-internal path available to the Python test process
           "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          uv run python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run PyAnsys Geometry tests
         timeout-minutes: 20 # Sometimes hangs...
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          pytest -v --use-tracker=$env:USE_TRACKER
+          uv run pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
