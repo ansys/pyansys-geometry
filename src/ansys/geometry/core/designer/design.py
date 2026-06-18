@@ -161,7 +161,6 @@ class Design(Component):
         self._is_active = False
         self._modeler = modeler
         self._design_tess = None
-        self._grpc_client = ClientProvider.get()
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:

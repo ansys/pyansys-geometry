@@ -26,7 +26,7 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING
 
 import ansys.geometry.core as pyansys_geom
-from ansys.geometry.core.connection import ClientProvider
+from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.misc.auxiliary import (
     get_design_from_body,
     get_design_from_edge,
