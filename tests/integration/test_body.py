@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Test body interaction."""
 
 from pathlib import Path
@@ -36,7 +37,6 @@ from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
     UNITVECTOR3D_Z,
-    Frame,
     Plane,
     Point2D,
     Point3D,
@@ -47,6 +47,7 @@ from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.sketch import Sketch
 
 from .conftest import FILES_DIR
+
 
 def test_body_tracker_update_paths(modeler: Modeler):
     """Test USE_TRACKER_TO_UPDATE_DESIGN=True branches and detach_faces failure path."""
@@ -104,6 +105,7 @@ def test_body_tracker_update_paths(modeler: Modeler):
     finally:
         pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN = original_tracker
 
+
 def test_assigning_and_getting_material(modeler: Modeler):
     """Test the assignment and retrieval of materials from a design."""
     # Create a Sketch and draw a circle (all client side)
@@ -154,6 +156,7 @@ def test_assigning_and_getting_material(modeler: Modeler):
         mat_service.properties[MaterialPropertyType.TENSILE_STRENGTH].quantity == tensile_strength
     )
 
+
 def test_get_empty_material(modeler: Modeler):
     """Check that the material service returns an empty material."""
     # Create a Sketch and draw a circle (all client side)
@@ -174,6 +177,7 @@ def test_get_empty_material(modeler: Modeler):
         0, UNITS.kg / (UNITS.m**3)
     )
     assert len(mat_service.properties) == 1
+
 
 def test_single_body_translation(modeler: Modeler):
     """Test for verifying the correct translation of a ``Body``.
@@ -200,6 +204,7 @@ def test_single_body_translation(modeler: Modeler):
     body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
+
 
 def test_boolean_body_operations(modeler: Modeler):
     """
@@ -447,6 +452,7 @@ def test_boolean_body_operations(modeler: Modeler):
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
+
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
     design = modeler.create_design("simple_cube")
@@ -464,6 +470,7 @@ def test_set_body_name(modeler: Modeler):
     assert box.name == "updated_name"
     box.name = "updated_name2"
     assert box.name == "updated_name2"
+
 
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
@@ -486,6 +493,7 @@ def test_set_fill_style(modeler: Modeler):
     box.fill_style = FillStyle.OPAQUE
     assert box.fill_style == FillStyle.OPAQUE
 
+
 def test_body_suppression(modeler: Modeler):
     """Test the suppression of a body."""
 
@@ -507,6 +515,7 @@ def test_body_suppression(modeler: Modeler):
     assert box.is_suppressed is True
     box.is_suppressed = False
     assert box.is_suppressed is False
+
 
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
@@ -564,6 +573,7 @@ def test_set_body_color(modeler: Modeler):
     ):
         box.opacity = 255
 
+
 def test_shell_body(modeler: Modeler):
     """Test shell command."""
     design = modeler.create_design("shell")
@@ -584,6 +594,7 @@ def test_shell_body(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
 
+
 def test_shell_faces(modeler: Modeler):
     """Test shell commands for a single face."""
     design = modeler.create_design("shell")
@@ -598,6 +609,7 @@ def test_shell_faces(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.584, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 11
 
+
 def test_shell_multiple_faces(modeler: Modeler):
     """Test shell commands for multiple faces."""
     design = modeler.create_design("shell")
@@ -611,6 +623,7 @@ def test_shell_multiple_faces(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.452, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 10
+
 
 def test_combine_merge(modeler: Modeler):
     design = modeler.create_design("combine_merge")
@@ -633,6 +646,7 @@ def test_combine_merge(modeler: Modeler):
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
+
 def test_combine_subtract_transfer_ns(modeler: Modeler):
     """Testing the transfer of named selection during an intersect"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
@@ -653,6 +667,7 @@ def test_combine_subtract_transfer_ns(modeler: Modeler):
     assert len(design.named_selections[2].edges) == 4
     assert len(design.named_selections[3].edges) == 2
 
+
 def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
     """Testing the transfer of named selection during an
     intersect with default options overridden"""
@@ -667,6 +682,7 @@ def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
     # Then confirm the named selections
     assert len(design.bodies) == 2
     assert len(design.named_selections) == 4
+
 
 def test_get_centroid(modeler: Modeler):
     """Test get_centroid() method on body, face, and edge objects.
@@ -740,4 +756,3 @@ def test_get_centroid(modeler: Modeler):
     assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
     assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
     assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
-
