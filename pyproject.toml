@@ -1,6 +1,6 @@
 [build-system]
-build-backend = "flit_core.buildapi"
-requires = [ "flit-core>=3.2,<4" ]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
 
 [project]
 name = "ansys-geometry-core"
@@ -11,14 +11,12 @@ license = "MIT"
 license-files = [ "LICENSE" ]
 maintainers = [ { name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" } ]
 authors = [ { name = "ANSYS, Inc.", email = "pyansys.core@ansys.com" } ]
-requires-python = ">=3.10,<4"
+requires-python = ">=3.12,<4"
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
@@ -72,7 +70,7 @@ dev = [
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.8.2",
+  "ansys-sphinx-theme[autoapi]==1.9.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.3",
@@ -91,23 +89,21 @@ doc = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.5.0",
+  "ansys-tools-common==0.5.1",
   "ansys-tools-visualization-interface==0.13.3",
   "beartype==0.22.9",
   "docker==7.1.0",
   "geomdl==5.4.0",
-  "grpcio==1.78.1",
-  "grpcio-health-checking==1.78.1",
+  "grpcio==1.81.1",
+  "grpcio-health-checking==1.81.1",
   "matplotlib==3.10.9",
-  "numpy==2.2.6; python_version<'3.11'",
-  "numpy==2.4.0; python_version>='3.11'",
+  "numpy==2.4.6",
   "pint==0.25.2",
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.4",
   "requests==2.34.2",
-  "scipy==1.15.3; python_version<'3.11'",
-  "scipy==1.16.3; python_version>='3.11'",
+  "scipy==1.16.3",
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
@@ -124,8 +120,12 @@ tests-minimal = [
   "pyyaml==6.0.3",
 ]
 
-[tool.flit]
-module.name = "ansys.geometry.core"
+[tool.hatch]
+build.targets.wheel.packages = [ "src/ansys" ]
+
+[tool.uv]
+default-groups = []
+package = true
 
 [tool.ruff]
 line-length = 100
