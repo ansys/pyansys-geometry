@@ -27,7 +27,7 @@ from contextvars import ContextVar
 import logging
 from pathlib import Path
 import time
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import grpc
 from grpc._channel import _InactiveRpcError
@@ -47,6 +47,9 @@ try:
     from ansys.platform.instancemanagement import Instance
 except ModuleNotFoundError:  # pragma: no cover
     pass
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.modeler import Modeler
 
 
 def _create_geometry_channel(
@@ -228,9 +231,9 @@ class ClientProvider:
     _client: ContextVar["GrpcClient | None"] = ContextVar("client_provider", default=None)
 
     @classmethod
-    def set(cls, client: "GrpcClient") -> None:
+    def set(cls, modeler: "Modeler") -> None:
         """Set the active client for the current context."""
-        cls._client.set(client)
+        cls._client.set(modeler.client)
 
     @classmethod
     def get(cls) -> "GrpcClient":
@@ -377,8 +380,6 @@ class GrpcClient:
         # the user calling it or not...
         atexit.register(self.close)
 
-        ClientProvider.set(self)
-
     @property
     def backend_type(self) -> BackendType:
         """Backend type.
@@ -488,9 +489,6 @@ class GrpcClient:
         if self._closed is True:  # pragma: no cover
             self.log.debug("Connection is already closed. Ignoring request.")
             return
-
-        if ClientProvider.get_optional() is self:
-            ClientProvider.clear()
 
         if self._remote_instance:
             self._remote_instance.delete()  # pragma: no cover

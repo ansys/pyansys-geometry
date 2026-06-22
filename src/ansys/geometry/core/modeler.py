@@ -30,7 +30,7 @@ from grpc import Channel
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
-from ansys.geometry.core.connection.client import GrpcClient
+from ansys.geometry.core.connection.client import ClientProvider, GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
@@ -143,6 +143,8 @@ class Modeler:
             certs_dir=certs_dir,
         )
 
+        ClientProvider.set(self)
+
         # Single design for the Modeler
         self._design: Optional["Design"] = None
 
@@ -250,6 +252,8 @@ class Modeler:
         # Close design (if requested)
         if close_design and self._design is not None:
             self._design.close()
+
+        ClientProvider.clear()
 
         # Close the client
         self.client.close()
