@@ -31,7 +31,6 @@ from pint import Quantity, UndefinedUnitError
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.beam import (
     Beam,
     BeamCircularProfile,
