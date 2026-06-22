@@ -44,6 +44,7 @@ from ansys.geometry.core.math import (
     Vector3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.sketch import Sketch
 
 from .conftest import FILES_DIR
