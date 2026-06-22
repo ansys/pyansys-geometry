@@ -1,7 +1,7 @@
 ci:
   autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
 
-exclude: "tests/integration/files"
+exclude: "tests/integration/files|uv\\.lock"
 repos:
 
   - repo: https://github.com/google/yamlfmt

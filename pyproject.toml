@@ -1,6 +1,6 @@
 [build-system]
-build-backend = "flit_core.buildapi"
-requires = [ "flit-core>=3.2,<4" ]
+build-backend = "hatchling.build"
+requires = [ "hatchling" ]
 
 [project]
 name = "ansys-geometry-core"
@@ -94,10 +94,10 @@ general-all = [
   "beartype==0.22.9",
   "docker==7.1.0",
   "geomdl==5.4.0",
-  "grpcio==1.78.1",
-  "grpcio-health-checking==1.78.1",
+  "grpcio==1.81.1",
+  "grpcio-health-checking==1.81.1",
   "matplotlib==3.10.9",
-  "numpy==2.4.0",
+  "numpy==2.4.6",
   "pint==0.25.2",
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
@@ -120,8 +120,12 @@ tests-minimal = [
   "pyyaml==6.0.3",
 ]
 
-[tool.flit]
-module.name = "ansys.geometry.core"
+[tool.hatch]
+build.targets.wheel.packages = [ "src/ansys" ]
+
+[tool.uv]
+default-groups = []
+package = true
 
 [tool.ruff]
 line-length = 100
