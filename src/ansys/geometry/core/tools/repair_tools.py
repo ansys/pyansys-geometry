@@ -30,6 +30,7 @@ import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
+    build_edge_id_map,
     get_bodies_from_ids,
     get_design_from_body,
     get_edges_from_ids,
@@ -252,11 +253,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
         return [
             ShortEdgeProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
