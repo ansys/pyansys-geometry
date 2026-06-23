@@ -290,11 +290,7 @@ def build_edge_id_map(design: "Design") -> "dict[str, Edge]":
     when you need to resolve multiple sets of edge ids from the same design, so that
     the full traversal is paid only once.
     """
-    return {
-        edge.id: edge
-        for body in __traverse_all_bodies(design)
-        for edge in body.edges
-    }
+    return {edge.id: edge for body in __traverse_all_bodies(design) for edge in body.edges}
 
 
 def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vertex"]:
