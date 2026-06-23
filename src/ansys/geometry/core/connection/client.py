@@ -337,9 +337,7 @@ class GrpcClient:
         # Retrieve the backend information
         try:
             response = self._services.admin.get_backend()
-        except GeometryExitedError:
-            raise
-        except grpc.RpcError as exc:
+        except (GeometryExitedError, grpc.RpcError) as exc:
             raise GeometryRuntimeError(
                 "Failed to retrieve backend information. Check server logs for licensing and "
                 "connectivity.\nDefault server logs path is "
