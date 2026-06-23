@@ -1102,6 +1102,11 @@ def launch_modeler_with_core_service(
         # Writing to the "Public" folder by default - no write permissions specifically required.
         server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
         LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+    elif server_logs_folder is None:
+        # Writing to the "/tmp/Ansys/GeometryService" folder by default - no write
+        # permissions specifically required.
+        server_logs_folder = Path("/tmp", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(
         BackendType.LINUX_SERVICE,
