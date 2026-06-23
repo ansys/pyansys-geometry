@@ -23,7 +23,6 @@
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
 import atexit
-from contextvars import ContextVar
 import logging
 from pathlib import Path
 import time
@@ -222,35 +221,6 @@ def wait_until_healthy(
     return tmp_channel
 
 
-class ClientProvider:
-    """Ambient-context holder for the active :class:`GrpcClient` instance."""
-
-    _client: ContextVar["GrpcClient | None"] = ContextVar("client_provider", default=None)
-
-    @classmethod
-    def set(cls, client: "GrpcClient") -> None:
-        """Set the active client for the current context."""
-        cls._client.set(client)
-
-    @classmethod
-    def get(cls) -> "GrpcClient":
-        """Get the active client for the current context."""
-        client = cls._client.get()
-        if client is None:
-            raise RuntimeError("No GrpcClient has been set for the current context.")
-        return client
-
-    @classmethod
-    def get_optional(cls) -> "GrpcClient | None":
-        """Get the active client for the current context, or None if not set."""
-        return cls._client.get()
-
-    @classmethod
-    def clear(cls) -> None:
-        """Clear the active client for the current context."""
-        cls._client.set(None)
-
-
 class GrpcClient:
     """Wraps the gRPC connection for the Geometry service.
 
@@ -376,8 +346,6 @@ class GrpcClient:
         # Register the close method to be called at exit - irrespectively of
         # the user calling it or not...
         atexit.register(self.close)
-
-        ClientProvider.set(self)
 
     @property
     def backend_type(self) -> BackendType:

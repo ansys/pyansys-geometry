@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the Body Selection service implementation for v0.
 
 The BodySelection service does not exist in the v0 proto API.
@@ -53,7 +54,7 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
             f"Method '{self.__class__.__name__}.{method_name}' is not "
             "implemented in this protofile version."
         )
-    
+
     # ── Static factory ────────────────────────────────────────────────────────
 
     def get_all_visible_bodies(self, **kwargs) -> dict:  # noqa: D102

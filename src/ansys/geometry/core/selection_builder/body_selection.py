@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,13 +19,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating a body selection."""
 
 from numbers import Real
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import BackendType
-from ansys.geometry.core.connection.client import ClientProvider
 from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.misc.auxiliary import convert_color_to_hex, get_bodies_from_ids
@@ -42,6 +42,7 @@ from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 if TYPE_CHECKING:
     from pint import Quantity
 
+    from ansys.geometry.core.connection.client import GrpcClient
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.design import Design
 
@@ -49,16 +50,18 @@ if TYPE_CHECKING:
 class BodySelection(TypedSelection):
     """A builder for creating a body selection."""
 
-    def __init__(self, design: "Design", items: list["Body"] = None):
+    def __init__(self, design: "Design", grpc_client: "GrpcClient", items: list["Body"] = None):
         """Initialize the body selection builder.
 
         Parameters
         ----------
         design : Design
             The active design used to resolve body IDs into ``Body`` objects.
+        grpc_client : GrpcClient
+            The gRPC client used to communicate with the backend.
         """
-        self._grpc_client = ClientProvider.get()
         self._design = design
+        self._grpc_client = grpc_client
         self._items = items or []
 
     # ── Static factory (get) ─────────────────────────────────────────────────
@@ -73,9 +76,8 @@ class BodySelection(TypedSelection):
             All visible bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_visible_bodies()
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_all_bodies(self) -> "BodySelection":
@@ -87,9 +89,8 @@ class BodySelection(TypedSelection):
             All bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_bodies()
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_all_surface_bodies(self) -> "BodySelection":
@@ -101,9 +102,8 @@ class BodySelection(TypedSelection):
             All surface bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_surface_bodies()
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_all_solid_bodies(self) -> "BodySelection":
@@ -115,9 +115,8 @@ class BodySelection(TypedSelection):
             All solid bodies.
         """
         response = self._grpc_client.services.body_selection.get_all_solid_bodies()
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_from_named_selection(
@@ -147,9 +146,8 @@ class BodySelection(TypedSelection):
             filter_type=filter_type,
             ignore_case=ignore_case,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_name(
@@ -179,9 +177,8 @@ class BodySelection(TypedSelection):
             filter_type=filter_type,
             ignore_case=ignore_case,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_volume(
@@ -209,9 +206,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_surface_area(
@@ -239,9 +235,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_x_location(
@@ -273,9 +268,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_y_location(
@@ -307,9 +301,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_z_location(
@@ -341,9 +334,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_color(
@@ -365,9 +357,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.get_bodies_with_color(
             color=convert_color_to_hex(color)
         )
-        return BodySelection(
-            self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        )
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     # ── Instance operations ───────────────────────────────────────────────────
 
@@ -393,7 +384,7 @@ class BodySelection(TypedSelection):
             scope=scope,
         )
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
-        return BodySelection(self._design, bodies)
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     # ── Filter ────────────────────────────────────────────────────────────────
 
@@ -424,7 +415,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_volume(self) -> "BodySelection":
@@ -438,7 +430,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_max_volume(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_volume(self) -> "BodySelection":
@@ -452,7 +445,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_min_volume(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_surface_area(
@@ -481,7 +475,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_surface_area(self) -> "BodySelection":
@@ -495,7 +490,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_max_surface_area(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_surface_area(self) -> "BodySelection":
@@ -509,7 +505,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_min_surface_area(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_face_count(
@@ -536,7 +533,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_face_count(self) -> "BodySelection":
@@ -550,7 +548,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_max_face_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_face_count(self) -> "BodySelection":
@@ -564,7 +563,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_min_face_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_edge_count(
@@ -591,7 +591,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_edge_count(self) -> "BodySelection":
@@ -605,7 +606,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_max_edge_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_edge_count(self) -> "BodySelection":
@@ -619,7 +621,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_min_edge_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_loop_count(
@@ -646,7 +649,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_loop_count(self) -> "BodySelection":
@@ -660,7 +664,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_max_loop_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_loop_count(self) -> "BodySelection":
@@ -674,7 +679,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_bodies_min_loop_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_number_surfaces(
@@ -705,7 +711,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_number_curves(
@@ -736,7 +743,8 @@ class BodySelection(TypedSelection):
             min=min,
             max=max,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_number_surfaces(
@@ -759,7 +767,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             surface_type=surface_type.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_max_number_curves(
@@ -782,7 +791,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             curve_type=curve_type.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_number_surfaces(
@@ -805,7 +815,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             surface_type=surface_type.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_min_number_curves(
@@ -828,7 +839,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             curve_type=curve_type.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_number_surfaces_percentile(
@@ -860,7 +872,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_number_curves_percentile(
@@ -892,7 +905,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_color(
@@ -915,7 +929,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             color=convert_color_to_hex(color),
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_name(
@@ -946,7 +961,8 @@ class BodySelection(TypedSelection):
             filter_type=filter_type.value,
             ignore_case=ignore_case,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_containing_surface_types(
@@ -973,7 +989,8 @@ class BodySelection(TypedSelection):
             surface_types=surface_type,
             exclusive=exclusive,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_containing_curve_types(
@@ -1000,7 +1017,8 @@ class BodySelection(TypedSelection):
             curve_types=curve_type,
             exclusive=exclusive,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_volume_percentile(
@@ -1027,7 +1045,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_surface_area_percentile(
@@ -1054,7 +1073,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_face_count_percentile(
@@ -1081,7 +1101,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_edge_count_percentile(
@@ -1108,7 +1129,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_loop_count_percentile(
@@ -1135,7 +1157,8 @@ class BodySelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_surface_bodies(self) -> "BodySelection":
@@ -1149,7 +1172,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_surface_bodies(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def filter_solid_bodies(self) -> "BodySelection":
@@ -1163,7 +1187,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.filter_solid_bodies(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     # ── Extend ────────────────────────────────────────────────────────────────
 
@@ -1188,7 +1213,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_surface_area(
@@ -1211,7 +1237,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_number_of_faces(
@@ -1234,7 +1261,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_number_of_edges(
@@ -1257,7 +1285,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_color(
@@ -1280,7 +1309,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_name(
@@ -1303,7 +1333,8 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def extend_nearby_bodies(
@@ -1339,7 +1370,8 @@ class BodySelection(TypedSelection):
             distance=distance,
             scope=scope.value,
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     # ── OrderBy ───────────────────────────────────────────────────────────────
 
@@ -1355,7 +1387,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_volume(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_surface_area(self) -> "BodySelection":
@@ -1369,7 +1402,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_surface_area(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_face_count(self) -> "BodySelection":
@@ -1383,7 +1417,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_face_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_edge_count(self) -> "BodySelection":
@@ -1397,7 +1432,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_edge_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_loop_count(self) -> "BodySelection":
@@ -1411,7 +1447,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_loop_count(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_number_of_surfaces(self) -> "BodySelection":
@@ -1425,7 +1462,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_number_of_surfaces(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     @min_backend_version(27, 1, 0)
     def order_bodies_by_number_of_curves(self) -> "BodySelection":
@@ -1439,7 +1477,8 @@ class BodySelection(TypedSelection):
         response = self._grpc_client.services.body_selection.order_bodies_by_number_of_curves(
             body_ids=[b.id for b in self.items],
         )
-        return BodySelection(self._design, get_bodies_from_ids(self._design, response["response_data"][0]["bodies"]))
+        bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
+        return BodySelection(self._design, self._grpc_client, bodies)
 
     # ── GroupBy ───────────────────────────────────────────────────────────────
 
@@ -1456,7 +1495,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1473,7 +1512,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1490,7 +1529,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1507,7 +1546,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1524,7 +1563,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1541,7 +1580,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1558,6 +1597,6 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, get_bodies_from_ids(self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]

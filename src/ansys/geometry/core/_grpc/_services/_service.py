@@ -213,7 +213,7 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._bodies
-    
+
     @property
     def body_selection(self) -> GRPCBodySelectionService:
         """

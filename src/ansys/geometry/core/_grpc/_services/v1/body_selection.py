@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the Body Selection service implementation for v1."""
 
 import grpc
@@ -172,7 +173,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
 
         data = GetBodiesWithVolumeRequestData(
             min=from_volume_to_grpc_quantity(kwargs["min"]),
-            max=from_volume_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None
+            max=from_volume_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
         )
 
         return serialize_body_selection_response(
@@ -188,13 +189,11 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
 
         data = GetBodiesWithSurfaceAreaRequestData(
             min=from_area_to_grpc_quantity(kwargs["min"]),
-            max=from_area_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None
+            max=from_area_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
         )
 
         return serialize_body_selection_response(
-            self.stub.GetBodiesWithSurfaceArea(
-                GetBodiesWithSurfaceAreaRequest(request_data=[data])
-            )
+            self.stub.GetBodiesWithSurfaceArea(GetBodiesWithSurfaceAreaRequest(request_data=[data]))
         )
 
     @protect_grpc
@@ -207,7 +206,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         data = GetBodiesWithLocationRequestData(
             min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
             max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
-            range_type=kwargs["range_type"].value
+            range_type=kwargs["range_type"].value,
         )
 
         return serialize_body_selection_response(
@@ -224,7 +223,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         data = GetBodiesWithLocationRequestData(
             min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
             max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
-            range_type=kwargs["range_type"].value
+            range_type=kwargs["range_type"].value,
         )
 
         return serialize_body_selection_response(
@@ -241,7 +240,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         data = GetBodiesWithLocationRequestData(
             min=from_length_to_grpc_quantity(kwargs["min"]) if kwargs["min"] is not None else None,
             max=from_length_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None,
-            range_type=kwargs["range_type"].value
+            range_type=kwargs["range_type"].value,
         )
 
         return serialize_body_selection_response(
@@ -292,9 +291,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
             min=from_volume_to_grpc_quantity(kwargs["min"]),
             max=(
-                from_volume_to_grpc_quantity(kwargs["max"])
-                if kwargs["max"] is not None
-                else None
+                from_volume_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None
             ),
         )
 
@@ -324,11 +321,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         data = FilterBodiesBySurfaceAreaRequestData(
             body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
             min=from_area_to_grpc_quantity(kwargs["min"]),
-            max=(
-                from_area_to_grpc_quantity(kwargs["max"])
-                if kwargs["max"] is not None
-                else None
-            ),
+            max=(from_area_to_grpc_quantity(kwargs["max"]) if kwargs["max"] is not None else None),
         )
 
         return serialize_body_selection_response(
@@ -359,7 +352,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         data = FilterBodiesByIntRangeRequestData(
             body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
             min=kwargs["min"],
-            max=kwargs["max"] if kwargs["max"] is not None else None
+            max=kwargs["max"] if kwargs["max"] is not None else None,
         )
 
         return serialize_body_selection_response(
@@ -487,7 +480,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 FilterBodiesBySurfaceTypeRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    surface_type=kwargs["surface_type"]
+                    surface_type=kwargs["surface_type"],
                 )
             ]
         )
@@ -504,7 +497,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 FilterBodiesByCurveTypeRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    curve_type=kwargs["curve_type"]
+                    curve_type=kwargs["curve_type"],
                 )
             ]
         )
@@ -521,7 +514,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 FilterBodiesBySurfaceTypeRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    surface_type=kwargs["surface_type"]
+                    surface_type=kwargs["surface_type"],
                 )
             ]
         )
@@ -538,7 +531,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 FilterBodiesByCurveTypeRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    curve_type=kwargs["curve_type"]
+                    curve_type=kwargs["curve_type"],
                 )
             ]
         )
@@ -597,7 +590,7 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 FilterBodiesByColorRequestData(
                     body_ids=[build_grpc_id(bid) for bid in kwargs["body_ids"]],
-                    color=kwargs["color"]
+                    color=kwargs["color"],
                 )
             ]
         )

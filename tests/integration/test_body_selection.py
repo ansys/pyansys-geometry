@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Integration tests for BodySelectionBuilder."""
 
 import pytest
@@ -28,11 +29,12 @@ from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.selection_builder.body_selection import BodySelection
-from ansys.geometry.core.selection_builder.selection_builder import RangeType, SelectionBuilder
+from ansys.geometry.core.selection_builder.selection_builder import RangeType
 
 from .conftest import FILES_DIR
 
 # ── Static factory (get) ──────────────────────────────────────────────────────
+
 
 def test_get_all_visible_bodies(modeler: Modeler):
     """Verify that get_all_visible_bodies returns all visible bodies in the design."""
@@ -42,9 +44,10 @@ def test_get_all_visible_bodies(modeler: Modeler):
     all_bodies = design.get_all_bodies()
     assert len(all_bodies) == 19
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     visible_bodies = sel_builder.bodies.get_all_visible_bodies()
     assert len(visible_bodies.items) == 18
+
 
 def test_get_all_bodies(modeler: Modeler):
     """Verify that get_all_bodies returns every body regardless of visibility."""
@@ -53,7 +56,7 @@ def test_get_all_bodies(modeler: Modeler):
     all_bodies = design.get_all_bodies()
     assert len(all_bodies) == 19
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     visible_bodies = sel_builder.bodies.get_all_bodies()
     assert len(visible_bodies.items) == 19
 
@@ -65,7 +68,7 @@ def test_get_all_surface_bodies(modeler: Modeler):
     all_bodies = design.get_all_bodies()
     assert len([b for b in all_bodies if b.is_surface]) == 6
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     surface_bodies = sel_builder.bodies.get_all_surface_bodies()
     assert len(surface_bodies.items) == 6
 
@@ -78,7 +81,7 @@ def test_get_all_solid_bodies(modeler: Modeler):
     all_bodies = design.get_all_bodies()
     assert len([b for b in all_bodies if not b.is_surface]) == 13
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     solid_bodies = sel_builder.bodies.get_all_solid_bodies()
     assert len(solid_bodies.items) == 13
 
@@ -99,7 +102,7 @@ def test_get_bodies_with_name(modeler: Modeler):
     design.tree_print()
     assert len([b for b in all_bodies if b.name == "Wheel"]) == 8
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     named_bodies = sel_builder.bodies.get_bodies_with_name("Wheel")
     assert len(named_bodies.items) == 8
 
@@ -111,7 +114,7 @@ def test_get_bodies_with_volume(modeler: Modeler):
     all_bodies = design.get_all_bodies()
     assert len([b for b in all_bodies if 200 < b.volume.m < 300]) == 2
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     volume_bodies = sel_builder.bodies.get_bodies_with_volume(200, 300)
 
     assert len(volume_bodies.items) == 2
@@ -132,16 +135,16 @@ def test_get_bodies_with_surface_area(modeler: Modeler):
     assert expected_count > 0, "range too narrow - no bodies found on Python side"
     assert expected_count < len(all_bodies), "range too wide - all bodies matched on Python side"
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_surface_area(min_sa, max_sa)
     assert len(result.items) == expected_count
 
 
 def test_get_bodies_with_x_location(modeler: Modeler):
     """Verify that get_bodies_with_x_location returns bodies whose centroid X is in range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_x_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=0.001, max=30.0
     )
@@ -150,9 +153,9 @@ def test_get_bodies_with_x_location(modeler: Modeler):
 
 def test_get_bodies_with_y_location(modeler: Modeler):
     """Verify that get_bodies_with_y_location returns bodies whose centroid Y is in range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_y_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=5.0, max=10.0
     )
@@ -161,9 +164,9 @@ def test_get_bodies_with_y_location(modeler: Modeler):
 
 def test_get_bodies_with_z_location(modeler: Modeler):
     """Verify that get_bodies_with_z_location returns bodies whose centroid Z is in range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_z_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=6.0, max=10.0
     )
@@ -172,9 +175,9 @@ def test_get_bodies_with_z_location(modeler: Modeler):
 
 def test_get_bodies_with_color(modeler: Modeler):
     """Verify that get_bodies_with_color returns bodies matching a specific ARGB color."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_color((255, 0, 0))
     assert len(result.items) == 1
 
@@ -185,9 +188,9 @@ def test_get_bodies_with_color(modeler: Modeler):
 def test_invert_body_selection(modeler: Modeler):
     """Verify that invert_body_selection returns all bodies not in the input selection."""
     pytest.skip("broken")
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
-    sel_builder = SelectionBuilder(design)
+    sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_color((255, 0, 0)).invert_body_selection()
     assert len(result.items) == 18
 
@@ -197,8 +200,8 @@ def test_invert_body_selection(modeler: Modeler):
 
 def test_filter_bodies_by_volume(modeler: Modeler):
     """Verify that filter_bodies_by_volume keeps only bodies within the volume range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # With max bound: 2 bodies named "Top" have volume == 250
     result = all_bodies.filter_bodies_by_volume(200, 300)
@@ -212,8 +215,8 @@ def test_filter_bodies_by_volume(modeler: Modeler):
 
 def test_filter_bodies_max_volume(modeler: Modeler):
     """Verify that filter_bodies_max_volume returns bodies with the largest volume."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_bodies_max_volume()
     assert len(result.items) == 2
@@ -222,8 +225,8 @@ def test_filter_bodies_max_volume(modeler: Modeler):
 
 def test_filter_bodies_min_volume(modeler: Modeler):
     """Verify that filter_bodies_min_volume returns bodies with the smallest volume."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_bodies_min_volume()
     assert len(result.items) == 6
@@ -232,8 +235,8 @@ def test_filter_bodies_min_volume(modeler: Modeler):
 
 def test_filter_bodies_by_surface_area(modeler: Modeler):
     """Verify that filter_bodies_by_surface_area keeps bodies within the surface area range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies have surface area ≈ 314.16; filter 300-350 captures only them
     result = all_bodies.filter_bodies_by_surface_area(300, 350)
@@ -247,8 +250,8 @@ def test_filter_bodies_by_surface_area(modeler: Modeler):
 
 def test_filter_bodies_max_surface_area(modeler: Modeler):
     """Verify that filter_bodies_max_surface_area returns bodies with the largest surface area."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_bodies_max_surface_area()
     assert len(result.items) == 2
@@ -257,8 +260,8 @@ def test_filter_bodies_max_surface_area(modeler: Modeler):
 
 def test_filter_bodies_min_surface_area(modeler: Modeler):
     """Verify that filter_bodies_min_surface_area returns bodies with the smallest surface area."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 4 Surface bodies share the smallest surface area (≈12.5)
     result = all_bodies.filter_bodies_min_surface_area()
@@ -268,8 +271,8 @@ def test_filter_bodies_min_surface_area(modeler: Modeler):
 
 def test_filter_bodies_by_face_count(modeler: Modeler):
     """Verify that filter_bodies_by_face_count keeps bodies within the face count range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies have exactly 3 faces
     result = all_bodies.filter_bodies_by_face_count(3, 3)
@@ -283,8 +286,8 @@ def test_filter_bodies_by_face_count(modeler: Modeler):
 
 def test_filter_bodies_max_face_count(modeler: Modeler):
     """Verify that filter_bodies_max_face_count returns bodies with the most faces."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Solid×1, Top×2, BaseBody×2 all have 6 faces
     result = all_bodies.filter_bodies_max_face_count()
@@ -293,8 +296,8 @@ def test_filter_bodies_max_face_count(modeler: Modeler):
 
 def test_filter_bodies_min_face_count(modeler: Modeler):
     """Verify that filter_bodies_min_face_count returns bodies with the fewest faces."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 6 Surface bodies each have 1 face
     result = all_bodies.filter_bodies_min_face_count()
@@ -304,8 +307,8 @@ def test_filter_bodies_min_face_count(modeler: Modeler):
 
 def test_filter_bodies_by_edge_count(modeler: Modeler):
     """Verify that filter_bodies_by_edge_count keeps bodies within the edge count range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies have exactly 2 edges
     result = all_bodies.filter_bodies_by_edge_count(2, 2)
@@ -319,8 +322,8 @@ def test_filter_bodies_by_edge_count(modeler: Modeler):
 
 def test_filter_bodies_max_edge_count(modeler: Modeler):
     """Verify that filter_bodies_max_edge_count returns bodies with the most edges."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Solid×1, Top×2, BaseBody×2 all have 12 edges
     result = all_bodies.filter_bodies_max_edge_count()
@@ -329,8 +332,8 @@ def test_filter_bodies_max_edge_count(modeler: Modeler):
 
 def test_filter_bodies_min_edge_count(modeler: Modeler):
     """Verify that filter_bodies_min_edge_count returns bodies with the fewest edges."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies have 2 edges each
     result = all_bodies.filter_bodies_min_edge_count()
@@ -340,8 +343,8 @@ def test_filter_bodies_min_edge_count(modeler: Modeler):
 
 def test_filter_bodies_by_loop_count(modeler: Modeler):
     """Verify that filter_bodies_by_loop_count keeps bodies within the loop count range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies have exactly 4 loops
     result = all_bodies.filter_bodies_by_loop_count(4, 4)
@@ -355,8 +358,8 @@ def test_filter_bodies_by_loop_count(modeler: Modeler):
 
 def test_filter_bodies_max_loop_count(modeler: Modeler):
     """Verify that filter_bodies_max_loop_count returns bodies with the most loops."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Solid×1, Top×2, BaseBody×2 all have 6 loops
     result = all_bodies.filter_bodies_max_loop_count()
@@ -365,8 +368,8 @@ def test_filter_bodies_max_loop_count(modeler: Modeler):
 
 def test_filter_bodies_min_loop_count(modeler: Modeler):
     """Verify that filter_bodies_min_loop_count returns bodies with the fewest loops."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 6 Surface bodies each have 1 loop
     result = all_bodies.filter_bodies_min_loop_count()
@@ -376,8 +379,8 @@ def test_filter_bodies_min_loop_count(modeler: Modeler):
 
 def test_filter_bodies_by_number_surfaces(modeler: Modeler):
     """Verify that filter_bodies_by_number_surfaces filters by surface type count range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Only the 8 Wheel bodies have at least 1 cylinder face
     result = all_bodies.filter_bodies_by_number_surfaces(SurfaceType.SURFACETYPE_CYLINDER, 1)
@@ -387,8 +390,8 @@ def test_filter_bodies_by_number_surfaces(modeler: Modeler):
 
 def test_filter_bodies_by_number_curves(modeler: Modeler):
     """Verify that filter_bodies_by_number_curves filters by curve type count range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Only the 8 Wheel bodies have at least 1 circle edge
     result = all_bodies.filter_bodies_by_number_curves(CurveType.CURVETYPE_CIRCLE, 1)
@@ -397,9 +400,10 @@ def test_filter_bodies_by_number_curves(modeler: Modeler):
 
 
 def test_filter_bodies_max_number_surfaces(modeler: Modeler):
-    """Verify that filter_bodies_max_number_surfaces returns bodies with the most of a surface type."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_max_number_surfaces returns bodies with the most of a surface
+    type."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # All 8 Wheels tie for the most cylinder faces (1 each)
     result = all_bodies.filter_bodies_max_number_surfaces(SurfaceType.SURFACETYPE_CYLINDER)
@@ -409,8 +413,8 @@ def test_filter_bodies_max_number_surfaces(modeler: Modeler):
 
 def test_filter_bodies_max_number_curves(modeler: Modeler):
     """Verify that filter_bodies_max_number_curves returns bodies with the most of a curve type."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # All 8 Wheels tie for the most circle edges (2 each)
     result = all_bodies.filter_bodies_max_number_curves(CurveType.CURVETYPE_CIRCLE)
@@ -419,9 +423,10 @@ def test_filter_bodies_max_number_curves(modeler: Modeler):
 
 
 def test_filter_bodies_min_number_surfaces(modeler: Modeler):
-    """Verify that filter_bodies_min_number_surfaces returns bodies with the fewest of a surface type."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_min_number_surfaces returns bodies with the fewest of a surface
+    type."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 11 non-Wheel bodies have 0 cylinder faces (minimum)
     result = all_bodies.filter_bodies_min_number_surfaces(SurfaceType.SURFACETYPE_CYLINDER)
@@ -430,9 +435,10 @@ def test_filter_bodies_min_number_surfaces(modeler: Modeler):
 
 
 def test_filter_bodies_min_number_curves(modeler: Modeler):
-    """Verify that filter_bodies_min_number_curves returns bodies with the fewest of a curve type."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_min_number_curves returns bodies with the fewest of a curve
+    type."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 11 non-Wheel bodies have 0 circle edges (minimum)
     result = all_bodies.filter_bodies_min_number_curves(CurveType.CURVETYPE_CIRCLE)
@@ -442,8 +448,8 @@ def test_filter_bodies_min_number_curves(modeler: Modeler):
 
 def test_filter_bodies_by_number_surfaces_percentile(modeler: Modeler):
     """Verify filter_bodies_by_number_surfaces_percentile filters by surface type percentile."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by cylinder face count returns the 8 Wheels
     result = all_bodies.filter_bodies_by_number_surfaces_percentile(
@@ -455,8 +461,8 @@ def test_filter_bodies_by_number_surfaces_percentile(modeler: Modeler):
 
 def test_filter_bodies_by_number_curves_percentile(modeler: Modeler):
     """Verify that filter_bodies_by_number_curves_percentile filters by curve type percentile."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by circle edge count returns the 8 Wheels
     result = all_bodies.filter_bodies_by_number_curves_percentile(
@@ -468,8 +474,8 @@ def test_filter_bodies_by_number_curves_percentile(modeler: Modeler):
 
 def test_filter_bodies_by_color(modeler: Modeler):
     """Verify that filter_bodies_by_color keeps only bodies matching an ARGB color."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_bodies_by_color((255, 0, 0))
     assert len(result.items) == 1
@@ -477,8 +483,8 @@ def test_filter_bodies_by_color(modeler: Modeler):
 
 def test_filter_bodies_by_name(modeler: Modeler):
     """Verify that filter_bodies_by_name keeps bodies whose name matches the filter."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_bodies_by_name("Wheel")
     assert len(result.items) == 8
@@ -487,8 +493,8 @@ def test_filter_bodies_by_name(modeler: Modeler):
 
 def test_filter_bodies_containing_surface_types(modeler: Modeler):
     """Verify that filter_bodies_containing_surface_types keeps bodies with the given types."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies contain cylinder faces
     result = all_bodies.filter_bodies_containing_surface_types(SurfaceType.SURFACETYPE_CYLINDER)
@@ -498,8 +504,8 @@ def test_filter_bodies_containing_surface_types(modeler: Modeler):
 
 def test_filter_bodies_containing_curve_types(modeler: Modeler):
     """Verify that filter_bodies_containing_curve_types keeps bodies with the given curve types."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # 8 Wheel bodies contain circle edges
     result = all_bodies.filter_bodies_containing_curve_types(CurveType.CURVETYPE_CIRCLE)
@@ -509,8 +515,8 @@ def test_filter_bodies_containing_curve_types(modeler: Modeler):
 
 def test_filter_bodies_volume_percentile(modeler: Modeler):
     """Verify that filter_bodies_volume_percentile keeps bodies in the volume percentile range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by volume: BaseBody×2 + Solid×1
     result = all_bodies.filter_bodies_volume_percentile(50, 100)
@@ -520,8 +526,8 @@ def test_filter_bodies_volume_percentile(modeler: Modeler):
 
 def test_filter_bodies_surface_area_percentile(modeler: Modeler):
     """Verify that filter_bodies_surface_area_percentile keeps bodies in the surface area range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by surface area: BaseBody×2 + Solid×1
     result = all_bodies.filter_bodies_surface_area_percentile(50, 100)
@@ -530,9 +536,10 @@ def test_filter_bodies_surface_area_percentile(modeler: Modeler):
 
 
 def test_filter_bodies_face_count_percentile(modeler: Modeler):
-    """Verify that filter_bodies_face_count_percentile keeps bodies in the face count percentile."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_face_count_percentile keeps bodies in the face count
+    percentile."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by face count: Solid×1 + Top×2 + BaseBody×2
     result = all_bodies.filter_bodies_face_count_percentile(50, 100)
@@ -541,9 +548,10 @@ def test_filter_bodies_face_count_percentile(modeler: Modeler):
 
 
 def test_filter_bodies_edge_count_percentile(modeler: Modeler):
-    """Verify that filter_bodies_edge_count_percentile keeps bodies in the edge count percentile."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_edge_count_percentile keeps bodies in the edge count
+    percentile."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by edge count: Solid×1 + Top×2 + BaseBody×2 + some Surface bodies
     result = all_bodies.filter_bodies_edge_count_percentile(50, 100)
@@ -551,9 +559,10 @@ def test_filter_bodies_edge_count_percentile(modeler: Modeler):
 
 
 def test_filter_bodies_loop_count_percentile(modeler: Modeler):
-    """Verify that filter_bodies_loop_count_percentile keeps bodies in the loop count percentile."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that filter_bodies_loop_count_percentile keeps bodies in the loop count
+    percentile."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Top 50th percentile by loop count: Solid×1 + Top×2 + BaseBody×2
     result = all_bodies.filter_bodies_loop_count_percentile(50, 100)
@@ -563,8 +572,8 @@ def test_filter_bodies_loop_count_percentile(modeler: Modeler):
 
 def test_filter_surface_bodies(modeler: Modeler):
     """Verify that filter_surface_bodies keeps only surface bodies from the input."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_surface_bodies()
     assert len(result.items) == 6
@@ -573,8 +582,8 @@ def test_filter_surface_bodies(modeler: Modeler):
 
 def test_filter_solid_bodies(modeler: Modeler):
     """Verify that filter_solid_bodies keeps only solid bodies from the input."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.filter_solid_bodies()
     assert len(result.items) == 13
@@ -589,11 +598,11 @@ def test_extend_to_same_volume(modeler: Modeler):
     that share the same volume as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 Top body (volume 250.0). Both Top bodies share that volume.
     top_bodies = all_bodies.filter_bodies_by_name("Top")
-    seed = BodySelection(design, top_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, top_bodies.items[:1])
 
     result = seed.extend_to_same_volume()
     assert len(result.items) == 2
@@ -605,11 +614,11 @@ def test_extend_to_same_surface_area(modeler: Modeler):
     that share the same surface area as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 Wheel body (surface area ≈ 314.16). All 8 Wheels share that value.
     wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, wheel_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
 
     result = seed.extend_to_same_surface_area()
     assert len(result.items) == 8
@@ -621,11 +630,11 @@ def test_extend_to_same_number_of_faces(modeler: Modeler):
     that share the same face count as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 BaseBody (6 faces). Solid×1 + Top×2 + BaseBody×2 all have 6 faces.
     base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, base_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
 
     result = seed.extend_to_same_number_of_faces()
     assert len(result.items) == 5
@@ -637,11 +646,11 @@ def test_extend_to_same_number_of_edges(modeler: Modeler):
     that share the same edge count as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 BaseBody (12 edges). Solid×1 + Top×2 + BaseBody×2 all have 12 edges.
     base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, base_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
 
     result = seed.extend_to_same_number_of_edges()
     assert len(result.items) == 5
@@ -653,12 +662,12 @@ def test_extend_to_same_color(modeler: Modeler):
     same color as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 Wheel. All Wheels share the default color (also shared with Surface, Top,
     # BaseBody), so the result is 18 bodies (all except the 1 red body).
     wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, wheel_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
 
     result = seed.extend_to_same_color()
     assert len(result.items) == 18
@@ -670,11 +679,11 @@ def test_extend_to_same_name(modeler: Modeler):
     same name as any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     # Seed: 1 Wheel. All 8 Wheels share that name.
     wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, wheel_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
 
     result = seed.extend_to_same_name()
     assert len(result.items) == 8
@@ -686,10 +695,10 @@ def test_extend_nearby_bodies(modeler: Modeler):
     of any body in the seed selection.
     """
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, base_bodies.items[:1])
+    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
 
     # A very large distance should capture all 19 bodies in the model
     if BackendType.is_core_service(modeler.client.backend_type):
@@ -706,8 +715,8 @@ def test_extend_nearby_bodies(modeler: Modeler):
 
 def test_order_bodies_by_volume(modeler: Modeler):
     """Verify that order_bodies_by_volume returns bodies sorted ascending by volume."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_volume()
     assert len(result.items) == 19
@@ -720,8 +729,8 @@ def test_order_bodies_by_volume(modeler: Modeler):
 
 def test_order_bodies_by_surface_area(modeler: Modeler):
     """Verify that order_bodies_by_surface_area returns bodies sorted ascending by surface area."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_surface_area()
     assert len(result.items) == 19
@@ -733,8 +742,8 @@ def test_order_bodies_by_surface_area(modeler: Modeler):
 
 def test_order_bodies_by_face_count(modeler: Modeler):
     """Verify that order_bodies_by_face_count returns bodies sorted ascending by face count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_face_count()
     assert len(result.items) == 19
@@ -746,8 +755,8 @@ def test_order_bodies_by_face_count(modeler: Modeler):
 
 def test_order_bodies_by_edge_count(modeler: Modeler):
     """Verify that order_bodies_by_edge_count returns bodies sorted ascending by edge count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_edge_count()
     assert len(result.items) == 19
@@ -759,8 +768,8 @@ def test_order_bodies_by_edge_count(modeler: Modeler):
 
 def test_order_bodies_by_loop_count(modeler: Modeler):
     """Verify that order_bodies_by_loop_count returns bodies sorted ascending by loop count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_loop_count()
     assert len(result.items) == 19
@@ -772,8 +781,8 @@ def test_order_bodies_by_loop_count(modeler: Modeler):
 
 def test_order_bodies_by_number_of_surfaces(modeler: Modeler):
     """Verify that order_bodies_by_number_of_surfaces sorts ascending by total surface count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_number_of_surfaces()
     assert len(result.items) == 19
@@ -785,8 +794,8 @@ def test_order_bodies_by_number_of_surfaces(modeler: Modeler):
 
 def test_order_bodies_by_number_of_curves(modeler: Modeler):
     """Verify that order_bodies_by_number_of_curves sorts ascending by total curve count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     result = all_bodies.order_bodies_by_number_of_curves()
     assert len(result.items) == 19
@@ -801,8 +810,8 @@ def test_order_bodies_by_number_of_curves(modeler: Modeler):
 
 def test_group_bodies_by_volume(modeler: Modeler):
     """Verify that group_bodies_by_volume partitions bodies into equal-volume groups."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_volume()
     # 5 distinct volume values: 0 (Surface×6), 250 (Top×2), ~392.7 (Wheel×8),
@@ -819,9 +828,10 @@ def test_group_bodies_by_volume(modeler: Modeler):
 
 
 def test_group_bodies_by_surface_area(modeler: Modeler):
-    """Verify that group_bodies_by_surface_area partitions bodies into equal-surface-area groups."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    """Verify that group_bodies_by_surface_area partitions bodies into equal-surface-area
+    groups."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_surface_area()
     # 6 distinct surface area values: 12.5 (Surface×4), ~70.7 (Surface×2),
@@ -833,8 +843,8 @@ def test_group_bodies_by_surface_area(modeler: Modeler):
 
 def test_group_bodies_by_face_count(modeler: Modeler):
     """Verify that group_bodies_by_face_count partitions bodies by face count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_face_count()
     # 3 distinct face counts: 1 (Surface×6), 3 (Wheel×8), 6 (Solid+Top+BaseBody = 5)
@@ -849,8 +859,8 @@ def test_group_bodies_by_face_count(modeler: Modeler):
 
 def test_group_bodies_by_edge_count(modeler: Modeler):
     """Verify that group_bodies_by_edge_count partitions bodies by edge count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_edge_count()
     # 4 distinct edge counts: 2 (Wheel×8), 3 (Surface×4), 4 (Surface×2),
@@ -865,8 +875,8 @@ def test_group_bodies_by_edge_count(modeler: Modeler):
 
 def test_group_bodies_by_loop_count(modeler: Modeler):
     """Verify that group_bodies_by_loop_count partitions bodies by loop count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_loop_count()
     # 3 distinct loop counts: 1 (Surface×6), 4 (Wheel×8), 6 (Solid+Top+BaseBody = 5)
@@ -881,8 +891,8 @@ def test_group_bodies_by_loop_count(modeler: Modeler):
 
 def test_group_bodies_by_color(modeler: Modeler):
     """Verify that group_bodies_by_color partitions bodies by color."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_color()
     # 2 distinct colors: 1 red body (Solid), 18 bodies sharing the default color
@@ -895,8 +905,8 @@ def test_group_bodies_by_color(modeler: Modeler):
 
 def test_group_bodies_by_name(modeler: Modeler):
     """Verify that group_bodies_by_name partitions bodies by name."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = SelectionBuilder(design).bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
     groups = all_bodies.group_bodies_by_name()
     # 5 distinct names: Solid (1), Top (2), BaseBody (2), Surface (6), Wheel (8)
@@ -909,4 +919,3 @@ def test_group_bodies_by_name(modeler: Modeler):
     assert frozenset({"BaseBody"}) in name_sets
     assert frozenset({"Surface"}) in name_sets
     assert frozenset({"Wheel"}) in name_sets
-

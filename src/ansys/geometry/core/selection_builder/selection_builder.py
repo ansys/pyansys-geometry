@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,14 +19,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating a custom selection."""
 
 from enum import Enum, unique
 from typing import TYPE_CHECKING
 
-from ansys.geometry.core.connection.client import ClientProvider
-
 if TYPE_CHECKING:
+    from ansys.geometry.core.connection.client import GrpcClient
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.selection_builder.body_selection import (
         BodySelection,
@@ -70,7 +70,7 @@ class RangeType(Enum):
 class SelectionBuilder:
     """A builder for creating a custom selection."""
 
-    def __init__(self, design: "Design"):
+    def __init__(self, design: "Design", grpc_client: "GrpcClient"):
         """Initialize the selection builder.
 
         Parameters
@@ -82,11 +82,11 @@ class SelectionBuilder:
             BodySelection,
         )
 
-        self._grpc_client = ClientProvider.get()
+        self._grpc_client = grpc_client
         self._design = design
 
-        self._bodies = BodySelection(design)
-        
+        self._bodies = BodySelection(design, self._grpc_client)
+
     @property
     def bodies(self) -> "BodySelection":
         """Get the body selection."""
