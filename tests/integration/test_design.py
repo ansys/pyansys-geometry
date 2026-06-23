@@ -6793,7 +6793,8 @@ def test_move_bodies_to_component(modeler: Modeler):
     moved_names = {b.name for b in target2.bodies}
     assert moved_names == {"BodyA", "BodyB"}
     assert len(source2.bodies) == 0
-    
+
+
 def _tracker_payload(**overrides):
     payload = {
         "created_parts": [],
