@@ -38,7 +38,7 @@ from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
-from ansys.geometry.core.errors import GeometryRuntimeError
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
 from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
@@ -337,13 +337,15 @@ class GrpcClient:
         # Retrieve the backend information
         try:
             response = self._services.admin.get_backend()
-        except Exception:  # pragma: no cover
+        except GeometryExitedError:
+            raise
+        except grpc.RpcError as exc:
             raise GeometryRuntimeError(
                 "Failed to retrieve backend information. Check server logs for licensing and "
                 "connectivity.\nDefault server logs path is "
                 "%PUBLIC%/Documents/Ansys/GeometryService (Windows) or "
                 "/tmp/Ansys/GeometryService (Linux). "
-            )
+            ) from exc
 
         # Store the backend type and version
         self._backend_type = response.get("backend")
