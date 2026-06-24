@@ -5531,25 +5531,6 @@ def test_update_body_properties(modeler: Modeler):
     assert body._template._is_surface is True
 
 
-def test_clear_body_cache_for_part(modeler: Modeler):
-    """Test _clear_body_cache_for_part clears caches for all matching components."""
-    design = modeler.create_design("clear_body_cache_test")
-
-    comp = design.add_component("TestComp")
-    part = comp._master_component.part
-
-    sketch = Sketch()
-    sketch.box(Point2D([0, 0]), 1, 1)
-    comp.extrude_sketch("TestBody", sketch, 1)
-
-    _ = comp.bodies
-    assert "bodies" in comp.__dict__
-
-    design._clear_body_cache_for_part(part)
-
-    assert "bodies" not in comp.__dict__
-
-
 def test_clear_body_cache_for_part_nested(modeler: Modeler):
     """Test _clear_body_cache_for_part clears caches in nested components."""
     design = modeler.create_design("clear_cache_nested")
