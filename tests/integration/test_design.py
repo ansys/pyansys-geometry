@@ -5530,6 +5530,7 @@ def test_update_body_properties(modeler: Modeler):
     assert body.name == "UpdatedBodyName"
     assert body._template._is_surface is True
 
+
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
