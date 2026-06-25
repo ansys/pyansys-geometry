@@ -6680,26 +6680,11 @@ def test_tracking_captures_boolean_operations(modeler: Modeler):
     assert len(unite_changes["deleted_bodies"]) == 1
 
 
-def _tracker_payload(**overrides):
-    payload = {
-        "created_parts": [],
-        "deleted_parts": [],
-        "created_components": [],
-        "modified_components": [],
-        "deleted_components": [],
-        "created_bodies": [],
-        "modified_bodies": [],
-        "deleted_bodies": [],
-    }
-    payload.update(overrides)
-    return payload
-
-
-def test_tracker_response_missing_master_part_warns(modeler: Modeler):
+def test_tracker_response_missing_master_part_warns(modeler: Modeler, tracker_payload_factory):
     """Test _update_from_tracker warns when master part not found for MasterComponent."""
     design = modeler.create_design("cov_missing_master_part")
 
-    tracker_response = _tracker_payload(
+    tracker_response = tracker_payload_factory(
         created_components=[
             {
                 "id": "master_comp_cov",
@@ -6720,11 +6705,13 @@ def test_tracker_response_missing_master_part_warns(modeler: Modeler):
     )
 
 
-def test_tracker_response_modified_deleted_component_not_found(modeler: Modeler):
+def test_tracker_response_modified_deleted_component_not_found(
+    modeler: Modeler, tracker_payload_factory
+):
     """Test _update_from_tracker warns when modified/deleted components not found."""
     design = modeler.create_design("cov_component_not_found")
 
-    tracker_response = _tracker_payload(
+    tracker_response = tracker_payload_factory(
         modified_components=[{"id": "missing_mod", "name": "MissingMod"}],
         deleted_components=[{"id": "missing_del"}],
     )
@@ -6824,13 +6811,15 @@ def test_find_and_update_component_nested_and_missing(modeler: Modeler):
     assert not_found is False
 
 
-def test_update_from_tracker_modified_body_nested_component(modeler: Modeler):
+def test_update_from_tracker_modified_body_nested_component(
+    modeler: Modeler, tracker_payload_factory
+):
     """Test _update_from_tracker updates modified bodies in nested components."""
     design = modeler.create_design("cov_mod_body_nested")
     nested = design.add_component("Parent").add_component("Child")
     body = nested.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    tracker_response = _tracker_payload(
+    tracker_response = tracker_payload_factory(
         modified_bodies=[{"id": body._template.id, "name": "NestedUpdated", "is_surface": True}]
     )
 
@@ -6840,14 +6829,18 @@ def test_update_from_tracker_modified_body_nested_component(modeler: Modeler):
     assert body._template.is_surface is True
 
 
-def test_update_from_tracker_deleted_nested_body_breaks_recursion(modeler: Modeler):
+def test_update_from_tracker_deleted_nested_body_breaks_recursion(
+    modeler: Modeler, tracker_payload_factory
+):
     """Test _update_from_tracker deletes nested bodies and breaks from recursion."""
     design = modeler.create_design("cov_del_body_nested")
     parent = design.add_component("Parent")
     child = parent.add_component("Child")
     nested_body = child.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
 
-    tracker_response = _tracker_payload(deleted_bodies=[{"id": nested_body.id.split("/")[-1]}])
+    tracker_response = tracker_payload_factory(
+        deleted_bodies=[{"id": nested_body.id.split("/")[-1]}]
+    )
 
     design._update_from_tracker(tracker_response)
 
