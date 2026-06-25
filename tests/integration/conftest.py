@@ -331,3 +331,35 @@ def disable_active_design_check_true():
     yield
 
     pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK = False
+
+
+@pytest.fixture
+def tracker_payload_factory():
+    """Factory fixture for creating tracker payload dictionaries."""
+
+    def _factory(**overrides):
+        payload = {
+            "created_parts": [],
+            "deleted_parts": [],
+            "created_components": [],
+            "modified_components": [],
+            "deleted_components": [],
+            "created_bodies": [],
+            "modified_bodies": [],
+            "deleted_bodies": [],
+        }
+        payload.update(overrides)
+        return payload
+
+    return _factory
+
+
+@pytest.fixture
+def unit_box_sketch():
+    """Fixture providing a simple 1x1 box sketch."""
+    from ansys.geometry.core.math import Point2D
+    from ansys.geometry.core.sketch import Sketch
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    return sketch
