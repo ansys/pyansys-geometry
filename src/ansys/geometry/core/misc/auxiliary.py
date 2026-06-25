@@ -270,6 +270,29 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     ]  # noqa: E501
 
 
+def build_edge_id_map(design: "Design") -> "dict[str, Edge]":
+    """Build a mapping of edge id to ``Edge`` object for all edges in a ``Design``.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design to traverse.
+
+    Returns
+    -------
+    dict[str, Edge]
+        Dictionary mapping each edge id to its corresponding ``Edge`` object.
+
+    Notes
+    -----
+    This method traverses the design tree once and issues one gRPC call per body
+    (``body.edges``). Use this instead of repeated calls to ``get_edges_from_ids``
+    when you need to resolve multiple sets of edge ids from the same design, so that
+    the full traversal is paid only once.
+    """
+    return {edge.id: edge for body in __traverse_all_bodies(design) for edge in body.edges}
+
+
 def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vertex"]:
     """Find the ``Vertex`` objects inside a ``Design`` from its ids.
 
