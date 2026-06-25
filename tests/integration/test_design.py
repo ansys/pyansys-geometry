@@ -4942,32 +4942,6 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.z.m == 1
 
 
-@pytest.fixture
-def tracker_payload_factory():
-    def _factory(**overrides):
-        payload = {
-            "created_parts": [],
-            "deleted_parts": [],
-            "created_components": [],
-            "modified_components": [],
-            "deleted_components": [],
-            "created_bodies": [],
-            "modified_bodies": [],
-            "deleted_bodies": [],
-        }
-        payload.update(overrides)
-        return payload
-
-    return _factory
-
-
-@pytest.fixture
-def unit_box_sketch() -> Sketch:
-    sketch = Sketch()
-    sketch.box(Point2D([0, 0]), 1, 1)
-    return sketch
-
-
 def _entity(entity_id: str) -> Mock:
     entity = Mock()
     entity.id = entity_id
