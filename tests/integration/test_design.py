@@ -369,10 +369,7 @@ def test_update_from_tracker_created_parts(modeler: Modeler):
 
 
 def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
-    """Test _update_from_tracker() for deleted parts.
-
-    Verifies parts are marked inactive and warnings are logged for missing parts.
-    """
+    """Test _update_from_tracker() marks deleted parts as inactive and logs warnings for missing parts."""
     design = modeler.create_design("update_tracker_deleted")
 
     mock_part = Mock()
@@ -769,7 +766,7 @@ def test_find_and_update_component_updates_name(modeler: Modeler):
 
 
 def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
-    """Test _find_and_remove_component() marks component as removed and returns True."""
+    """Test _find_and_remove_component() successfully marks component as removed and returns True."""
     design = modeler.create_design("remove_comp")
     comp = design.add_component("ComponentToRemove")
     comp_id = comp.id
@@ -4974,7 +4971,7 @@ def _entity(entity_id: str) -> Mock:
     return entity
 
 
-def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
+def _named_selection(*, backend_version=(27, 1, 0), bodies=None) -> "NamedSelection":
     from ansys.geometry.core.designer.selection import NamedSelection
 
     grpc_client = Mock()
@@ -5532,33 +5529,6 @@ def test_update_body_properties(modeler: Modeler):
 
     assert body.name == "UpdatedBodyName"
     assert body._template._is_surface is True
-
-
-def test_clear_body_cache_for_part_nested(modeler: Modeler):
-    """Test _clear_body_cache_for_part clears caches in nested components."""
-    design = modeler.create_design("clear_cache_nested")
-
-    target_part = design._master_component.part
-    matching_component = Mock()
-    matching_component._master_component = Mock()
-    matching_component._master_component.part = target_part
-    matching_component._clear_cached_bodies = Mock()
-
-    non_matching_component = Mock()
-    non_matching_component._master_component = Mock()
-    non_matching_component._master_component.part = Part("other", "other", [], [])
-    non_matching_component._clear_cached_bodies = Mock()
-
-    with patch.object(
-        design,
-        "_get_all_components",
-        return_value=[matching_component, non_matching_component],
-    ):
-        design._clear_body_cache_for_part(target_part)
-
-    matching_component._clear_cached_bodies.assert_called_once()
-    non_matching_component._clear_cached_bodies.assert_not_called()
-
 
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
@@ -6732,53 +6702,6 @@ def test_tracking_captures_boolean_operations(modeler: Modeler):
     assert len(unite_changes["deleted_bodies"]) == 1
 
 
-def test_move_bodies_to_component(modeler: Modeler):
-    """Test moving bodies between components.
-
-    Covers:
-    - Single body moved from a source component into a target component.
-    - Multiple bodies moved at once.
-    """
-    design = modeler.create_design("move_bodies_to_component")
-    source = design.add_component("source")
-    target = design.add_component("target")
-
-    body1 = source.extrude_sketch("Box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    # --- Single body ---
-    assert len(source.bodies) == 1
-    assert len(target.bodies) == 0
-
-    target.move_bodies_to_component([body1])
-    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-        source = design.components[0]  # Need to re-query source component if tracker is off
-        target = design.components[1]  # Need to re-query target component if tracker is off
-
-    assert len(target.bodies) == 1
-    assert target.bodies[0].name == "Box1"
-    assert len(source.bodies) == 0
-
-    # --- Multiple bodies ---
-    source2 = design.add_component("source2")
-    target2 = design.add_component("target2")
-
-    body_a = source2.extrude_sketch("BodyA", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    body_b = source2.extrude_sketch("BodyB", Sketch().box(Point2D([3, 0]), 1, 1), 1)
-
-    assert len(source2.bodies) == 2
-    assert len(target2.bodies) == 0
-
-    target2.move_bodies_to_component([body_a, body_b])
-    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-        source2 = design.components[2]  # Need to re-query source component if tracker is off
-        target2 = design.components[3]  # Need to re-query target component if tracker is off
-
-    assert len(target2.bodies) == 2
-    moved_names = {b.name for b in target2.bodies}
-    assert moved_names == {"BodyA", "BodyB"}
-    assert len(source2.bodies) == 0
-
-
 def _tracker_payload(**overrides):
     payload = {
         "created_parts": [],
@@ -6991,3 +6914,50 @@ def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
 
     matching_component._clear_cached_bodies.assert_called_once()
     non_matching_component._clear_cached_bodies.assert_not_called()
+
+
+def test_move_bodies_to_component(modeler: Modeler):
+    """Test moving bodies between components.
+
+    Covers:
+    - Single body moved from a source component into a target component.
+    - Multiple bodies moved at once.
+    """
+    design = modeler.create_design("move_bodies_to_component")
+    source = design.add_component("source")
+    target = design.add_component("target")
+
+    body1 = source.extrude_sketch("Box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # --- Single body ---
+    assert len(source.bodies) == 1
+    assert len(target.bodies) == 0
+
+    target.move_bodies_to_component([body1])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source = design.components[0]  # Need to re-query source component if tracker is off
+        target = design.components[1]  # Need to re-query target component if tracker is off
+
+    assert len(target.bodies) == 1
+    assert target.bodies[0].name == "Box1"
+    assert len(source.bodies) == 0
+
+    # --- Multiple bodies ---
+    source2 = design.add_component("source2")
+    target2 = design.add_component("target2")
+
+    body_a = source2.extrude_sketch("BodyA", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_b = source2.extrude_sketch("BodyB", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    assert len(source2.bodies) == 2
+    assert len(target2.bodies) == 0
+
+    target2.move_bodies_to_component([body_a, body_b])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source2 = design.components[2]  # Need to re-query source component if tracker is off
+        target2 = design.components[3]  # Need to re-query target component if tracker is off
+
+    assert len(target2.bodies) == 2
+    moved_names = {b.name for b in target2.bodies}
+    assert moved_names == {"BodyA", "BodyB"}
+    assert len(source2.bodies) == 0
