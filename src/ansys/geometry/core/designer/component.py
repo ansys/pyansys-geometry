@@ -1649,7 +1649,7 @@ class Component:
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """Search nested components by id recursively for a component.
+        """Search this component and nested components recursively for a component by id.
 
         Parameters
         ----------
@@ -1677,7 +1677,7 @@ class Component:
 
     @check_input_types
     def search_component_by_name(self, name: str) -> Union["Component", None]:
-        """Search nested components recursively for a component by name.
+        """Search this component and nested components recursively for a component by name.
 
         Parameters
         ----------
