@@ -2373,6 +2373,25 @@ def test_delete_body_component(modeler: Modeler):
     assert "Color                : None" in body_1_str
 
 
+def test_search_component_by_name(modeler: Modeler):
+    design = modeler.create_design("Deletion_Test")
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+
+    # Search for components at top level
+    found_comp_1 = design.search_component_by_name("Component_1")
+    found_comp_2 = design.search_component_by_name("Component_2")
+    assert comp_1 == found_comp_1
+    assert comp_2 == found_comp_2
+
+    # Search for nested component
+    found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
+    assert nested_1_comp_1 == found_nested_comp
+
+
 def test_shared_topology(modeler: Modeler):
     """Test for checking the correct setting of shared topology on the server.
 

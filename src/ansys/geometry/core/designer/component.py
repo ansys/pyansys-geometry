@@ -1649,7 +1649,7 @@ class Component:
 
     @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """Search nested components recursively for a component.
+        """Search nested components by id recursively for a component.
 
         Parameters
         ----------
@@ -1669,6 +1669,37 @@ class Component:
         result = None
         for component in self.components:
             result = component.search_component(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no component was found!
+        return None
+
+    def search_component_by_name(self, name: str) -> Union["Component", None]:
+        """Search nested components recursively for a component by name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the component to search for.
+
+        Returns
+        -------
+        Component
+           Component with the requested name. If this name is not found, ``None`` is returned.
+
+        Warning
+        -------
+        If multiple components have the same name, only the first one found is returned.
+        """
+        # Check if the requested component is this one
+        if self.name == name and self.is_alive:
+            return self
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_component_by_name(name)
             if result:
                 return result
 
