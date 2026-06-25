@@ -369,7 +369,10 @@ def test_update_from_tracker_created_parts(modeler: Modeler):
 
 
 def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
-    """Test _update_from_tracker() marks deleted parts as inactive and logs warnings for missing parts."""
+    """Test _update_from_tracker() for deleted parts.
+
+    Verifies parts are marked inactive and warnings are logged for missing parts.
+    """
     design = modeler.create_design("update_tracker_deleted")
 
     mock_part = Mock()
@@ -766,7 +769,7 @@ def test_find_and_update_component_updates_name(modeler: Modeler):
 
 
 def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
-    """Test _find_and_remove_component() successfully marks component as removed and returns True."""
+    """Test _find_and_remove_component() marks component as removed and returns True."""
     design = modeler.create_design("remove_comp")
     comp = design.add_component("ComponentToRemove")
     comp_id = comp.id
@@ -4971,7 +4974,7 @@ def _entity(entity_id: str) -> Mock:
     return entity
 
 
-def _named_selection(*, backend_version=(27, 1, 0), bodies=None) -> "NamedSelection":
+def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
     from ansys.geometry.core.designer.selection import NamedSelection
 
     grpc_client = Mock()
