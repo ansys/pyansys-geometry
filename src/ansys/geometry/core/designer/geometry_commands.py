@@ -2279,9 +2279,11 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
 
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
             created_curves = []
             for curve_info in result.get("created_curves", []):
-                parent: Component = design.search_component(curve_info.get("parent_id")) or design
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
                 dc = DesignCurve(
                     curve_info.get("id"),
                     curve_info.get("name"),
@@ -2365,9 +2367,11 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
 
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
             created_curves = []
             for curve_info in result.get("created_curves", []):
-                parent: Component = design.search_component(curve_info.get("parent_id")) or design
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
                 dc = DesignCurve(
                     curve_info.get("id"),
                     curve_info.get("name"),
@@ -2473,9 +2477,11 @@ class GeometryCommands:
             else:
                 design._update_design_inplace()
 
+            all_comps = {c.id: c for c in design._get_all_components()}
+            all_comps[design.id] = design
             created_curves = []
             for curve_info in result.get("created_curves", []):
-                parent: Component = design.search_component(curve_info.get("parent_id")) or design
+                parent: Component = all_comps.get(curve_info.get("parent_id"), design)
                 dc = DesignCurve(
                     curve_info.get("id"),
                     curve_info.get("name"),

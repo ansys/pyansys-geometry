@@ -2391,6 +2391,10 @@ def test_search_component_by_name(modeler: Modeler):
     found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
     assert nested_1_comp_1 == found_nested_comp
 
+    # Search for a non-existing component
+    found_none = design.search_component_by_name("NonExistingComponent")
+    assert found_none is None
+
 
 def test_shared_topology(modeler: Modeler):
     """Test for checking the correct setting of shared topology on the server.

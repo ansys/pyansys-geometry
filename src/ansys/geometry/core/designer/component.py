@@ -1675,6 +1675,7 @@ class Component:
         # If you reached this point... this means that no component was found!
         return None
 
+    @check_input_types
     def search_component_by_name(self, name: str) -> Union["Component", None]:
         """Search nested components recursively for a component by name.
 
