@@ -1676,7 +1676,7 @@ class Component:
         return None
 
     @check_input_types
-    def search_component_by_name(self, name: str) -> Union["Component", None]:
+    def search_component_by_name(self, name: str) -> Union[list["Component"], "Component", None]:
         """Search this component and nested components recursively for a component by name.
 
         Parameters
@@ -1686,26 +1686,33 @@ class Component:
 
         Returns
         -------
-        Component
-           Component with the requested name. If this name is not found, ``None`` is returned.
-
-        Warning
-        -------
-        If multiple components have the same name, only the first one found is returned.
+        list[Component] | Component | None
+           Component(s) with the requested name. Returns a single ``Component`` if exactly
+           one match is found, a ``list[Component]`` if multiple matches are found, or
+           ``None`` if no match is found.
         """
-        # Check if the requested component is this one
+        results = []
+
+        # Check if this component matches
         if self.name == name and self.is_alive:
-            return self
+            results.append(self)
 
-        # If no luck, search on nested components
-        result = None
+        # Recurse into nested components and collect all matches
         for component in self.components:
-            result = component.search_component_by_name(name)
-            if result:
-                return result
+            nested = component.search_component_by_name(name)
+            if nested is None:
+                pass
+            elif isinstance(nested, list):
+                results.extend(nested)
+            else:
+                results.append(nested)
 
-        # If you reached this point... this means that no component was found!
-        return None
+        if len(results) == 0:
+            return None
+        elif len(results) == 1:
+            return results[0]
+        else:
+            return results
 
     @check_input_types
     def search_body(self, id: str) -> Body | None:
