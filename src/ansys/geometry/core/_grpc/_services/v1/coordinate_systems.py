@@ -81,3 +81,18 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
             "name": coord_system.name,
             "frame": from_grpc_frame_to_frame(coord_system.frame),
         }
+    
+    @protect_grpc
+    def delete(self, **kwargs) -> None:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import (
+            MultipleEntitiesRequest,
+        )
+
+        # Create the request data - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        self.stub.Delete(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}

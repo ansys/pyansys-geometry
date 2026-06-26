@@ -151,7 +151,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         request = DeleteRequest(selection=build_grpc_id(kwargs["curve_id"]))
 
         # Call the gRPC service
-        _ = self.stub.Delete(request)
+        self.stub.Delete(request)
 
         # Return the result - formatted as a dictionary
         return {}
