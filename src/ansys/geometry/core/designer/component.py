@@ -41,6 +41,7 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -185,6 +186,7 @@ class Component:
     _design_points: list[DesignPoint]
     _datum_planes: list[DatumPlane]
     _design_curves: list[DesignCurve]
+    _datum_points: list[DatumPoint]
 
     @check_input_types
     def __init__(
@@ -244,6 +246,7 @@ class Component:
         self._design_points = []
         self._datum_planes = []
         self._design_curves = []
+        self._datum_points = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -365,6 +368,11 @@ class Component:
     def design_curves(self) -> list[DesignCurve]:
         """List of ``DesignCurve`` objects inside of the component."""
         return self._design_curves
+    
+    @property
+    def datum_points(self) -> list[DatumPoint]:
+        """List of ``DatumPoint`` objects inside of the component."""
+        return self._datum_points
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -1648,6 +1656,51 @@ class Component:
             pass
 
     @check_input_types
+    @ensure_design_is_active
+    def delete_design_curve(
+        self,
+        design_curve: DesignCurve | str
+    ) -> None:
+        """Delete an existing design curve belonging to this component's scope.
+
+        Parameters
+        ----------
+        design_curve : DesignCurve | str
+            ID of the design curve or instance to delete.
+
+        Notes
+        -----
+        If the design curve belongs to this component's children, it is deleted.
+        If the design curve does not belong to this component (or its children), it
+        is not deleted.
+        """
+        id = design_curve if isinstance(design_curve, str) else design_curve.id
+        
+        design_curve_requested = self.search_design_curve(id)
+
+        if design_curve_requested:
+            # If the design curve belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.curves.delete(curve_id=id)
+
+            # If the design curve was deleted from the server side... "kill" it
+            # on the client side
+            design_curve_requested._is_alive = False
+            self._grpc_client.log.debug(
+                f"DesignCurve {design_curve_requested.id} has been deleted."
+            )
+        else:
+            self._grpc_client.log.warning(
+                f"DesignCurve {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
         """Search nested components recursively for a component.
 
@@ -1775,6 +1828,40 @@ class Component:
                 return result
 
         # If you reached this point... this means that no plane was found!
+        return None
+    
+    @check_input_types
+    def search_design_curve(self, id: str) -> DesignCurve | None:
+        """Search design curves in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the design curve to search for.
+
+        Returns
+        -------
+        DesignCurve | None
+            DesignCurve with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for design curves in the component and nested components
+        recursively.
+        """
+        # Search in component's design curves
+        for design_curve in self.design_curves:
+            if design_curve.id == id:
+                return design_curve
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_design_curve(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no design curve was found!
         return None
 
     @check_input_types
