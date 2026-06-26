@@ -136,8 +136,22 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
             "length": to_distance(response.length),
         }
 
+    @protect_grpc
     def get_interval(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
             f"Method '{self.__class__.__name__}.get_interval' is not "
             "implemented in this protofile version."
         )
+    
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.curves_pb2 import DeleteRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteRequest(selection=build_grpc_id(kwargs["curve_id"]))
+
+        # Call the gRPC service
+        _ = self.stub.Delete(request)
+
+        # Return the result - formatted as a dictionary
+        return {}

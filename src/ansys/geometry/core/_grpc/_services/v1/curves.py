@@ -186,3 +186,13 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
             "start": response.start,
             "end": response.end,
         }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> None:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["curve_id"])])
+
+        # Call the gRPC service
+        self.stub.Delete(request=request)
