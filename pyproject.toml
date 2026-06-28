@@ -23,7 +23,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.2.1",
+  "ansys-api-discovery==1.2.2",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -103,7 +103,7 @@ general-all = [
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.4",
   "requests==2.34.2",
-  "scipy==1.17.1",
+  "scipy==1.18.0",
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",
