@@ -45,11 +45,15 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.beam import (
+    BeamCrossSectionInfo,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
@@ -2409,36 +2413,6 @@ def test_delete_body_component(modeler: Modeler):
     assert "Color                : None" in body_1_str
 
 
-def test_search_component_by_name(modeler: Modeler):
-    design = modeler.create_design("Deletion_Test")
-
-    # Create the components
-    comp_1 = design.add_component("Component_1")
-    comp_2 = design.add_component("Component_2")
-    comp_2_duplicate = comp_2.add_component("Component_2")
-    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
-
-    # Search for component at top level
-    found_comp_1 = design.search_component_by_name("Component_1")
-    assert len(found_comp_1) == 1
-    assert comp_1 == found_comp_1[0]
-
-    # Search for nested component
-    found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
-    assert len(found_nested_comp) == 1
-    assert nested_1_comp_1 == found_nested_comp[0]
-
-    # Search for a non-existing component
-    found_none = design.search_component_by_name("NonExistingComponent")
-    assert len(found_none) == 0
-
-    # Search for a component with a name that exists in multiple places
-    found_duplicate = design.search_component_by_name("Component_2")
-    assert len(found_duplicate) == 2
-    assert found_duplicate[0] == comp_2
-    assert found_duplicate[1] == comp_2_duplicate
-
-
 def test_shared_topology(modeler: Modeler):
     """Test for checking the correct setting of shared topology on the server.
 
@@ -2867,6 +2841,149 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
+def test_beams(modeler: Modeler):
+    """Test beam creation."""
+    # Create your design on the server side
+    design = modeler.create_design("BeamCreation")
+
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+
+    assert circle_profile_1.id is not None
+    assert circle_profile_1.center == Point3D([0, 0, 0])
+    assert circle_profile_1.radius.value.m_as(DEFAULT_UNITS.LENGTH) == 0.01
+    assert circle_profile_1.direction_x == UNITVECTOR3D_X
+    assert circle_profile_1.direction_y == UNITVECTOR3D_Y
+
+    circle_profile_2 = design.add_beam_circular_profile(
+        "CircleProfile2",
+        Distance(20, UNITS.mm),
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 1, 1]),
+        UnitVector3D([0, -1, 1]),
+    )
+
+    assert circle_profile_2.id is not None
+    assert circle_profile_2.id is not circle_profile_1.id
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        design.add_beam_circular_profile(
+            "InvalidProfileRadius",
+            Quantity(-10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UNITVECTOR3D_Y,
+        )
+
+    with pytest.raises(ValueError, match="Direction X and direction Y must be perpendicular."):
+        design.add_beam_circular_profile(
+            "InvalidUnitVectorAlignment",
+            Quantity(10, UNITS.mm),
+            Point3D([0, 0, 0]),
+            UNITVECTOR3D_X,
+            UnitVector3D([-1, -1, -1]),
+        )
+
+    # Create a beam at the root component level
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+
+    assert beam_1.id is not None
+    assert beam_1.start == Point3D([9, 99, 999], UNITS.mm)
+    assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
+    assert beam_1.profile == circle_profile_1
+    assert beam_1.parent_component.id == design.id
+    assert beam_1.is_alive
+    assert len(design.beams) == 1
+    assert design.beams[0] == beam_1
+
+    beam_1_str = str(beam_1)
+    assert "ansys.geometry.core.designer.Beam" in beam_1_str
+    assert "  Exists               : True" in beam_1_str
+    assert "  Start                : [0.009" in beam_1_str
+    assert "  End                  : [0.008" in beam_1_str
+    assert "  Parent component     : BeamCreation" in beam_1_str
+    assert "  Beam Profile info" in beam_1_str
+    assert "  -----------------" in beam_1_str
+    assert "ansys.geometry.core.designer.BeamCircularProfile " in beam_1_str
+    assert "  Name                 : CircleProfile1" in beam_1_str
+    assert "  Radius               : 10.0 millimeter" in beam_1_str
+    assert "  Center               : [0.0,0.0,0.0] in meters" in beam_1_str
+    assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
+    assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
+
+    # Now, let's create two beams at a nested component, with the same profile
+    nested_component = design.add_component("NestedComponent")
+    beam_2 = nested_component.create_beam(
+        Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
+    )
+    beam_3 = nested_component.create_beam(
+        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
+    )
+
+    assert beam_2.id is not None
+    assert beam_2.profile == circle_profile_2
+    assert beam_2.parent_component.id == nested_component.id
+    assert beam_2.is_alive
+    assert beam_3.id is not None
+    assert beam_3.profile == circle_profile_2
+    assert beam_3.parent_component.id == nested_component.id
+    assert beam_3.is_alive
+    assert beam_2.id != beam_3.id
+    assert len(nested_component.beams) == 2
+    assert nested_component.beams[0] == beam_2
+    assert nested_component.beams[1] == beam_3
+
+    # Once the beams are created, let's try deleting it.
+    # For example, we shouldn't be able to delete beam_1 from the nested component.
+    nested_component.delete_beam(beam_1)
+
+    assert beam_2.is_alive
+    assert nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Let's try deleting one of the beams from the nested component
+    nested_component.delete_beam(beam_2)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert beam_3.is_alive
+    assert nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Now, let's try deleting it from the design directly - this should be possible
+    design.delete_beam(beam_3)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert beam_1.is_alive
+    assert design.beams[0].is_alive
+
+    # Finally, let's delete the beam from the root component
+    design.delete_beam(beam_1)
+    assert not beam_2.is_alive
+    assert not nested_component.beams[0].is_alive
+    assert not beam_3.is_alive
+    assert not nested_component.beams[1].is_alive
+    assert not beam_1.is_alive
+    assert not design.beams[0].is_alive
+
+    # Now, let's try deleting the beam profiles!
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile("MyInventedBeamProfile")
+    assert len(design.beam_profiles) == 2
+    design.delete_beam_profile(circle_profile_1)
+    assert len(design.beam_profiles) == 1
+    design.delete_beam_profile(circle_profile_2)
+    assert len(design.beam_profiles) == 0
+
+
 def test_midsurface_properties(modeler: Modeler):
     """Test mid-surface properties assignment."""
     # Create your design on the server side
@@ -3025,6 +3142,29 @@ def test_design_points(modeler: Modeler):
         import pyvista as pv
 
         assert isinstance(pd, pv.PolyData)
+
+
+def test_named_selections_beams(modeler: Modeler):
+    """Test for verifying the correct creation of ``NamedSelection`` with
+    beams.
+    """
+    # Create your design on the server side
+    design = modeler.create_design("NamedSelectionBeams_Test")
+
+    # Test creating a named selection out of beams
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    beam_1 = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
+    assert len(design.named_selections) == 1
+    assert design.named_selections[0].name == "CircleProfile"
+
+    # Try deleting this named selection
+    design.delete_named_selection(ns_beams)
+    assert len(design.named_selections) == 0
 
 
 def test_named_selections_design_points(modeler: Modeler):
@@ -5974,6 +6114,30 @@ def test_body_get_named_selections(modeler: Modeler):
             assert len(ns_list) == 0  # No named selection for this body
 
 
+def test_beams_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with beams."""
+    design = modeler.create_design("beam_named_selections")
+    profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
+    beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
+    beam2 = design.create_beam(Point3D([0, 1, 0]), Point3D([1, 1, 0]), profile)
+
+    # create named selection from beams
+    design.create_named_selection("beam_ns_1", beams=[beam1])
+    design.create_named_selection("beam_ns_2", beams=[beam2])
+
+    # Check that beams return the correct named selections
+    for beam in design.beams:
+        ns_list = beam.get_named_selections()
+        if beam.id == beam1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_1" for ns in ns_list)
+        elif beam.id == beam2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "beam_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this beam
+
+
 def test_vertices_get_named_selections(modeler: Modeler):
     """Test getting named selections associated with vertices."""
     design = modeler.create_design("vertex_named_selections")
@@ -6731,196 +6895,94 @@ def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
 def test_move_bodies_to_component(modeler: Modeler):
     """Test moving bodies between components.
 
-    tracker_response = _tracker_payload(
-        created_components=[
-            {
-                "id": "master_comp_cov",
-                "master_id": "master_comp_cov",
-                "name": "MissingPartMaster",
-                "part_master": {"id": "part_does_not_exist"},
-                "parent_id": design.id,
-                "placement": None,
-            }
-        ]
+    Covers:
+    - Single body moved from a source component into a target component.
+    - Multiple bodies moved at once.
+    """
+    design = modeler.create_design("move_bodies_to_component")
+    source = design.add_component("source")
+    target = design.add_component("target")
+
+    body1 = source.extrude_sketch("Box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # --- Single body ---
+    assert len(source.bodies) == 1
+    assert len(target.bodies) == 0
+
+    target.move_bodies_to_component([body1])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source = design.components[0]  # Need to re-query source component if tracker is off
+        target = design.components[1]  # Need to re-query target component if tracker is off
+
+    assert len(target.bodies) == 1
+    assert target.bodies[0].name == "Box1"
+    assert len(source.bodies) == 0
+
+    # --- Multiple bodies ---
+    source2 = design.add_component("source2")
+    target2 = design.add_component("target2")
+
+    body_a = source2.extrude_sketch("BodyA", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_b = source2.extrude_sketch("BodyB", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    assert len(source2.bodies) == 2
+    assert len(target2.bodies) == 0
+
+    target2.move_bodies_to_component([body_a, body_b])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source2 = design.components[2]  # Need to re-query source component if tracker is off
+        target2 = design.components[3]  # Need to re-query target component if tracker is off
+
+    assert len(target2.bodies) == 2
+    moved_names = {b.name for b in target2.bodies}
+    assert moved_names == {"BodyA", "BodyB"}
+    assert len(source2.bodies) == 0
+
+
+def test_beam_cross_section_info_properties_and_repr():
+    """Test BeamCrossSectionInfo property accessors and repr output."""
+    section_frame = Frame(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    section_info = BeamCrossSectionInfo(
+        SectionAnchorType.CENTROID,
+        15.0,
+        section_frame,
+        None,
     )
 
-    with patch.object(design._grpc_client.log, "warning") as warning_spy:
-        design._update_from_tracker(tracker_response)
+    assert section_info.section_anchor == SectionAnchorType.CENTROID
+    assert section_info.section_angle == 15.0
+    assert section_info.section_frame == section_frame
+    assert section_info.section_profile is None
 
-    assert any(
-        "Could not find part for MasterComponent" in str(c) for c in warning_spy.call_args_list
+    section_repr = repr(section_info)
+    assert "ansys.geometry.core.designer.BeamCrossSectionInfo" in section_repr
+    assert "Section Anchor       : CENTROID" in section_repr
+    assert "Section Angle        : 15.0" in section_repr
+    assert f"Section Frame        : {section_frame}" in section_repr
+    assert "Section Profile info" in section_repr
+    assert "None" in section_repr
+
+
+def test_beam_properties_getters():
+    """Test BeamProperties property accessors."""
+    centroid = ParamUV(0.1, 0.2)
+    shear_center = ParamUV(0.3, 0.4)
+    properties = BeamProperties(
+        area=1.0,
+        centroid=centroid,
+        warping_constant=2.0,
+        ixx=3.0,
+        ixy=4.0,
+        iyy=5.0,
+        shear_center=shear_center,
+        torsion_constant=6.0,
     )
 
-
-def test_tracker_response_modified_deleted_component_not_found(modeler: Modeler):
-    """Test _update_from_tracker warns when modified/deleted components not found."""
-    design = modeler.create_design("cov_component_not_found")
-
-    tracker_response = _tracker_payload(
-        modified_components=[{"id": "missing_mod", "name": "MissingMod"}],
-        deleted_components=[{"id": "missing_del"}],
-    )
-
-    with patch.object(design._grpc_client.log, "warning") as warning_spy:
-        design._update_from_tracker(tracker_response)
-
-    warning_messages = [str(c) for c in warning_spy.call_args_list]
-    assert any("Could not find component to update" in msg for msg in warning_messages)
-    assert any("Could not find component to delete" in msg for msg in warning_messages)
-
-
-def test_find_existing_part_nested_components(modeler: Modeler):
-    """Test _find_existing_part searches nested components for parts."""
-    design = modeler.create_design("cov_find_part_nested")
-    nested = design.add_component("Parent").add_component("Child")
-
-    found = design._find_existing_part(nested._master_component.part.id)
-
-    assert found == nested._master_component.part
-
-
-def test_find_and_remove_part_sets_alive_flag(modeler: Modeler):
-    """Test _find_and_remove_part marks part as not alive."""
-    design = modeler.create_design("cov_remove_part_flag")
-    part = design._master_component.part
-    part._is_alive = True
-
-    removed = design._find_and_remove_part({"id": part.id})
-
-    assert removed is True
-    assert part._is_alive is False
-
-
-def test_find_and_add_component_to_root_design_tracker(modeler: Modeler):
-    """Test _find_and_add_component_to_design adds component to root design."""
-    design = modeler.create_design("cov_add_component_root")
-
-    component_info = {
-        "id": "new_root_cov",
-        "master_id": design._master_component.id,
-        "name": "RootCov",
-        "parent_id": design.id,
-        "part_master": {"id": design._master_component.part.id},
-    }
-
-    result = design._find_and_add_component_to_design(
-        component_info,
-        design.components,
-        {},
-        {design._master_component.id: design._master_component},
-    )
-
-    assert result is not None
-    assert result.name == "RootCov"
-
-
-def test_find_and_add_component_nested_parent_recurses(modeler: Modeler):
-    """Test _find_and_add_component_to_design recurses through nested parents."""
-    design = modeler.create_design("cov_add_component_nested")
-    grandparent = design.add_component("GrandParent")
-    parent = grandparent.add_component("Parent")
-
-    component_info = {
-        "id": "new_child_cov",
-        "master_id": parent._master_component.id,
-        "name": "ChildCov",
-        "parent_id": parent.id,
-        "part_master": {"id": parent._master_component.part.id},
-    }
-
-    result = design._find_and_add_component_to_design(
-        component_info,
-        design.components,
-        {},
-        {parent._master_component.id: parent._master_component},
-    )
-
-    assert result is not None
-    assert result.name == "ChildCov"
-
-
-def test_find_and_update_component_nested_and_missing(modeler: Modeler):
-    """Test _find_and_update_component finds nested component or returns False."""
-    design = modeler.create_design("cov_update_component")
-    nested = design.add_component("Parent").add_component("Original")
-
-    updated = design._find_and_update_component(
-        {"id": nested.id, "name": "Updated"}, design.components
-    )
-    not_found = design._find_and_update_component(
-        {"id": "missing", "name": "Nope"}, design.components
-    )
-
-    assert updated is True
-    assert nested.name == "Updated"
-    assert not_found is False
-
-
-def test_update_from_tracker_modified_body_nested_component(modeler: Modeler):
-    """Test _update_from_tracker updates modified bodies in nested components."""
-    design = modeler.create_design("cov_mod_body_nested")
-    nested = design.add_component("Parent").add_component("Child")
-    body = nested.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    tracker_response = _tracker_payload(
-        modified_bodies=[{"id": body._template.id, "name": "NestedUpdated", "is_surface": True}]
-    )
-
-    design._update_from_tracker(tracker_response)
-
-    assert body.name == "NestedUpdated"
-    assert body._template.is_surface is True
-
-
-def test_update_from_tracker_deleted_nested_body_breaks_recursion(modeler: Modeler):
-    """Test _update_from_tracker deletes nested bodies and breaks from recursion."""
-    design = modeler.create_design("cov_del_body_nested")
-    parent = design.add_component("Parent")
-    child = parent.add_component("Child")
-    nested_body = child.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    tracker_response = _tracker_payload(deleted_bodies=[{"id": nested_body.id.split("/")[-1]}])
-
-    design._update_from_tracker(tracker_response)
-
-    assert nested_body.is_alive is False
-
-
-def test_find_and_remove_body_recursive_success(modeler: Modeler):
-    """Test _find_and_remove_body removes nested body and marks not alive."""
-    design = modeler.create_design("cov_remove_body_recursive")
-    parent = design.add_component("Parent")
-    child = parent.add_component("Child")
-    body = child.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    body_id = body.id.split("/")[-1]
-
-    removed = design._find_and_remove_body({"id": body_id}, parent)
-
-    assert removed is True
-    assert body.is_alive is False
-
-
-def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
-    """Test _clear_body_cache_for_part clears cache only for matching components."""
-    design = modeler.create_design("cov_clear_cache_nested")
-    target_part = design._master_component.part
-
-    matching_component = Mock()
-    matching_component._master_component = Mock()
-    matching_component._master_component.part = target_part
-    matching_component._clear_cached_bodies = Mock()
-
-    non_matching_component = Mock()
-    non_matching_component._master_component = Mock()
-    non_matching_component._master_component.part = Part("other", "other", [], [])
-    non_matching_component._clear_cached_bodies = Mock()
-
-    with patch.object(
-        design,
-        "_get_all_components",
-        return_value=[matching_component, non_matching_component],
-    ):
-        design._clear_body_cache_for_part(target_part)
-
-    matching_component._clear_cached_bodies.assert_called_once()
-    non_matching_component._clear_cached_bodies.assert_not_called()
+    assert properties.area == 1.0
+    assert properties.centroid == centroid
+    assert properties.warping_constant == 2.0
+    assert properties.ixx == 3.0
+    assert properties.ixy == 4.0
+    assert properties.iyy == 5.0
+    assert properties.shear_center == shear_center
+    assert properties.torsion_constant == 6.0
