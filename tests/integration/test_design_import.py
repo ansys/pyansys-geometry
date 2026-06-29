@@ -23,6 +23,7 @@
 """Test design import."""
 
 from pathlib import Path
+import re
 
 import numpy as np
 from pint import Quantity
@@ -32,6 +33,7 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
@@ -788,3 +790,42 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
     ):
         modeler.open_file(unsupported_file)
+
+
+def test_opening_nonexistent_path(modeler: Modeler):
+    """Test that opening a file from a nonexistent path raises an appropriate error."""
+    nonexistent_path = FILES_DIR / "nonexistent_file.scdocx"
+    with pytest.raises(
+        GeometryRuntimeError,
+        match=re.escape(f"File {nonexistent_path} does not exist."),
+    ):
+        modeler.open_file(nonexistent_path)
+
+
+def test_importing_with_sc_colors(modeler: Modeler):
+    """Test importing a file with SpaceClaim colors."""
+    # Import the file without SC color tones
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#ff00ffff"
+    assert bodies[1].color == "#ff0000ff"
+    assert bodies[2].color == "#ff8000ff"
+    assert bodies[3].color == "#0080c0ff"
+
+    # Import the file with SC color tones
+    options = ImportOptions()
+    options.import_using_spaceclaim_colors = True
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"), import_options=options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#af8fafff"
+    assert bodies[1].color == "#af8f8fff"
+    assert bodies[2].color == "#af9f8fff"
+    assert bodies[3].color == "#8fa4afff"
