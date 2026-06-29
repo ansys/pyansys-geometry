@@ -29,6 +29,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
+from ansys.geometry.core.sketch.nurbs import SketchNurbs
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.sketch.sketch import Sketch
