@@ -45,6 +45,11 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.beam import (
+    BeamCrossSectionInfo,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
@@ -6966,3 +6971,52 @@ def test_move_bodies_to_component(modeler: Modeler):
     moved_names = {b.name for b in target2.bodies}
     assert moved_names == {"BodyA", "BodyB"}
     assert len(source2.bodies) == 0
+
+
+def test_beam_cross_section_info_properties_and_repr():
+    """Test BeamCrossSectionInfo property accessors and repr output."""
+    section_frame = Frame(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    section_info = BeamCrossSectionInfo(
+        SectionAnchorType.CENTROID,
+        15.0,
+        section_frame,
+        None,
+    )
+
+    assert section_info.section_anchor == SectionAnchorType.CENTROID
+    assert section_info.section_angle == 15.0
+    assert section_info.section_frame == section_frame
+    assert section_info.section_profile is None
+
+    section_repr = repr(section_info)
+    assert "ansys.geometry.core.designer.BeamCrossSectionInfo" in section_repr
+    assert "Section Anchor       : CENTROID" in section_repr
+    assert "Section Angle        : 15.0" in section_repr
+    assert f"Section Frame        : {section_frame}" in section_repr
+    assert "Section Profile info" in section_repr
+    assert "None" in section_repr
+
+
+def test_beam_properties_getters():
+    """Test BeamProperties property accessors."""
+    centroid = ParamUV(0.1, 0.2)
+    shear_center = ParamUV(0.3, 0.4)
+    properties = BeamProperties(
+        area=1.0,
+        centroid=centroid,
+        warping_constant=2.0,
+        ixx=3.0,
+        ixy=4.0,
+        iyy=5.0,
+        shear_center=shear_center,
+        torsion_constant=6.0,
+    )
+
+    assert properties.area == 1.0
+    assert properties.centroid == centroid
+    assert properties.warping_constant == 2.0
+    assert properties.ixx == 3.0
+    assert properties.ixy == 4.0
+    assert properties.iyy == 5.0
+    assert properties.shear_center == shear_center
+    assert properties.torsion_constant == 6.0
