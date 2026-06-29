@@ -25,9 +25,11 @@
 from typing import TYPE_CHECKING
 
 import numpy as np
+from pint import Quantity
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
 
@@ -136,14 +138,14 @@ class SketchNurbs(SketchEdge):
 
         return polydata
 
-    def contains_point(self, point: Point2D, tolerance: Real = 1e-6) -> bool:
+    def contains_point(self, point: Point2D, tol: float = 1e-6) -> bool:
         """Check if the curve contains a given point within a specified tolerance.
 
         Parameters
         ----------
         point : Point2D
             The point to check.
-        tolerance : Real, optional
+        tol : float, optional
             The tolerance for the containment check, by default 1e-6.
 
         Returns
@@ -156,7 +158,7 @@ class SketchNurbs(SketchEdge):
         sampled = [self._nurbs_curve.evaluate_single(u) for u in params]
 
         # Check if any sampled point is close to the target point
-        return any(np.linalg.norm(np.array(pt) - np.array(point)) < tolerance for pt in sampled)
+        return any(np.linalg.norm(np.array(pt) - np.array(point)) < tol for pt in sampled)
 
     @classmethod
     @check_input_types
@@ -212,3 +214,152 @@ class SketchNurbs(SketchEdge):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return nurbs_curve
+
+    @classmethod
+    @check_input_types
+    def partial_ellipse(
+        cls,
+        center: Point2D,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        start_angle: Quantity | Angle | Real,
+        end_angle: Quantity | Angle | Real,
+        angle: Quantity | Angle | Real = 0,
+    ) -> "SketchNurbs":
+        """Create an exact rational NURBS for a partial ellipse arc.
+
+        Parameters
+        ----------
+        center : Point2D
+            Center of the ellipse.
+        major_radius : ~pint.Quantity | Distance | Real
+            Semi-major axis length (x-direction before rotation).
+        minor_radius : ~pint.Quantity | Distance | Real
+            Semi-minor axis length (y-direction before rotation).
+        start_angle : ~pint.Quantity | Angle | Real
+            Parametric start angle. Defaults to radians when given as a ``Real``.
+        end_angle : ~pint.Quantity | Angle | Real
+            Parametric end angle. Defaults to radians when given as a ``Real``.
+            The arc sweeps counter-clockwise when ``end_angle > start_angle``.
+        angle : ~pint.Quantity | Angle | Real, default: 0
+            Rotation of the ellipse about its center (radians when ``Real``).
+
+        Returns
+        -------
+        SketchNurbs
+            Exact rational quadratic NURBS (degree 2) for the requested arc.
+            The arc is split into segments of at most 90° for numerical stability.
+
+        Raises
+        ------
+        ValueError
+            If either radius is non-positive.
+        ValueError
+            If ``start_angle`` equals ``end_angle`` (zero-length arc).
+        """
+        # ------------------------------------------------------------------
+        # Extract SI float values
+        # ------------------------------------------------------------------
+        a = (
+            major_radius if isinstance(major_radius, Distance) else Distance(major_radius)
+        ).value.m_as(DEFAULT_UNITS.LENGTH)
+
+        b = (
+            minor_radius if isinstance(minor_radius, Distance) else Distance(minor_radius)
+        ).value.m_as(DEFAULT_UNITS.LENGTH)
+
+        # Angles are stored in base unit (radians) inside Angle._value
+        theta0 = (start_angle if isinstance(start_angle, Angle) else Angle(start_angle))._value
+        theta1 = (end_angle if isinstance(end_angle, Angle) else Angle(end_angle))._value
+        phi = (angle if isinstance(angle, Angle) else Angle(angle))._value
+
+        # Center coordinates are already in base units (metres)
+        cx, cy = float(center[0]), float(center[1])
+
+        # ------------------------------------------------------------------
+        # Validation
+        # ------------------------------------------------------------------
+        if a <= 0:
+            raise ValueError("Semi-major axis must be a real positive value.")
+        if b <= 0:
+            raise ValueError("Semi-minor axis must be a real positive value.")
+
+        delta = theta1 - theta0
+        if np.isclose(delta, 0.0):
+            raise ValueError("Start angle and end angle must be different.")
+        elif delta < 0:
+            raise ValueError("Start angle must be less than end angle.")
+
+        # ------------------------------------------------------------------
+        # Split into segments of at most π/2 (90°) for numerical stability
+        # ------------------------------------------------------------------
+        n_segs = max(1, int(np.ceil(abs(delta) / (np.pi / 2))))
+        d_theta = delta / n_segs
+        w_mid = float(np.cos(abs(d_theta) / 2.0))  # conic weight for each segment
+
+        cos_phi, sin_phi = np.cos(phi), np.sin(phi)
+
+        def _on_ellipse(theta: Real) -> np.ndarray:
+            """Unrotated, unshifted point on the ellipse."""
+            return np.array([a * np.cos(theta), b * np.sin(theta)])
+
+        def _tangent(theta: Real) -> np.ndarray:
+            """Unrotated tangent direction (CCW sense) at parametric angle theta."""
+            return np.array([-a * np.sin(theta), b * np.cos(theta)])
+
+        def _shoulder(theta_a: Real, theta_b: Real) -> np.ndarray:
+            """Tangent-intersection shoulder control point for one conic segment."""
+            p0, p2 = _on_ellipse(theta_a), _on_ellipse(theta_b)
+            d0, d2 = _tangent(theta_a), _tangent(theta_b)
+            # Solve p0 + t*d0 = p2 + s*d2  →  [d0 | -d2][t,s]^T = p2-p0
+            det = d0[0] * (-d2[1]) - (-d2[0]) * d0[1]
+            rhs = p2 - p0
+            t = ((-d2[1]) * rhs[0] - (-d2[0]) * rhs[1]) / det
+            return p0 + t * d0
+
+        def _to_global(pt: np.ndarray) -> list:
+            """Rotate by phi then translate to center."""
+            return [
+                cos_phi * pt[0] - sin_phi * pt[1] + cx,
+                sin_phi * pt[0] + cos_phi * pt[1] + cy,
+            ]
+
+        # ------------------------------------------------------------------
+        # Accumulate control points, weights and knot vector
+        # ------------------------------------------------------------------
+        ctrl_pts: list[list[float]] = []
+        weights: list[float] = []
+
+        # Start point (on ellipse)
+        ctrl_pts.append(_to_global(_on_ellipse(theta0)))
+        weights.append(1.0)
+
+        for i in range(n_segs):
+            t_a = theta0 + i * d_theta
+            t_b = theta0 + (i + 1) * d_theta
+
+            # Shoulder (off-ellipse) control point for this segment
+            ctrl_pts.append(_to_global(_shoulder(t_a, t_b)))
+            weights.append(w_mid)
+
+            # End point of this segment (on ellipse); shared with next segment
+            ctrl_pts.append(_to_global(_on_ellipse(t_b)))
+            weights.append(1.0)
+
+        # Interior knots are repeated (multiplicity = degree = 2) at each join
+        knot_vector = [0.0, 0.0, 0.0]
+        for i in range(1, n_segs):
+            t = i / n_segs
+            knot_vector.extend([t, t])
+        knot_vector.extend([1.0, 1.0, 1.0])
+
+        # ------------------------------------------------------------------
+        # Assemble and return the SketchNurbs
+        # ------------------------------------------------------------------
+        nurbs = cls()
+        nurbs._nurbs_curve.degree = 2
+        nurbs._nurbs_curve.ctrlpts = ctrl_pts
+        nurbs._nurbs_curve.knotvector = knot_vector
+        nurbs._nurbs_curve.weights = weights
+
+        return nurbs
