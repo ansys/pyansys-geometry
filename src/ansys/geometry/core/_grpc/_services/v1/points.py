@@ -219,3 +219,18 @@ class GRPCPointsServiceV1(GRPCPointsService):
             ],
             "tracked_response": serialized_response,
         }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(
+            ids=[build_grpc_id(id) for id in kwargs["ids"]]
+        )
+
+        # Call the gRPC service
+        self.stub.Delete(request)
+
+        # Return the response - formatted as a dictionary
+        return {}

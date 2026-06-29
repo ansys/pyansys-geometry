@@ -172,3 +172,18 @@ class GRPCPointsServiceV0(GRPCPointsService):
                 for curve in response.created_curves
             ],
         }
+    
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import DeleteEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteEntitiesRequest(
+            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]]
+        )
+
+        # Call the gRPC service
+        self.stub.DeleteEntities(request)
+
+        # Return the response - formatted as a dictionary
+        return {}

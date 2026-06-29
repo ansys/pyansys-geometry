@@ -1610,8 +1610,9 @@ class Design(Component):
         self._named_selections = {}
         self._coordinate_systems = []
         self._datum_planes = []
-        self._design_curves = []
         self._datum_points = []
+        self._design_curves = []
+        self._design_points = []
 
         # Read the existing design
         self.__read_existing_design()

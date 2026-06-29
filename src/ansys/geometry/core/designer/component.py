@@ -1618,6 +1618,82 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    def delete_coordinate_system(self, coordinate_system: CoordinateSystem | str) -> None:
+        """Delete a coordinate system from this component.
+
+        Parameters
+        ----------
+        coordinate_system : CoordinateSystem | str
+            ID of the coordinate system or instance to delete.
+
+        Notes
+        -----
+        If the coordinate system belongs to this component's children, it is deleted.
+        If the coordinate system does not belong to this component, it is not deleted.
+        """
+        id = coordinate_system if isinstance(coordinate_system, str) else coordinate_system.id
+        cs_requested = self.search_coordinate_system(id)
+
+        if cs_requested:
+            # If the coordinate system belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.coordinate_systems.delete(id=cs_requested.id)
+
+            # If the coordinate system was deleted from the server side... "kill" it
+            # on the client side
+            cs_requested._is_alive = False
+            self._grpc_client.log.debug(
+                f"CoordinateSystem {cs_requested.id} has been deleted."
+            )
+        else:
+            self._grpc_client.log.warning(
+                f"CoordinateSystem {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    def delete_datum_point(self, datum_point: DatumPoint | str) -> None:
+        """Delete a datum point from this component.
+
+        Parameters
+        ----------
+        datum_point : DatumPoint | str
+            ID of the datum point or instance to delete.
+
+        Notes
+        -----
+        If the datum point belongs to this component's children, it is deleted.
+        If the datum point does not belong to this component, it is not deleted.
+        """
+        id = datum_point if isinstance(datum_point, str) else datum_point.id
+        dp_requested = self.search_datum_point(id)
+
+        if dp_requested:
+            # If the datum point belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.points.delete(ids=[dp_requested.id])
+
+            # If the datum point was deleted from the server side... "kill" it
+            # on the client side
+            dp_requested._is_alive = False
+            self._grpc_client.log.debug(
+                f"DatumPoint {dp_requested.id} has been deleted."
+            )
+        else:
+            self._grpc_client.log.warning(
+                f"DatumPoint {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:
         """Delete an existing beam belonging to this component's scope.
 
@@ -1862,6 +1938,74 @@ class Component:
                 return result
 
         # If you reached this point... this means that no design curve was found!
+        return None
+
+    @check_input_types
+    def search_coordinate_system(self, id: str) -> CoordinateSystem | None:
+        """Search coordinate systems in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the coordinate system to search for.
+
+        Returns
+        -------
+        CoordinateSystem | None
+            CoordinateSystem with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for coordinate systems in the component and nested components
+        recursively.
+        """
+        # Search in component's coordinate systems
+        for cs in self.coordinate_systems:
+            if cs.id == id and cs.is_alive:
+                return cs
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_coordinate_system(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no coordinate system was found!
+        return None
+
+    @check_input_types
+    def search_datum_point(self, id: str) -> DatumPoint | None:
+        """Search datum points in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum point to search for.
+
+        Returns
+        -------
+        DatumPoint | None
+            DatumPoint with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum points in the component and nested components
+        recursively.
+        """
+        # Search in component's datum points
+        for dp in self.datum_points:
+            if dp.id == id and dp.is_alive:
+                return dp
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_point(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum point was found!
         return None
 
     @check_input_types
