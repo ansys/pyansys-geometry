@@ -2436,7 +2436,7 @@ def test_search_component_by_name(modeler: Modeler):
     assert len(found_duplicate) == 2
     assert found_duplicate[0] == comp_2
     assert found_duplicate[1] == comp_2_duplicate
-    
+
 
 def test_shared_topology(modeler: Modeler):
     """Test for checking the correct setting of shared topology on the server.
