@@ -17,14 +17,26 @@ jobs:
     name: "Code style checks"
     runs-on: ubuntu-latest
     steps:
+      - name: "Checkout code"
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
       - name: "Run PyAnsys code style checks"
         uses: ansys/actions/code-style@a5b0351dc277d68c2dc1beca2d2674c7dfa4fc55 # v10.3.3
+        with:
+          checkout: false
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: "Commit changes (if any)"
         if: failure()
+        env:
+          BOT_USER: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+          BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "$BOT_USER"
+          git config --global user.email "$BOT_EMAIL"
           git add -A
           git commit -m "chore: apply code style fixes" || echo "No changes to commit"
-          git push origin HEAD:${{ github.head_ref }}
+          git push origin HEAD:$HEAD_REF
