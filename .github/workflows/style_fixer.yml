@@ -4,6 +4,8 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.14'
+  # Forks don't have access to secrets
+  HAS_SECRETS: ${{ secrets.PYANSYS_CI_BOT_TOKEN != '' }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,7 +22,15 @@ jobs:
       - name: "Checkout code"
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          # To be able to commit it needs to fetch the head of the branch, not the
+          # merge commit
+          ref: ${{ github.head_ref }}
+          # And it needs the full history to be able to compute diffs
+          fetch-depth: 0
+          # A token other than the default GITHUB_TOKEN is needed to be able to trigger CI
+          # If secret is not available, use the default GITHUB_TOKEN to avoid workflow failure.
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN || github.token }} # zizmor: ignore[secrets-outside-env]
+          persist-credentials: true # Required for `git push` command
 
       - name: "Run PyAnsys code style checks"
         uses: ansys/actions/code-style@a5b0351dc277d68c2dc1beca2d2674c7dfa4fc55 # v10.3.3
@@ -29,14 +39,18 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: "Commit changes (if any)"
-        if: failure()
+        if: failure() && env.HAS_SECRETS == 'true'
         env:
           BOT_USER: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           HEAD_REF: ${{ github.head_ref }}
         run: |
-          git config --global user.name "$BOT_USER"
-          git config --global user.email "$BOT_EMAIL"
+          git config user.name "${BOT_USER}"
+          git config user.email "${BOT_EMAIL}"
           git add -A
-          git commit -m "chore: apply code style fixes" || echo "No changes to commit"
-          git push origin HEAD:$HEAD_REF
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: apply code style fixes"
+            git push
+          fi
