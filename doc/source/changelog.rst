@@ -9,6 +9,195 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.16.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.0>`_ - June 30, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Move body to different component parent
+          - `#2850 <https://github.com/ansys/pyansys-geometry/pull/2850>`_
+
+        * - Drop Python 3.10 and 3.11
+          - `#2871 <https://github.com/ansys/pyansys-geometry/pull/2871>`_
+
+        * - Switch to uv
+          - `#2872 <https://github.com/ansys/pyansys-geometry/pull/2872>`_
+
+        * - License error messaging improvements
+          - `#2886 <https://github.com/ansys/pyansys-geometry/pull/2886>`_
+
+        * - Search for component by name
+          - `#2888 <https://github.com/ansys/pyansys-geometry/pull/2888>`_
+
+        * - Partial ellipse sketching
+          - `#2895 <https://github.com/ansys/pyansys-geometry/pull/2895>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Improve repair tool performance
+          - `#2885 <https://github.com/ansys/pyansys-geometry/pull/2885>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Getting Started Improvements + Ecosystem links
+          - `#2854 <https://github.com/ansys/pyansys-geometry/pull/2854>`_
+
+        * - Update \`\`CONTRIBUTORS.md\`\` with the latest contributors
+          - `#2859 <https://github.com/ansys/pyansys-geometry/pull/2859>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.1.9 to 1.1.10
+          - `#2848 <https://github.com/ansys/pyansys-geometry/pull/2848>`_
+
+        * - Bump ty from 0.0.44 to 0.0.46
+          - `#2856 <https://github.com/ansys/pyansys-geometry/pull/2856>`_
+
+        * - Bump ansys-api-discovery from 1.1.10 to 1.1.11
+          - `#2857 <https://github.com/ansys/pyansys-geometry/pull/2857>`_
+
+        * - Bump ty from 0.0.46 to 0.0.49
+          - `#2860 <https://github.com/ansys/pyansys-geometry/pull/2860>`_
+
+        * - Bump ansys-api-discovery from 1.1.11 to 1.1.12
+          - `#2861 <https://github.com/ansys/pyansys-geometry/pull/2861>`_
+
+        * - Bump ansys-api-discovery from 1.1.12 to 1.1.13
+          - `#2866 <https://github.com/ansys/pyansys-geometry/pull/2866>`_
+
+        * - Bump ansys-sphinx-theme from 1.8.2 to 1.9.0 in the docs-deps group
+          - `#2869 <https://github.com/ansys/pyansys-geometry/pull/2869>`_
+
+        * - Bump ansys-tools-common from 0.5.0 to 0.5.1
+          - `#2870 <https://github.com/ansys/pyansys-geometry/pull/2870>`_
+
+        * - Bump the docs-deps group with 2 updates
+          - `#2875 <https://github.com/ansys/pyansys-geometry/pull/2875>`_, `#2890 <https://github.com/ansys/pyansys-geometry/pull/2890>`_
+
+        * - Bump pint from 0.25.2 to 0.25.3
+          - `#2876 <https://github.com/ansys/pyansys-geometry/pull/2876>`_
+
+        * - Bump pytest from 9.0.3 to 9.1.0
+          - `#2877 <https://github.com/ansys/pyansys-geometry/pull/2877>`_
+
+        * - Bump matplotlib from 3.10.9 to 3.11.0
+          - `#2878 <https://github.com/ansys/pyansys-geometry/pull/2878>`_
+
+        * - Bump ansys-api-discovery from 1.1.13 to 1.2.1
+          - `#2879 <https://github.com/ansys/pyansys-geometry/pull/2879>`_
+
+        * - Bump pytest from 9.1.0 to 9.1.1
+          - `#2881 <https://github.com/ansys/pyansys-geometry/pull/2881>`_
+
+        * - Bump ty from 0.0.49 to 0.0.51
+          - `#2882 <https://github.com/ansys/pyansys-geometry/pull/2882>`_
+
+        * - Bump scipy from 1.16.3 to 1.17.1
+          - `#2883 <https://github.com/ansys/pyansys-geometry/pull/2883>`_
+
+        * - Bump scipy from 1.17.1 to 1.18.0
+          - `#2892 <https://github.com/ansys/pyansys-geometry/pull/2892>`_
+
+        * - Bump ty from 0.0.51 to 0.0.52
+          - `#2893 <https://github.com/ansys/pyansys-geometry/pull/2893>`_
+
+        * - Bump ansys-api-discovery from 1.2.1 to 1.2.2
+          - `#2894 <https://github.com/ansys/pyansys-geometry/pull/2894>`_
+
+        * - Bump ty from 0.0.52 to 0.0.54
+          - `#2898 <https://github.com/ansys/pyansys-geometry/pull/2898>`_
+
+        * - Bump numpy from 2.4.6 to 2.5.0
+          - `#2899 <https://github.com/ansys/pyansys-geometry/pull/2899>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.15.5
+          - `#2846 <https://github.com/ansys/pyansys-geometry/pull/2846>`_
+
+        * - Bump pyproject-fmt from v2.23.0 to 2.23.0 in the pre-commit-hooks group
+          - `#2851 <https://github.com/ansys/pyansys-geometry/pull/2851>`_
+
+        * - Bump github/codeql-action from 4.36.1 to 4.36.2 in the actions group
+          - `#2852 <https://github.com/ansys/pyansys-geometry/pull/2852>`_
+
+        * - Bump the pre-commit-hooks group with 2 updates
+          - `#2858 <https://github.com/ansys/pyansys-geometry/pull/2858>`_
+
+        * - Bump codecov/codecov-action from 6.0.1 to 7.0.0 in the actions group
+          - `#2862 <https://github.com/ansys/pyansys-geometry/pull/2862>`_
+
+        * - Bump pyproject-fmt from v2.24.0 to 2.24.1 in the pre-commit-hooks group
+          - `#2863 <https://github.com/ansys/pyansys-geometry/pull/2863>`_
+
+        * - Bump ansys/pre-commit-hooks from v0.7.2 to v0.8.0 in the pre-commit-hooks group
+          - `#2867 <https://github.com/ansys/pyansys-geometry/pull/2867>`_
+
+        * - Update missing or outdated files
+          - `#2874 <https://github.com/ansys/pyansys-geometry/pull/2874>`_
+
+        * - Bump actions/checkout from 6.0.3 to 7.0.0 in the actions group
+          - `#2887 <https://github.com/ansys/pyansys-geometry/pull/2887>`_
+
+        * - Bump ruff-pre-commit from v0.15.17 to 0.15.18 in the pre-commit-hooks group
+          - `#2891 <https://github.com/ansys/pyansys-geometry/pull/2891>`_
+
+        * - Bump the actions group with 15 updates
+          - `#2900 <https://github.com/ansys/pyansys-geometry/pull/2900>`_
+
+        * - Style fixer workflow (to remove pre-commit.ci)
+          - `#2902 <https://github.com/ansys/pyansys-geometry/pull/2902>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Expanded body coverage to 100%
+          - `#2818 <https://github.com/ansys/pyansys-geometry/pull/2818>`_
+
+        * - Increased test coverage
+          - `#2847 <https://github.com/ansys/pyansys-geometry/pull/2847>`_
+
+        * - Increased test coverage (beam)
+          - `#2855 <https://github.com/ansys/pyansys-geometry/pull/2855>`_
+
+        * - Set component name and refresh design
+          - `#2896 <https://github.com/ansys/pyansys-geometry/pull/2896>`_
+
+        * - Improve partial ellipse sketching with rotation angle
+          - `#2897 <https://github.com/ansys/pyansys-geometry/pull/2897>`_
+
+
 `0.15.5 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.15.5>`_ - June 10, 2026
 ==========================================================================================
 
