@@ -26,7 +26,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read    
+  contents: read
   packages: read # Needs access to the Geometry docker image
 
 jobs:
