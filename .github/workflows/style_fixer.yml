@@ -1,0 +1,30 @@
+name: Pre-commit style fixer
+on:
+  pull_request:
+
+env:
+  MAIN_PYTHON_VERSION: '3.14'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write # Needed to push the changes back to the PR
+
+jobs:
+  code-style:
+    name: "Code style checks"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run PyAnsys code style checks"
+        uses: ansys/actions/code-style@a5b0351dc277d68c2dc1beca2d2674c7dfa4fc55 # v10.3.3
+
+      - name: "Commit changes (if any)"
+        if: failure()
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: apply code style fixes" || echo "No changes to commit"
+          git push origin HEAD:${{ github.head_ref }}
