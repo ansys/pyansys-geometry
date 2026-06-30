@@ -1322,20 +1322,21 @@ def test_partial_ellipse_sketch(start_angle, end_angle, semi_major, semi_minor, 
         partial_ellipse.geomdl_nurbs_curve.evaluate_single(u) for u in np.linspace(0, 1, 100)
     ]  # For 2D: [x, y]
     for point in points:
+        # Check that the points lie within the specified angle range (taking into account
+        # the rotation). So first... rotate back the ellipse (i.e. ellipse with no rotation)
+        # and then check the angle
         x, y = point[0], point[1]
-        # Check that the points lie within the specified angle range
-        angle = np.arctan2((y - origin.y.m) / semi_minor.m, (x - origin.x.m) / semi_major.m)
-        angle -= rot_angle  # Adjust for rotation
+        x_rotated = (x - origin.x.m) * np.cos(-rot_angle) - (y - origin.y.m) * np.sin(-rot_angle)
+        y_rotated = (x - origin.x.m) * np.sin(-rot_angle) + (y - origin.y.m) * np.cos(-rot_angle)
+        angle = np.arctan2(y_rotated / semi_minor.m, x_rotated / semi_major.m)
         if angle < 0:
-            angle += 2 * np.pi  # Normalize angle to [0, 2*pi]
+            angle += 2 * np.pi
         assert start_angle <= angle <= end_angle
 
         # Check that the points lie on the ellipse equation: (x/a)^2 + (y/b)^2 = 1
+        # Use the rotated back coordinates to check the ellipse equation - simpler formulas
         assert np.isclose(
-            ((x - origin.x.m) * np.cos(rot_angle) + (y - origin.y.m) * np.sin(rot_angle)) ** 2
-            / semi_major.m**2
-            + ((x - origin.x.m) * np.sin(rot_angle) - (y - origin.y.m) * np.cos(rot_angle)) ** 2
-            / semi_minor.m**2,
+            (x_rotated / semi_major.m) ** 2 + (y_rotated / semi_minor.m) ** 2,
             1,
             atol=1e-5,
         )
