@@ -42,7 +42,7 @@ jobs:
           BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           HEAD_REF: ${{ github.head_ref }}
         run: |
-          git config user.name "${BOT_USER}"
+          git config user.name "${BOT_USER}"    
           git config user.email "${BOT_EMAIL}"
           git add -A
           if git diff --staged --quiet; then
