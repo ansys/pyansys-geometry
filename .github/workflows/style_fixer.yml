@@ -16,7 +16,7 @@ jobs:
     name: "Code style checks"
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Required to push changes back to the PR
+      contents: write # Required to push changes back to the PR
     steps:
       - name: "Checkout code"
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -40,7 +40,7 @@ jobs:
       - name: "Commit changes (if any)"
         if: failure() && env.HAS_SECRETS == 'true'
         env:
-          BOT_USER: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}    
+          BOT_USER: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           BOT_EMAIL: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
           HEAD_REF: ${{ github.head_ref }}
         run: |
