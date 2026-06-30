@@ -4906,6 +4906,10 @@ def test_set_component_name(modeler: Modeler):
     component.name = "ChangedComponentName"
     assert component.name == "ChangedComponentName"
 
+    # Call update to ensure the name change is reflected in the design
+    design._update_design_inplace()
+    assert design.components[0].name == "ChangedComponentName"
+
 
 def test_get_face_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a face."""
