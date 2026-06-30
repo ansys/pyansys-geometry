@@ -1261,22 +1261,30 @@ def test_start_center_and_angle_clockwise_from_sketch():
 
 
 @pytest.mark.parametrize(
-    "start_angle, end_angle, semi_major, semi_minor, origin",
+    "start_angle, end_angle, semi_major, semi_minor, origin, rot_angle",
     [
-        (0, np.pi / 2, 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m)),
-        (np.pi / 4, 3 * np.pi / 4, 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m)),
-        (np.pi, 3 * np.pi / 2, 2 * UNITS.m, 1 * UNITS.m, Point2D([3, 4], UNITS.m)),
-        (0, 2 * np.pi, 2 * UNITS.m, 1 * UNITS.m, Point2D([6, 7], UNITS.m)),
+        (0, np.pi / 2, 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m), 0),
+        (np.pi / 4, 3 * np.pi / 4, 2 * UNITS.m, 1 * UNITS.m, Point2D([0, 0], UNITS.m), 0),
+        (np.pi, 3 * np.pi / 2, 2 * UNITS.m, 1 * UNITS.m, Point2D([3, 4], UNITS.m), 0),
+        (0, 2 * np.pi, 2 * UNITS.m, 1 * UNITS.m, Point2D([6, 7], UNITS.m), 0),
+        (0, 2 * np.pi, 2 * UNITS.m, 1 * UNITS.m, Point2D([6, 7], UNITS.m), np.pi / 2),
+        (0, 2 * np.pi, 2 * UNITS.m, 1 * UNITS.m, Point2D([6, 7], UNITS.m), 3),
     ],
 )
-def test_partial_ellipse_sketch(start_angle, end_angle, semi_major, semi_minor, origin):
+def test_partial_ellipse_sketch(start_angle, end_angle, semi_major, semi_minor, origin, rot_angle):
     """Test partial ellipse generation in a sketch."""
     # Create a Sketch instance
     sketch = Sketch()
 
     # Draw a partial ellipse in previous sketch
     sketch.partial_ellipse(
-        origin, semi_major, semi_minor, start_angle, end_angle, tag="PartialEllipse"
+        origin,
+        semi_major,
+        semi_minor,
+        start_angle,
+        end_angle,
+        angle=rot_angle,
+        tag="PartialEllipse",
     )
 
     # Check attributes are expected ones
@@ -1286,15 +1294,23 @@ def test_partial_ellipse_sketch(start_angle, end_angle, semi_major, semi_minor, 
     # Start angle and end angle should be as specified
     expected_start_point = Point2D(
         [
-            semi_major.m * np.cos(start_angle) + origin.x.m,
-            semi_minor.m * np.sin(start_angle) + origin.y.m,
+            semi_major.m * np.cos(start_angle) * np.cos(rot_angle)
+            - semi_minor.m * np.sin(start_angle) * np.sin(rot_angle)
+            + origin.x.m,
+            semi_major.m * np.cos(start_angle) * np.sin(rot_angle)
+            + semi_minor.m * np.sin(start_angle) * np.cos(rot_angle)
+            + origin.y.m,
         ],
         unit=UNITS.m,
     )
     expected_end_point = Point2D(
         [
-            semi_major.m * np.cos(end_angle) + origin.x.m,
-            semi_minor.m * np.sin(end_angle) + origin.y.m,
+            semi_major.m * np.cos(end_angle) * np.cos(rot_angle)
+            - semi_minor.m * np.sin(end_angle) * np.sin(rot_angle)
+            + origin.x.m,
+            semi_major.m * np.cos(end_angle) * np.sin(rot_angle)
+            + semi_minor.m * np.sin(end_angle) * np.cos(rot_angle)
+            + origin.y.m,
         ],
         unit=UNITS.m,
     )
@@ -1306,16 +1322,21 @@ def test_partial_ellipse_sketch(start_angle, end_angle, semi_major, semi_minor, 
         partial_ellipse.geomdl_nurbs_curve.evaluate_single(u) for u in np.linspace(0, 1, 100)
     ]  # For 2D: [x, y]
     for point in points:
+        # Check that the points lie within the specified angle range (taking into account
+        # the rotation). So first... rotate back the ellipse (i.e. ellipse with no rotation)
+        # and then check the angle
         x, y = point[0], point[1]
-        # Check that the points lie within the specified angle range
-        angle = np.arctan2((y - origin.y.m) / semi_minor.m, (x - origin.x.m) / semi_major.m)
+        x_rotated = (x - origin.x.m) * np.cos(-rot_angle) - (y - origin.y.m) * np.sin(-rot_angle)
+        y_rotated = (x - origin.x.m) * np.sin(-rot_angle) + (y - origin.y.m) * np.cos(-rot_angle)
+        angle = np.arctan2(y_rotated / semi_minor.m, x_rotated / semi_major.m)
         if angle < 0:
-            angle += 2 * np.pi  # Normalize angle to [0, 2*pi]
+            angle += 2 * np.pi
         assert start_angle <= angle <= end_angle
 
         # Check that the points lie on the ellipse equation: (x/a)^2 + (y/b)^2 = 1
+        # Use the rotated back coordinates to check the ellipse equation - simpler formulas
         assert np.isclose(
-            ((x - origin.x.m) ** 2 / semi_major.m**2) + ((y - origin.y.m) ** 2 / semi_minor.m**2),
+            (x_rotated / semi_major.m) ** 2 + (y_rotated / semi_minor.m) ** 2,
             1,
             atol=1e-5,
         )
