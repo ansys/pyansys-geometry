@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the designs service implementation for v1."""
 
 from pathlib import Path
@@ -37,6 +38,7 @@ from .conversions import (
     from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
     from_grpc_quantity_to_distance,
+    from_pmdb_options_to_grpc_pmdb_options,
 )
 
 
@@ -189,7 +191,8 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         if isinstance(file_path, str):
             file_path = Path(file_path)
 
-        options = kwargs.get("options")
+        fmd_options = kwargs.get("fmd_options")
+        pmdb_options = kwargs.get("pmdb_options")
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = SaveRequest(
@@ -197,7 +200,14 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             write_body_facets=kwargs["write_body_facets"],
             file_name=file_path.stem,
             fmd_export_options=(
-                from_fmd_options_to_grpc_fmd_options(options) if options is not None else None
+                from_fmd_options_to_grpc_fmd_options(fmd_options)
+                if fmd_options is not None
+                else None
+            ),
+            pmdb_export_options=(
+                from_pmdb_options_to_grpc_pmdb_options(pmdb_options)
+                if pmdb_options is not None
+                else None
             ),
         )
 

@@ -51,7 +51,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13", "3.14"]
+    assets_context_python_versions = ["3.12", "3.13", "3.14"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -269,6 +269,10 @@ html_css_files = [
     "custom.css",
 ]
 
+html_js_files = [
+    "js/download_notebooks.js",
+]
+
 html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
@@ -372,7 +376,12 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelog"]
+linkcheck_exclude_documents = [
+    "index",
+    "getting_started/local/index",
+    "changelog",
+    "examples/04_applied/05_pmdb_export_options",
+]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",

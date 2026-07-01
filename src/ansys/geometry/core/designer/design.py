@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing designs."""
 
 from enum import Enum, unique
@@ -68,6 +69,7 @@ from ansys.geometry.core.misc.options import (
     FMDExportOptions,
     ImportOptions,
     ImportOptionsDefinitions,
+    PMDBExportOptions,
     TessellationOptions,
 )
 from ansys.geometry.core.modeler import Modeler
@@ -302,6 +304,7 @@ class Design(Component):
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
         write_body_facets: bool = False,
         fmd_options: FMDExportOptions | None = None,
+        pmdb_options: PMDBExportOptions | None = None,
     ) -> None:
         """Export and download the design from the server.
 
@@ -315,6 +318,14 @@ class Design(Component):
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
         fmd_options : FMDExportOptions | None, default: None
             Options for FMD export. Only applicable when format is FMD.
+        pmdb_options : PMDBExportOptions | None, default: None
+            Options for PMDB export. Only applicable when format is PMDB.
+
+        Warnings
+        --------
+        FMD and PMDB export options are only available in Ansys 27.1 and later
+        products. If options are provided but the backend version does not support
+        them, the options will be ignored.
         """
         from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
 
@@ -346,6 +357,7 @@ class Design(Component):
                 write_body_facets=write_body_facets,
                 file_location=file_location,
                 fmd_options=fmd_options,
+                pmdb_options=pmdb_options,
             )
 
         # Write to file
@@ -434,8 +446,9 @@ class Design(Component):
         self,
         format: DesignFileFormat,
         write_body_facets: bool = False,
-        file_location: Union[Path, str] = None,
+        file_location: Path | str | None = None,
         fmd_options: FMDExportOptions | None = None,
+        pmdb_options: PMDBExportOptions | None = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -449,7 +462,8 @@ class Design(Component):
             Location on disk to save the file to.
         fmd_options : FMDExportOptions | None, default: None
             Options for FMD export. Only applicable when format is FMD.
-
+        pmdb_options : PMDBExportOptions | None, default: None
+            Options for PMDB export. Only applicable when format is PMDB.
 
         Returns
         -------
@@ -476,7 +490,8 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filename=file_location,
-                    options=fmd_options,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -489,7 +504,8 @@ class Design(Component):
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
                     filepath=file_location,
-                    options=fmd_options,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
         else:
             self._grpc_client.log.warning(
@@ -744,7 +760,11 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_pmdb(self, location: Path | str | None = None) -> Path:
+    def export_to_pmdb(
+        self,
+        location: Path | str | None = None,
+        options: PMDBExportOptions | None = None,
+    ) -> Path:
         """Export the design to a PMDB file.
 
         Parameters
@@ -762,7 +782,7 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "pmdb")
 
         # Export the design to a PMDB file
-        self.download(file_location, DesignFileFormat.PMDB)
+        self.download(file_location, DesignFileFormat.PMDB, pmdb_options=options)
 
         # Return the file location
         return file_location

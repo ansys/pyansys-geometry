@@ -291,6 +291,8 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
       # Import error message added in 27.1
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
 
   - version: "25.1"
     incompatible_tests:
@@ -401,6 +403,8 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
       # Import error message added in 27.1
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
 
   - version: "25.2"
     incompatible_tests:
@@ -460,6 +464,10 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
       # Import error message added in 27.1
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # Update design in place breaks component rename before 27.1 (Core Service)
+      - tests/integration/test_design.py::test_set_component_name
 
   - version: "26.1"
     incompatible_tests:
@@ -475,3 +483,7 @@ backends:
       - tests/integration/test_tessellation.py::test_body_tessellate_with_options
       # Import error message added in 27.1
       - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # Update design in place breaks component rename before 27.1 (Core Service)
+      - tests/integration/test_design.py::test_set_component_name

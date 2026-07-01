@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """This testing module automatically connects to the Geometry service running
 at localhost:50051.
 
@@ -330,3 +331,35 @@ def disable_active_design_check_true():
     yield
 
     pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK = False
+
+
+@pytest.fixture
+def tracker_payload_factory():
+    """Factory fixture for creating tracker payload dictionaries."""
+
+    def _factory(**overrides):
+        payload = {
+            "created_parts": [],
+            "deleted_parts": [],
+            "created_components": [],
+            "modified_components": [],
+            "deleted_components": [],
+            "created_bodies": [],
+            "modified_bodies": [],
+            "deleted_bodies": [],
+        }
+        payload.update(overrides)
+        return payload
+
+    return _factory
+
+
+@pytest.fixture
+def unit_box_sketch():
+    """Fixture providing a simple 1x1 box sketch."""
+    from ansys.geometry.core.math import Point2D
+    from ansys.geometry.core.sketch import Sketch
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    return sketch
