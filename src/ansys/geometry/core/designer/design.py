@@ -800,6 +800,8 @@ class Design(Component):
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
         design_curves: list[DesignCurve] | None = None,
+        datum_planes: list[DatumPlane] | None = None,
+        coordinate_systems: list[CoordinateSystem] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -823,6 +825,10 @@ class Design(Component):
             All vertices to include in the named selection.
         design_curves : list[DesignCurve], default: None
             All design curves to include in the named selection.
+        datum_planes : list[DatumPlane], default: None
+            All datum planes to include in the named selection.
+        coordinate_systems : list[CoordinateSystem], default: None
+            All coordinate systems to include in the named selection.
 
         Returns
         -------
@@ -837,12 +843,23 @@ class Design(Component):
         """
         # Verify that at least one entity is provided
         if not any(
-            [bodies, faces, edges, beams, design_points, components, vertices, design_curves]
+            [
+                bodies,
+                faces,
+                edges,
+                beams,
+                design_points,
+                components,
+                vertices,
+                design_curves,
+                datum_planes,
+                coordinate_systems,
+            ]
         ):
             raise ValueError(
                 "At least one of the following must be provided: "
                 "bodies, faces, edges, beams, design_points, components, vertices, "
-                "or design_curves."
+                "design_curves, datum_planes, or coordinate_systems."
             )
 
         named_selection = NamedSelection(
@@ -857,6 +874,8 @@ class Design(Component):
             components=components,
             vertices=vertices,
             design_curves=design_curves,
+            datum_planes=datum_planes,
+            coordinate_systems=coordinate_systems,
         )
 
         self._named_selections[named_selection.name] = named_selection

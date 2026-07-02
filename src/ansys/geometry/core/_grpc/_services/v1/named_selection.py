@@ -82,6 +82,8 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
             "design_curves": [curve.id.id for curve in response.curves],
+            "datum_planes": [plane.id.id for plane in response.datum_planes],
+            "coordinate_systems": [cs.id.id for cs in response.coordinate_systems],
         }
 
     @protect_grpc
@@ -102,7 +104,9 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
         )
 
         # Call the gRPC service
+        print("REQUEST SENT TO BACKEND", request)
         response = self.stub.Create(request).named_selections[0]
+        print("RESPONSE FROM BACKEND", response)
 
         # Return the response - formatted as a dictionary
         return {
@@ -116,6 +120,8 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
             "design_curves": [curve.id.id for curve in response.curves],
+            "datum_planes": [plane.id.id for plane in response.datum_planes],
+            "coordinate_systems": [cs.id.id for cs in response.coordinate_systems],
         }
 
     @protect_grpc

@@ -28,6 +28,8 @@ from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import Beam
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
@@ -39,6 +41,8 @@ from ansys.geometry.core.misc.auxiliary import (
     get_beams_from_ids,
     get_bodies_from_ids,
     get_components_from_ids,
+    get_coordinate_systems_from_ids,
+    get_datum_planes_from_ids,
     get_design_curves_from_ids,
     get_design_points_from_ids,
     get_edges_from_ids,
@@ -83,6 +87,10 @@ class NamedSelection:
         All vertices to include in the named selection.
     design_curves : list[DesignCurve], default: None
         All design curves to include in the named selection.
+    datum_planes: list[DatumPlane], default: None
+        All datum planes to add to the named selection.
+    coordinate_systems: list[CoordinateSystem], default: None
+        All coordinate systems to add to the named selection.
     """
 
     def __init__(
@@ -98,6 +106,8 @@ class NamedSelection:
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
         design_curves: list[DesignCurve] | None = None,
+        datum_planes: list[DatumPlane] | None = None,
+        coordinate_systems: list[CoordinateSystem] | None = None,
         preexisting_id: str | None = None,
     ):
         """Initialize the ``NamedSelection`` class."""
@@ -115,6 +125,8 @@ class NamedSelection:
         components = components if components is not None else []
         vertices = vertices if vertices is not None else []
         design_curves = design_curves if design_curves is not None else []
+        datum_planes = datum_planes if datum_planes is not None else []
+        coordinate_systems = coordinate_systems if coordinate_systems is not None else []
 
         # Instantiate
         self._bodies = bodies
@@ -125,6 +137,8 @@ class NamedSelection:
         self._components = components
         self._vertices = vertices
         self._design_curves = design_curves
+        self._datum_planes = datum_planes
+        self._coordinate_systems = coordinate_systems
 
         # Store ids for later use... when verifying if the NS changed.
         self._ids_cached = {
@@ -136,6 +150,10 @@ class NamedSelection:
             "components": [component.id for component in components],
             "vertices": [vertex.id for vertex in vertices],
             "design_curves": [dc.id for dc in design_curves],
+            "datum_planes": [plane.id for plane in datum_planes],
+            "coordinate_systems": [
+                cs.id.id if hasattr(cs.id, "id") else cs.id for cs in coordinate_systems
+            ],
         }
         self._faces_meta_cached = [
             {
@@ -302,6 +320,42 @@ class NamedSelection:
 
         return self._design_curves
 
+    @property
+    def datum_planes(self) -> list[DatumPlane]:
+        """All datum planes in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing datum planes of named selections is only"
+                " consistent starting in version 2027 R1."
+            )
+            return []
+        if self._datum_planes is None:
+            # Get all datum planes from the named selection
+            self._datum_planes = get_datum_planes_from_ids(
+                self._design, self._ids_cached["datum_planes"]
+            )
+
+        return self._datum_planes
+
+    @property
+    def coordinate_systems(self) -> list[CoordinateSystem]:
+        """All coordinate systems in the named selection."""
+        self.__verify_ns()
+        if self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "Accessing coordinate systems of named selections is only"
+                " consistent starting in version 2027 R1."
+            )
+            return []
+        if self._coordinate_systems is None:
+            # Get all coordinate systems from the named selection
+            self._coordinate_systems = get_coordinate_systems_from_ids(
+                self._design, self._ids_cached["coordinate_systems"]
+            )
+
+        return self._coordinate_systems
+
     def add_members(
         self,
         bodies: list[Body] | None = None,
@@ -312,6 +366,8 @@ class NamedSelection:
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
         design_curves: list[DesignCurve] | None = None,
+        datum_planes: list[DatumPlane] | None = None,
+        coordinate_systems: list[CoordinateSystem] | None = None,
     ) -> "NamedSelection":
         """Add members to the named selection.
 
@@ -333,6 +389,10 @@ class NamedSelection:
             All vertices to add to the named selection.
         design_curves: list[DesignCurve], default: None
             All design curves to add to the named selection.
+        datum_planes: list[DatumPlane], default: None
+            All datum planes to add to the named selection.
+        coordinate_systems: list[CoordinateSystem], default: None
+            All coordinate systems to add to the named selection.
 
         Returns
         -------
@@ -359,6 +419,8 @@ class NamedSelection:
             components = components if components is not None else []
             vertices = vertices if vertices is not None else []
             design_curves = design_curves if design_curves is not None else []
+            datum_planes = datum_planes if datum_planes is not None else []
+            coordinate_systems = coordinate_systems if coordinate_systems is not None else []
 
             new_ns = NamedSelection(
                 self._name,
@@ -372,6 +434,8 @@ class NamedSelection:
                 components=components + self.components,
                 vertices=vertices + self.vertices,
                 design_curves=design_curves + self.design_curves,
+                datum_planes=datum_planes + self.datum_planes,
+                coordinate_systems=coordinate_systems + self.coordinate_systems,
             )
 
             # Delete the old NS server-side
@@ -387,13 +451,28 @@ class NamedSelection:
 
     def remove_members(
         self,
-        members: list[Union[Body, Face, Edge, Beam, DesignPoint, Component, Vertex, DesignCurve]],
+        members: list[
+            Union[
+                Body,
+                Face,
+                Edge,
+                Beam,
+                DesignPoint,
+                Component,
+                Vertex,
+                DesignCurve,
+                DatumPlane,
+                CoordinateSystem,
+            ]
+        ],
     ) -> "NamedSelection":
         """Remove members from the named selection.
 
         Parameters
         ----------
-        members : list of Body, Face, Edge, Beam, DesignPoint, Component, or Vertex
+        members : list of Body, Face, Edge, Beam, DesignPoint, Component, Vertex,
+        DesignCurve, DatumPlane, or CoordinateSystem
+
             The members to remove from the named selection.
 
         Returns
@@ -417,6 +496,8 @@ class NamedSelection:
                 + len(self.components)
                 + len(self.design_curves)
                 + len(self.vertices)
+                + len(self.datum_planes)
+                + len(self.coordinate_systems)
             )
             if len(members) >= total_members:
                 raise GeometryRuntimeError("NamedSelection cannot be empty after removal.")
@@ -433,6 +514,8 @@ class NamedSelection:
                 components=[component for component in self.components if component not in members],
                 vertices=[vertex for vertex in self.vertices if vertex not in members],
                 design_curves=[dc for dc in self.design_curves if dc not in members],
+                datum_planes=[dp for dp in self.datum_planes if dp not in members],
+                coordinate_systems=[cs for cs in self.coordinate_systems if cs not in members],
             )
 
             # Delete the old NS server-side
@@ -468,6 +551,8 @@ class NamedSelection:
             "components": response.get("components"),
             "vertices": response.get("vertices"),
             "design_curves": response.get("design_curves"),
+            "datum_planes": response.get("datum_planes"),
+            "coordinate_systems": response.get("coordinate_systems"),
         }
 
         faces_meta = response.get("faces_meta") or []
@@ -535,6 +620,8 @@ class NamedSelection:
             lines.append(f"  N Components         : {len(self.components)}")
             lines.append(f"  N Vertices           : {len(self.vertices)}")
             lines.append(f"  N Design Curves      : {len(self.design_curves)}")
+            lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
+            lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
 
         finally:
             self._verified = False
