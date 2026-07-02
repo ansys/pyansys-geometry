@@ -49,9 +49,9 @@
    :target: https://github.com/astral-sh/ruff
    :alt: Ruff
 
-.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-geometry/main.svg
-   :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-geometry/main
-   :alt: pre-commit.ci
+.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+   :target: https://pre-commit.com/
+   :alt: pre-commit
 
 .. |deep-wiki| image:: https://deepwiki.com/badge.svg
    :target: https://deepwiki.com/ansys/pyansys-geometry

@@ -45,6 +45,11 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.beam import (
+    BeamCrossSectionInfo,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
@@ -370,7 +375,14 @@ def test_update_from_tracker_created_parts(modeler: Modeler):
 
 
 def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
+<<<<<<< HEAD
     """Test deleted parts are marked inactive and missing parts are warned about."""
+=======
+    """Test _update_from_tracker() for deleted parts.
+
+    Verifies parts are marked inactive and warnings are logged for missing parts.
+    """
+>>>>>>> origin/main
     design = modeler.create_design("update_tracker_deleted")
 
     mock_part = Mock()
@@ -767,7 +779,11 @@ def test_find_and_update_component_updates_name(modeler: Modeler):
 
 
 def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
+<<<<<<< HEAD
     """Test _find_and_remove_component() marks a component as removed and returns True."""
+=======
+    """Test _find_and_remove_component() marks component as removed and returns True."""
+>>>>>>> origin/main
     design = modeler.create_design("remove_comp")
     comp = design.add_component("ComponentToRemove")
     comp_id = comp.id
@@ -2274,6 +2290,36 @@ def test_delete_body_component(modeler: Modeler):
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
     assert "Color                : None" in body_1_str
+
+
+def test_search_component_by_name(modeler: Modeler):
+    design = modeler.create_design("Deletion_Test")
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_2_duplicate = comp_2.add_component("Component_2")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+
+    # Search for component at top level
+    found_comp_1 = design.search_component_by_name("Component_1")
+    assert len(found_comp_1) == 1
+    assert comp_1 == found_comp_1[0]
+
+    # Search for nested component
+    found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
+    assert len(found_nested_comp) == 1
+    assert nested_1_comp_1 == found_nested_comp[0]
+
+    # Search for a non-existing component
+    found_none = design.search_component_by_name("NonExistingComponent")
+    assert len(found_none) == 0
+
+    # Search for a component with a name that exists in multiple places
+    found_duplicate = design.search_component_by_name("Component_2")
+    assert len(found_duplicate) == 2
+    assert found_duplicate[0] == comp_2
+    assert found_duplicate[1] == comp_2_duplicate
 
 
 def test_shared_topology(modeler: Modeler):
@@ -4127,6 +4173,10 @@ def test_set_component_name(modeler: Modeler):
     component.name = "ChangedComponentName"
     assert component.name == "ChangedComponentName"
 
+    # Call update to ensure the name change is reflected in the design
+    design._update_design_inplace()
+    assert design.components[0].name == "ChangedComponentName"
+
 
 def test_get_face_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a face."""
@@ -4198,6 +4248,7 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.z.m == 1
 
 
+<<<<<<< HEAD
 @pytest.fixture
 def tracker_payload_factory():
     def _factory(**overrides):
@@ -4224,13 +4275,21 @@ def unit_box_sketch() -> Sketch:
     return sketch
 
 
+=======
+>>>>>>> origin/main
 def _entity(entity_id: str) -> Mock:
     entity = Mock()
     entity.id = entity_id
     return entity
 
 
+<<<<<<< HEAD
 def _named_selection(*, backend_version=(27, 1, 0), bodies=None) -> object:
+=======
+def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
+    from ansys.geometry.core.designer.selection import NamedSelection
+
+>>>>>>> origin/main
     grpc_client = Mock()
     grpc_client.backend_version = backend_version
     grpc_client.log = Mock()
@@ -4788,6 +4847,7 @@ def test_update_body_properties(modeler: Modeler):
     assert body._template._is_surface is True
 
 
+<<<<<<< HEAD
 def test_clear_body_cache_for_part_component_bodies(modeler: Modeler):
     """Test _clear_body_cache_for_part clears caches for all matching components."""
     design = modeler.create_design("clear_body_cache_test")
@@ -4833,6 +4893,8 @@ def test_clear_body_cache_for_part_nested(modeler: Modeler):
     non_matching_component._clear_cached_bodies.assert_not_called()
 
 
+=======
+>>>>>>> origin/main
 def test_get_edge_tight_bounding_box(modeler: Modeler):
     """Test getting the tight bounding box of a face."""
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
@@ -5848,6 +5910,7 @@ def test_tracking_captures_boolean_operations(modeler: Modeler):
     assert len(unite_changes["deleted_bodies"]) == 1
 
 
+<<<<<<< HEAD
 def _tracker_payload(**overrides):
     payload = {
         "created_parts": [],
@@ -5861,6 +5924,217 @@ def _tracker_payload(**overrides):
     }
     payload.update(overrides)
     return payload
+=======
+def test_tracker_response_missing_master_part_warns(modeler: Modeler, tracker_payload_factory):
+    """Test _update_from_tracker warns when master part not found for MasterComponent."""
+    design = modeler.create_design("cov_missing_master_part")
+
+    tracker_response = tracker_payload_factory(
+        created_components=[
+            {
+                "id": "master_comp_cov",
+                "master_id": "master_comp_cov",
+                "name": "MissingPartMaster",
+                "part_master": {"id": "part_does_not_exist"},
+                "parent_id": design.id,
+                "placement": None,
+            }
+        ]
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+    assert any(
+        "Could not find part for MasterComponent" in str(c) for c in warning_spy.call_args_list
+    )
+
+
+def test_tracker_response_modified_deleted_component_not_found(
+    modeler: Modeler, tracker_payload_factory
+):
+    """Test _update_from_tracker warns when modified/deleted components not found."""
+    design = modeler.create_design("cov_component_not_found")
+
+    tracker_response = tracker_payload_factory(
+        modified_components=[{"id": "missing_mod", "name": "MissingMod"}],
+        deleted_components=[{"id": "missing_del"}],
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+    warning_messages = [str(c) for c in warning_spy.call_args_list]
+    assert any("Could not find component to update" in msg for msg in warning_messages)
+    assert any("Could not find component to delete" in msg for msg in warning_messages)
+
+
+def test_find_existing_part_nested_components(modeler: Modeler):
+    """Test _find_existing_part searches nested components for parts."""
+    design = modeler.create_design("cov_find_part_nested")
+    nested = design.add_component("Parent").add_component("Child")
+
+    found = design._find_existing_part(nested._master_component.part.id)
+
+    assert found == nested._master_component.part
+
+
+def test_find_and_remove_part_sets_alive_flag(modeler: Modeler):
+    """Test _find_and_remove_part marks part as not alive."""
+    design = modeler.create_design("cov_remove_part_flag")
+    part = design._master_component.part
+    part._is_alive = True
+
+    removed = design._find_and_remove_part({"id": part.id})
+
+    assert removed is True
+    assert part._is_alive is False
+
+
+def test_find_and_add_component_to_root_design_tracker(modeler: Modeler):
+    """Test _find_and_add_component_to_design adds component to root design."""
+    design = modeler.create_design("cov_add_component_root")
+
+    component_info = {
+        "id": "new_root_cov",
+        "master_id": design._master_component.id,
+        "name": "RootCov",
+        "parent_id": design.id,
+        "part_master": {"id": design._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {design._master_component.id: design._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "RootCov"
+
+
+def test_find_and_add_component_nested_parent_recurses(modeler: Modeler):
+    """Test _find_and_add_component_to_design recurses through nested parents."""
+    design = modeler.create_design("cov_add_component_nested")
+    grandparent = design.add_component("GrandParent")
+    parent = grandparent.add_component("Parent")
+
+    component_info = {
+        "id": "new_child_cov",
+        "master_id": parent._master_component.id,
+        "name": "ChildCov",
+        "parent_id": parent.id,
+        "part_master": {"id": parent._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {parent._master_component.id: parent._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "ChildCov"
+
+
+def test_find_and_update_component_nested_and_missing(modeler: Modeler):
+    """Test _find_and_update_component finds nested component or returns False."""
+    design = modeler.create_design("cov_update_component")
+    nested = design.add_component("Parent").add_component("Original")
+
+    updated = design._find_and_update_component(
+        {"id": nested.id, "name": "Updated"}, design.components
+    )
+    not_found = design._find_and_update_component(
+        {"id": "missing", "name": "Nope"}, design.components
+    )
+
+    assert updated is True
+    assert nested.name == "Updated"
+    assert not_found is False
+
+
+def test_update_from_tracker_modified_body_nested_component(
+    modeler: Modeler, tracker_payload_factory
+):
+    """Test _update_from_tracker updates modified bodies in nested components."""
+    design = modeler.create_design("cov_mod_body_nested")
+    nested = design.add_component("Parent").add_component("Child")
+    body = nested.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    tracker_response = tracker_payload_factory(
+        modified_bodies=[{"id": body._template.id, "name": "NestedUpdated", "is_surface": True}]
+    )
+
+    design._update_from_tracker(tracker_response)
+
+    assert body.name == "NestedUpdated"
+    assert body._template.is_surface is True
+
+
+def test_update_from_tracker_deleted_nested_body_breaks_recursion(
+    modeler: Modeler, tracker_payload_factory
+):
+    """Test _update_from_tracker deletes nested bodies and breaks from recursion."""
+    design = modeler.create_design("cov_del_body_nested")
+    parent = design.add_component("Parent")
+    child = parent.add_component("Child")
+    nested_body = child.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    tracker_response = tracker_payload_factory(
+        deleted_bodies=[{"id": nested_body.id.split("/")[-1]}]
+    )
+
+    design._update_from_tracker(tracker_response)
+
+    assert nested_body.is_alive is False
+
+
+def test_find_and_remove_body_recursive_success(modeler: Modeler):
+    """Test _find_and_remove_body removes nested body and marks not alive."""
+    design = modeler.create_design("cov_remove_body_recursive")
+    parent = design.add_component("Parent")
+    child = parent.add_component("Child")
+    body = child.extrude_sketch("NestedBody", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body_id = body.id.split("/")[-1]
+
+    removed = design._find_and_remove_body({"id": body_id}, parent)
+
+    assert removed is True
+    assert body.is_alive is False
+
+
+def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
+    """Test _clear_body_cache_for_part clears cache only for matching components."""
+    design = modeler.create_design("cov_clear_cache_nested")
+    target_part = design._master_component.part
+
+    matching_component = Mock()
+    matching_component._master_component = Mock()
+    matching_component._master_component.part = target_part
+    matching_component._clear_cached_bodies = Mock()
+
+    non_matching_component = Mock()
+    non_matching_component._master_component = Mock()
+    non_matching_component._master_component.part = Part("other", "other", [], [])
+    non_matching_component._clear_cached_bodies = Mock()
+
+    with patch.object(
+        design,
+        "_get_all_components",
+        return_value=[matching_component, non_matching_component],
+    ):
+        design._clear_body_cache_for_part(target_part)
+
+    matching_component._clear_cached_bodies.assert_called_once()
+    non_matching_component._clear_cached_bodies.assert_not_called()
+
+
+def test_move_bodies_to_component(modeler: Modeler):
+    """Test moving bodies between components.
+>>>>>>> origin/main
 
 
 def test_tracker_response_missing_master_part_warns(modeler: Modeler):
@@ -5900,6 +6174,7 @@ def test_tracker_response_modified_deleted_component_not_found(modeler: Modeler)
     with patch.object(design._grpc_client.log, "warning") as warning_spy:
         design._update_from_tracker(tracker_response)
 
+<<<<<<< HEAD
     warning_messages = [str(c) for c in warning_spy.call_args_list]
     assert any("Could not find component to update" in msg for msg in warning_messages)
     assert any("Could not find component to delete" in msg for msg in warning_messages)
@@ -6060,3 +6335,58 @@ def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
 
     matching_component._clear_cached_bodies.assert_called_once()
     non_matching_component._clear_cached_bodies.assert_not_called()
+=======
+    assert len(target2.bodies) == 2
+    moved_names = {b.name for b in target2.bodies}
+    assert moved_names == {"BodyA", "BodyB"}
+    assert len(source2.bodies) == 0
+
+
+def test_beam_cross_section_info_properties_and_repr():
+    """Test BeamCrossSectionInfo property accessors and repr output."""
+    section_frame = Frame(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    section_info = BeamCrossSectionInfo(
+        SectionAnchorType.CENTROID,
+        15.0,
+        section_frame,
+        None,
+    )
+
+    assert section_info.section_anchor == SectionAnchorType.CENTROID
+    assert section_info.section_angle == 15.0
+    assert section_info.section_frame == section_frame
+    assert section_info.section_profile is None
+
+    section_repr = repr(section_info)
+    assert "ansys.geometry.core.designer.BeamCrossSectionInfo" in section_repr
+    assert "Section Anchor       : CENTROID" in section_repr
+    assert "Section Angle        : 15.0" in section_repr
+    assert f"Section Frame        : {section_frame}" in section_repr
+    assert "Section Profile info" in section_repr
+    assert "None" in section_repr
+
+
+def test_beam_properties_getters():
+    """Test BeamProperties property accessors."""
+    centroid = ParamUV(0.1, 0.2)
+    shear_center = ParamUV(0.3, 0.4)
+    properties = BeamProperties(
+        area=1.0,
+        centroid=centroid,
+        warping_constant=2.0,
+        ixx=3.0,
+        ixy=4.0,
+        iyy=5.0,
+        shear_center=shear_center,
+        torsion_constant=6.0,
+    )
+
+    assert properties.area == 1.0
+    assert properties.centroid == centroid
+    assert properties.warping_constant == 2.0
+    assert properties.ixx == 3.0
+    assert properties.ixy == 4.0
+    assert properties.iyy == 5.0
+    assert properties.shear_center == shear_center
+    assert properties.torsion_constant == 6.0
+>>>>>>> origin/main
