@@ -537,6 +537,7 @@ def launch_modeler_with_geometry_service(
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
     proto_version: str = None,
+    bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -546,18 +547,27 @@ def launch_modeler_with_geometry_service(
     but the endpoint is not available, the startup will fail. Otherwise, it will try to
     launch its own service.
 
+    This method automatically detects the operating system and launches the
+    appropriate backend:
+
+    - On **Windows**: Launches the Geometry DMS service (available from v24.1).
+    - On **Linux**: Launches the Geometry Core service (available from v25.2).
+
     Parameters
     ----------
     version: str | int, optional
-        The product version to be started. Goes from v24.1 to
-        the latest. Default is ``None``.
+        The product version to be started. On Windows, this goes from v24.1 to
+        the latest. On Linux, this goes from v25.2 to the latest. Default is ``None``.
         If a specific product version is requested but not installed locally,
         a SystemError will be raised.
 
         **Ansys products versions and their corresponding int values:**
 
-        * ``241`` : Ansys 24R1
-        * ``242`` : Ansys 24R2
+        * ``241`` : Ansys 24R1 (Windows only)
+        * ``242`` : Ansys 24R2 (Windows only)
+        * ``251`` : Ansys 25R1 (Windows only)
+        * ``252`` : Ansys 25R2
+        * ``261`` : Ansys 26R1
     host: str, optional
         IP address at which the Geometry service will be deployed. By default,
         its value will be ``localhost``.
@@ -607,6 +617,9 @@ def launch_modeler_with_geometry_service(
     proto_version : str, default: None
         The version of the gRPC API protocol to use. If None, the latest
         version supported by the server will be used. Options are "v0" and "v1".
+    bypass_token : str | None, default: None
+        Token used to bypass license checks when connecting to the service.
+        If None, no bypass token is used.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -622,8 +635,8 @@ def launch_modeler_with_geometry_service(
         If the specified endpoint is already in use, a connection
         error will be raised.
     SystemError
-        If there is not an Ansys product 24.1 version or later installed
-        a SystemError will be raised.
+        If there is not an Ansys product 24.1 (Windows) or 25.2 (Linux) version
+        or later installed, a SystemError will be raised.
 
     Examples
     --------
@@ -643,15 +656,26 @@ def launch_modeler_with_geometry_service(
         timeout=300,
         server_log_level=0)
     """
-    # If we are in a Windows environment, we are going to write down the server
-    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
-    if os.name == "nt" and server_logs_folder is None:
-        # Writing to the "Public" folder by default - no write permissions specifically required.
-        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+    # Determine the backend type and minimum version based on the OS
+    if os.name == "nt":
+        backend_type = BackendType.WINDOWS_SERVICE
+        specific_minimum_version = None  # Default minimum version for Windows (24.1)
+    else:
+        backend_type = BackendType.LINUX_SERVICE
+        specific_minimum_version = 252  # Linux requires 25.2+
+
+    # Set up the server logs folder based on the OS
+    if server_logs_folder is None:
+        if os.name == "nt":
+            # Writing to the "Public" folder by default - no write permissions specifically required.
+            server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        else:
+            # Writing to the system temp folder by default - no write permissions specifically required.
+            server_logs_folder = Path(tempfile.gettempdir(), "Ansys", "GeometryService")
         LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(
-        BackendType.WINDOWS_SERVICE,
+        backend_type,
         version=version,
         host=host,
         port=port,
@@ -668,6 +692,8 @@ def launch_modeler_with_geometry_service(
         uds_id=uds_id,
         certs_dir=certs_dir,
         proto_version=proto_version,
+        specific_minimum_version=specific_minimum_version,
+        bypass_token=bypass_token,
     )
 
 
@@ -989,132 +1015,64 @@ def launch_modeler_with_core_service(
     bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
-    """Start the Geometry Core service locally using the ``ProductInstance`` class.
+    """Start the Geometry service locally using the ``ProductInstance`` class.
 
-    When calling this method, a standalone Geometry Core service is started.
-    By default, if an endpoint is specified (by defining `host` and `port` parameters)
-    but the endpoint is not available, the startup will fail. Otherwise, it will try to
-    launch its own service.
+    .. deprecated::
+        This function is deprecated. Use :func:`launch_modeler_with_geometry_service` instead.
+        The platform-specific backend selection is now handled automatically.
+
+    This function is an alias for :func:`launch_modeler_with_geometry_service`.
+    It automatically detects the operating system and launches the appropriate backend.
+
+    See :func:`launch_modeler_with_geometry_service` for full parameter documentation.
 
     Parameters
     ----------
-    version: str | int, optional
-        The product version to be started. Goes from v25.2 to
-        the latest. Default is ``None``.
-        If a specific product version is requested but not installed locally,
-        a SystemError will be raised.
-
-        **Ansys products versions and their corresponding int values:**
-
-        * ``252`` : Ansys 25R2
-        * ``261`` : Ansys 26R1
-        * ``271`` : Ansys 27R1
-    host: str, optional
-        IP address at which the service will be deployed. By default,
-        its value will be ``localhost``.
+    version : str | int, optional
+        The product version to be started.
+    host : str, optional
+        IP address at which the service will be deployed. Default is ``"localhost"``.
     port : int, optional
-        Port at which the service will be deployed. By default, its
-        value will be ``None``.
+        Port at which the service will be deployed.
     enable_trace : bool, optional
-        Boolean enabling the logs trace on the service console window.
-        By default its value is ``False``.
+        Enable logs trace on the service console window. Default is ``False``.
     timeout : int, optional
-        Timeout for starting the backend startup process. The default is 60.
+        Timeout for starting the backend startup process. Default is 60.
     server_log_level : int, optional
-        Backend's log level from 0 to 3:
-            0: Chatterbox
-            1: Debug
-            2: Warning
-            3: Error
-
-        The default is ``2`` (Warning).
+        Backend's log level from 0 to 3. Default is ``2`` (Warning).
     client_log_level : int, optional
-        Logging level to apply to the client. By default, INFO level is used.
-        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+        Logging level to apply to the client. Default is ``logging.INFO``.
     server_logs_folder : str, optional
-        Sets the backend's logs folder path. If nothing is defined,
-        the backend will use its default path.
+        Backend's logs folder path.
     client_log_file : str, optional
-        Sets the client's log file path. If nothing is defined,
-        the client will log to the console.
+        Client's log file path.
     server_working_dir : str | Path, optional
-        Sets the working directory for the product instance. If nothing is defined,
-        the working directory will be inherited from the parent process.
+        Working directory for the product instance.
     transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+        Transport mode selected.
     uds_dir : Path | str | None
-        Directory to use for Unix Domain Sockets (UDS) transport mode.
-        By default `None` and thus it will use the "~/.conn" folder.
+        Directory for Unix Domain Sockets transport mode.
     uds_id : str | None
-        Optional ID to use for the UDS socket filename.
-        By default `None` and thus it will use "aposdas_socket.sock".
-        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+        ID for the UDS socket filename.
     certs_dir : Path | str | None
-        Directory to use for TLS certificates.
-        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
-        If not found, it will use the "certs" folder assuming it is in the current working
-        directory.
-    proto_version : str | None, default: None
-        The version of the gRPC API protocol to use. If None, the latest
-        version supported by the server will be used. Options are "v0" and "v1".
-    bypass_token : str | None, default: None
-        Token used to bypass license checks when connecting to the service.
-        If None, no bypass token is used.
+        Directory for TLS certificates.
+    proto_version : str | None
+        The gRPC API protocol version to use.
+    bypass_token : str | None
+        Token to bypass license checks.
     **kwargs : dict, default: None
-        Placeholder to prevent errors when passing additional arguments that
-        are not compatible with this method.
+        Additional arguments (unused, for compatibility).
 
     Returns
     -------
     Modeler
-        Instance of the Geometry Core service.
-
-    Raises
-    ------
-    ConnectionError
-        If the specified endpoint is already in use, a connection
-        error will be raised.
-    SystemError
-        If there is not an Ansys product 25.2 version or later installed
-        a SystemError will be raised.
-
-    Examples
-    --------
-    Starting a geometry core service with the default parameters and getting back a ``Modeler``
-    object:
-
-    >>> from ansys.geometry.core import launch_modeler_with_core_service
-    >>> modeler = launch_modeler_with_core_service()
-
-    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
-    logs, traces enabled and a ``300`` seconds timeout:
-
-    >>> from ansys.geometry.core import launch_modeler_with_core_service
-    >>> modeler = launch_modeler_with_core_service(host="10.171.22.44",
-        port=5001,
-        enable_trace= True,
-        timeout=300,
-        server_log_level=0)
+        Instance of the Geometry service.
     """
-    # If we are in a Windows environment, we are going to write down the server
-    # logs in the %PUBLIC%/Documents/Ansys/GeometryService folder.
-    if os.name == "nt" and server_logs_folder is None:
-        # Writing to the "Public" folder by default - no write permissions specifically required.
-        server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
-        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
-    elif server_logs_folder is None:
-        # Writing to the system temp folder by default - no write permissions specifically required.
-        server_logs_folder = Path(tempfile.gettempdir(), "Ansys", "GeometryService")
-        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
-
-    return prepare_and_start_backend(
-        BackendType.LINUX_SERVICE,
+    return launch_modeler_with_geometry_service(
         version=version,
         host=host,
         port=port,
         enable_trace=enable_trace,
-        api_version=ApiVersions.LATEST,
         timeout=timeout,
         server_log_level=server_log_level,
         client_log_level=client_log_level,
@@ -1125,7 +1083,6 @@ def launch_modeler_with_core_service(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
-        specific_minimum_version=252,
         proto_version=proto_version,
         bypass_token=bypass_token,
     )
