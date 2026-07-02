@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``trame_gui.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.plotting.trame_gui
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: trame_gui
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.trame_gui.TrameVisualizer`
+            - Defines the trame layout view.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> TrameVisualizer</api/ansys/geometry/core/plotting/trame_gui/TrameVisualizer>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

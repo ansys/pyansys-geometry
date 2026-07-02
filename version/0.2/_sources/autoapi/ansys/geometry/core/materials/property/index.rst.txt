@@ -1,0 +1,225 @@
+:py:mod:`ansys.geometry.core.materials.property`
+================================================
+
+.. py:module:: ansys.geometry.core.materials.property
+
+.. autoapi-nested-parse::
+
+   Provides the ``MaterialProperty`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.materials.property.MaterialPropertyType
+   ansys.geometry.core.materials.property.MaterialProperty
+
+
+
+
+.. py:class:: MaterialPropertyType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Provides an enum holding the possible values for ``MaterialProperty`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: DENSITY
+      :value: 'Density'
+
+      
+
+   .. py:attribute:: ELASTIC_MODULUS
+      :value: 'ElasticModulus'
+
+      
+
+   .. py:attribute:: POISSON_RATIO
+      :value: 'PoissonsRatio'
+
+      
+
+   .. py:attribute:: SHEAR_MODULUS
+      :value: 'ShearModulus'
+
+      
+
+   .. py:attribute:: SPECIFIC_HEAT
+      :value: 'SpecificHeat'
+
+      
+
+   .. py:attribute:: TENSILE_STRENGTH
+      :value: 'TensileStrength'
+
+      
+
+   .. py:attribute:: THERMAL_CONDUCTIVITY
+      :value: 'ThermalConductivity'
+
+      
+
+   .. py:method:: from_id() -> MaterialPropertyType
+
+      
+      Return the ``MaterialPropertyType`` value from the service representation.
+
+
+      :Parameters:
+
+          **id** : :class:`python:str`
+              Geometry Service string representation of a property type.
+
+      :Returns:
+
+          :obj:`MaterialPropertyType`
+              Common name for property type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MaterialProperty(type: MaterialPropertyType, name: str, quantity: pint.Quantity)
+
+
+   
+   Provides the data structure for a material property.
+
+
+   :Parameters:
+
+       **type** : :obj:`MaterialPropertyType`
+           Type of the material property.
+
+       **name: str**
+           Material property name.
+
+       **quantity: ~pint.Quantity**
+           Value and unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: type
+      :type: MaterialPropertyType
+
+      
+      Material property ID.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Material property name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: quantity
+      :type: pint.Quantity
+
+      
+      Material property quantity and unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,113 @@
+
+
+
+
+
+The ``face.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.face
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: face
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~FaceLoop`
+            - Provides an internal class holding the face loops defined on the server side.
+
+
+          * - :py:attr:`~Face`
+            - Represents a single face of a body within the design assembly.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~SurfaceType`
+            - Provides values for the surface types supported by the Geometry service.
+
+
+          * - :py:attr:`~FaceLoopType`
+            - Provides values for the face loop types supported by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 FaceLoop<FaceLoop>
+    🝆 Face<Face>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ SurfaceType<SurfaceType>
+    ≔ FaceLoopType<FaceLoopType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for managing a face.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

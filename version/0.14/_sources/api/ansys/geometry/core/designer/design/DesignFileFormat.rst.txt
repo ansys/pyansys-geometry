@@ -1,0 +1,172 @@
+
+
+
+
+
+
+:class:`DesignFileFormat`
+=========================
+
+
+.. py:class:: ansys.geometry.core.designer.design.DesignFileFormat(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides supported file formats that can be downloaded for designs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DesignFileFormat
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~SCDOCX`
+            - 
+          * - :py:attr:`~PARASOLID_TEXT`
+            - 
+          * - :py:attr:`~PARASOLID_BIN`
+            - 
+          * - :py:attr:`~FMD`
+            - 
+          * - :py:attr:`~STEP`
+            - 
+          * - :py:attr:`~IGES`
+            - 
+          * - :py:attr:`~PMDB`
+            - 
+          * - :py:attr:`~STRIDE`
+            - 
+          * - :py:attr:`~DISCO`
+            - 
+          * - :py:attr:`~INVALID`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__str__`
+            - Represent object in string format.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: SCDOCX
+   :value: 'SCDOCX'
+
+
+.. py:attribute:: PARASOLID_TEXT
+   :value: 'PARASOLID_TEXT'
+
+
+.. py:attribute:: PARASOLID_BIN
+   :value: 'PARASOLID_BIN'
+
+
+.. py:attribute:: FMD
+   :value: 'FMD'
+
+
+.. py:attribute:: STEP
+   :value: 'STEP'
+
+
+.. py:attribute:: IGES
+   :value: 'IGES'
+
+
+.. py:attribute:: PMDB
+   :value: 'PMDB'
+
+
+.. py:attribute:: STRIDE
+   :value: 'STRIDE'
+
+
+.. py:attribute:: DISCO
+   :value: 'DISCO'
+
+
+.. py:attribute:: INVALID
+   :value: 'INVALID'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __str__()
+
+   
+   Represent object in string format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

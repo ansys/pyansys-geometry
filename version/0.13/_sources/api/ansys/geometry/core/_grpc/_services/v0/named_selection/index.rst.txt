@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``named_selection.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.named_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: named_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.named_selection.GRPCNamedSelectionServiceV0`
+            - Named Selection service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCNamedSelectionServiceV0</api/ansys/geometry/core/_grpc/_services/v0/named_selection/GRPCNamedSelectionServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Named Selection service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

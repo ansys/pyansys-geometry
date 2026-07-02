@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`PyGeometryPercentStyle`
+===============================
+
+
+.. py:class:: ansys.geometry.core.logger.PyGeometryPercentStyle(fmt, *, defaults=None)
+
+   Bases: :py:obj:`logging.PercentStyle`
+
+
+   
+   Provides a common messaging style.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.logger import PyGeometryPercentStyle
+
+
+
+
+

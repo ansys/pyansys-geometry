@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``options.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.misc.options
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: options
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.ImportOptions`
+            - Import options when opening a file.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.TessellationOptions`
+            - Provides options for getting tessellation.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ImportOptions</api/ansys/geometry/core/misc/options/ImportOptions>
+    <span class="nf nf-cod-symbol_class"></span> TessellationOptions</api/ansys/geometry/core/misc/options/TessellationOptions>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides various option classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

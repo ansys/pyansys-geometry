@@ -1,0 +1,126 @@
+
+
+
+
+Measurement
+===========
+
+.. py:class:: Measurement(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: pint.Unit, dimensions: pint.Unit)
+   :canonical: ansys.geometry.core.misc.measurements.Measurement
+
+
+
+Bases: :py:obj:`ansys.geometry.core.misc.units.PhysicalQuantity`
+
+Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Measurement
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~value`
+            - Value of the measurement.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Measurement`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import Measurement
+
+
+Property detail
+---------------
+.. py:property:: value
+   :canonical: ansys.geometry.core.misc.measurements.Measurement.value
+   :type: pint.Quantity
+
+
+   
+   Value of the measurement.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __eq__(other: Measurement) -> bool
+
+   
+   Equals operator for the ``Measurement`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

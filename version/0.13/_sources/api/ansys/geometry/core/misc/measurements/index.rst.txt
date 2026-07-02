@@ -1,0 +1,153 @@
+
+
+
+
+
+
+The ``measurements.py`` module
+==============================
+
+.. py:module:: ansys.geometry.core.misc.measurements
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: measurements
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.SingletonMeta`
+            - Provides a thread-safe implementation of a singleton design pattern.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.DefaultUnitsClass`
+            - Provides default units for PyAnsys Geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.Measurement`
+            - Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.Distance`
+            - Provides the ``Measurement`` subclass for holding a distance.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.Angle`
+            - Provides the ``Measurement`` subclass for holding an angle.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements.Area`
+            - Provides the ``Measurement`` subclass for holding an area.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_UNITS`
+            - PyAnsys Geometry default units object.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SingletonMeta</api/ansys/geometry/core/misc/measurements/SingletonMeta>
+    <span class="nf nf-cod-symbol_class"></span> DefaultUnitsClass</api/ansys/geometry/core/misc/measurements/DefaultUnitsClass>
+    <span class="nf nf-cod-symbol_class"></span> Measurement</api/ansys/geometry/core/misc/measurements/Measurement>
+    <span class="nf nf-cod-symbol_class"></span> Distance</api/ansys/geometry/core/misc/measurements/Distance>
+    <span class="nf nf-cod-symbol_class"></span> Angle</api/ansys/geometry/core/misc/measurements/Angle>
+    <span class="nf nf-cod-symbol_class"></span> Area</api/ansys/geometry/core/misc/measurements/Area>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides various measurement-related classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_UNITS
+
+   
+   PyAnsys Geometry default units object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

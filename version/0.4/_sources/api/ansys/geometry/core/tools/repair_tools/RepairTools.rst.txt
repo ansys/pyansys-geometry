@@ -1,0 +1,336 @@
+
+
+
+
+RepairTools
+===========
+
+.. py:class:: RepairTools(grpc_client: ansys.geometry.core.connection.GrpcClient)
+   :canonical: ansys.geometry.core.tools.repair_tools.RepairTools
+
+
+
+
+
+   Repair tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: RepairTools
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~find_split_edges`
+            - Find split edges in the given list of bodies.
+          * - :py:attr:`~find_extra_edges`
+            - Find the extra edges in the given list of bodies.
+          * - :py:attr:`~find_inexact_edges`
+            - Find inexact edges in the given list of bodies.
+          * - :py:attr:`~find_duplicate_faces`
+            - Find the duplicate face problem areas.
+          * - :py:attr:`~find_missing_faces`
+            - Find the missing faces.
+          * - :py:attr:`~find_small_faces`
+            - Find the small face problem areas.
+          * - :py:attr:`~find_stitch_faces`
+            - Return the list of stitch face problem areas.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.repair_tools import RepairTools
+
+
+
+
+Method detail
+-------------
+.. py:method:: find_split_edges(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body], angle: ansys.geometry.core.typing.Real = 0.0, length: ansys.geometry.core.typing.Real = 0.0) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.SplitEdgeProblemAreas]
+
+   
+   Find split edges in the given list of bodies.
+
+   This method finds the split edge problem areas and returns a list of split edge
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that split edges are investigated on.
+
+       **angle** : :obj:`Real`
+           The maximum angle between edges.
+
+       **length** : :obj:`Real`
+           The maximum length of the edges.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`SplitEdgeProblemAreas`]
+           List of objects representing split edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_extra_edges(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.ExtraEdgeProblemAreas]
+
+   
+   Find the extra edges in the given list of bodies.
+
+   This method find the extra edge problem areas and returns a list of extra edge
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that extra edges are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`ExtraEdgeProblemArea`]
+           List of objects representing extra edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_inexact_edges(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.InexactEdgeProblemAreas]
+
+   
+   Find inexact edges in the given list of bodies.
+
+   This method find the inexact edge problem areas and returns a list of inexact
+   edge problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that inexact edges are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`InExactEdgeProblemArea`]
+           List of objects representing inexact edge problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_duplicate_faces(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.DuplicateFaceProblemAreas]
+
+   
+   Find the duplicate face problem areas.
+
+   This method finds the duplicate face problem areas and returns a list of
+   duplicate face problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that duplicate faces are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`DuplicateFaceProblemAreas`]
+           List of objects representing duplicate face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_missing_faces(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.MissingFaceProblemAreas]
+
+   
+   Find the missing faces.
+
+   This method find the missing face problem areas and returns a list of missing
+   face problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that missing faces are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`MissingFaceProblemAreas`]
+           List of objects representing missing face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_small_faces(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.SmallFaceProblemAreas]
+
+   
+   Find the small face problem areas.
+
+   This method finds and returns a list of ids of small face problem areas
+   objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that small faces are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`SmallFaceProblemAreas`]
+           List of objects representing small face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_stitch_faces(bodies: beartype.typing.List[ansys.geometry.core.designer.body.Body]) -> beartype.typing.List[ansys.geometry.core.tools.problem_areas.StitchFaceProblemAreas]
+
+   
+   Return the list of stitch face problem areas.
+
+   This method find the stitch face problem areas and returns a list of ids of stitch face
+   problem areas objects.
+
+   :Parameters:
+
+       **bodies** : :obj:`List`\[:obj:`Body`]
+           List of bodies that stitchable faces are investigated on.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`StitchFaceProblemAreas`]
+           List of objects representing stitch face problem areas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
