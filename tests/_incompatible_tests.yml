@@ -66,8 +66,8 @@ backends:
       - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
@@ -78,7 +78,7 @@ backends:
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # Components and vertex only available from 26.1 onwards
@@ -212,8 +212,8 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
@@ -224,7 +224,7 @@ backends:
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
@@ -306,8 +306,8 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns
-      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_body.py::test_combine_subtract_transfer_ns_default_options_changed
       - tests/integration/test_design.py::test_get_face_tight_bounding_box
       - tests/integration/test_design.py::test_get_edge_tight_bounding_box
       - tests/integration/test_design.py::test_get_body_tight_bounding_box
@@ -318,7 +318,7 @@ backends:
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
