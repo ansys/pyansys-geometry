@@ -174,7 +174,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
         }
     
     @protect_grpc
-    def delete(self, **kwargs) -> dict:  # noqa: D102
+    def delete_datum_points(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import DeleteEntitiesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type

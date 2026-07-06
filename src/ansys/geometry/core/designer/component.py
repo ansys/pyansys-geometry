@@ -1658,6 +1658,33 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    def create_datum_point(self, name: str, point: Point3D) -> DatumPoint:
+        """Create a datum point on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum point.
+        point : Point3D
+            3D point constituting the datum point.
+        
+        Returns
+        -------
+        DatumPoint
+            Created datum point object.
+        """
+        self._grpc_client.log.debug(f"Creating datum point on {self.id}...")
+        response = self._grpc_client.services.points.create_design_points(
+            parent_id=self.id,
+            points=[point],
+        )
+        self._grpc_client.log.debug("Datum point successfully created.")
+        datum_point = DatumPoint(response.get("point_ids")[0], name, point, self)
+        self._datum_points.append(datum_point)
+        return datum_point
+
+    @check_input_types
+    @ensure_design_is_active
     def delete_datum_point(self, datum_point: DatumPoint | str) -> None:
         """Delete a datum point from this component.
 
@@ -1677,7 +1704,7 @@ class Component:
         if dp_requested:
             # If the datum point belongs to this component (or nested components)
             # call the server deletion mechanism
-            self._grpc_client.services.points.delete(ids=[dp_requested.id])
+            self._grpc_client.services.points.delete_datum_points(ids=[dp_requested.id])
 
             # If the datum point was deleted from the server side... "kill" it
             # on the client side

@@ -6932,3 +6932,147 @@ def test_move_bodies_to_component(modeler: Modeler):
     moved_names = {b.name for b in target2.bodies}
     assert moved_names == {"BodyA", "BodyB"}
     assert len(source2.bodies) == 0
+
+
+def test_delete_coordinate_system(modeler: Modeler):
+    """Test deletion of coordinate systems from a component."""
+    design = modeler.create_design("DeleteCoordinateSystem_Test")
+
+    # Create a component with coordinate systems
+    comp = design.add_component("CompWithCS")
+    frame1 = Frame(
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 0, 0]),
+        UnitVector3D([0, 1, 0]),
+    )
+    frame2 = Frame(
+        Point3D([40, 50, 60], UNITS.mm),
+        UnitVector3D([0, 1, 0]),
+        UnitVector3D([0, 0, 1]),
+    )
+    cs1 = comp.create_coordinate_system("CS1", frame1)
+    cs2 = comp.create_coordinate_system("CS2", frame2)
+
+    # Verify both coordinate systems exist
+    assert len(comp.coordinate_systems) == 2
+    assert cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the first coordinate system by object
+    comp.delete_coordinate_system(cs1)
+    assert not cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the second coordinate system by ID
+    comp.delete_coordinate_system(cs2.id)
+    assert not cs2.is_alive
+
+    # Attempt to delete a coordinate system that does not belong to the component
+    comp2 = design.add_component("CompWithCS2")
+    cs3 = comp2.create_coordinate_system("CS3", frame1)
+    assert cs3.is_alive
+
+    # Trying to delete cs3 from comp (wrong component) should not delete it
+    comp.delete_coordinate_system(cs3)
+    assert cs3.is_alive
+
+    # Delete cs3 from the correct component
+    comp2.delete_coordinate_system(cs3)
+    assert not cs3.is_alive
+
+    # Delete a coordinate system from the root design (top-level component)
+    cs_root = design.create_coordinate_system("RootCS", frame1)
+    assert cs_root.is_alive
+    assert len(design.coordinate_systems) == 1
+
+    design.delete_coordinate_system(cs_root)
+    assert not cs_root.is_alive
+
+
+def test_delete_datum_point(modeler: Modeler):
+    """Test deletion of datum points from a component."""
+    design = modeler.create_design("DeleteDatumPoint_Test")
+
+    # Create datum points on the design
+    dp1 = design.create_datum_point("DP1", Point3D([1, 2, 3], UNITS.mm))
+    dp2 = design.create_datum_point("DP2", Point3D([4, 5, 6], UNITS.mm))
+    dp3 = design.create_datum_point("DP3", Point3D([7, 8, 9], UNITS.mm))
+
+    # Verify all datum points exist
+    assert len(design.datum_points) == 3
+    assert dp1.is_alive
+    assert dp2.is_alive
+    assert dp3.is_alive
+
+    # Delete by object
+    design.delete_datum_point(dp1)
+    assert not dp1.is_alive
+    assert dp2.is_alive
+    assert dp3.is_alive
+
+    # Delete by ID
+    design.delete_datum_point(dp2.id)
+    assert not dp2.is_alive
+    assert dp3.is_alive
+
+    # Attempt deletion from wrong component (should not delete)
+    comp = design.add_component("WrongComp")
+    comp.delete_datum_point(dp3)
+    assert dp3.is_alive
+
+    # Delete from root design (correct scope)
+    design.delete_datum_point(dp3)
+    assert not dp3.is_alive
+
+    # Create a datum point on a nested component and delete from there
+    nested = design.add_component("NestedComp")
+    dp_nested = nested.create_datum_point(
+        "DPNested", Point3D([10, 20, 30], UNITS.mm)
+    )
+    assert dp_nested.is_alive
+    assert len(nested.datum_points) == 1
+
+    nested.delete_datum_point(dp_nested)
+    assert not dp_nested.is_alive
+
+
+def test_delete_design_curve(modeler: Modeler):
+    """Test deletion of design curves from a component."""
+    design = modeler.create_design("DeleteDesignCurve_Test")
+
+    # Create a design point and revolve it to produce a design curve
+    dp1 = design.add_design_point("RevPt1", Point3D([1, 0, 0], UNITS.m))
+    curves1 = modeler.geometry_commands.revolve_points(
+        dp1,
+        Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z),
+        Angle(np.pi / 2, UNITS.rad),
+    )
+    assert len(curves1) == 1
+    assert isinstance(curves1[0], DesignCurve)
+    assert curves1[0].is_alive
+
+    # Create a second design curve
+    dp2 = design.add_design_point("RevPt2", Point3D([2, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points(
+        dp2,
+        Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z),
+        Angle(np.pi / 4, UNITS.rad),
+    )
+    assert len(curves2) == 1
+    assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].is_alive
+
+    # Delete the first curve by object
+    design.delete_design_curve(curves1[0])
+    assert not curves1[0].is_alive
+    assert curves2[0].is_alive
+
+    # Delete the second curve by ID
+    design.delete_design_curve(curves2[0].id)
+    assert not curves2[0].is_alive
+
+    # Attempt to delete a non-existent design curve (by fabricated ID)
+    design.delete_design_curve("non_existent_id")
+    # No error raised, just a warning logged - all existing curves remain
+    assert not curves1[0].is_alive
+    assert not curves2[0].is_alive

@@ -61,6 +61,6 @@ class GRPCPointsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
-    def delete(self, **kwargs) -> dict:
-        """Delete a datum point."""
+    def delete_datum_points(self, **kwargs) -> dict:
+        """Delete datum points."""
         pass
