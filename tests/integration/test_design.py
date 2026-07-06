@@ -1866,6 +1866,49 @@ def test_imprint_trimmed_curves(modeler: Modeler):
     assert len(box.edges) == 13
 
 
+def test_copy_body(modeler: Modeler):
+    """Test copying a body."""
+    # Create your design on the server side
+    design = modeler.create_design("Design")
+
+    sketch_1 = Sketch().circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
+    body = design.extrude_sketch("Original", sketch_1, Distance(1, UNITS.mm))
+
+    # Copy body at same design level
+    copy = body.copy(design, "Copy")
+    assert len(design.bodies) == 2
+    assert design.bodies[-1].id == copy.id
+
+    # Bodies should be distinct
+    assert body.id != copy.id
+    assert body != copy
+
+    # Copy body into sub-component
+    comp1 = design.add_component("comp1")
+    copy2 = body.copy(comp1, "Subcopy")
+    assert len(comp1.bodies) == 1
+    assert comp1.bodies[-1].id == copy2.id
+
+    # Bodies should be distinct
+    assert body.id != copy2.id
+    assert body != copy2
+
+    # Copy a copy
+    comp2 = comp1.add_component("comp2")
+    copy3 = copy2.copy(comp2, "Copy3")
+    assert len(comp2.bodies) == 1
+    assert comp2.bodies[-1].id == copy3.id
+
+    # Bodies should be distinct
+    assert copy2.id != copy3.id
+    assert copy2 != copy3
+
+    # Ensure deleting original doesn't affect the copies
+    design.delete_body(body)
+    assert not body.is_alive
+    assert copy.is_alive
+
+
 def test_midsurface_properties(modeler: Modeler):
     """Test mid-surface properties assignment."""
     # Create your design on the server side
@@ -3954,6 +3997,29 @@ def test_edges_get_named_selections(modeler: Modeler):
             assert any(ns.name == "edge_ns_2" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this edge
+
+
+def test_body_get_named_selections(modeler: Modeler):
+    """Test getting named selections associated with bodies."""
+    design = modeler.create_design("body_named_selections")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([2, 2]), 1, 1), 1)
+
+    # create named selection from bodies
+    design.create_named_selection("body_ns_1", bodies=[box1])
+    design.create_named_selection("body_ns_2", bodies=[box2])
+
+    # Check that bodies return the correct named selections
+    for body in design.bodies:
+        ns_list = body.get_named_selections()
+        if body.id == box1.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_1" for ns in ns_list)
+        elif body.id == box2.id:
+            assert len(ns_list) == 1
+            assert any(ns.name == "body_ns_2" for ns in ns_list)
+        else:
+            assert len(ns_list) == 0  # No named selection for this body
 
 
 def test_vertices_get_named_selections(modeler: Modeler):
