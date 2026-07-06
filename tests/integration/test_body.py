@@ -23,8 +23,8 @@
 """Test body interaction."""
 
 from pathlib import Path
-import zipfile
 from unittest.mock import Mock, patch
+import zipfile
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -32,16 +32,13 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._version import GeometryApiProtos
-from ansys.geometry.core.designer import DesignFileFormat, SharedTopologyType
+from ansys.geometry.core.designer import DesignFileFormat
 from ansys.geometry.core.designer.body import FillStyle, MasterBody
 from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
-    UNITVECTOR3D_Z,
     Frame,
     Plane,
     Point2D,
@@ -49,7 +46,7 @@ from ansys.geometry.core.math import (
     UnitVector3D,
     Vector3D,
 )
-from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance
+from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Distance
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes import Circle, Cone, Cylinder, Line, Sphere, Torus
@@ -611,6 +608,7 @@ def test_body_get_named_selections(modeler: Modeler):
         else:
             assert len(ns_list) == 0
 
+
 def test_clear_body_cache_for_part(modeler: Modeler):
     """Test _clear_body_cache_for_part() clears cached bodies for part and matching components."""
     design = modeler.create_design("clear_body_cache")
@@ -629,6 +627,7 @@ def test_clear_body_cache_for_part(modeler: Modeler):
 
         clear_spy.assert_called_once()
         matching_component._clear_cached_bodies.assert_called_once()
+
 
 def test_find_and_add_body_matching_part_id(modeler: Modeler):
     """Test _find_and_add_body() adds new body when parent part is found."""
@@ -654,6 +653,7 @@ def test_find_and_add_body_matching_part_id(modeler: Modeler):
         debug_spy.assert_called()
         assert any("Added new body" in str(call) for call in debug_spy.call_args_list)
 
+
 def test_find_and_add_body_recursive_search(modeler: Modeler):
     """Test _find_and_add_body() recursively searches nested components for parent part."""
     design = modeler.create_design("add_body_recursive")
@@ -678,6 +678,7 @@ def test_find_and_add_body_recursive_search(modeler: Modeler):
         assert result.id == "nested_body_1"
         debug_spy.assert_called()
 
+
 def test_find_and_add_body_not_found_returns_none(modeler: Modeler):
     """Test _find_and_add_body() returns None when parent part cannot be found."""
     design = modeler.create_design("add_body_notfound")
@@ -693,6 +694,7 @@ def test_find_and_add_body_not_found_returns_none(modeler: Modeler):
 
     assert result is None
 
+
 def test_find_and_add_body_empty_components(modeler: Modeler):
     """Test _find_and_add_body() returns None when component list is empty."""
     design = modeler.create_design("add_body_empty")
@@ -707,6 +709,7 @@ def test_find_and_add_body_empty_components(modeler: Modeler):
     result = design._find_and_add_body(body_info, [], None, None)
 
     assert result is None
+
 
 def test_update_body_sets_properties(modeler: Modeler):
     """Test _update_body() sets body properties from tracker response."""
@@ -936,6 +939,7 @@ def test_delete_body_component(modeler: Modeler):
     assert "Parent component     : Component_3" in body_1_str
     assert "Color                : None" in body_1_str
 
+
 def test_single_body_translation(modeler: Modeler):
     """Test for verifying the correct translation of a ``Body``.
 
@@ -962,6 +966,7 @@ def test_single_body_translation(modeler: Modeler):
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
     body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
 
+
 def test_body_rotation(modeler: Modeler):
     """Test for verifying the correct rotation of a ``Body``."""
     # Create your design on the server side
@@ -982,6 +987,7 @@ def test_body_rotation(modeler: Modeler):
     # Make sure no vertices are in the same position as in before rotation
     for old_vertex, new_vertex in zip(original_vertices, new_vertices):
         assert not np.allclose(old_vertex, new_vertex)
+
 
 def test_copy_body(modeler: Modeler):
     """Test copying a body."""
@@ -1024,6 +1030,7 @@ def test_copy_body(modeler: Modeler):
     design.delete_body(body)
     assert not body.is_alive
     assert copy.is_alive
+
 
 def test_boolean_body_operations(modeler: Modeler):
     """
@@ -1271,6 +1278,7 @@ def test_boolean_body_operations(modeler: Modeler):
     assert body3.is_alive
     assert Accuracy.length_is_equal(copy1.volume.m, 1)
 
+
 def test_set_body_name(modeler: Modeler):
     """Test the setting the name of a body."""
     design = modeler.create_design("simple_cube")
@@ -1288,6 +1296,7 @@ def test_set_body_name(modeler: Modeler):
     assert box.name == "updated_name"
     box.name = "updated_name2"
     assert box.name == "updated_name2"
+
 
 def test_body_suppression(modeler: Modeler):
     """Test the suppression of a body."""
@@ -1310,6 +1319,7 @@ def test_body_suppression(modeler: Modeler):
     assert box.is_suppressed is True
     box.is_suppressed = False
     assert box.is_suppressed is False
+
 
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
@@ -1367,6 +1377,7 @@ def test_set_body_color(modeler: Modeler):
     ):
         box.opacity = 255
 
+
 def test_body_scale(modeler: Modeler):
     """Verify the correct scaling of a body."""
     design = modeler.create_design("BodyScale_Test")
@@ -1379,6 +1390,7 @@ def test_body_scale(modeler: Modeler):
 
     body.scale(0.25)
     assert Accuracy.length_is_equal(body.volume.m, 1 / 8)
+
 
 def test_body_mapping(modeler: Modeler):
     """Verify the correct mapping of a body."""
@@ -1471,6 +1483,7 @@ def test_body_mapping(modeler: Modeler):
 
     assert np.allclose(map_vertices, rotate_vertices)
 
+
 def test_create_block_body(modeler: Modeler):
     """Test the creation of a block body given two opposite corner points."""
     design = modeler.create_design("BlockTest")
@@ -1487,6 +1500,7 @@ def test_create_block_body(modeler: Modeler):
     assert len(nested_block.faces) == 6
     assert nested_block.volume.m == 27.0
     assert nested_block.parent_component.id == nested.id
+
 
 def test_body_mirror(modeler: Modeler):
     """Test the mirroring of a body."""
@@ -1604,6 +1618,7 @@ def test_body_mirror(modeler: Modeler):
             copy_vertices.append(edge.shape.start)
     assert np.allclose(expected_vertices, copy_vertices)
 
+
 def test_create_body_from_loft_profile(modeler: Modeler):
     """Test the ``create_body_from_loft_profile()`` method to create a vase
     shape.
@@ -1625,6 +1640,7 @@ def test_create_body_from_loft_profile(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert result.volume.m == 0
+
 
 def test_surface_body_creation(modeler: Modeler):
     """Test surface body creation from trimmed surfaces."""
@@ -1684,6 +1700,7 @@ def test_surface_body_creation(modeler: Modeler):
     assert not body.is_surface
     assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
 
+
 def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
     design = modeler.create_design("surface")
 
@@ -1707,6 +1724,7 @@ def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
         Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
 
+
 def test_shell_body(modeler: Modeler):
     """Test shell command."""
     design = modeler.create_design("shell")
@@ -1727,6 +1745,7 @@ def test_shell_body(modeler: Modeler):
     assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
 
+
 def test_named_selection_build_faces_from_metadata_returns_none_when_body_missing():
     """Test face metadata build returns None when a referenced body is unavailable."""
     import ansys.geometry.core.designer.selection as selection_module
@@ -1743,6 +1762,7 @@ def test_named_selection_build_faces_from_metadata_returns_none_when_body_missin
 
     with patch.object(selection_module, "get_all_bodies_from_design", return_value=[]):
         assert ns._NamedSelection__build_faces_from_metadata() is None
+
 
 def test_tracker_response_delete_body_from_root(
     modeler: Modeler, unit_box_sketch: Sketch, tracker_payload_factory
@@ -1768,6 +1788,7 @@ def test_tracker_response_delete_body_from_root(
     clear_cache_spy.assert_called_once()
     assert any("Deleted body" in str(call) for call in info_spy.call_args_list)
 
+
 def test_update_from_tracker_modified_body_in_nested_component(
     modeler: Modeler, unit_box_sketch: Sketch, tracker_payload_factory
 ):
@@ -1788,6 +1809,7 @@ def test_update_from_tracker_modified_body_in_nested_component(
 
     assert nested_body.name == "NestedBodyUpdated"
     assert nested_body._template.is_surface is True
+
 
 def test_find_and_add_body_to_component(modeler: Modeler):
     """Test _find_and_add_body finds component and adds body to it."""
@@ -1812,6 +1834,7 @@ def test_find_and_add_body_to_component(modeler: Modeler):
     assert result.name == "NewBody"
     clear_cache_spy.assert_called_once_with(part)
 
+
 def test_find_and_add_body_to_nested_component_recursive(modeler: Modeler):
     """Test _find_and_add_body finds body parent in nested components via recursion."""
     design = modeler.create_design("add_body_recursive_nested")
@@ -1834,6 +1857,7 @@ def test_find_and_add_body_to_nested_component_recursive(modeler: Modeler):
     assert result.id == "nested_new_body"
     clear_cache_spy.assert_called_once_with(child_part)
 
+
 def test_find_and_add_body_returns_none_when_not_found(modeler: Modeler):
     """Test _find_and_add_body returns None when parent part not found."""
     design = modeler.create_design("body_notfound")
@@ -1848,6 +1872,7 @@ def test_find_and_add_body_returns_none_when_not_found(modeler: Modeler):
     result = design._find_and_add_body(body_info, design.components, {}, {})
 
     assert result is None
+
 
 def test_find_and_remove_body_from_component(modeler: Modeler, unit_box_sketch: Sketch):
     """Test _find_and_remove_body removes body from component."""
@@ -1870,6 +1895,7 @@ def test_find_and_remove_body_from_component(modeler: Modeler, unit_box_sketch: 
         for call in debug_spy.call_args_list
     )
 
+
 def test_find_and_remove_body_returns_false_not_found(modeler: Modeler):
     """Test _find_and_remove_body returns False when body not found."""
     design = modeler.create_design("body_remove_notfound")
@@ -1881,6 +1907,7 @@ def test_find_and_remove_body_returns_false_not_found(modeler: Modeler):
     result = design._find_and_remove_body(body_info, comp)
 
     assert result is False
+
 
 def test_update_body_properties(modeler: Modeler):
     """Test _update_body updates body properties from tracker response."""
@@ -1901,6 +1928,7 @@ def test_update_body_properties(modeler: Modeler):
     assert body.name == "UpdatedBodyName"
     assert body._template._is_surface is True
 
+
 def test_get_body_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body."""
     design = modeler.create_design("body_bounding_box")
@@ -1917,6 +1945,7 @@ def test_get_body_bounding_box(modeler: Modeler):
     assert center.x.m == 0
     assert center.y.m == 0
     assert center.z.m == 0.5
+
 
 def test_get_body_tight_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a body with tight tolerance."""
@@ -2000,6 +2029,7 @@ def test_write_body_facets_on_save(
     missing = expected_files - namelist
     assert not missing
 
+
 def test_update_from_tracker_modified_body_nested_component(
     modeler: Modeler, tracker_payload_factory
 ):
@@ -2016,6 +2046,7 @@ def test_update_from_tracker_modified_body_nested_component(
 
     assert body.name == "NestedUpdated"
     assert body._template.is_surface is True
+
 
 def test_update_from_tracker_deleted_nested_body_breaks_recursion(
     modeler: Modeler, tracker_payload_factory
@@ -2034,6 +2065,7 @@ def test_update_from_tracker_deleted_nested_body_breaks_recursion(
 
     assert nested_body.is_alive is False
 
+
 def test_find_and_remove_body_recursive_success(modeler: Modeler):
     """Test _find_and_remove_body removes nested body and marks not alive."""
     design = modeler.create_design("cov_remove_body_recursive")
@@ -2046,6 +2078,7 @@ def test_find_and_remove_body_recursive_success(modeler: Modeler):
 
     assert removed is True
     assert body.is_alive is False
+
 
 def test_clear_body_cache_nested_component_match_only(modeler: Modeler):
     """Test _clear_body_cache_for_part clears cache only for matching components."""
