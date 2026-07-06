@@ -45,6 +45,11 @@ from ansys.geometry.core.designer import (
     SharedTopologyType,
     SurfaceType,
 )
+from ansys.geometry.core.designer.beam import (
+    BeamCrossSectionInfo,
+    BeamProperties,
+    SectionAnchorType,
+)
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
@@ -2406,6 +2411,36 @@ def test_delete_body_component(modeler: Modeler):
     assert "Surface body         : False" in body_1_str
     assert "Parent component     : Component_3" in body_1_str
     assert "Color                : None" in body_1_str
+
+
+def test_search_component_by_name(modeler: Modeler):
+    design = modeler.create_design("Deletion_Test")
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_2_duplicate = comp_2.add_component("Component_2")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+
+    # Search for component at top level
+    found_comp_1 = design.search_component_by_name("Component_1")
+    assert len(found_comp_1) == 1
+    assert comp_1 == found_comp_1[0]
+
+    # Search for nested component
+    found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
+    assert len(found_nested_comp) == 1
+    assert nested_1_comp_1 == found_nested_comp[0]
+
+    # Search for a non-existing component
+    found_none = design.search_component_by_name("NonExistingComponent")
+    assert len(found_none) == 0
+
+    # Search for a component with a name that exists in multiple places
+    found_duplicate = design.search_component_by_name("Component_2")
+    assert len(found_duplicate) == 2
+    assert found_duplicate[0] == comp_2
+    assert found_duplicate[1] == comp_2_duplicate
 
 
 def test_shared_topology(modeler: Modeler):
@@ -4871,6 +4906,10 @@ def test_set_component_name(modeler: Modeler):
     component.name = "ChangedComponentName"
     assert component.name == "ChangedComponentName"
 
+    # Call update to ensure the name change is reflected in the design
+    design._update_design_inplace()
+    assert design.components[0].name == "ChangedComponentName"
+
 
 def test_get_face_bounding_box(modeler: Modeler):
     """Test getting the bounding box of a face."""
@@ -6932,6 +6971,55 @@ def test_move_bodies_to_component(modeler: Modeler):
     moved_names = {b.name for b in target2.bodies}
     assert moved_names == {"BodyA", "BodyB"}
     assert len(source2.bodies) == 0
+
+
+def test_beam_cross_section_info_properties_and_repr():
+    """Test BeamCrossSectionInfo property accessors and repr output."""
+    section_frame = Frame(Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y)
+    section_info = BeamCrossSectionInfo(
+        SectionAnchorType.CENTROID,
+        15.0,
+        section_frame,
+        None,
+    )
+
+    assert section_info.section_anchor == SectionAnchorType.CENTROID
+    assert section_info.section_angle == 15.0
+    assert section_info.section_frame == section_frame
+    assert section_info.section_profile is None
+
+    section_repr = repr(section_info)
+    assert "ansys.geometry.core.designer.BeamCrossSectionInfo" in section_repr
+    assert "Section Anchor       : CENTROID" in section_repr
+    assert "Section Angle        : 15.0" in section_repr
+    assert f"Section Frame        : {section_frame}" in section_repr
+    assert "Section Profile info" in section_repr
+    assert "None" in section_repr
+
+
+def test_beam_properties_getters():
+    """Test BeamProperties property accessors."""
+    centroid = ParamUV(0.1, 0.2)
+    shear_center = ParamUV(0.3, 0.4)
+    properties = BeamProperties(
+        area=1.0,
+        centroid=centroid,
+        warping_constant=2.0,
+        ixx=3.0,
+        ixy=4.0,
+        iyy=5.0,
+        shear_center=shear_center,
+        torsion_constant=6.0,
+    )
+
+    assert properties.area == 1.0
+    assert properties.centroid == centroid
+    assert properties.warping_constant == 2.0
+    assert properties.ixx == 3.0
+    assert properties.ixy == 4.0
+    assert properties.iyy == 5.0
+    assert properties.shear_center == shear_center
+    assert properties.torsion_constant == 6.0
 
 
 def test_delete_coordinate_system(modeler: Modeler):
