@@ -27,6 +27,7 @@ from pathlib import Path
 
 import pytest
 
+from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.math import Point2D, Point3D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.options import ImportOptions
@@ -144,8 +145,10 @@ def test_import_lightweight_and_convert(modeler: Modeler):
     assert all(body.is_lightweight for body in bodies)
 
     plane = Plane()
-    bodies[0].mirror(plane)
+    with pytest.raises(GeometryExitedError, match="not currently supported in stride"):
+        bodies[0].mirror(plane)
 
     result = modeler.unsupported.convert_to_heavyweight(bodies)
     assert result is True
     assert all(not body.is_lightweight for body in bodies)
+    bodies[0].mirror(plane)  # Should not raise after conversion
