@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,6 +23,7 @@
 import os
 import socket
 import tempfile
+from unittest.mock import MagicMock, patch
 
 from beartype.roar import BeartypeCallHintParamViolation
 import grpc
@@ -39,6 +40,7 @@ from ansys.geometry.core.connection.product_instance import (
     _manifest_path_provider,
     prepare_and_start_backend,
 )
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 
 
 def test_wait_until_healthy():
@@ -339,3 +341,34 @@ def test_get_common_env(
         # Assert environment variables are correctly set
         for key, value in expected_env.items():
             assert env[key] == value
+
+
+def test_grpc_client_get_backend_failure():
+    """Test that GrpcClient raises GeometryRuntimeError when get_backend() fails.
+
+    Mocks wait_until_healthy and _GRPCServices so that the admin.get_backend()
+    call raises a grpc.RpcError, verifying it is wrapped in GeometryRuntimeError with chaining.
+    Both grpc.RpcError and GeometryExitedError are caught by the same handler.
+    """
+    mock_channel = MagicMock()
+
+    mock_admin = MagicMock()
+    mock_admin.get_backend.side_effect = GeometryExitedError("connection refused")
+
+    mock_services = MagicMock()
+    mock_services.admin = mock_admin
+
+    with (
+        patch(
+            "ansys.geometry.core.connection.client.wait_until_healthy",
+            return_value=mock_channel,
+        ),
+        patch(
+            "ansys.geometry.core.connection.client._GRPCServices",
+            return_value=mock_services,
+        ),
+        pytest.raises(GeometryRuntimeError, match="Failed to retrieve backend information") as exc,
+    ):
+        GrpcClient(host="localhost", port=50051)
+
+    assert exc.value.__cause__ is not None
