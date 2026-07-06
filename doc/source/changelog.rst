@@ -9,6 +9,60 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.16.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.1>`_ - July 06, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Cap grpcio and grpcio-health-checking below 1.82.0 to avoid protobuf gencode/runtime version mismatch
+          - `#2914 <https://github.com/ansys/pyansys-geometry/pull/2914>`_
+
+        * - Update uv lock file after capping grpcio 1.82
+          - `#2916 <https://github.com/ansys/pyansys-geometry/pull/2916>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ty from 0.0.54 to 0.0.55
+          - `#2904 <https://github.com/ansys/pyansys-geometry/pull/2904>`_
+
+        * - Bump ansys-api-discovery from 1.2.2 to 1.2.3
+          - `#2905 <https://github.com/ansys/pyansys-geometry/pull/2905>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.11.0 to 3.12.0 in the docs-deps group
+          - `#2910 <https://github.com/ansys/pyansys-geometry/pull/2910>`_
+
+        * - Bump ansys-api-discovery from 1.2.3 to 1.2.4
+          - `#2911 <https://github.com/ansys/pyansys-geometry/pull/2911>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.16.0
+          - `#2903 <https://github.com/ansys/pyansys-geometry/pull/2903>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2906 <https://github.com/ansys/pyansys-geometry/pull/2906>`_
+
+        * - Bump ruff-pre-commit from v0.15.18 to 0.15.19 in the pre-commit-hooks group
+          - `#2907 <https://github.com/ansys/pyansys-geometry/pull/2907>`_
+
+
 `0.16.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.0>`_ - June 30, 2026
 ==========================================================================================
 
