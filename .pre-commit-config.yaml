@@ -1,7 +1,7 @@
 ci:
   autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
 
-exclude: "tests/integration/files"
+exclude: "tests/integration/files|uv\\.lock"
 repos:
 
   - repo: https://github.com/google/yamlfmt
@@ -15,14 +15,13 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: a007bb7dd9043d022292401abc3061cb1906b4bc # frozen: v2.21.2
+    rev: 0c8c15d8fe996493035be407c5cf4a288cf6bf8e # frozen: v2.25.1
     hooks:
       - id: pyproject-fmt
-        additional_dependencies: [toml-fmt-common<1.3.3]
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 5e2fb545eba1ea9dc051f6f962d52fe8f76a9794 # frozen: v0.15.13
+    rev: c59bba8fb259db0fec2bbb77ad8ba51ea7341b56 # frozen: v0.15.20
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -42,7 +41,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: ad4e7598809ad98cde5aaf52d80040c7ac56e7cf # frozen: v0.7.2
+    rev: 55c5b6a5439abd847613579c6924da750e8b78b2 # frozen: v0.8.0
     hooks:
       - id: add-license-headers
         args:
@@ -50,7 +49,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: f805888065fdb6162e1f800e50bb9460cbd223d6 # frozen: 0.37.2
+    rev: 5030dca3047414c338091455ac41803200ec1f0f # frozen: 0.37.3
     hooks:
       - id: check-github-workflows
 

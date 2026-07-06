@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,8 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing 2D and 3D vectors."""
 
+from collections.abc import Sequence
 from io import UnsupportedOperation
 from typing import Union
 
@@ -279,6 +281,10 @@ class Vector3D(np.ndarray):
         The resulting 3D vector is always expressed in ``Point3D``
         base units.
         """
+        if isinstance(point_a, Sequence) and isinstance(point_b, Sequence):
+            if len(point_a) != 3 or len(point_b) != 3:
+                raise ValueError("Points must have three coordinates.")
+            return Vector3D([b - a for b, a in zip(point_b, point_a)])
         return Vector3D(point_b - point_a)
 
 
@@ -473,6 +479,10 @@ class Vector2D(np.ndarray):
         The resulting 2D vector is always expressed in ``Point2D``
         base units.
         """
+        if isinstance(point_a, Sequence) and isinstance(point_b, Sequence):
+            if len(point_a) != 2 or len(point_b) != 2:
+                raise ValueError("Points must have two coordinates.")
+            return Vector2D([b - a for b, a in zip(point_b, point_a)])
         return Vector2D(point_b - point_a)
 
 
