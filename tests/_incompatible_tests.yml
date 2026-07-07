@@ -114,7 +114,7 @@ backends:
       # Issues in log retrieval from server when empty log are solved from 25R1 onwards
       - tests/integration/test_client.py::test_client_get_service_logs
       # body.is_surface property is only available from 24R2 onwards
-      - tests/integration/test_body.py::test_component_body
+      - tests/integration/test_design.py::test_component_body
       - tests/integration/test_design.py::test_midsurface_properties
       - tests/integration/test_issues.py::test_issue_834_design_import_with_surfaces
       - tests/integration/test_geometry_commands.py::test_thicken_surface_body
