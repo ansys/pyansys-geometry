@@ -22,7 +22,6 @@
 """Test design import."""
 
 from pathlib import Path
-import re
 
 import numpy as np
 from pint import Quantity
@@ -32,7 +31,6 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer import Component, Design
 from ansys.geometry.core.designer.design import DesignFileFormat
-from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import UNITVECTOR3D_Z, Plane, Point2D, Point3D, UnitVector3D, Vector3D
 from ansys.geometry.core.misc import UNITS, Distance, ImportOptions
 from ansys.geometry.core.sketch import Sketch
