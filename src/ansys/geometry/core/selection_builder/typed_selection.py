@@ -35,5 +35,3 @@ class TypedSelection:
     def items(self) -> list[Any]:
         """Get the current selection items."""
         return self._items
-
-
