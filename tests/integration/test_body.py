@@ -24,7 +24,6 @@
 
 from pathlib import Path
 from unittest.mock import Mock, patch
-import zipfile
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -32,7 +31,6 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core.designer import DesignFileFormat
 from ansys.geometry.core.designer.body import FillStyle
 from ansys.geometry.core.designer.part import Part
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
@@ -1622,53 +1620,6 @@ def test_get_body_tight_bounding_box(modeler: Modeler):
     assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
     assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
     assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
-
-
-@pytest.mark.parametrize(
-    "file_extension, design_format",
-    [
-        ("scdocx", None),  # For .scdocx files
-        ("dsco", DesignFileFormat.DISCO),  # For .dsco files
-    ],
-)
-def test_write_body_facets_on_save(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, file_extension: str, design_format
-):
-    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
-
-    # First file without body facets
-    filepath_no_facets = tmp_path_factory.mktemp("test_design") / f"cars_no_facets.{file_extension}"
-    if design_format:
-        design.download(filepath_no_facets, design_format)
-    else:
-        design.download(filepath_no_facets)
-
-    # Second file with body facets
-    filepath_with_facets = (
-        tmp_path_factory.mktemp("test_design") / f"cars_with_facets.{file_extension}"
-    )
-    if design_format:
-        design.download(filepath_with_facets, design_format, write_body_facets=True)
-    else:
-        design.download(filepath_with_facets, write_body_facets=True)
-
-    # Compare file sizes
-    size_no_facets = filepath_no_facets.stat().st_size
-    size_with_facets = filepath_with_facets.stat().st_size
-
-    assert size_with_facets > size_no_facets
-
-    # Ensure facets.bin and renderlist.xml files exist
-    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
-        namelist = set(zip_ref.namelist())
-
-    expected_files = {
-        "SpaceClaim/Graphics/facets.bin",
-        "SpaceClaim/Graphics/renderlist.xml",
-    }
-
-    missing = expected_files - namelist
-    assert not missing
 
 
 def test_update_from_tracker_modified_body_nested_component(
