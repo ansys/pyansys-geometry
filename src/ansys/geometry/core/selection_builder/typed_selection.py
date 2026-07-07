@@ -22,26 +22,18 @@
 
 """Provides for creating a typed selection."""
 
+from typing import Any
+
 
 class TypedSelection:
     """Base class for typed selections."""
 
-    def __init__(self, items: list[any] = []):
-        self._items = items
+    def __init__(self, items: list[Any] | None = None):
+        self._items = items if items is not None else []
 
     @property
-    def items(self) -> list[any]:
+    def items(self) -> list[Any]:
         """Get the current selection items."""
         return self._items
 
-    def __add__(self, other: "TypedSelection") -> "TypedSelection":
-        """Return a new selection that is the union of this selection and another."""
-        return TypedSelection(list(set(self.items) | set(other.items)))
 
-    def __sub__(self, other: "TypedSelection") -> "TypedSelection":
-        """Return a new selection that is the difference of this selection and another."""
-        return TypedSelection(list(set(self.items) - set(other.items)))
-
-    def __and__(self, other: "TypedSelection") -> "TypedSelection":
-        """Return a new selection that is the intersection of this selection and another."""
-        return TypedSelection(list(set(self.items) & set(other.items)))

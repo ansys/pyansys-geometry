@@ -2230,7 +2230,8 @@ def serialize_body_selection_response(response: GRPCBodySelectionResponse) -> di
         "response_data": [
             {
                 "bodies": [body.id.id for body in rd.bodies],
-                "command_response": rd.command_response,
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
             }
             for rd in response.response_data
         ]
@@ -2254,7 +2255,8 @@ def serialize_body_group_response(response: GRPCBodyGroupResponse) -> dict:
         "response_data": [
             {
                 "groups": [[body.id.id for body in group.bodies] for group in rd.groups],
-                "command_response": rd.command_response,
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
             }
             for rd in response.response_data
         ]

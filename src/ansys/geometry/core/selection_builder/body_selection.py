@@ -64,6 +64,34 @@ class BodySelection(TypedSelection):
         self._grpc_client = grpc_client
         self._items = items or []
 
+    # ── Set-like operators ───────────────────────────────────────────────────
+
+    def __add__(self, other: "BodySelection") -> "BodySelection":
+        """Return a new selection that is the union of this selection and another."""
+        return BodySelection(
+            self._design,
+            self._grpc_client,
+            list(dict.fromkeys(self.items + other.items)),
+        )
+
+    def __sub__(self, other: "BodySelection") -> "BodySelection":
+        """Return a new selection that is the difference of this selection and another."""
+        other_set = set(other.items)
+        return BodySelection(
+            self._design,
+            self._grpc_client,
+            [x for x in self.items if x not in other_set],
+        )
+
+    def __and__(self, other: "BodySelection") -> "BodySelection":
+        """Return a new selection that is the intersection of this selection and another."""
+        other_set = set(other.items)
+        return BodySelection(
+            self._design,
+            self._grpc_client,
+            list(dict.fromkeys(x for x in self.items if x in other_set)),
+        )
+
     # ── Static factory (get) ─────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)

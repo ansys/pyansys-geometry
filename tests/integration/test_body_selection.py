@@ -106,7 +106,6 @@ def test_get_bodies_with_name(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     all_bodies = design.get_all_bodies()
-    design.tree_print()
     assert len([b for b in all_bodies if b.name == "Wheel"]) == 8
 
     sel_builder = modeler.create_selection_builder()

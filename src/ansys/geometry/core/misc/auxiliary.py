@@ -195,7 +195,8 @@ def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     -----
     This method takes a design and body ids, and gets their corresponding ``Body`` object.
     """
-    body_map = {body.id: body for body in __traverse_all_bodies(design) if body.id in body_ids}
+    body_id_set = set(body_ids)
+    body_map = {body.id: body for body in __traverse_all_bodies(design) if body.id in body_id_set}
     return [body_map[bid] for bid in body_ids if bid in body_map]
 
 
