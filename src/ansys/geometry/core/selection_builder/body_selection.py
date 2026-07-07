@@ -1532,7 +1532,7 @@ class BodySelection(TypedSelection):
             body_ids=[b.id for b in self.items],
         )
         return [
-            BodySelection(self._design, self._grpc_client, get_bodies_from_ids (self._design, group))
+            BodySelection(self._design, self._grpc_client, get_bodies_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
