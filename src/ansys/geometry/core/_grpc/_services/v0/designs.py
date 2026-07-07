@@ -292,7 +292,6 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
                 "master_id": body.master_id,
                 "parent_id": body.parent_id,
                 "is_surface": body.is_surface,
-                "is_lightweight": False,
             }
 
         def serialize_component(component):
