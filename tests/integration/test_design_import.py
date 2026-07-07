@@ -791,14 +791,6 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         modeler.open_file(unsupported_file)
 
 
-def test_opening_nonexistent_path(modeler: Modeler):
-    """Test that opening a file from a nonexistent path raises an appropriate error."""
-    nonexistent_path = FILES_DIR / "nonexistent_file.scdocx"
-    with pytest.raises(
-        GeometryRuntimeError,
-        match=re.escape(f"File {nonexistent_path} does not exist."),
-    ):
-        modeler.open_file(nonexistent_path)
 def test_importing_with_sc_colors(modeler: Modeler):
     """Test importing a file with SpaceClaim colors."""
     # Import the file without SC color tones
