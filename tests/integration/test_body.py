@@ -33,8 +33,8 @@ import pytest
 
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import DesignFileFormat
-from ansys.geometry.core.designer.body import FillStyle, MasterBody
-from ansys.geometry.core.designer.part import MasterComponent, Part
+from ansys.geometry.core.designer.body import FillStyle
+from ansys.geometry.core.designer.part import Part
 from ansys.geometry.core.materials import Material, MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
@@ -579,6 +579,7 @@ def test_update_body_sets_properties(modeler: Modeler):
         design._update_body(body, body_info)
 
         debug_spy.assert_called()
+
 
 def test_single_body_translation(modeler: Modeler):
     """Test for verifying the correct translation of a ``Body``.
@@ -1384,6 +1385,7 @@ def test_shell_body(modeler: Modeler):
     assert success
     assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
     assert len(base.faces) == 12
+
 
 def test_named_selection_build_faces_from_metadata_returns_none_when_body_missing():
     """Test face metadata build returns None when a referenced body is unavailable."""
