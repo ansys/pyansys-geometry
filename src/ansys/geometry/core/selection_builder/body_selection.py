@@ -23,7 +23,7 @@
 """Provides for creating a body selection."""
 
 from numbers import Real
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer.edge import CurveType
@@ -122,8 +122,6 @@ class BodySelection(TypedSelection):
     def get_bodies_from_named_selection(
         self,
         name: str,
-        filter_type: "StringFilterType" = StringFilterType.STRINGFILTERTYPE_TEXT,
-        ignore_case: bool = False,
     ) -> "BodySelection":
         """Return bodies belonging to a named selection.
 
@@ -131,10 +129,6 @@ class BodySelection(TypedSelection):
         ----------
         name : str
             Name (or pattern) of the named selection to match.
-        filter_type : StringFilterType, default: StringFilterType.STRINGFILTERTYPE_TEXT
-            String filter type.
-        ignore_case : bool, default: False
-            Whether the name match is case-insensitive.
 
         Returns
         -------
@@ -143,8 +137,6 @@ class BodySelection(TypedSelection):
         """
         response = self._grpc_client.services.body_selection.get_bodies_from_named_selection(
             name=name,
-            filter_type=filter_type,
-            ignore_case=ignore_case,
         )
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
@@ -183,8 +175,8 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_bodies_with_volume(
         self,
-        min: Volume | "Quantity" | Real,
-        max: Volume | "Quantity" | Real | None = None,
+        min: Union[Volume, "Quantity", Real],
+        max: Union[Volume, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose volume falls within a range.
 
@@ -212,8 +204,8 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_bodies_with_surface_area(
         self,
-        min: Area | "Quantity" | Real,
-        max: Area | "Quantity" | Real | None = None,
+        min: Union[Area, "Quantity", Real],
+        max: Union[Area, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose surface area falls within a range.
 
@@ -242,8 +234,8 @@ class BodySelection(TypedSelection):
     def get_bodies_with_x_location(
         self,
         range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
-        min: Distance | "Quantity" | Real | None = None,
-        max: Distance | "Quantity" | Real | None = None,
+        min: Union[Distance, "Quantity", Real, None] = None,
+        max: Union[Distance, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose X-location centroid falls within a range.
 
@@ -275,8 +267,8 @@ class BodySelection(TypedSelection):
     def get_bodies_with_y_location(
         self,
         range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
-        min: Distance | "Quantity" | Real | None = None,
-        max: Distance | "Quantity" | Real | None = None,
+        min: Union[Distance, "Quantity", Real, None] = None,
+        max: Union[Distance, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose Y-location centroid falls within a range.
 
@@ -308,8 +300,8 @@ class BodySelection(TypedSelection):
     def get_bodies_with_z_location(
         self,
         range_type: RangeType = RangeType.RANGETYPE_INTERSECT,
-        min: Distance | "Quantity" | Real | None = None,
-        max: Distance | "Quantity" | Real | None = None,
+        min: Union[Distance, "Quantity", Real, None] = None,
+        max: Union[Distance, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose Z-location centroid falls within a range.
 
@@ -339,7 +331,7 @@ class BodySelection(TypedSelection):
 
     @min_backend_version(27, 1, 0)
     def get_bodies_with_color(
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self, color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]
     ) -> "BodySelection":
         """Return bodies that match a specific color.
 
@@ -391,8 +383,8 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_volume(
         self,
-        min: Volume | "Quantity" | Real,
-        max: Volume | "Quantity" | Real | None = None,
+        min: Union[Volume, "Quantity", Real],
+        max: Union[Volume, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Filter bodies whose volume falls within a range.
 
@@ -451,8 +443,8 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_surface_area(
         self,
-        min: Area | "Quantity" | Real,
-        max: Area | "Quantity" | Real | None = None,
+        min: Union[Area, "Quantity", Real],
+        max: Union[Area, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Filter bodies whose surface area falls within a range.
 
@@ -910,7 +902,7 @@ class BodySelection(TypedSelection):
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_color(
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self, color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]
     ) -> "BodySelection":
         """Filter bodies that match a specific color.
 
@@ -1339,7 +1331,7 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def extend_nearby_bodies(
         self,
-        distance: Distance | "Quantity" | Real,
+        distance: Union[Distance, "Quantity", Real],
         scope: ExtendScope = ExtendScope.EXTENDSCOPE_ALL,
     ) -> "BodySelection":
         """Extend the selection with bodies within a given distance.

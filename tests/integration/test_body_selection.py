@@ -38,7 +38,6 @@ from .conftest import FILES_DIR
 
 def test_get_all_visible_bodies(modeler: Modeler):
     """Verify that get_all_visible_bodies returns all visible bodies in the design."""
-    pytest.skip("broken")
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     all_bodies = design.get_all_bodies()
@@ -75,7 +74,6 @@ def test_get_all_surface_bodies(modeler: Modeler):
 
 def test_get_all_solid_bodies(modeler: Modeler):
     """Verify that get_all_solid_bodies returns only solid bodies."""
-    pytest.skip("broken")
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     all_bodies = design.get_all_bodies()
@@ -85,13 +83,22 @@ def test_get_all_solid_bodies(modeler: Modeler):
     solid_bodies = sel_builder.bodies.get_all_solid_bodies()
     assert len(solid_bodies.items) == 13
 
-    solid_visible_bodies = sel_builder.bodies.get_all_solid_bodies().get_all_visible_bodies()
-    assert len(solid_visible_bodies.items) == 12
+    solid_bodies &= solid_bodies.get_all_visible_bodies()
+    assert len(solid_bodies.items) == 12
 
 
 def test_get_bodies_from_named_selection(modeler: Modeler):
     """Verify that get_bodies_from_named_selection returns bodies in the named selection."""
-    pytest.skip("not implemented")
+    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+
+    all_bodies = design.get_all_bodies()
+    assert len([b for b in all_bodies if b.name == "Wheel"]) == 8
+
+    design.create_named_selection("Wheels", [b for b in all_bodies if b.name == "Wheel"])
+
+    sel_builder = modeler.create_selection_builder()
+    named_bodies = sel_builder.bodies.get_bodies_from_named_selection("Wheels")
+    assert len(named_bodies.items) == 8
 
 
 def test_get_bodies_with_name(modeler: Modeler):
@@ -187,7 +194,6 @@ def test_get_bodies_with_color(modeler: Modeler):
 
 def test_invert_body_selection(modeler: Modeler):
     """Verify that invert_body_selection returns all bodies not in the input selection."""
-    pytest.skip("broken")
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()

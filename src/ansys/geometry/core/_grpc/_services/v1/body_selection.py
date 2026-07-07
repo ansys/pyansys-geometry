@@ -139,8 +139,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             request_data=[
                 GetBodiesFromNamedSelectionRequestData(
                     name=kwargs["name"],
-                    filter_type=kwargs["filter_type"].value,
-                    ignore_case=kwargs["ignore_case"],
                 )
             ]
         )
