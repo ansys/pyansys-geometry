@@ -28,6 +28,7 @@ from .base.assembly_condition import GRPCAssemblyConditionService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.body_selection import GRPCBodySelectionService
+from .base.face_selection import GRPCFaceSelectionService
 from .base.commands import GRPCCommandsService
 from .base.commands_script import GRPCCommandsScriptService
 from .base.components import GRPCComponentsService
@@ -93,6 +94,7 @@ class _GRPCServices:
         self._beams = None
         self._bodies = None
         self._body_selection = None
+        self._face_selection = None
         self._commands = None
         self._components = None
         self._coordinate_systems = None
@@ -238,6 +240,31 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._body_selection
+
+    @property
+    def face_selection(self) -> GRPCFaceSelectionService:
+        """
+        Get the face selection service for the specified version.
+
+        Returns
+        -------
+        GRPCFaceSelectionService
+            The face selection service for the specified version.
+        """
+        if not self._face_selection:
+            # Import the appropriate face selection service based on the version
+            from .v0.face_selection import GRPCFaceSelectionServiceV0
+            from .v1.face_selection import GRPCFaceSelectionServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._face_selection = GRPCFaceSelectionServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._face_selection = GRPCFaceSelectionServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._face_selection
 
     @property
     def commands(self) -> GRPCCommandsService:
