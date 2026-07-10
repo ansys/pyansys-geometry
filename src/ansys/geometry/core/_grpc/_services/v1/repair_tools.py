@@ -493,7 +493,13 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
     @protect_grpc
     def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
-        from ansys.api.discovery.v1.operations.repair_pb2 import FindBadFacesRequest
+        try:
+            from ansys.api.discovery.v1.operations.repair_pb2 import FindBadFacesRequest
+        except ImportError as error:
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.find_bad_faces' is not "
+                "implemented in this protofile version."
+            ) from error
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindBadFacesRequest(body_ids=[build_grpc_id(item) for item in kwargs["body_ids"]])
