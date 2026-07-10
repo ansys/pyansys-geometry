@@ -164,16 +164,16 @@ wheels = [
 
 [[package]]
 name = "ansys-api-discovery"
-version = "1.2.4"
+version = "1.2.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-api-geometry" },
     { name = "grpcio" },
     { name = "protobuf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3e/d9/9a2e7de42e8d11c306e73e9d509f6aee9e8b4868ae969fde1fa8fbe49708/ansys_api_discovery-1.2.4.tar.gz", hash = "sha256:4de71775dab9a34ecbd01e99906de1c02f2fd6e12ea0368357e6bb42be94bcde", size = 83944, upload-time = "2026-07-02T12:35:54.087Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/f4/c8f8a80862603c1e72a19edd0d57e2f06a5f20693562506b36f517342b99/ansys_api_discovery-1.2.5.tar.gz", hash = "sha256:7438bd0421357186a0c80b68bc8d2bf0e1ab53950af7ebef99c55b4aae183615", size = 85925, upload-time = "2026-07-09T14:11:20.928Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/eb/da/adb6eda6c406f0f69582e352f906156b703a7b154047f1b7f91b0ddf369f/ansys_api_discovery-1.2.4-py3-none-any.whl", hash = "sha256:785d1199d0cadaa1b15342bbd779b55cf3739f9bb79bef775dff75c11803328a", size = 1150244, upload-time = "2026-07-02T12:35:52.574Z" },
+    { url = "https://files.pythonhosted.org/packages/33/e5/b5c1797356daad69d074db9aa7cf9a63a0d88d38066809d46e44222f8f5e/ansys_api_discovery-1.2.5-py3-none-any.whl", hash = "sha256:22816bd35a3a49b0796c38731b00b1f34b9401759dd92a9cb4e1cdbd75b24196", size = 1168980, upload-time = "2026-07-09T14:11:19.263Z" },
 ]
 
 [[package]]
@@ -378,7 +378,7 @@ tests-minimal = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-api-discovery", specifier = "==1.2.4" },
+    { name = "ansys-api-discovery", specifier = "==1.2.5" },
     { name = "ansys-platform-instancemanagement", marker = "extra == 'all'", specifier = ">=1.0.3,<2" },
     { name = "ansys-tools-common", specifier = ">=0.3,<1" },
     { name = "ansys-tools-visualization-interface", marker = "extra == 'all'", specifier = ">=0.2.6" },
@@ -2317,11 +2317,11 @@ wheels = [
 
 [[package]]
 name = "mistune"
-version = "3.2.1"
+version = "3.3.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/ca/84/620cc3f7e3adf6f5067e10f4dbae71295d8f9e16d5d3f9ef97c40f2f592c/mistune-3.2.1.tar.gz", hash = "sha256:7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28", size = 98003, upload-time = "2026-05-03T14:33:22.312Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/9c/1939635275ec7258e2b43b00dafabc36d89ad11aa7838d375dc1b0e561cb/mistune-3.3.0.tar.gz", hash = "sha256:3074ec4c61b384abe725128e4dcbb483f5a09cc4632012505cdee655d3a113b9", size = 110936, upload-time = "2026-06-21T13:11:39.458Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2a/7f/a946aa4f8752b37102b41e64dca18a1976ac705c3a0d1dfe74d820a02552/mistune-3.2.1-py3-none-any.whl", hash = "sha256:78cdb0ba5e938053ccf63651b352508d2efa9411dc8810bfb05f2dc5140c0048", size = 53749, upload-time = "2026-05-03T14:33:20.551Z" },
+    { url = "https://files.pythonhosted.org/packages/b7/76/b90f9d48d43fbd80a79a20d3eab2e5109859c7a56dc663b23187385898f3/mistune-3.3.0-py3-none-any.whl", hash = "sha256:a758e578acda49d8195f9a860b132dae2cf7bf409381393b1c4e6e489a65397b", size = 61250, upload-time = "2026-06-21T13:11:37.938Z" },
 ]
 
 [[package]]
