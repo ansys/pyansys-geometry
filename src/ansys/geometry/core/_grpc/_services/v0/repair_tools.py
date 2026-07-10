@@ -798,6 +798,13 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
 
+    @protect_grpc
+    def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.find_bad_faces' is not "
+            "implemented in this protofile version."
+        )
+
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):
             return {

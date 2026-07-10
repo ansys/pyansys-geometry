@@ -24,6 +24,7 @@
 
 import pytest
 
+from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.check_geometry import InspectResult
 from ansys.geometry.core.tools.problem_areas import (
@@ -239,6 +240,32 @@ def test_fix_small_face(modeler: Modeler):
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
     assert len(problem_areas) == 4
     assert problem_areas[0].fix().success is True
+
+
+def test_find_bad_faces(modeler: Modeler):
+    """Test to read geometry and find bad faces."""
+    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
+
+    try:
+        grpc_response = modeler.client.services.repair_tools.find_bad_faces(
+            body_ids=[body.id for body in design.bodies]
+        )
+    except NotImplementedError:
+        pytest.skip("find_bad_faces is not implemented for this backend/proto version")
+    except GeometryExitedError as error:
+        if "UNIMPLEMENTED" in str(error).upper() or "METHOD NOT FOUND" in str(error).upper():
+            pytest.skip("find_bad_faces is not implemented for this backend/proto version")
+        raise
+
+    bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
+
+    assert len(bad_faces) == len(grpc_response["face_ids"])
+    assert sorted(face.id for face in bad_faces) == sorted(grpc_response["face_ids"])
+
+
+def test_find_bad_faces_empty_input(modeler: Modeler):
+    """Test that ``find_bad_faces`` returns an empty list for empty input."""
+    assert modeler.repair_tools.find_bad_faces([]) == []
 
 
 def test_find_stitch_faces(modeler: Modeler):
