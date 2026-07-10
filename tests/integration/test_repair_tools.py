@@ -22,8 +22,12 @@
 
 """Testing of repair tools."""
 
+from unittest.mock import MagicMock
+
+from ansys.api.discovery.v1.commonmessages_pb2 import EntityIdentifier
 import pytest
 
+from ansys.geometry.core._grpc._services.v1.repair_tools import GRPCRepairToolsServiceV1
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.check_geometry import InspectResult
@@ -266,6 +270,54 @@ def test_find_bad_faces(modeler: Modeler):
 def test_find_bad_faces_empty_input(modeler: Modeler):
     """Test that ``find_bad_faces`` returns an empty list for empty input."""
     assert modeler.repair_tools.find_bad_faces([]) == []
+
+
+def test_grpc_v1_find_bad_faces_builds_request_and_calls_stub():
+    """Test v1 ``find_bad_faces`` request creation and RPC invocation."""
+    repair_pb2 = pytest.importorskip("ansys.api.discovery.v1.operations.repair_pb2")
+    if not hasattr(repair_pb2, "FindBadFacesRequest") or not hasattr(
+        repair_pb2, "FindBadFacesResponse"
+    ):
+        pytest.skip("FindBadFaces request/response are not available in installed discovery protos")
+
+    find_bad_faces_response = repair_pb2.FindBadFacesResponse
+
+    service = object.__new__(GRPCRepairToolsServiceV1)
+    service.stub = MagicMock()
+    service.stub.FindBadFaces.return_value = find_bad_faces_response(
+        face_ids=[EntityIdentifier(id="face-1"), EntityIdentifier(id="face-2")]
+    )
+
+    result = service.find_bad_faces(body_ids=["body-1", "body-2"])
+
+    assert result == {"face_ids": ["face-1", "face-2"]}
+    service.stub.FindBadFaces.assert_called_once()
+
+    request = service.stub.FindBadFaces.call_args.args[0]
+    assert [body.id for body in request.body_ids] == ["body-1", "body-2"]
+
+
+def test_grpc_v1_find_bad_faces_handles_empty_body_ids():
+    """Test v1 ``find_bad_faces`` with an empty body list."""
+    repair_pb2 = pytest.importorskip("ansys.api.discovery.v1.operations.repair_pb2")
+    if not hasattr(repair_pb2, "FindBadFacesRequest") or not hasattr(
+        repair_pb2, "FindBadFacesResponse"
+    ):
+        pytest.skip("FindBadFaces request/response are not available in installed discovery protos")
+
+    find_bad_faces_response = repair_pb2.FindBadFacesResponse
+
+    service = object.__new__(GRPCRepairToolsServiceV1)
+    service.stub = MagicMock()
+    service.stub.FindBadFaces.return_value = find_bad_faces_response(face_ids=[])
+
+    result = service.find_bad_faces(body_ids=[])
+
+    assert result == {"face_ids": []}
+    service.stub.FindBadFaces.assert_called_once()
+
+    request = service.stub.FindBadFaces.call_args.args[0]
+    assert list(request.body_ids) == []
 
 
 def test_find_stitch_faces(modeler: Modeler):
