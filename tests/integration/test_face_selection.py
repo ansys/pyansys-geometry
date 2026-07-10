@@ -402,7 +402,10 @@ def test_filter_faces_perimeter_percentile(modeler: Modeler):
 
 
 @pytest.mark.xfail(
-    reason="Server returns 0 for edge-count percentile filter; server-side behaviour TBD",
+    reason=(
+        "scFaceSelection.FilterNumberEdgesPercentile returns 0 in this SC build; "
+        "expected 32 faces (4-edge faces at/above 50th percentile)"
+    ),
     strict=False,
 )
 def test_filter_faces_edge_count_percentile(modeler: Modeler):
@@ -492,7 +495,9 @@ def test_extend_to_same_color(modeler: Modeler):
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason="ExtendToCoincident not implemented on this server build",
+    reason=(
+        "scFaceSelection.ExtendToCoincident throws NotImplementedException in this SC build"
+    ),
     strict=True,
 )
 def test_extend_to_coincident(modeler: Modeler):
@@ -508,7 +513,9 @@ def test_extend_to_coincident(modeler: Modeler):
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason="ExtendToCoaxialFaces not implemented on this server build",
+    reason=(
+        "scFaceSelection.ExtendToCoaxialFaces throws NotImplementedException in this SC build"
+    ),
     strict=True,
 )
 def test_extend_to_coaxial_faces(modeler: Modeler):
@@ -665,7 +672,9 @@ def test_group_faces_by_color(modeler: Modeler):
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason="GroupFacesByCoincident not implemented on this server build",
+    reason=(
+        "scFaceSelection.GroupByCoincident throws NotImplementedException in this SC build"
+    ),
     strict=True,
 )
 def test_group_faces_by_coincident(modeler: Modeler):
