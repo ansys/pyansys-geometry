@@ -800,8 +800,8 @@ def test_opening_nonexistent_path(modeler: Modeler):
         match=re.escape(f"File {nonexistent_path} does not exist."),
     ):
         modeler.open_file(nonexistent_path)
-        
-        
+
+
 def test_importing_with_sc_colors(modeler: Modeler):
     """Test importing a file with SpaceClaim colors."""
     # Import the file without SC color tones
