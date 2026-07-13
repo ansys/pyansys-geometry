@@ -23,7 +23,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.2.4",
+  "ansys-api-discovery==1.2.5",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -97,7 +97,7 @@ general-all = [
   "grpcio==1.81.1",
   "grpcio-health-checking==1.81.1",
   "matplotlib==3.11.0",
-  "numpy==2.5.0",
+  "numpy==2.5.1",
   "pint==0.25.3",
   "protobuf==6.33.6",
   "pygltflib==1.16.5",
