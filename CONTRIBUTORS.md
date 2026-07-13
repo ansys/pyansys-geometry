@@ -17,6 +17,7 @@
 * [colton](https://github.com/syscordan)
 * [dastan-ansys](https://github.com/dastan-ansys)
 * [David Gorman](https://github.com/david-gorman)
+* [dmitriy-bty](https://github.com/dmitriy-bty)
 * [Dominik Gresch](https://github.com/greschd)
 * [German](https://github.com/germa89)
 * [Jacob Kerstetter](https://github.com/jacobrkerstetter)
