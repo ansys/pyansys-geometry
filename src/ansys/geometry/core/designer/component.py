@@ -1531,7 +1531,7 @@ class Component:
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
         response = self._grpc_client.services.points.create_design_points(
-            points=points, parent_id=self.id
+            points=points, parent_id=self.id, name=name,
         )
         self._grpc_client.log.debug("Design points successfully created.")
 
@@ -1580,6 +1580,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def delete_datum_plane(self, plane: DatumPlane | str) -> None:
         """Delete a datum plane from this component.
 
@@ -1618,6 +1619,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def delete_coordinate_system(self, coordinate_system: CoordinateSystem | str) -> None:
         """Delete a coordinate system from this component.
 
@@ -1658,6 +1660,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def create_datum_point(self, name: str, point: Point3D) -> DatumPoint:
         """Create a datum point on this component.
 
@@ -1674,9 +1677,10 @@ class Component:
             Created datum point object.
         """
         self._grpc_client.log.debug(f"Creating datum point on {self.id}...")
-        response = self._grpc_client.services.points.create_design_points(
+        response = self._grpc_client.services.points.create_datum_points(
             parent_id=self.id,
             points=[point],
+            name=name,
         )
         self._grpc_client.log.debug("Datum point successfully created.")
         datum_point = DatumPoint(response.get("point_ids")[0], name, point, self)
@@ -1685,6 +1689,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def delete_datum_point(self, datum_point: DatumPoint | str) -> None:
         """Delete a datum point from this component.
 

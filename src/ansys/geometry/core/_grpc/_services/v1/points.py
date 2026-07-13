@@ -34,7 +34,8 @@ from .conversions import (
     from_grpc_quantity_to_distance,
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
-    from_point3d_to_grpc_design_point,
+    from_point3d_to_grpc_datum_point,
+    from_point3d_to_grpc_point,
     from_trimmed_curve_to_grpc_trimmed_curve,
     serialize_tracked_command_response,
 )
@@ -56,13 +57,15 @@ class GRPCPointsServiceV1(GRPCPointsService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.discovery.v1.design.constructs.datumpoint_pb2_grpc import DatumPointStub
+        from ansys.api.discovery.v1.design.geometry.curve_pb2_grpc import CurveStub
         from ansys.api.discovery.v1.operations.edit_pb2_grpc import EditStub
 
         self.stub = DatumPointStub(channel)
+        self.curve_stub = CurveStub(channel)
         self.edit_stub = EditStub(channel)
 
     @protect_grpc
-    def create_design_points(self, **kwargs) -> dict:  # noqa: D102
+    def create_datum_points(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.constructs.datumpoint_pb2 import (
             DatumPointCreationRequest,
             DatumPointCreationRequestData,
@@ -72,8 +75,9 @@ class GRPCPointsServiceV1(GRPCPointsService):
         request = DatumPointCreationRequest(
             request_data=[
                 DatumPointCreationRequestData(
-                    points=[from_point3d_to_grpc_design_point(point) for point in kwargs["points"]],
+                    points=[from_point3d_to_grpc_datum_point(point) for point in kwargs["points"]],
                     parent_id=build_grpc_id(kwargs["parent_id"]),
+                    name=kwargs["name"],
                 )
             ]
         )
@@ -83,6 +87,31 @@ class GRPCPointsServiceV1(GRPCPointsService):
 
         # Return the response - formatted as a dictionary
         return {"point_ids": [p.id for p in response.ids]}
+
+    @protect_grpc
+    def create_design_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.curve_pb2 import (
+            CreateDesignPointsRequest,
+            CreateDesignPointsRequestData,
+        )
+
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateDesignPointsRequest(
+            request_data=[
+                CreateDesignPointsRequestData(
+                    points=[from_point3d_to_grpc_point(point) for point in kwargs["points"]],
+                    parent_id=build_grpc_id(kwargs["parent_id"]),
+                    name=kwargs["name"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.curve_stub.CreateDesignPoints(request)
+
+        # Return the response - formatted as a dictionary
+        return {"point_ids": [p.id for p in response.created_point_ids]}
 
     @protect_grpc
     def revolve_points(self, **kwargs) -> dict:  # noqa: D102

@@ -960,6 +960,7 @@ def test_read_existing_design_plane_retrieval_paths(
         "component_shared_topologies": [
             {"component_id": "p_main", "shared_topology_type": shared_type.value}
         ],
+        "datum_points": [],
     }
 
     with (
@@ -2390,8 +2391,12 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Coordinate Systems : 0" in design_str
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
+    assert "N Beams              : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Datum Points       : 0" in design_str
+    assert "N Datum Planes       : 0" in design_str
     assert "N Design Points      : 0" in design_str
+    assert "N Design Curves      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -7114,9 +7119,7 @@ def test_delete_datum_point(modeler: Modeler):
 
     # Create a datum point on a nested component and delete from there
     nested = design.add_component("NestedComp")
-    dp_nested = nested.create_datum_point(
-        "DPNested", Point3D([10, 20, 30], UNITS.mm)
-    )
+    dp_nested = nested.create_datum_point("DPNested", Point3D([10, 20, 30], UNITS.mm))
     assert dp_nested.is_alive
     assert len(nested.datum_points) == 1
 
@@ -7164,3 +7167,166 @@ def test_delete_design_curve(modeler: Modeler):
     # No error raised, just a warning logged - all existing curves remain
     assert not curves1[0].is_alive
     assert not curves2[0].is_alive
+
+
+def test_create_datum_point(modeler: Modeler):
+    """Test creation of datum points and their basic properties.
+
+    Combines creation, property validation, repr output, and nested-component
+    scoping into a single test.
+    """
+    design = modeler.create_design("CreateDatumPoint_Test")
+
+    # Create a datum point at the root design level
+    point = Point3D([1, 2, 3], UNITS.mm)
+    dp1 = design.create_datum_point("DP1", point)
+
+    assert dp1.id is not None
+    assert dp1.name == "DP1"
+    assert dp1.value == point
+    assert dp1.parent_component.id == design.id
+    assert dp1.is_alive
+    assert len(design.datum_points) == 1
+    assert design.datum_points[0].id == dp1.id
+
+    # Create a second datum point on a nested component
+    nested = design.add_component("Nested")
+    dp2 = nested.create_datum_point("DP2", Point3D([4, 5, 6], UNITS.mm))
+
+    assert dp2.id is not None
+    assert dp2.id != dp1.id
+    assert dp2.name == "DP2"
+    assert dp2.parent_component.id == nested.id
+    assert dp2.is_alive
+    assert len(nested.datum_points) == 1
+    assert nested.datum_points[0] == dp2
+
+    # The root design-level list does not include datum points from nested components
+    assert len(design.datum_points) == 1
+
+    # Verify repr output
+    dp1_str = str(dp1)
+    assert "ansys.geometry.core.designer.DatumPoint" in dp1_str
+    assert "  Name                 : DP1" in dp1_str
+    assert "  Datum Point          : " in dp1_str
+
+
+def test_named_selection_with_datum_points(modeler: Modeler):
+    """Test adding and removing datum points via a named selection.
+
+    create_named_selection does not expose a datum_points parameter, so datum
+    points are added through add_members and removed through remove_members.
+    """
+    design = modeler.create_design("NSWithDatumPoints_Test")
+
+    # A body is required to seed the named selection
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    dp1 = design.create_datum_point("DP1", Point3D([1, 0, 0], UNITS.m))
+    dp2 = design.create_datum_point("DP2", Point3D([2, 0, 0], UNITS.m))
+
+    ns = design.create_named_selection("DatumPointsNS", bodies=[box])
+    ns.add_members(datum_points=[dp1, dp2])
+
+    assert len(ns.datum_points) == 2
+    assert {dp.id for dp in ns.datum_points} == {dp1.id, dp2.id}
+
+    # Remove one datum point — body keeps the selection non-empty
+    ns.remove_members(members=[dp1])
+    assert len(ns.datum_points) == 1
+    assert ns.datum_points[0].id == dp2.id
+
+
+def test_datum_point_get_named_selections(modeler: Modeler):
+    """Test that DatumPoint.get_named_selections returns the correct named selections."""
+    design = modeler.create_design("DatumPointNS_Test")
+
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    dp = design.create_datum_point("DP1", Point3D([1, 0, 0], UNITS.m))
+
+    # Not yet part of any named selection
+    assert len(dp.get_named_selections()) == 0
+
+    ns = design.create_named_selection("MyNS", bodies=[box])
+    ns.add_members(datum_points=[dp])
+
+    included = dp.get_named_selections()
+    assert len(included) == 1
+    assert included[0].name == "MyNS"
+
+    # After removal the datum point is no longer linked to the named selection
+    ns.remove_members(members=[dp])
+    assert len(dp.get_named_selections()) == 0
+
+
+def test_search_datum_point(modeler: Modeler):
+    """Test recursive search for datum points across nested components."""
+    design = modeler.create_design("SearchDatumPoint_Test")
+
+    dp1 = design.create_datum_point("DP1", Point3D([1, 0, 0], UNITS.m))
+    nested = design.add_component("Nested")
+    dp2 = nested.create_datum_point("DP2", Point3D([2, 0, 0], UNITS.m))
+    deep = nested.add_component("Deep")
+    dp3 = deep.create_datum_point("DP3", Point3D([3, 0, 0], UNITS.m))
+
+    # Root search finds datum points at all depths
+    assert design.search_datum_point(dp1.id) is dp1
+    assert design.search_datum_point(dp2.id) is dp2
+    assert design.search_datum_point(dp3.id) is dp3
+
+    # Nested search finds its own and deeper datum points but not the root one
+    assert nested.search_datum_point(dp2.id) is dp2
+    assert nested.search_datum_point(dp3.id) is dp3
+    assert nested.search_datum_point(dp1.id) is None
+
+    # Unknown id returns None
+    assert design.search_datum_point("non_existent_id") is None
+
+
+def test_search_coordinate_system(modeler: Modeler):
+    """Test recursive search for coordinate systems across nested components."""
+    design = modeler.create_design("SearchCS_Test")
+    frame = Frame(Point3D([10, 20, 30], UNITS.mm), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
+
+    cs1 = design.create_coordinate_system("CS1", frame)
+    nested = design.add_component("Nested")
+    cs2 = nested.create_coordinate_system("CS2", frame)
+    deep = nested.add_component("Deep")
+    cs3 = deep.create_coordinate_system("CS3", frame)
+
+    # Root search finds coordinate systems at all depths
+    assert design.search_coordinate_system(cs1.id) is cs1
+    assert design.search_coordinate_system(cs2.id) is cs2
+    assert design.search_coordinate_system(cs3.id) is cs3
+
+    # Nested search finds its own and deeper coordinate systems but not the root one
+    assert nested.search_coordinate_system(cs2.id) is cs2
+    assert nested.search_coordinate_system(cs3.id) is cs3
+    assert nested.search_coordinate_system(cs1.id) is None
+
+    # Unknown id returns None
+    assert design.search_coordinate_system("non_existent_id") is None
+
+
+def test_search_design_curve(modeler: Modeler):
+    """Test search for design curves on the design."""
+    design = modeler.create_design("SearchDesignCurve_Test")
+
+    dp1 = design.add_design_point("RevPt1", Point3D([1, 0, 0], UNITS.m))
+    curves1 = modeler.geometry_commands.revolve_points(
+        dp1, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(curves1) == 1
+
+    dp2 = design.add_design_point("RevPt2", Point3D([2, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points(
+        dp2, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 4, UNITS.rad)
+    )
+    assert len(curves2) == 1
+
+    # Search by id finds the correct curve object
+    assert design.search_design_curve(curves1[0].id) is curves1[0]
+    assert design.search_design_curve(curves2[0].id) is curves2[0]
+
+    # Unknown id returns None
+    assert design.search_design_curve("non_existent_id") is None

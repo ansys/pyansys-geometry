@@ -187,3 +187,10 @@ class GRPCPointsServiceV0(GRPCPointsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def create_datum_points(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.create_datum_points' is not "
+            "implemented in this protofile version."
+        )

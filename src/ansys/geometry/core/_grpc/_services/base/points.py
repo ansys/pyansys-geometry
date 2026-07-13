@@ -41,6 +41,11 @@ class GRPCPointsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def create_datum_points(self, **kwargs) -> dict:
+        """Create datum points."""
+        pass
+    
+    @abstractmethod
     def create_design_points(self, **kwargs) -> dict:
         """Create design points."""
         pass

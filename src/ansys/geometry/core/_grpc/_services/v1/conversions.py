@@ -48,7 +48,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     BodyEntity as GRPCBodyEntity,
     ComponentEntity as GRPCComponentEntity,
     CurveGeometry as GRPCCurveGeometry,
-    DatumPointEntity as GRPCDesignPoint,
+    DatumPointEntity as GRPCDatumPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
     FMDExportOptions as GRPCFMDExportOptions,
@@ -257,8 +257,8 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     )
 
 
-def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
-    """Convert a v1 ``Point3D`` class to a design point gRPC message.
+def from_point3d_to_grpc_datum_point(point: "Point3D") -> GRPCDatumPoint:
+    """Convert a v1 ``Point3D`` class to a datum point gRPC message.
 
     Parameters
     ----------
@@ -267,10 +267,10 @@ def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
 
     Returns
     -------
-    GRPCDesignPoint
-        Geometry service gRPC design point message. The unit is meters.
+    GRPCDatumPoint
+        Geometry service gRPC datum point message. The unit is meters.
     """
-    return GRPCDesignPoint(
+    return GRPCDatumPoint(
         position=from_point3d_to_grpc_point(point),
     )
 
