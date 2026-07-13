@@ -34,7 +34,7 @@ jobs:
           persist-credentials: true # Required for `git push` command
 
       - name: "Run PyAnsys code style checks"
-        uses: ansys/actions/code-style@a5b0351dc277d68c2dc1beca2d2674c7dfa4fc55 # v10.3.3
+        uses: ansys/actions/code-style@7419880d64bb0bba83f968ca803611df0b76faf0 # v10.3.4
         with:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
