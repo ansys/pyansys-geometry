@@ -25,8 +25,9 @@
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-import ansys.geometry.core as pyansys_geo
 import pytest
+
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer import SurfaceType
 from ansys.geometry.core.designer.face import Face
