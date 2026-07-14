@@ -817,3 +817,21 @@ def test_importing_with_sc_colors(modeler: Modeler):
     assert bodies[1].color == "#af8f8fff"
     assert bodies[2].color == "#af9f8fff"
     assert bodies[3].color == "#8fa4afff"
+
+
+def test_importing_catia_groups(modeler: Modeler):
+    """Test importing a CATIA file with groups."""
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "catia_ns/FOP_RECOGNISE_TEST.CATProduct"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 3
+
+    # Verify the groups
+    expected_groups = [
+        "SKETCH/RIGHTBOX",
+        "SKETCH/CENTERBOX",
+        "SKETCH/LEFTBOX",
+        "SKETCH/Z",
+        "SKETCH/XY"
+    ]
+    actual_groups = [group.name for group in design.named_selections]
+    assert np.isin(actual_groups, expected_groups).all()
