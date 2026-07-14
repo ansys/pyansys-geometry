@@ -54,6 +54,7 @@ from ansys.geometry.core.math import (
     Point3D,
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Angle, Distance
+from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 ```
 
@@ -220,11 +221,33 @@ print(
 )
 ```
 
-### Visualise and export the source model
+### Visualise the source model
+
+The ``GeometryPlotter`` displays each body type in a distinct color and opacity,
+making it easy to see the internal PCB layers through the semi-transparent
+laminate stack:
+
+- **PCB layers** — green, semi-transparent (opacity 0.3)
+- **Infill / underfill** — khaki, semi-transparent (opacity 0.2)
+- **Copper pads** — orange, opaque
+- **Solder cylinders** — silver, opaque
 
 ```{code-cell} ipython3
-design.plot()
+pcb_layers = [layer_1, layer_2, layer_3, layer_4, layer_5, layer_6]
+copper_pads = [b for b in component.bodies if b.name == "copper_pad"]
+
+plotter = GeometryPlotter()
+for layer in pcb_layers:
+    plotter.plot(layer, color="green", opacity=0.3)
+plotter.plot(infill, color="tan", opacity=0.2)
+for pad in copper_pads:
+    plotter.plot(pad, color="orange")
+for solder in solder_bodies:
+    plotter.plot(solder, color="silver")
+plotter.show()
 ```
+
+### Export the source model
 
 ```{code-cell} ipython3
 source_file = design.export_to_scdocx()
@@ -325,11 +348,18 @@ print(
 )
 ```
 
-### Visualise and export the target model
+### Visualise the target model
+
+The solder balls are plotted in silver to convey a metallic solder appearance.
 
 ```{code-cell} ipython3
-design_target.plot()
+plotter = GeometryPlotter()
+for ball in solder_ball_bodies:
+    plotter.plot(ball, color="silver")
+plotter.show()
 ```
+
+### Export the target model
 
 ```{code-cell} ipython3
 target_file = design_target.export_to_scdocx()
