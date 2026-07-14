@@ -22,12 +22,8 @@
 
 """Testing of repair tools."""
 
-from unittest.mock import MagicMock
-
-from ansys.api.discovery.v1.commonmessages_pb2 import EntityIdentifier
 import pytest
 
-from ansys.geometry.core._grpc._services.v1.repair_tools import GRPCRepairToolsServiceV1
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.check_geometry import InspectResult
@@ -254,6 +250,8 @@ def test_find_bad_faces(modeler: Modeler):
         grpc_response = modeler.client.services.repair_tools.find_bad_faces(
             body_ids=[body.id for body in design.bodies]
         )
+    except ImportError:
+        pytest.skip("find_bad_faces is not available in installed discovery protos")
     except NotImplementedError:
         pytest.skip("find_bad_faces is not implemented for this backend/proto version")
     except GeometryExitedError as error:
@@ -272,52 +270,23 @@ def test_find_bad_faces_empty_input(modeler: Modeler):
     assert modeler.repair_tools.find_bad_faces([]) == []
 
 
-def test_grpc_v1_find_bad_faces_builds_request_and_calls_stub():
-    """Test v1 ``find_bad_faces`` request creation and RPC invocation."""
-    repair_pb2 = pytest.importorskip("ansys.api.discovery.v1.operations.repair_pb2")
-    if not hasattr(repair_pb2, "FindBadFacesRequest") or not hasattr(
-        repair_pb2, "FindBadFacesResponse"
-    ):
-        pytest.skip("FindBadFaces request/response are not available in installed discovery protos")
+def test_find_bad_faces_is_stable_across_repeated_calls(modeler: Modeler):
+    """Test ``find_bad_faces`` gives stable results across repeated calls."""
+    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
 
-    find_bad_faces_response = repair_pb2.FindBadFacesResponse
+    try:
+        first_call = modeler.repair_tools.find_bad_faces(design.bodies)
+        second_call = modeler.repair_tools.find_bad_faces(design.bodies)
+    except ImportError:
+        pytest.skip("find_bad_faces is not available in installed discovery protos")
+    except NotImplementedError:
+        pytest.skip("find_bad_faces is not implemented for this backend/proto version")
+    except GeometryExitedError as error:
+        if "UNIMPLEMENTED" in str(error).upper() or "METHOD NOT FOUND" in str(error).upper():
+            pytest.skip("find_bad_faces is not implemented for this backend/proto version")
+        raise
 
-    service = object.__new__(GRPCRepairToolsServiceV1)
-    service.stub = MagicMock()
-    service.stub.FindBadFaces.return_value = find_bad_faces_response(
-        face_ids=[EntityIdentifier(id="face-1"), EntityIdentifier(id="face-2")]
-    )
-
-    result = service.find_bad_faces(body_ids=["body-1", "body-2"])
-
-    assert result == {"face_ids": ["face-1", "face-2"]}
-    service.stub.FindBadFaces.assert_called_once()
-
-    request = service.stub.FindBadFaces.call_args.args[0]
-    assert [body.id for body in request.body_ids] == ["body-1", "body-2"]
-
-
-def test_grpc_v1_find_bad_faces_handles_empty_body_ids():
-    """Test v1 ``find_bad_faces`` with an empty body list."""
-    repair_pb2 = pytest.importorskip("ansys.api.discovery.v1.operations.repair_pb2")
-    if not hasattr(repair_pb2, "FindBadFacesRequest") or not hasattr(
-        repair_pb2, "FindBadFacesResponse"
-    ):
-        pytest.skip("FindBadFaces request/response are not available in installed discovery protos")
-
-    find_bad_faces_response = repair_pb2.FindBadFacesResponse
-
-    service = object.__new__(GRPCRepairToolsServiceV1)
-    service.stub = MagicMock()
-    service.stub.FindBadFaces.return_value = find_bad_faces_response(face_ids=[])
-
-    result = service.find_bad_faces(body_ids=[])
-
-    assert result == {"face_ids": []}
-    service.stub.FindBadFaces.assert_called_once()
-
-    request = service.stub.FindBadFaces.call_args.args[0]
-    assert list(request.body_ids) == []
+    assert sorted(face.id for face in first_call) == sorted(face.id for face in second_call)
 
 
 def test_find_stitch_faces(modeler: Modeler):

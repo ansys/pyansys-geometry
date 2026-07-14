@@ -407,6 +407,7 @@ class RepairTools:
             for res in response.get("problems")
         ]
 
+    @min_backend_version(27, 1, 0)
     def find_bad_faces(self, bodies: list["Body"]) -> list["Face"]:
         """Find bad faces in the given list of bodies.
 
