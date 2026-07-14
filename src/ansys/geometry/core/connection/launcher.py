@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,11 +19,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module for connecting to instances of the Geometry service."""
 
 import logging
 import os
 from pathlib import Path
+import tempfile
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -1100,6 +1102,10 @@ def launch_modeler_with_core_service(
     if os.name == "nt" and server_logs_folder is None:
         # Writing to the "Public" folder by default - no write permissions specifically required.
         server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+    elif server_logs_folder is None:
+        # Writing to the system temp folder by default - no write permissions specifically required.
+        server_logs_folder = Path(tempfile.gettempdir(), "Ansys", "GeometryService")
         LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(

@@ -32,6 +32,10 @@ PyMechanical
 PyPI
 PyVista
 pytest
+pygltflib
 SciPy
 subpackage
+Synopsys
+synopsys
+uv
 launch_modeler_with_.*

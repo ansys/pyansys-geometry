@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module providing a wrapped abstraction of the gRPC stubs."""
 
 import atexit
@@ -37,6 +38,7 @@ from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
 from ansys.geometry.core.connection.product_instance import ProductInstance
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.logger import LOG, PyGeometryCustomAdapter
 from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
@@ -333,7 +335,15 @@ class GrpcClient:
             self._log.log_to_file(filename=logging_file, level=logging_level)
 
         # Retrieve the backend information
-        response = self._services.admin.get_backend()
+        try:
+            response = self._services.admin.get_backend()
+        except GeometryExitedError as exc:
+            raise GeometryRuntimeError(
+                "Failed to retrieve backend information. Check server logs for licensing and "
+                "connectivity.\nDefault server logs path is "
+                "%PUBLIC%/Documents/Ansys/GeometryService (Windows) or "
+                "/tmp/Ansys/GeometryService (Linux). "
+            ) from exc
 
         # Store the backend type and version
         self._backend_type = response.get("backend")
@@ -466,7 +476,13 @@ class GrpcClient:
                     "Geometry service was not shut down because it was already running..."
                 )
         elif self._product_instance:
-            self._product_instance.close()
+            try:
+                # Shutdown the server
+                self.services.admin.close()
+            except Exception as err:
+                self.log.debug(f"Shutdown call failed. Temporary files may be stranded: {err}")
+            finally:
+                self._product_instance.close()
 
         self._closed = True
         self._channel.close()

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides various option classes."""
 
 from dataclasses import asdict, dataclass
@@ -60,6 +61,8 @@ class ImportOptions:
     publications_only_to_groups: bool = False
         Whether to map only published CATIA sets to groups in SpaceClaim. This option is only
         applicable when importing CATIA files.
+    import_using_spaceclaim_colors : bool = False
+        Import geometry using SpaceClaim colors.
     """
 
     cleanup_bodies: bool = False
@@ -72,6 +75,8 @@ class ImportOptions:
     import_named_selections: bool = True
     map_catia_sets_to_groups: bool = True
     publications_only_to_groups: bool = False
+    import_using_spaceclaim_colors: bool = False
+
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
         return {k: bool(v) for k, v in asdict(self).items()}

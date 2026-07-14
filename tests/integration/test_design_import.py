@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Test design import."""
 
 from pathlib import Path
@@ -787,3 +788,32 @@ def test_import_unsupported_filetype(modeler: Modeler, tmp_path_factory: pytest.
         match="File extension '.unsupported' is not supported. File: 'test_file.unsupported'"
     ):
         modeler.open_file(unsupported_file)
+
+
+def test_importing_with_sc_colors(modeler: Modeler):
+    """Test importing a file with SpaceClaim colors."""
+    # Import the file without SC color tones
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"))
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#ff00ffff"
+    assert bodies[1].color == "#ff0000ff"
+    assert bodies[2].color == "#ff8000ff"
+    assert bodies[3].color == "#0080c0ff"
+
+    # Import the file with SC color tones
+    options = ImportOptions()
+    options.import_using_spaceclaim_colors = True
+    design = modeler.open_file(Path(FILES_DIR, "ColoredBoxes.stp"), import_options=options)
+    assert len(design.components) == 1
+    assert len(design.components[0].bodies) == 4
+
+    # Test the color values
+    bodies = design.get_all_bodies()
+    assert bodies[0].color == "#af8fafff"
+    assert bodies[1].color == "#af8f8fff"
+    assert bodies[2].color == "#af9f8fff"
+    assert bodies[3].color == "#8fa4afff"
