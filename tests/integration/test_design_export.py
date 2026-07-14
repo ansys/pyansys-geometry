@@ -23,6 +23,7 @@
 """Test design export functionality."""
 
 from pathlib import Path
+import zipfile
 
 import numpy as np
 import pytest
@@ -268,6 +269,53 @@ def test_export_to_disco_with_facets(modeler: Modeler, tmp_path_factory: pytest.
 
     # Check the imported design
     _checker_method(design_read, design, True)
+
+
+@pytest.mark.parametrize(
+    "file_extension, design_format",
+    [
+        ("scdocx", None),  # For .scdocx files
+        ("dsco", DesignFileFormat.DISCO),  # For .dsco files
+    ],
+)
+def test_write_body_facets_on_save(
+    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, file_extension: str, design_format
+):
+    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
+
+    # First file without body facets
+    filepath_no_facets = tmp_path_factory.mktemp("test_design") / f"cars_no_facets.{file_extension}"
+    if design_format:
+        design.download(filepath_no_facets, design_format)
+    else:
+        design.download(filepath_no_facets)
+
+    # Second file with body facets
+    filepath_with_facets = (
+        tmp_path_factory.mktemp("test_design") / f"cars_with_facets.{file_extension}"
+    )
+    if design_format:
+        design.download(filepath_with_facets, design_format, write_body_facets=True)
+    else:
+        design.download(filepath_with_facets, write_body_facets=True)
+
+    # Compare file sizes
+    size_no_facets = filepath_no_facets.stat().st_size
+    size_with_facets = filepath_with_facets.stat().st_size
+
+    assert size_with_facets > size_no_facets
+
+    # Ensure facets.bin and renderlist.xml files exist
+    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
+        namelist = set(zip_ref.namelist())
+
+    expected_files = {
+        "SpaceClaim/Graphics/facets.bin",
+        "SpaceClaim/Graphics/renderlist.xml",
+    }
+
+    missing = expected_files - namelist
+    assert not missing
 
 
 def test_export_to_parasolid_text(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):

@@ -9,6 +9,146 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.16.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.2>`_ - July 14, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Use spaceclaim colors import option
+          - `#2849 <https://github.com/ansys/pyansys-geometry/pull/2849>`_
+
+        * - Upgrade grpc deps and remove upper limits
+          - `#2931 <https://github.com/ansys/pyansys-geometry/pull/2931>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update \`\`CONTRIBUTORS.md\`\` with the latest contributors
+          - `#2930 <https://github.com/ansys/pyansys-geometry/pull/2930>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump sphinx-autodoc-typehints from 3.12.0 to 3.12.1 in the docs-deps group
+          - `#2918 <https://github.com/ansys/pyansys-geometry/pull/2918>`_
+
+        * - Bump ty from 0.0.55 to 0.0.56
+          - `#2919 <https://github.com/ansys/pyansys-geometry/pull/2919>`_
+
+        * - Bump numpy from 2.5.0 to 2.5.1
+          - `#2924 <https://github.com/ansys/pyansys-geometry/pull/2924>`_
+
+        * - Bump ansys-api-discovery from 1.2.4 to 1.2.5
+          - `#2925 <https://github.com/ansys/pyansys-geometry/pull/2925>`_
+
+        * - Bump mistune from 3.2.1 to 3.3.0
+          - `#2927 <https://github.com/ansys/pyansys-geometry/pull/2927>`_
+
+        * - Bump ty from 0.0.56 to 0.0.58
+          - `#2933 <https://github.com/ansys/pyansys-geometry/pull/2933>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.16.1
+          - `#2917 <https://github.com/ansys/pyansys-geometry/pull/2917>`_
+
+        * - Bump the actions group with 4 updates
+          - `#2926 <https://github.com/ansys/pyansys-geometry/pull/2926>`_
+
+        * - Bump the actions group with 17 updates
+          - `#2929 <https://github.com/ansys/pyansys-geometry/pull/2929>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2934 <https://github.com/ansys/pyansys-geometry/pull/2934>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Test design refactoring
+          - `#2915 <https://github.com/ansys/pyansys-geometry/pull/2915>`_
+
+        * - Test design refactoring (body)
+          - `#2921 <https://github.com/ansys/pyansys-geometry/pull/2921>`_
+
+
+`0.16.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.1>`_ - July 06, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Cap grpcio and grpcio-health-checking below 1.82.0 to avoid protobuf gencode/runtime version mismatch
+          - `#2914 <https://github.com/ansys/pyansys-geometry/pull/2914>`_
+
+        * - Update uv lock file after capping grpcio 1.82
+          - `#2916 <https://github.com/ansys/pyansys-geometry/pull/2916>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ty from 0.0.54 to 0.0.55
+          - `#2904 <https://github.com/ansys/pyansys-geometry/pull/2904>`_
+
+        * - Bump ansys-api-discovery from 1.2.2 to 1.2.3
+          - `#2905 <https://github.com/ansys/pyansys-geometry/pull/2905>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.11.0 to 3.12.0 in the docs-deps group
+          - `#2910 <https://github.com/ansys/pyansys-geometry/pull/2910>`_
+
+        * - Bump ansys-api-discovery from 1.2.3 to 1.2.4
+          - `#2911 <https://github.com/ansys/pyansys-geometry/pull/2911>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.16.0
+          - `#2903 <https://github.com/ansys/pyansys-geometry/pull/2903>`_
+
+        * - Bump the actions group with 2 updates
+          - `#2906 <https://github.com/ansys/pyansys-geometry/pull/2906>`_
+
+        * - Bump ruff-pre-commit from v0.15.18 to 0.15.19 in the pre-commit-hooks group
+          - `#2907 <https://github.com/ansys/pyansys-geometry/pull/2907>`_
+
+
 `0.16.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.0>`_ - June 30, 2026
 ==========================================================================================
 
