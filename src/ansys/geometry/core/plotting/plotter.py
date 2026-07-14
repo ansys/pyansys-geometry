@@ -45,6 +45,12 @@ import numpy as np
 from pygltflib.utils import gltf2glb
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
+from vtkmodules.vtkCommonCore import vtkObject
+
+# Suppress VTK-level warnings (e.g. texture unit limits) when running
+# off-screen / headlessly, where they are expected and not actionable.
+if pv.OFF_SCREEN:
+    vtkObject.GlobalWarningDisplayOff()
 
 import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
