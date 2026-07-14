@@ -246,18 +246,9 @@ def test_find_bad_faces(modeler: Modeler):
     """Test to read geometry and find bad faces."""
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
 
-    try:
-        grpc_response = modeler.client.services.repair_tools.find_bad_faces(
+    bad_faces = modeler.client.services.repair_tools.find_bad_faces(
             body_ids=[body.id for body in design.bodies]
         )
-    except ImportError:
-        pytest.skip("find_bad_faces is not available in installed discovery protos")
-    except NotImplementedError:
-        pytest.skip("find_bad_faces is not implemented for this backend/proto version")
-    except GeometryExitedError as error:
-        if "UNIMPLEMENTED" in str(error).upper() or "METHOD NOT FOUND" in str(error).upper():
-            pytest.skip("find_bad_faces is not implemented for this backend/proto version")
-        raise
 
     bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
 
