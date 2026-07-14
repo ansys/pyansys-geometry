@@ -40,8 +40,6 @@ class GRPCBodySelectionService(ABC):  # pragma: no cover
         """Initialize the GRPCBodySelectionService class."""
         pass
 
-    # ── Static factory ────────────────────────────────────────────────────────
-
     @abstractmethod
     def get_all_visible_bodies(self, **kwargs) -> dict:
         """Return all visible bodies in the active document."""
@@ -102,14 +100,10 @@ class GRPCBodySelectionService(ABC):  # pragma: no cover
         """Return bodies matching a given color."""
         pass
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @abstractmethod
     def invert_body_selection(self, **kwargs) -> dict:
         """Return the complement of the provided body selection."""
         pass
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @abstractmethod
     def filter_bodies_by_volume(self, **kwargs) -> dict:
@@ -281,8 +275,6 @@ class GRPCBodySelectionService(ABC):  # pragma: no cover
         """Filter down to only solid bodies."""
         pass
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     @abstractmethod
     def extend_to_same_volume(self, **kwargs) -> dict:
         """Extend selection to bodies with the same volume."""
@@ -318,8 +310,6 @@ class GRPCBodySelectionService(ABC):  # pragma: no cover
         """Extend selection to bodies within a specified distance."""
         pass
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     @abstractmethod
     def order_bodies_by_volume(self, **kwargs) -> dict:
         """Return bodies ordered by volume."""
@@ -354,8 +344,6 @@ class GRPCBodySelectionService(ABC):  # pragma: no cover
     def order_bodies_by_number_of_curves(self, **kwargs) -> dict:
         """Return bodies ordered by number of curves."""
         pass
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     @abstractmethod
     def group_bodies_by_volume(self, **kwargs) -> dict:

@@ -79,4 +79,4 @@ Do not search for a `.venv` directory. Instead, read the `PYANSYS_VENV` environm
 - Linux/macOS: `source "$PYANSYS_VENV/bin/activate"`
 
 ## Code style
-- **Maximum line length is 100 characters.** No generated line may exceed 100 characters. Wrap long lines by splitting arguments onto separate lines or extracting intermediate variables. After writing any file, verify with: `python -c "lines=open('path').readlines(); long=[(i+1,len(l.rstrip())) for i,l in enumerate(lines) if len(l.rstrip())>100]; print(long or 'OK')"` and fix any violations before completing the step.
+- After writing any file, run all pre-commit hooks to validate style: `pre-commit run --all-files`. Fix any violations before completing the step.

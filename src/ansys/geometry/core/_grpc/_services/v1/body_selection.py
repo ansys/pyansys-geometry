@@ -54,8 +54,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
 
         self.stub = BodySelectionStub(channel)
 
-    # ── helpers ───────────────────────────────────────────────────────────────
-
     def _input_request(self, kwargs):
         """Build a ``BodySelectionInputRequest`` from ``body_ids``."""
         from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
@@ -86,8 +84,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
                 )
             ]
         )
-
-    # ── Static factory ────────────────────────────────────────────────────────
 
     @protect_grpc
     def get_all_visible_bodies(self, **kwargs) -> dict:  # noqa: D102
@@ -257,8 +253,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         )
         return serialize_body_selection_response(self.stub.GetBodiesWithColor(request))
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @protect_grpc
     def invert_body_selection(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
@@ -275,8 +269,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             ]
         )
         return serialize_body_selection_response(self.stub.InvertBodySelection(request))
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @protect_grpc
     def filter_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102
@@ -757,8 +749,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
             self.stub.FilterSolidBodies(self._input_request(kwargs))
         )
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     @protect_grpc
     def extend_to_same_volume(self, **kwargs) -> dict:  # noqa: D102
         return serialize_body_selection_response(
@@ -813,8 +803,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         )
         return serialize_body_selection_response(self.stub.ExtendNearbyBodies(request))
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     @protect_grpc
     def order_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102
         return serialize_body_selection_response(
@@ -856,8 +844,6 @@ class GRPCBodySelectionServiceV1(GRPCBodySelectionService):
         return serialize_body_selection_response(
             self.stub.OrderBodiesByNumberOfCurves(self._input_request(kwargs))
         )
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     @protect_grpc
     def group_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102

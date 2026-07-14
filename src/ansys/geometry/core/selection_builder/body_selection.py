@@ -64,8 +64,6 @@ class BodySelection(TypedSelection):
         self._grpc_client = grpc_client
         self._items = items or []
 
-    # ── Set-like operators ───────────────────────────────────────────────────
-
     def __add__(self, other: "BodySelection") -> "BodySelection":
         """Return a new selection that is the union of this selection and another."""
         return BodySelection(
@@ -91,8 +89,6 @@ class BodySelection(TypedSelection):
             self._grpc_client,
             list(dict.fromkeys(x for x in self.items if x in other_set)),
         )
-
-    # ── Static factory (get) ─────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def get_all_visible_bodies(self) -> "BodySelection":
@@ -380,8 +376,6 @@ class BodySelection(TypedSelection):
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def invert_body_selection(
         self,
@@ -405,8 +399,6 @@ class BodySelection(TypedSelection):
         )
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_volume(
@@ -866,8 +858,8 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_number_surfaces_percentile(
         self,
         surface_type: SurfaceType,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by the percentile of a surface type count relative to the selection.
 
@@ -875,9 +867,9 @@ class BodySelection(TypedSelection):
         ----------
         surface_type : SurfaceType
             The surface type to count per body.
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -899,8 +891,8 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_number_curves_percentile(
         self,
         curve_type: CurveType,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by the percentile of a curve type count relative to the selection.
 
@@ -908,9 +900,9 @@ class BodySelection(TypedSelection):
         ----------
         curve_type : CurveType
             The curve type to count per body.
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1043,16 +1035,16 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_volume_percentile(
         self,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by volume percentile relative to the selection.
 
         Parameters
         ----------
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1071,16 +1063,16 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_surface_area_percentile(
         self,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by surface area percentile relative to the selection.
 
         Parameters
         ----------
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1099,16 +1091,16 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_face_count_percentile(
         self,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by face count percentile relative to the selection.
 
         Parameters
         ----------
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1127,16 +1119,16 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_edge_count_percentile(
         self,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by edge count percentile relative to the selection.
 
         Parameters
         ----------
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1155,16 +1147,16 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_loop_count_percentile(
         self,
-        min_percentile: float,
-        max_percentile: float,
+        min_percentile: Real,
+        max_percentile: Real,
     ) -> "BodySelection":
         """Filter bodies by loop count percentile relative to the selection.
 
         Parameters
         ----------
-        min_percentile : float
+        min_percentile : Real
             Minimum percentile threshold (0–100).
-        max_percentile : float
+        max_percentile : Real
             Maximum percentile threshold (0–100).
 
         Returns
@@ -1209,8 +1201,6 @@ class BodySelection(TypedSelection):
         )
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
-
-    # ── Extend ────────────────────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def extend_to_same_volume(
@@ -1393,8 +1383,6 @@ class BodySelection(TypedSelection):
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def order_bodies_by_volume(self) -> "BodySelection":
         """Return bodies sorted by volume in ascending order.
@@ -1499,8 +1487,6 @@ class BodySelection(TypedSelection):
         )
         bodies = get_bodies_from_ids(self._design, response["response_data"][0]["bodies"])
         return BodySelection(self._design, self._grpc_client, bodies)
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def group_bodies_by_volume(self) -> "list[BodySelection]":
