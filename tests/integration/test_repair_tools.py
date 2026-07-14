@@ -24,7 +24,6 @@
 
 import pytest
 
-from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.tools.check_geometry import InspectResult
 from ansys.geometry.core.tools.problem_areas import (
@@ -246,38 +245,21 @@ def test_find_bad_faces(modeler: Modeler):
     """Test to read geometry and find bad faces."""
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
 
-    bad_faces = modeler.client.services.repair_tools.find_bad_faces(
+    grpc_response = modeler.client.services.repair_tools.find_bad_faces(
         body_ids=[body.id for body in design.bodies]
     )
 
-    bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
+    first_call = modeler.repair_tools.find_bad_faces(design.bodies)
+    second_call = modeler.repair_tools.find_bad_faces(design.bodies)
 
-    assert len(bad_faces) == len(grpc_response["face_ids"])
-    assert sorted(face.id for face in bad_faces) == sorted(grpc_response["face_ids"])
+    assert len(first_call) == len(grpc_response["face_ids"])
+    assert sorted(face.id for face in first_call) == sorted(grpc_response["face_ids"])
+    assert sorted(face.id for face in first_call) == sorted(face.id for face in second_call)
 
 
 def test_find_bad_faces_empty_input(modeler: Modeler):
     """Test that ``find_bad_faces`` returns an empty list for empty input."""
     assert modeler.repair_tools.find_bad_faces([]) == []
-
-
-def test_find_bad_faces_is_stable_across_repeated_calls(modeler: Modeler):
-    """Test ``find_bad_faces`` gives stable results across repeated calls."""
-    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
-
-    try:
-        first_call = modeler.repair_tools.find_bad_faces(design.bodies)
-        second_call = modeler.repair_tools.find_bad_faces(design.bodies)
-    except ImportError:
-        pytest.skip("find_bad_faces is not available in installed discovery protos")
-    except NotImplementedError:
-        pytest.skip("find_bad_faces is not implemented for this backend/proto version")
-    except GeometryExitedError as error:
-        if "UNIMPLEMENTED" in str(error).upper() or "METHOD NOT FOUND" in str(error).upper():
-            pytest.skip("find_bad_faces is not implemented for this backend/proto version")
-        raise
-
-    assert sorted(face.id for face in first_call) == sorted(face.id for face in second_call)
 
 
 def test_find_stitch_faces(modeler: Modeler):
