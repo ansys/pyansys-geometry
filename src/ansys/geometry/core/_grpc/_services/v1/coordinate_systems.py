@@ -77,7 +77,7 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
         # Note: response.coordinate_systems is a repeated field, we return the first one
         coord_system = response.coordinate_systems[0]
         return {
-            "id": coord_system.id,
+            "id": coord_system.id.id,
             "name": coord_system.name,
             "frame": from_grpc_frame_to_frame(coord_system.frame),
         }
