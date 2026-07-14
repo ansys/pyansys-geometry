@@ -357,6 +357,6 @@ rest of the PCB mesh remains undisturbed.
 ### References
 
 - [PyAnsys Geometry API reference](https://geometry.docs.pyansys.com/version/stable/api/index.html)
-- [Sketch.arc_from_start_center_and_angle](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/sketch/Sketch.html)
-- [Component.revolve_sketch](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html)
-- [Design.create_named_selection](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html)
+- [Sketch.arc_from_start_center_and_angle](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc_from_start_center_and_angle)
+- [Component.revolve_sketch](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html#Component.revolve_sketch)
+- [Design.create_named_selection](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design.create_named_selection)
