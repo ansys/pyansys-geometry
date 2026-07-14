@@ -247,8 +247,8 @@ def test_find_bad_faces(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
 
     bad_faces = modeler.client.services.repair_tools.find_bad_faces(
-            body_ids=[body.id for body in design.bodies]
-        )
+        body_ids=[body.id for body in design.bodies]
+    )
 
     bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
 
