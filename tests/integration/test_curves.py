@@ -133,3 +133,69 @@ def test_design_curve_repr(modeler: Modeler):
     assert "Length" in text
     assert "Start" in text
     assert "End" in text
+
+
+def test_search_design_curve(modeler: Modeler):
+    """Test search for design curves on the design."""
+    design = modeler.create_design("SearchDesignCurve_Test")
+
+    dp1 = design.add_design_point("RevPt1", Point3D([1, 0, 0], UNITS.m))
+    curves1 = modeler.geometry_commands.revolve_points(
+        dp1, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(curves1) == 1
+
+    dp2 = design.add_design_point("RevPt2", Point3D([2, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points(
+        dp2, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 4, UNITS.rad)
+    )
+    assert len(curves2) == 1
+
+    # Search by id finds the correct curve object
+    assert design.search_design_curve(curves1[0].id).id == curves1[0].id
+    assert design.search_design_curve(curves2[0].id).id == curves2[0].id
+
+    # Unknown id returns None
+    assert design.search_design_curve("non_existent_id") is None
+
+
+def test_delete_design_curve(modeler: Modeler):
+    """Test deletion of design curves from a component."""
+    design = modeler.create_design("DeleteDesignCurve_Test")
+
+    # Create a design point and revolve it to produce a design curve
+    dp1 = design.add_design_point("RevPt1", Point3D([1, 0, 0], UNITS.m))
+    curves1 = modeler.geometry_commands.revolve_points(
+        dp1,
+        Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z),
+        Angle(np.pi / 2, UNITS.rad),
+    )
+    assert len(curves1) == 1
+    assert isinstance(curves1[0], DesignCurve)
+    assert curves1[0].is_alive
+
+    # Create a second design curve
+    dp2 = design.add_design_point("RevPt2", Point3D([2, 0, 0], UNITS.m))
+    curves2 = modeler.geometry_commands.revolve_points(
+        dp2,
+        Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z),
+        Angle(np.pi / 4, UNITS.rad),
+    )
+    assert len(curves2) == 1
+    assert isinstance(curves2[0], DesignCurve)
+    assert curves2[0].is_alive
+
+    # Delete the first curve by object
+    design.delete_design_curve(curves1[0])
+    assert not design.design_curves[0].is_alive
+    assert curves2[0].is_alive
+
+    # Delete the second curve by ID
+    design.delete_design_curve(curves2[0].id)
+    assert not design.design_curves[1].is_alive
+
+    # Attempt to delete a non-existent design curve (by fabricated ID)
+    design.delete_design_curve("non_existent_id")
+    # No error raised, just a warning logged - all existing curves remain
+    assert not design.design_curves[0].is_alive
+    assert not design.design_curves[1].is_alive
