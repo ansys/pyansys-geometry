@@ -225,6 +225,7 @@ def export_design_to_usd(
     from pxr import Usd, UsdGeom
 
     _validate_usd_format(path.suffix.lstrip("."))
+    path.parent.mkdir(parents=True, exist_ok=True)
     stage = Usd.Stage.CreateNew(str(path))
     root_name = sanitize_usd_name(design.name)
     root_prim = UsdGeom.Xform.Define(stage, f"/{root_name}")
@@ -234,8 +235,8 @@ def export_design_to_usd(
     used_root_names: set[str] = {"Looks"}
     for body in design.bodies:
         body_prim_name = unique_name(sanitize_usd_name(body.name), used_root_names)
-        used_root_names.add(body_prim_name)
-        _export_body(stage, root_path, body, tess_options, body_prim_name)
+        if _export_body(stage, root_path, body, tess_options, body_prim_name):
+            used_root_names.add(body_prim_name)
 
     for component in design.components:
         if not component.is_alive:
@@ -278,8 +279,8 @@ def _export_component(
 
     for body in component.bodies:
         body_prim_name = unique_name(sanitize_usd_name(body.name), used_child_names)
-        used_child_names.add(body_prim_name)
-        _export_body(stage, comp_path, body, tess_options, body_prim_name)
+        if _export_body(stage, comp_path, body, tess_options, body_prim_name):
+            used_child_names.add(body_prim_name)
 
     for sub_comp in component.components:
         if not sub_comp.is_alive:
@@ -295,7 +296,7 @@ def _export_body(
     body: "Body",
     tess_options,
     body_prim_name: str,
-) -> None:
+) -> bool:
     """Export a single body as a ``UsdGeom.Mesh`` prim with a ``UsdPreviewSurface`` material.
 
     Parameters
@@ -310,16 +311,22 @@ def _export_body(
         Tessellation quality options.
     body_prim_name : str
         Pre-computed sanitized and de-duplicated prim name for this body.
+
+    Returns
+    -------
+    bool
+        ``True`` if a prim was created, ``False`` if the body was skipped
+        (empty tessellation).
     """
     from pxr import Gf, Sdf, UsdGeom, UsdShade, Vt
 
     raw_tess = body.get_raw_tessellation(tess_options=tess_options)
     if not raw_tess:
-        return
+        return False
 
     points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
     if not points:
-        return
+        return False
 
     mesh_path = f"{parent_path}/{body_prim_name}"
     mesh = UsdGeom.Mesh.Define(stage, mesh_path)
@@ -341,3 +348,4 @@ def _export_body(
 
     material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
     UsdShade.MaterialBindingAPI(mesh.GetPrim()).Bind(material)
+    return True

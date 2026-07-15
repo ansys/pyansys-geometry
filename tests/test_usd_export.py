@@ -405,3 +405,25 @@ def test_design_has_export_to_usd_method():
 
     assert hasattr(Design, "export_to_usd")
     assert callable(Design.export_to_usd)
+
+
+def test_export_creates_parent_directory(tmp_path):
+    """export_design_to_usd creates missing parent directories automatically."""
+    design = _make_design("D")
+    out = tmp_path / "nonexistent" / "subdir" / "out.usda"
+    export_design_to_usd(design, out)
+    assert out.exists()
+
+
+def test_export_empty_body_does_not_consume_name_slot(tmp_path):
+    """A body with empty tessellation does not consume its prim name slot."""
+    empty_body = _make_body("Body", raw_tess={})
+    real_body = _make_body("Body")  # same name, has real tessellation
+    comp = _make_component("C", bodies=[empty_body, real_body])
+    design = _make_design("D", components=[comp])
+    out = tmp_path / "out.usda"
+    export_design_to_usd(design, out)
+    stage = Usd.Stage.Open(str(out))
+    # real_body should be at /D/C/Body (not /D/C/Body_1) since empty_body was skipped
+    assert stage.GetPrimAtPath("/D/C/Body").IsValid()
+    assert not stage.GetPrimAtPath("/D/C/Body_1").IsValid()
