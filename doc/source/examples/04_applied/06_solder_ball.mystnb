@@ -31,7 +31,7 @@ harder to mesh. Morphing workflows solve this by:
 
 This example builds both models using PyAnsys Geometry:
 
-- **Source model*: A six-layer PCB laminate stack with a 3 × 3 array of
+- **Source model**: A six-layer PCB laminate stack with a 3 × 3 array of
   cylindrical solder columns and copper pads.  A ``solder_cyl`` named
   selection marks the solder surfaces that is to be morphed.
 - **Target model**: The same 3 × 3 footprint with spherical solder balls
