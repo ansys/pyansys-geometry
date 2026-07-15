@@ -22,8 +22,8 @@
 """Provides USD export utilities for PyAnsys Geometry."""
 
 import functools
-import re
 from pathlib import Path
+import re
 from typing import TYPE_CHECKING
 
 import matplotlib.colors as mcolors

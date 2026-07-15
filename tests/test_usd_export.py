@@ -21,13 +21,21 @@
 
 """Tests for the USD export module."""
 
+from unittest.mock import MagicMock, PropertyMock
+
 import pytest
 
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.plotting.usd_export import (
+    _validate_usd_format,
+    export_design_to_usd,
     raw_tess_to_usd_mesh_data,
     sanitize_usd_name,
     unique_name,
 )
+
+pxr = pytest.importorskip("pxr", reason="usd-core not installed")
+from pxr import Usd, UsdGeom, UsdShade  # noqa: E402
 
 
 def test_usd_required_raises_when_unavailable():
@@ -185,20 +193,6 @@ def test_raw_tess_skips_empty_entry():
 # Task 4: _validate_usd_format and export_design_to_usd tests
 # ============================================================
 
-from pathlib import Path
-from unittest.mock import MagicMock, PropertyMock
-
-from ansys.geometry.core.errors import GeometryRuntimeError
-
-pxr = pytest.importorskip("pxr", reason="usd-core not installed")
-from pxr import Usd, UsdGeom, UsdShade  # noqa: E402
-
-from ansys.geometry.core.plotting.usd_export import (  # noqa: E402
-    _validate_usd_format,
-    export_design_to_usd,
-)
-
-
 # --- Helpers ---
 
 
@@ -208,13 +202,17 @@ def _make_body(name: str, color: str = "#D6F7D1FF", raw_tess: dict | None = None
     type(body).color = PropertyMock(return_value=color)
     type(body).opacity = PropertyMock(return_value=1.0)
     body.is_alive = True
-    body.get_raw_tessellation.return_value = raw_tess if raw_tess is not None else {
-        "face_1": {
-            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
-            "faces": [3, 0, 1, 2],
-            "is_edge": False,
+    body.get_raw_tessellation.return_value = (
+        raw_tess
+        if raw_tess is not None
+        else {
+            "face_1": {
+                "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+                "faces": [3, 0, 1, 2],
+                "is_edge": False,
+            }
         }
-    }
+    )
     return body
 
 
@@ -305,6 +303,7 @@ def test_export_body_material_diffuse_color(tmp_path):
     shader = UsdShade.Shader(shader_prim)
     diffuse = shader.GetInput("diffuseColor").Get()
     import matplotlib.colors as mcolors
+
     expected = mcolors.to_rgb("#FF8000")
     assert abs(diffuse[0] - expected[0]) < 0.01
     assert abs(diffuse[1] - expected[1]) < 0.01
@@ -406,4 +405,3 @@ def test_design_has_export_to_usd_method():
 
     assert hasattr(Design, "export_to_usd")
     assert callable(Design.export_to_usd)
-
