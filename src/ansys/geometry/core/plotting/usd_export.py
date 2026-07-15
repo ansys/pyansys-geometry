@@ -56,7 +56,7 @@ def sanitize_usd_name(name: str) -> str:
     return sanitized
 
 
-def unique_name(name: str, existing: set) -> str:
+def unique_name(name: str, existing: set[str]) -> str:
     """Return ``name`` or a de-duplicated variant if it already exists in ``existing``.
 
     Parameters

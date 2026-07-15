@@ -23,6 +23,8 @@
 
 import pytest
 
+from ansys.geometry.core.plotting.usd_export import sanitize_usd_name, unique_name
+
 
 def test_usd_required_raises_when_unavailable():
     """run_if_usd_required raises ImportError when usd-core is not available."""
@@ -64,9 +66,6 @@ def test_usd_required_passes_when_available():
         usd_mod.run_if_usd_required()  # must not raise
     finally:
         usd_mod._USD_AVAILABLE = original
-
-
-from ansys.geometry.core.plotting.usd_export import sanitize_usd_name, unique_name
 
 
 def test_sanitize_spaces():
