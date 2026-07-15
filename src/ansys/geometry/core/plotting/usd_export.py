@@ -222,10 +222,35 @@ def export_design_to_usd(
     tess_options : TessellationOptions | None, default: None
         Tessellation quality options. ``None`` uses the server default.
     """
+    import tempfile
+
     from pxr import Usd, UsdGeom
 
     _validate_usd_format(path.suffix.lstrip("."))
     path.parent.mkdir(parents=True, exist_ok=True)
+
+    # USDZ is a zip package and cannot be created via Stage.CreateNew directly.
+    # Write to a temporary USDC file, then package it into a USDZ archive.
+    if path.suffix.lower() == ".usdz":
+        from pxr import UsdUtils
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix=".usdc", delete=False)
+        tmp_path = Path(tmp_file.name)
+        tmp_file.close()
+        try:
+            _write_stage(design, tmp_path, tess_options)
+            UsdUtils.CreateNewUsdzPackage(str(tmp_path), str(path))
+        finally:
+            tmp_path.unlink(missing_ok=True)
+        return
+
+    _write_stage(design, path, tess_options)
+
+
+def _write_stage(design: "Design", path: Path, tess_options) -> None:
+    """Write the design hierarchy to a new USD stage file at ``path``."""
+    from pxr import Usd, UsdGeom
+
     stage = Usd.Stage.CreateNew(str(path))
     root_name = sanitize_usd_name(design.name)
     root_prim = UsdGeom.Xform.Define(stage, f"/{root_name}")
