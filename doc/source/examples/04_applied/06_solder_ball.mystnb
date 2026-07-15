@@ -239,12 +239,12 @@ copper_pads = [b for b in component.bodies if b.name == "copper_pad"]
 
 plotter = GeometryPlotter()
 for layer in pcb_layers:
-    plotter.plot(layer, color="green", opacity=0.3)
-plotter.plot(infill, color="tan", opacity=0.2)
+    plotter.plot(layer, color="green", opacity=0.3, merge_bodies=True)
+plotter.plot(infill, color="tan", opacity=0.2, merge_bodies=True)
 for pad in copper_pads:
-    plotter.plot(pad, color="orange")
+    plotter.plot(pad, color="orange", merge_bodies=True)
 for solder in solder_bodies:
-    plotter.plot(solder, color="silver")
+    plotter.plot(solder, color="silver", merge_bodies=True)
 plotter.show()
 ```
 
@@ -356,7 +356,7 @@ The solder balls are plotted in silver to convey a metallic solder appearance.
 ```{code-cell} ipython3
 plotter = GeometryPlotter()
 for ball in solder_ball_bodies:
-    plotter.plot(ball, color="silver")
+    plotter.plot(ball, color="silver", merge_bodies=True)
 plotter.show()
 ```
 
