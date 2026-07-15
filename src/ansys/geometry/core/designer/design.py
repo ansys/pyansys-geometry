@@ -73,6 +73,11 @@ from ansys.geometry.core.misc.options import (
     TessellationOptions,
 )
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.plotting.usd_export import (
+    _validate_usd_format as _usd_validate_format,
+    export_design_to_usd as _export_to_usd_impl,
+    usd_required,
+)
 from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
@@ -785,6 +790,63 @@ class Design(Component):
         self.download(file_location, DesignFileFormat.PMDB, pmdb_options=options)
 
         # Return the file location
+        return file_location
+
+    @usd_required
+    @ensure_design_is_active
+    def export_to_usd(
+        self,
+        location: Path | str | None = None,
+        tess_options: TessellationOptions | None = None,
+        file_format: str = "usda",
+    ) -> Path:
+        """Export the design tessellation to a USD file.
+
+        Tessellates all bodies in the design and writes them to a Universal Scene
+        Description (USD) file. The export preserves the full component/body hierarchy,
+        mesh geometry, and per-body color as a ``UsdPreviewSurface`` material.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str | None, default: None
+            Output directory. If ``None``, the file is saved in the current working
+            directory using the design name as the filename.
+        tess_options : TessellationOptions | None, default: None
+            Tessellation quality options. If ``None``, the server default is used.
+        file_format : str, default: ``"usda"``
+            USD file format. One of:
+
+            - ``"usda"`` — USD ASCII (human-readable)
+            - ``"usdc"`` — USD binary crate (compact)
+            - ``"usdz"`` — USD zip archive (self-contained)
+            - ``"usd"`` — auto-detect (usd-core chooses binary or ASCII)
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the saved USD file.
+
+        Raises
+        ------
+        ImportError
+            If ``usd-core`` is not installed.
+            Install with: ``pip install ansys-geometry-core[usd]``.
+        ~ansys.geometry.core.errors.GeometryRuntimeError
+            If ``file_format`` is not one of the valid values.
+
+        Examples
+        --------
+        Export to USD ASCII in the current directory:
+
+        >>> path = design.export_to_usd()
+
+        Export to binary USD in a specific directory:
+
+        >>> path = design.export_to_usd("output/", file_format="usdc")
+        """
+        _usd_validate_format(file_format)
+        file_location = self.__build_export_file_location(location, file_format)
+        _export_to_usd_impl(self, file_location, tess_options)
         return file_location
 
     @check_input_types

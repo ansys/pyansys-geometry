@@ -382,3 +382,28 @@ def test_export_design_level_bodies(tmp_path):
     stage = Usd.Stage.Open(str(out))
     assert stage.GetPrimAtPath("/D/RootBody").IsValid()
 
+
+# ============================================================
+# Task 5: Design.export_to_usd() method tests
+# ============================================================
+
+
+def test_design_export_to_usd_method_invalid_format():
+    """Design.export_to_usd raises GeometryRuntimeError for unknown file_format.
+
+    We test this by calling _validate_usd_format directly (same code path),
+    since instantiating a real Design requires a live server.
+    """
+    from ansys.geometry.core.plotting.usd_export import _validate_usd_format
+
+    with pytest.raises(GeometryRuntimeError, match="xyz"):
+        _validate_usd_format("xyz")
+
+
+def test_design_has_export_to_usd_method():
+    """Design class exposes an export_to_usd method."""
+    from ansys.geometry.core.designer.design import Design
+
+    assert hasattr(Design, "export_to_usd")
+    assert callable(Design.export_to_usd)
+
