@@ -22,6 +22,7 @@
 """Provides USD export utilities for PyAnsys Geometry."""
 
 import functools
+import re
 
 _USD_AVAILABLE: bool | None = None
 """Cached availability flag for usd-core. ``None`` means not yet checked."""
@@ -30,6 +31,52 @@ _ERROR_USD_REQUIRED = (
     "The 'usd-core' package is required for USD export. "
     "Install it with: pip install ansys-geometry-core[usd]"
 )
+
+
+def sanitize_usd_name(name: str) -> str:
+    """Convert an arbitrary string to a valid USD prim name.
+
+    USD prim names must match ``[A-Za-z_][A-Za-z0-9_]*``.
+
+    Parameters
+    ----------
+    name : str
+        Input name (e.g. body or component name from the service).
+
+    Returns
+    -------
+    str
+        A valid USD prim name.
+    """
+    if not name:
+        return "_unnamed"
+    sanitized = re.sub(r"[^A-Za-z0-9_]", "_", name)
+    if sanitized[0].isdigit():
+        sanitized = "_" + sanitized
+    return sanitized
+
+
+def unique_name(name: str, existing: set) -> str:
+    """Return ``name`` or a de-duplicated variant if it already exists in ``existing``.
+
+    Parameters
+    ----------
+    name : str
+        Desired prim name.
+    existing : set[str]
+        Names already in use within the current USD prim scope.
+
+    Returns
+    -------
+    str
+        ``name`` if no collision, otherwise ``name_1``, ``name_2``, etc.
+    """
+    if name not in existing:
+        return name
+    counter = 1
+    while f"{name}_{counter}" in existing:
+        counter += 1
+    return f"{name}_{counter}"
 
 
 def run_if_usd_required() -> None:

@@ -64,3 +64,38 @@ def test_usd_required_passes_when_available():
         usd_mod.run_if_usd_required()  # must not raise
     finally:
         usd_mod._USD_AVAILABLE = original
+
+
+from ansys.geometry.core.plotting.usd_export import sanitize_usd_name, unique_name
+
+
+def test_sanitize_spaces():
+    assert sanitize_usd_name("my body") == "my_body"
+
+
+def test_sanitize_special_chars():
+    assert sanitize_usd_name("body-1 (main)") == "body_1__main_"
+
+
+def test_sanitize_digit_prefix():
+    assert sanitize_usd_name("1body") == "_1body"
+
+
+def test_sanitize_empty():
+    assert sanitize_usd_name("") == "_unnamed"
+
+
+def test_sanitize_already_valid():
+    assert sanitize_usd_name("ValidName_123") == "ValidName_123"
+
+
+def test_unique_name_no_collision():
+    assert unique_name("body", set()) == "body"
+
+
+def test_unique_name_single_collision():
+    assert unique_name("body", {"body"}) == "body_1"
+
+
+def test_unique_name_multiple_collisions():
+    assert unique_name("body", {"body", "body_1", "body_2"}) == "body_3"
