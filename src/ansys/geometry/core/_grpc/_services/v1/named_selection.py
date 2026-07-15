@@ -104,9 +104,7 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
         )
 
         # Call the gRPC service
-        print("REQUEST SENT TO BACKEND", request)
         response = self.stub.Create(request).named_selections[0]
-        print("RESPONSE FROM BACKEND", response)
 
         # Return the response - formatted as a dictionary
         return {

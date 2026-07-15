@@ -470,10 +470,11 @@ class NamedSelection:
 
         Parameters
         ----------
-        members : list of Body, Face, Edge, Beam, DesignPoint, Component, Vertex,
-        DesignCurve, DatumPlane, or CoordinateSystem
-
-            The members to remove from the named selection.
+        members : list
+            The members to remove from the named selection. Each member can be
+            a ``Body``, ``Face``, ``Edge``, ``Beam``, ``DesignPoint``,
+            ``Component``, ``Vertex``, ``DesignCurve``, ``DatumPlane``, or
+            ``CoordinateSystem``.
 
         Returns
         -------
