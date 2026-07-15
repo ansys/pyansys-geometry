@@ -23,7 +23,11 @@
 
 import pytest
 
-from ansys.geometry.core.plotting.usd_export import sanitize_usd_name, unique_name
+from ansys.geometry.core.plotting.usd_export import (
+    raw_tess_to_usd_mesh_data,
+    sanitize_usd_name,
+    unique_name,
+)
 
 
 def test_usd_required_raises_when_unavailable():
@@ -98,3 +102,81 @@ def test_unique_name_single_collision():
 
 def test_unique_name_multiple_collisions():
     assert unique_name("body", {"body", "body_1", "body_2"}) == "body_3"
+
+
+def test_raw_tess_single_triangle():
+    """Single face tessellation with one triangle."""
+    raw_tess = {
+        "face_1": {
+            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            "faces": [3, 0, 1, 2],
+            "is_edge": False,
+        }
+    }
+    points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
+    assert points == [(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0)]
+    assert counts == [3]
+    assert indices == [0, 1, 2]
+
+
+def test_raw_tess_two_faces_index_offset():
+    """Two face tessellations are merged with correct vertex index offsets."""
+    raw_tess = {
+        "face_1": {
+            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            "faces": [3, 0, 1, 2],
+            "is_edge": False,
+        },
+        "face_2": {
+            "vertices": [2.0, 0.0, 0.0, 3.0, 0.0, 0.0, 2.0, 1.0, 0.0],
+            "faces": [3, 0, 1, 2],
+            "is_edge": False,
+        },
+    }
+    points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
+    assert len(points) == 6
+    assert counts == [3, 3]
+    assert indices == [0, 1, 2, 3, 4, 5]  # face_2 indices offset by 3
+
+
+def test_raw_tess_empty_dict():
+    """Empty raw tessellation returns empty lists."""
+    points, counts, indices = raw_tess_to_usd_mesh_data({})
+    assert points == []
+    assert counts == []
+    assert indices == []
+
+
+def test_raw_tess_skips_edges():
+    """Edge entries (is_edge=True) are ignored."""
+    raw_tess = {
+        "edge_1": {
+            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+            "faces": [],
+            "is_edge": True,
+        },
+        "face_1": {
+            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            "faces": [3, 0, 1, 2],
+            "is_edge": False,
+        },
+    }
+    points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
+    assert len(points) == 3
+    assert counts == [3]
+    assert indices == [0, 1, 2]
+
+
+def test_raw_tess_skips_empty_entry():
+    """Face entries with no vertices/faces are skipped."""
+    raw_tess = {
+        "face_1": {"vertices": [], "faces": [], "is_edge": False},
+        "face_2": {
+            "vertices": [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+            "faces": [3, 0, 1, 2],
+            "is_edge": False,
+        },
+    }
+    points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
+    assert len(points) == 3
+

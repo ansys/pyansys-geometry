@@ -79,6 +79,61 @@ def unique_name(name: str, existing: set[str]) -> str:
     return f"{name}_{counter}"
 
 
+def raw_tess_to_usd_mesh_data(
+    raw_tess: dict,
+) -> tuple[list[tuple[float, float, float]], list[int], list[int]]:
+    """Convert raw tessellation data to USD mesh arrays.
+
+    Parameters
+    ----------
+    raw_tess : dict
+        Raw tessellation as returned by ``Body.get_raw_tessellation()``.
+        Keys are face/edge IDs; values are dicts with ``"vertices"`` (flat float list),
+        ``"faces"`` (VTK connectivity ``[3, i, j, k, ...]``), and ``"is_edge"`` (bool).
+
+    Returns
+    -------
+    tuple
+        A 3-tuple of ``(points, face_vertex_counts, face_vertex_indices)``:
+
+        - ``points``: list of ``(x, y, z)`` float tuples.
+        - ``face_vertex_counts``: list of ints (all 3 for triangulated meshes).
+        - ``face_vertex_indices``: flat list of vertex indices.
+    """
+    all_points: list[tuple[float, float, float]] = []
+    all_counts: list[int] = []
+    all_indices: list[int] = []
+
+    for entry in raw_tess.values():
+        if entry.get("is_edge", False):
+            continue
+
+        verts_flat: list[float] = entry.get("vertices") or []
+        faces_vtk: list[int] = entry.get("faces") or []
+
+        if not verts_flat or not faces_vtk:
+            continue
+
+        vertex_offset = len(all_points)
+        pts = [
+            (verts_flat[i], verts_flat[i + 1], verts_flat[i + 2])
+            for i in range(0, len(verts_flat), 3)
+        ]
+        all_points.extend(pts)
+
+        # Parse VTK connectivity format: [n_pts, i0, i1, ..., n_pts, i0, i1, ...]
+        idx = 0
+        while idx < len(faces_vtk):
+            n = faces_vtk[idx]
+            idx += 1
+            face_indices = [faces_vtk[idx + k] + vertex_offset for k in range(n)]
+            idx += n
+            all_counts.append(n)
+            all_indices.extend(face_indices)
+
+    return all_points, all_counts, all_indices
+
+
 def run_if_usd_required() -> None:
     """Check that usd-core is installed, raising ImportError if not.
 
