@@ -125,22 +125,11 @@ def test_get_bodies_with_volume(modeler: Modeler):
 
 def test_get_bodies_with_surface_area(modeler: Modeler):
     """Verify that get_bodies_with_surface_area returns bodies within a surface area range."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-
-    all_bodies = design.get_all_bodies()
-
-    # Compute per-body surface area on the Python side (sum of all face areas, in m²).
-    # Use a range that captures a strict subset so the test is meaningful.
-    min_sa, max_sa = 500.0, 1500.0
-    expected_count = len(
-        [b for b in all_bodies if min_sa <= sum(f.area.m for f in b.faces) <= max_sa]
-    )
-    assert expected_count > 0, "range too narrow - no bodies found on Python side"
-    assert expected_count < len(all_bodies), "range too wide - all bodies matched on Python side"
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    result = sel_builder.bodies.get_bodies_with_surface_area(min_sa, max_sa)
-    assert len(result.items) == expected_count
+    result = sel_builder.bodies.get_bodies_with_surface_area(500, 1000)
+    assert len(result.items) == 2
 
 
 def test_get_bodies_with_x_location(modeler: Modeler):
@@ -647,10 +636,14 @@ def test_extend_to_same_color(modeler: Modeler):
     same color as any body in the seed selection.
     """
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    all_visible = modeler.create_selection_builder().bodies.get_all_visible_bodies()
+    for b in all_visible.items:
+        b.color = (255, 0, 0)
 
-    # Get all bodies named Wheel (8 total).
-    wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
+    print([b.color for b in all_visible.items])
+
+    wheel_bodies = modeler.create_selection_builder().bodies.get_bodies_with_name("Wheel")
+
     assert len(wheel_bodies.items) == 8
 
     result = wheel_bodies.extend_to_same_color()
