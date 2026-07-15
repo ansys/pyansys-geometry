@@ -333,6 +333,8 @@ nbsphinx_thumbnails = {
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
     "examples/04_applied/04_mechanical_named_selections": "_static/thumbnails/mechanical_ns.png",
+    "examples/04_applied/05_pmdb_export_options": "_static/thumbnails/pmdb_export_options.png",
+    "examples/04_applied/06_solder_ball": "_static/thumbnails/solder_ball.png",
     "examples/05_tools/repair_tools": "_static/thumbnails/repair_tools.png",
     "examples/05_tools/prepare_tools": "_static/thumbnails/prepare_tools.png",
     "examples/05_tools/measurement_tools": "_static/thumbnails/measurement_tools.png",
