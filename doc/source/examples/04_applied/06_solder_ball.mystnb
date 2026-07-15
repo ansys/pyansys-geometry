@@ -266,7 +266,7 @@ approximates the meniscus of a reflowed solder joint) 360° around the Z-axis.
 
 ### Solder ball profile
 
-The profile is a circular arc of radius 0.3821 mm that spans 98.82°, connecting
+The profile is a circular arc with a 0.3821-millimeter radius that spans 98.82°, connecting
 the bottom pad face to the top pad face. The arc is closed with a straight
 segment to form a closed 2D region suitable for revolving.
 
