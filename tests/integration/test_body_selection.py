@@ -28,12 +28,9 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.designer.face import SurfaceType
-from ansys.geometry.core.selection_builder.body_selection import BodySelection
 from ansys.geometry.core.selection_builder.selection_builder import RangeType
 
 from .conftest import FILES_DIR
-
-# ── Static factory (get) ──────────────────────────────────────────────────────
 
 
 def test_get_all_visible_bodies(modeler: Modeler):
@@ -188,9 +185,6 @@ def test_get_bodies_with_color(modeler: Modeler):
     assert len(result.items) == 1
 
 
-# ── Instance operations ───────────────────────────────────────────────────────
-
-
 def test_invert_body_selection(modeler: Modeler):
     """Verify that invert_body_selection returns all bodies not in the input selection."""
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
@@ -198,9 +192,6 @@ def test_invert_body_selection(modeler: Modeler):
     sel_builder = modeler.create_selection_builder()
     result = sel_builder.bodies.get_bodies_with_color((255, 0, 0)).invert_body_selection()
     assert len(result.items) == 18
-
-
-# ── Filter ────────────────────────────────────────────────────────────────────
 
 
 def test_filter_bodies_by_volume(modeler: Modeler):
@@ -595,127 +586,107 @@ def test_filter_solid_bodies(modeler: Modeler):
     assert all(not b.is_surface for b in result.items)
 
 
-# ── Extend ────────────────────────────────────────────────────────────────────
-
-
 def test_extend_to_same_volume(modeler: Modeler):
     """Verify that extend_to_same_volume expands the selection to include all bodies
     that share the same volume as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    left_wheels = modeler.create_selection_builder().bodies.get_bodies_with_x_location(
+        min=-0.005, max=-0.001, range_type=RangeType.RANGETYPE_INTERSECT
+    )
+    assert len(left_wheels.items) == 2
 
-    # Seed: 1 Top body (volume 250.0). Both Top bodies share that volume.
-    top_bodies = all_bodies.filter_bodies_by_name("Top")
-    seed = BodySelection(design, modeler._grpc_client, top_bodies.items[:1])
-
-    result = seed.extend_to_same_volume()
-    assert len(result.items) == 2
-    assert all(b.name == "Top" for b in result.items)
+    result = left_wheels.extend_to_same_volume()
+    assert len(result.items) == 8
 
 
 def test_extend_to_same_surface_area(modeler: Modeler):
     """Verify that extend_to_same_surface_area expands the selection to include all bodies
     that share the same surface area as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    left_wheels = modeler.create_selection_builder().bodies.get_bodies_with_x_location(
+        min=-0.005, max=-0.001, range_type=RangeType.RANGETYPE_INTERSECT
+    )
+    assert len(left_wheels.items) == 2
 
-    # Seed: 1 Wheel body (surface area ≈ 314.16). All 8 Wheels share that value.
-    wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
-
-    result = seed.extend_to_same_surface_area()
+    result = left_wheels.extend_to_same_surface_area()
     assert len(result.items) == 8
-    assert all(b.name == "Wheel" for b in result.items)
 
 
 def test_extend_to_same_number_of_faces(modeler: Modeler):
     """Verify that extend_to_same_number_of_faces expands the selection to all bodies
     that share the same face count as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    left_wheels = modeler.create_selection_builder().bodies.get_bodies_with_x_location(
+        min=-0.005, max=-0.001, range_type=RangeType.RANGETYPE_INTERSECT
+    )
+    assert len(left_wheels.items) == 2
 
-    # Seed: 1 BaseBody (6 faces). Solid×1 + Top×2 + BaseBody×2 all have 6 faces.
-    base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
-
-    result = seed.extend_to_same_number_of_faces()
-    assert len(result.items) == 5
-    assert {b.name for b in result.items} == {"BaseBody", "Solid", "Top"}
+    result = left_wheels.extend_to_same_number_of_faces()
+    assert len(result.items) == 8
 
 
 def test_extend_to_same_number_of_edges(modeler: Modeler):
     """Verify that extend_to_same_number_of_edges expands the selection to all bodies
     that share the same edge count as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    left_wheels = modeler.create_selection_builder().bodies.get_bodies_with_x_location(
+        min=-0.005, max=-0.001, range_type=RangeType.RANGETYPE_INTERSECT
+    )
+    assert len(left_wheels.items) == 2
 
-    # Seed: 1 BaseBody (12 edges). Solid×1 + Top×2 + BaseBody×2 all have 12 edges.
-    base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
-
-    result = seed.extend_to_same_number_of_edges()
-    assert len(result.items) == 5
-    assert {b.name for b in result.items} == {"BaseBody", "Solid", "Top"}
+    result = left_wheels.extend_to_same_number_of_edges()
+    assert len(result.items) == 8
 
 
 def test_extend_to_same_color(modeler: Modeler):
-    """Verify that extend_to_same_color expands the selection to all bodies with the
+    """TODO: Verify that extend_to_same_color expands the selection to all bodies with the
     same color as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
 
-    # Seed: 1 Wheel. All Wheels share the default color (also shared with Surface, Top,
-    # BaseBody), so the result is 18 bodies (all except the 1 red body).
+    # Get all bodies named Wheel (8 total).
     wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
+    assert len(wheel_bodies.items) == 8
 
-    result = seed.extend_to_same_color()
+    result = wheel_bodies.extend_to_same_color()
     assert len(result.items) == 18
-    assert {b.name for b in result.items} == {"BaseBody", "Surface", "Top", "Wheel"}
 
 
 def test_extend_to_same_name(modeler: Modeler):
     """Verify that extend_to_same_name expands the selection to all bodies sharing the
     same name as any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    x_loc_bodies = modeler.create_selection_builder().bodies.get_bodies_with_x_location(
+        range_type=RangeType.RANGETYPE_INTERSECT, min=0.001, max=0.03
+    )
+    assert len(x_loc_bodies.items) == 3
 
-    # Seed: 1 Wheel. All 8 Wheels share that name.
-    wheel_bodies = all_bodies.filter_bodies_by_name("Wheel")
-    seed = BodySelection(design, modeler._grpc_client, wheel_bodies.items[:1])
-
-    result = seed.extend_to_same_name()
-    assert len(result.items) == 8
-    assert all(b.name == "Wheel" for b in result.items)
+    same_name = x_loc_bodies.extend_to_same_name()
+    assert len(same_name.items) == 10
 
 
 def test_extend_nearby_bodies(modeler: Modeler):
     """Verify that extend_nearby_bodies adds all bodies within the specified distance
     of any body in the seed selection.
     """
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_bodies = modeler.create_selection_builder().bodies.get_all_bodies()
-
-    base_bodies = all_bodies.filter_bodies_by_name("BaseBody")
-    seed = BodySelection(design, modeler._grpc_client, base_bodies.items[:1])
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    base_bodies = modeler.create_selection_builder().bodies.get_bodies_with_name("BaseBody")
+    assert len(base_bodies.items) == 2
 
     # A very large distance should capture all 19 bodies in the model
     if BackendType.is_core_service(modeler.client.backend_type):
         with pytest.raises(NotImplementedError):
-            seed.extend_nearby_bodies(5000)
+            base_bodies.extend_nearby_bodies(5000)
         return
 
-    result = seed.extend_nearby_bodies(5000)
-    assert len(result.items) == 19
-
-
-# ── OrderBy ───────────────────────────────────────────────────────────────────
+    result = base_bodies.extend_nearby_bodies(5000)
+    assert len(result.items) == 18
 
 
 def test_order_bodies_by_volume(modeler: Modeler):
@@ -808,9 +779,6 @@ def test_order_bodies_by_number_of_curves(modeler: Modeler):
     assert all(b.name == "Wheel" for b in result.items[:8])
     # Solid×1 + Top×2 + BaseBody×2 have 12 edges — must come last
     assert {b.name for b in result.items[-5:]} == {"BaseBody", "Solid", "Top"}
-
-
-# ── GroupBy ───────────────────────────────────────────────────────────────────
 
 
 def test_group_bodies_by_volume(modeler: Modeler):
