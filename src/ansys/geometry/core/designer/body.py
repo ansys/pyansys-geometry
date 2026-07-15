@@ -244,6 +244,11 @@ class IBody(ABC):  # pragma: no cover
         return
 
     @abstractmethod
+    def is_lightweight(self) -> bool:
+        """Check if the body is lightweight."""
+        return
+
+    @abstractmethod
     def surface_thickness(self) -> Quantity | None:
         """Get the surface thickness of a surface body.
 
@@ -1004,17 +1009,20 @@ class MasterBody(IBody):
         name: str,
         grpc_client: GrpcClient,
         is_surface: bool = False,
+        is_lightweight: bool = False,
     ):
         """Initialize the ``MasterBody`` class."""
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
         check_type(is_surface, bool)
+        check_type(is_lightweight, bool)
 
         self._id = id
         self._name = name
         self._grpc_client = grpc_client
         self._is_surface = is_surface
+        self._is_lightweight = is_lightweight
         self._surface_thickness = None
         self._surface_offset = None
         self._is_alive = True
@@ -1111,6 +1119,14 @@ class MasterBody(IBody):
     @property
     def is_surface(self) -> bool:  # noqa: D102
         return self._is_surface
+
+    @property
+    def is_lightweight(self) -> bool:  # noqa: D102
+        return self._is_lightweight
+
+    @is_lightweight.setter
+    def is_lightweight(self, value: bool):  # noqa: D102
+        self._is_lightweight = value
 
     @property
     def surface_thickness(self) -> Quantity | None:  # noqa: D102
@@ -1920,6 +1936,14 @@ class Body(IBody):
     @property
     def is_surface(self) -> bool:  # noqa: D102
         return self._template.is_surface
+
+    @property
+    def is_lightweight(self) -> bool:  # noqa: D102
+        return self._template.is_lightweight
+
+    @is_lightweight.setter
+    def is_lightweight(self, value: bool):  # noqa: D102
+        self._template.is_lightweight = value
 
     @property
     def _surface_thickness(self) -> Quantity | None:  # noqa: D102

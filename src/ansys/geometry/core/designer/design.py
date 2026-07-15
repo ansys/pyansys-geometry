@@ -1357,6 +1357,7 @@ class Design(Component):
                 body.get("name"),
                 self._grpc_client,
                 is_surface=body.get("is_surface"),
+                is_lightweight=body.get("is_lightweight", False),
             )
             part.bodies.append(tb)
             created_bodies[body.get("id")] = tb
@@ -1742,6 +1743,7 @@ class Design(Component):
             body_id = created_body_info["id"]
             body_name = created_body_info["name"]
             is_surface = created_body_info.get("is_surface", False)
+            is_lightweight = created_body_info.get("is_lightweight", False)
             self._grpc_client.log.debug(
                 f"Processing created body: ID={body_id}, Name='{body_name}'"
             )
@@ -1757,7 +1759,13 @@ class Design(Component):
             )
 
             if not new_body:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                new_body = MasterBody(
+                    body_id,
+                    body_name,
+                    self._grpc_client,
+                    is_surface=is_surface,
+                    is_lightweight=is_lightweight,
+                )
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(
@@ -2029,6 +2037,7 @@ class Design(Component):
         )
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
+        existing_body._template._is_lightweight = body_info.get("is_lightweight", False)
 
     def _find_and_add_body(
         self,
@@ -2066,6 +2075,7 @@ class Design(Component):
                     tracked_body_info["name"],
                     self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
+                    is_lightweight=tracked_body_info.get("is_lightweight", False),
                 )
 
                 component._master_component.part.bodies.append(new_master_body)
