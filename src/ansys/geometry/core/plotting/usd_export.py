@@ -26,14 +26,18 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import matplotlib.colors as mcolors
+
 if TYPE_CHECKING:
+    from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
 
 _USD_AVAILABLE: bool | None = None
+"""Cached availability flag for usd-core. ``None`` means not yet checked."""
 
 _VALID_USD_FORMATS: frozenset[str] = frozenset({"usda", "usdc", "usdz", "usd"})
-"""Cached availability flag for usd-core. ``None`` means not yet checked."""
+"""Valid USD file format extensions (without leading dot)."""
 
 _ERROR_USD_REQUIRED = (
     "The 'usd-core' package is required for USD export. "
@@ -220,6 +224,7 @@ def export_design_to_usd(
     """
     from pxr import Usd, UsdGeom
 
+    _validate_usd_format(path.suffix.lstrip("."))
     stage = Usd.Stage.CreateNew(str(path))
     root_name = sanitize_usd_name(design.name)
     root_prim = UsdGeom.Xform.Define(stage, f"/{root_name}")
@@ -287,7 +292,7 @@ def _export_component(
 def _export_body(
     stage,
     parent_path: str,
-    body,
+    body: "Body",
     tess_options,
     body_prim_name: str,
 ) -> None:
@@ -306,7 +311,6 @@ def _export_body(
     body_prim_name : str
         Pre-computed sanitized and de-duplicated prim name for this body.
     """
-    import matplotlib.colors as mcolors
     from pxr import Gf, Sdf, UsdGeom, UsdShade, Vt
 
     raw_tess = body.get_raw_tessellation(tess_options=tess_options)
