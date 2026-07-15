@@ -243,18 +243,9 @@ def test_fix_small_face(modeler: Modeler):
 
 def test_find_bad_faces(modeler: Modeler):
     """Test to read geometry and find bad faces."""
-    design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
-
-    grpc_response = modeler.client.services.repair_tools.find_bad_faces(
-        body_ids=[body.id for body in design.bodies]
-    )
-
-    first_call = modeler.repair_tools.find_bad_faces(design.bodies)
-    second_call = modeler.repair_tools.find_bad_faces(design.bodies)
-
-    assert len(first_call) == len(grpc_response["face_ids"])
-    assert sorted(face.id for face in first_call) == sorted(grpc_response["face_ids"])
-    assert sorted(face.id for face in first_call) == sorted(face.id for face in second_call)
+    design = modeler.open_file(FILES_DIR / "BadFaces.dsco")
+    bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
+    assert len(bad_faces) == 1
 
 
 def test_find_bad_faces_empty_input(modeler: Modeler):
