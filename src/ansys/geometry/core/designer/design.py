@@ -73,12 +73,12 @@ from ansys.geometry.core.misc.options import (
     TessellationOptions,
 )
 from ansys.geometry.core.modeler import Modeler
+from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.plotting.usd_export import (
     _validate_usd_format as _usd_validate_format,
     export_design_to_usd as _export_to_usd_impl,
     usd_required,
 )
-from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateStatus
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import Real, RealSequence
