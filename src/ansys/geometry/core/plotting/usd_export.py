@@ -23,8 +23,16 @@
 
 import functools
 import re
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.design import Design
 
 _USD_AVAILABLE: bool | None = None
+
+_VALID_USD_FORMATS: frozenset[str] = frozenset({"usda", "usdc", "usdz", "usd"})
 """Cached availability flag for usd-core. ``None`` means not yet checked."""
 
 _ERROR_USD_REQUIRED = (
@@ -175,3 +183,157 @@ def usd_required(method):
         return method(*args, **kwargs)
 
     return wrapper
+
+
+def _validate_usd_format(file_format: str) -> None:
+    """Raise ``GeometryRuntimeError`` if ``file_format`` is not a valid USD extension.
+
+    Parameters
+    ----------
+    file_format : str
+        Extension to validate (without the leading dot).
+    """
+    from ansys.geometry.core.errors import GeometryRuntimeError
+
+    if file_format not in _VALID_USD_FORMATS:
+        raise GeometryRuntimeError(
+            f"Invalid USD file format '{file_format}'. "
+            f"Valid formats: {', '.join(_VALID_USD_FORMATS)}."
+        )
+
+
+def export_design_to_usd(
+    design: "Design",
+    path: Path,
+    tess_options=None,
+) -> None:
+    """Export a design's tessellation to a USD stage file.
+
+    Parameters
+    ----------
+    design : Design
+        The design to export.
+    path : ~pathlib.Path
+        Output file path. Must end with ``.usda``, ``.usdc``, ``.usdz``, or ``.usd``.
+    tess_options : TessellationOptions | None, default: None
+        Tessellation quality options. ``None`` uses the server default.
+    """
+    from pxr import Usd, UsdGeom
+
+    stage = Usd.Stage.CreateNew(str(path))
+    root_name = sanitize_usd_name(design.name)
+    root_prim = UsdGeom.Xform.Define(stage, f"/{root_name}")
+    stage.SetDefaultPrim(root_prim.GetPrim())
+    root_path = f"/{root_name}"
+
+    used_root_names: set[str] = {"Looks"}
+    for body in design.bodies:
+        body_prim_name = unique_name(sanitize_usd_name(body.name), used_root_names)
+        used_root_names.add(body_prim_name)
+        _export_body(stage, root_path, body, tess_options, body_prim_name)
+
+    for component in design.components:
+        if not component.is_alive:
+            continue
+        comp_prim_name = unique_name(sanitize_usd_name(component.name), used_root_names)
+        used_root_names.add(comp_prim_name)
+        _export_component(stage, root_path, component, tess_options, comp_prim_name)
+
+    stage.GetRootLayer().Save()
+
+
+def _export_component(
+    stage,
+    parent_path: str,
+    component: "Component",
+    tess_options,
+    prim_name: str,
+) -> None:
+    """Recursively export a component and all its children to the USD stage.
+
+    Parameters
+    ----------
+    stage : Usd.Stage
+        The USD stage to write to.
+    parent_path : str
+        Absolute USD prim path of the parent.
+    component : Component
+        The component to export.
+    tess_options : TessellationOptions | None
+        Tessellation quality options.
+    prim_name : str
+        Pre-computed sanitized and de-duplicated prim name for this component.
+    """
+    from pxr import UsdGeom
+
+    comp_path = f"{parent_path}/{prim_name}"
+    UsdGeom.Xform.Define(stage, comp_path)
+
+    used_child_names: set[str] = {"Looks"}
+
+    for body in component.bodies:
+        body_prim_name = unique_name(sanitize_usd_name(body.name), used_child_names)
+        used_child_names.add(body_prim_name)
+        _export_body(stage, comp_path, body, tess_options, body_prim_name)
+
+    for sub_comp in component.components:
+        if not sub_comp.is_alive:
+            continue
+        sub_prim_name = unique_name(sanitize_usd_name(sub_comp.name), used_child_names)
+        used_child_names.add(sub_prim_name)
+        _export_component(stage, comp_path, sub_comp, tess_options, sub_prim_name)
+
+
+def _export_body(
+    stage,
+    parent_path: str,
+    body,
+    tess_options,
+    body_prim_name: str,
+) -> None:
+    """Export a single body as a ``UsdGeom.Mesh`` prim with a ``UsdPreviewSurface`` material.
+
+    Parameters
+    ----------
+    stage : Usd.Stage
+        The USD stage to write to.
+    parent_path : str
+        Absolute USD prim path of the parent component.
+    body : Body
+        The body to export.
+    tess_options : TessellationOptions | None
+        Tessellation quality options.
+    body_prim_name : str
+        Pre-computed sanitized and de-duplicated prim name for this body.
+    """
+    import matplotlib.colors as mcolors
+    from pxr import Gf, Sdf, UsdGeom, UsdShade, Vt
+
+    raw_tess = body.get_raw_tessellation(tess_options=tess_options)
+    if not raw_tess:
+        return
+
+    points, counts, indices = raw_tess_to_usd_mesh_data(raw_tess)
+    if not points:
+        return
+
+    mesh_path = f"{parent_path}/{body_prim_name}"
+    mesh = UsdGeom.Mesh.Define(stage, mesh_path)
+    mesh.GetPointsAttr().Set(Vt.Vec3fArray([Gf.Vec3f(*p) for p in points]))
+    mesh.GetFaceVertexCountsAttr().Set(counts)
+    mesh.GetFaceVertexIndicesAttr().Set(indices)
+
+    mat_path = f"{parent_path}/Looks/{body_prim_name}_mat"
+    material = UsdShade.Material.Define(stage, mat_path)
+
+    shader_path = f"{mat_path}/PBRShader"
+    shader = UsdShade.Shader.Define(stage, shader_path)
+    shader.CreateIdAttr("UsdPreviewSurface")
+
+    hex_rgb = body.color[:7]
+    r, g, b = mcolors.to_rgb(hex_rgb)
+    shader.CreateInput("diffuseColor", Sdf.ValueTypeNames.Color3f).Set(Gf.Vec3f(r, g, b))
+    shader.CreateInput("opacity", Sdf.ValueTypeNames.Float).Set(float(body.opacity))
+
+    material.CreateSurfaceOutput().ConnectToSource(shader.ConnectableAPI(), "surface")
+    UsdShade.MaterialBindingAPI(mesh.GetPrim()).Bind(material)
