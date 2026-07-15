@@ -22,17 +22,6 @@
 """Provides USD export utilities for PyAnsys Geometry."""
 
 import functools
-import re
-from pathlib import Path
-from typing import TYPE_CHECKING
-
-import matplotlib.colors as mcolors
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ansys.geometry.core.designer.body import Body
-    from ansys.geometry.core.designer.component import Component
-    from ansys.geometry.core.designer.design import Design
-    from ansys.geometry.core.misc.options import TessellationOptions
 
 _USD_AVAILABLE: bool | None = None
 """Cached availability flag for usd-core. ``None`` means not yet checked."""
@@ -42,11 +31,15 @@ _ERROR_USD_REQUIRED = (
     "Install it with: pip install ansys-geometry-core[usd]"
 )
 
-_VALID_USD_FORMATS = ("usda", "usdc", "usdz", "usd")
-
 
 def run_if_usd_required() -> None:
-    """Check that usd-core is installed, raising ImportError if not."""
+    """Check that usd-core is installed, raising ImportError if not.
+
+    Raises
+    ------
+    ImportError
+        If ``usd-core`` is not installed.
+    """
     global _USD_AVAILABLE
     if _USD_AVAILABLE is None:
         try:
