@@ -223,7 +223,8 @@ print(
 
 ### Visualize the source model
 
-The ``GeometryPlotter`` displays each body type in a distinct color and opacity,
+The ``GeometryPlotter``, which is the visualization object leveraged throughout PyAnsys Geometry,
+displays each body type in a distinct color and opacity,
 making it easy to see the internal PCB layers through the semi-transparent
 laminate stack:
 
