@@ -224,8 +224,6 @@ def export_design_to_usd(
     """
     import tempfile
 
-    from pxr import Usd, UsdGeom
-
     _validate_usd_format(path.suffix.lstrip("."))
     path.parent.mkdir(parents=True, exist_ok=True)
 
