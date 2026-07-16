@@ -180,11 +180,13 @@ infill.subtract(seed_hole)  # merges seed into infill, leaving a through-hole
 infill_top_face = next(f for f in infill.faces if f.normal().z > 0.99)
 
 # Find a straight edge along the global X direction
+# Note: edge start/end coordinates are returned in server units (metres);
+# use .m_as(UNITS.mm) so the thresholds stay in the same mm domain as BOARD_SIZE.
 x_edge = next(
     e for e in infill.edges
-    if abs(e.end.x.m - e.start.x.m) > BOARD_SIZE * 0.9
-    and abs(e.end.y.m - e.start.y.m) < 0.01
-    and abs(e.end.z.m - e.start.z.m) < 0.01
+    if abs(e.end.x.m_as(UNITS.mm) - e.start.x.m_as(UNITS.mm)) > BOARD_SIZE * 0.9
+    and abs(e.end.y.m_as(UNITS.mm) - e.start.y.m_as(UNITS.mm)) < 0.01
+    and abs(e.end.z.m_as(UNITS.mm) - e.start.z.m_as(UNITS.mm)) < 0.01
 )
 
 # Stamp a 3 × 3 grid of solder through-holes — no manual copy loop required
