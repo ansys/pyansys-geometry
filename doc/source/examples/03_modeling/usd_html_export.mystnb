@@ -1,0 +1,117 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Modeling: Exporting a design to HTML through USD
+
+This example shows how to create a design, export its tessellation to a
+[Universal Scene Description (USD)](https://openusd.org/release/index.html) file,
+and then convert that USD file into a self-contained HTML viewer using
+[ansys-tools-visualization-interface](https://visualization-interface.tools.docs.pyansys.com).
+The resulting HTML page embeds all geometry as a GLB file and renders it with
+[Three.js](https://threejs.org) — only a CDN connection is required to view it
+in any modern browser.
+
+## Prerequisites
+
+This example requires two optional extras:
+
+```text
+pip install ansys-geometry-core[usd]
+pip install ansys-tools-visualization-interface[usd]
+```
+
+## Create a design
+
+```{code-cell} ipython3
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.sketch import Sketch
+
+modeler = launch_modeler()
+
+design = modeler.create_design("HtmlExportExample")
+
+# --- Component A: a base platform made of three extruded boxes ---
+comp_a = design.add_component("BasePlatform")
+sketch_a = Sketch()
+sketch_a.box(Point2D([0, 0]), 30, 10)
+comp_a.extrude_sketch("Base", sketch_a, 2)
+
+# --- Component B: three vertical pillars ---
+comp_b = design.add_component("Pillars")
+sketch_pillar = Sketch()
+sketch_pillar.box(Point2D([0, 0]), 4, 4)
+for x_pos in [-10, 0, 10]:
+    comp_b.extrude_sketch(f"Pillar_x{x_pos}", sketch_pillar, 15)
+
+# --- Component C: a top slab ---
+comp_c = design.add_component("TopSlab")
+sketch_c = Sketch()
+sketch_c.box(Point2D([0, 0]), 32, 12)
+comp_c.extrude_sketch("Slab", sketch_c, 2)
+
+print(f"Design '{design.name}' created with {len(design.components)} components.")
+```
+
+## Plot the design
+
+```{code-cell} ipython3
+design.plot()
+```
+
+## Export the design to USD
+
+```{code-cell} ipython3
+from pathlib import Path
+
+output_dir = Path.cwd() / "html_export"
+
+usd_path = design.export_to_usd(output_dir, file_format="usda")
+print(f"USD file written to: {usd_path}  ({usd_path.stat().st_size} B)")
+```
+
+## Convert USD to a self-contained HTML viewer
+
+Pass the USD file path to
+:func:`~ansys.tools.visualization_interface.export_usd_to_html`.
+The function returns the path to the generated HTML file.
+
+```{code-cell} ipython3
+from ansys.tools.visualization_interface import export_usd_to_html
+
+html_path = export_usd_to_html(
+    usd_path,
+    output_dir / "HtmlExportExample_viewer.html",
+    show_mesh_lines=True,
+    line_color="#00aaff",
+    line_opacity=0.6,
+)
+print(f"HTML viewer written to: {html_path}")
+```
+
+## Open the result in a browser
+
+The generated HTML file is fully self-contained — copy it anywhere and open
+it without a server.
+
+```python
+import webbrowser
+
+webbrowser.open(html_path.as_uri())
+```
+
+## Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
