@@ -1628,6 +1628,7 @@ class Design(Component):
         self._datum_points = []
         self._design_curves = []
         self._design_points = []
+        self._beam_profiles = {}
 
         # Read the existing design
         self.__read_existing_design()

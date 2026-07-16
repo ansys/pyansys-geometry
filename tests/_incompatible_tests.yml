@@ -154,6 +154,8 @@ backends:
       - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "24.2"
     incompatible_tests:
@@ -303,6 +305,8 @@ backends:
       - tests/integration/test_design.py::test_design_download_v1_api
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "25.1"
     incompatible_tests:
@@ -420,6 +424,8 @@ backends:
       - tests/integration/test_design.py::test_design_download_v1_api
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "25.2"
     incompatible_tests:
@@ -488,6 +494,8 @@ backends:
       - tests/integration/test_design.py::test_set_component_name
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "26.1"
     incompatible_tests:
@@ -511,3 +519,5 @@ backends:
       - tests/integration/test_design.py::test_set_component_name
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
