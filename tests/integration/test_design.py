@@ -1587,10 +1587,6 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp.create_coordinate_system("CompCS1", frame1)
     nested_comp.create_coordinate_system("CompCS2", frame2)
 
-    # Call design.update_design_inplace() to ensure that the coordinate systems are reset/updated
-    assert len(design.coordinate_systems) == 1
-    design._update_design_inplace()
-
     # Check that the coordinate systems are available
     assert len(design.coordinate_systems) == 1
     assert all(entry.id is not None for entry in design.coordinate_systems)
@@ -1648,6 +1644,23 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame X-direction    : " in nested_comp_cs1_str
     assert "  Frame Y-direction    : " in nested_comp_cs1_str
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
+
+
+def test_coordinate_systems_on_design_refresh(modeler: Modeler):
+    """Test for verifying the correct behavior of ``CoordinateSystem`` after a design refresh."""
+    # Create your design on the server side
+    design = modeler.create_design("CoordinateSystem_Test")
+    frame1 = Frame(
+        Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
+    )
+
+    # Create the CoordinateSystem
+    design.create_coordinate_system("DesignCS1", frame1)
+    assert len(design.coordinate_systems) == 1
+
+    # Call the refresh method on the design and check that the coordinate system is still there
+    design._update_design_inplace()
+    assert len(design.coordinate_systems) == 1
 
 
 def test_search_component_by_name(modeler: Modeler):
