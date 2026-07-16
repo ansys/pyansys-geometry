@@ -1594,7 +1594,11 @@ class Design(Component):
         self._clear_cached_bodies()
         self._materials = []
         self._named_selections = {}
-        self._coordinate_systems = {}
+        self._coordinate_systems = []
+        self._datum_planes = []
+        self._design_curves = []
+        self._design_points = []
+        self._beam_profiles = {}
 
         # Read the existing design
         self.__read_existing_design()
