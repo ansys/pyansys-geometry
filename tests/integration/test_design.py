@@ -1587,7 +1587,11 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp.create_coordinate_system("CompCS1", frame1)
     nested_comp.create_coordinate_system("CompCS2", frame2)
 
-    # Check that the named selections are available
+    # Call design.update_design_inplace() to ensure that the coordinate systems are reset/updated
+    assert len(design.coordinate_systems) == 1
+    design._update_design_inplace()
+
+    # Check that the coordinate systems are available
     assert len(design.coordinate_systems) == 1
     assert all(entry.id is not None for entry in design.coordinate_systems)
     design_cs = design.coordinate_systems[0]
