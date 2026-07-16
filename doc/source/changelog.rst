@@ -9,6 +9,81 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.16.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.3>`_ - July 16, 2026
+==========================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Support lightweight import
+          - `#2831 <https://github.com/ansys/pyansys-geometry/pull/2831>`_
+
+        * - Add FindBadFaces support in gRPC services and RepairTools API
+          - `#2928 <https://github.com/ansys/pyansys-geometry/pull/2928>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Reset root part fields on design update
+          - `#2945 <https://github.com/ansys/pyansys-geometry/pull/2945>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add solder ball modeling example for BGA morphing workflows
+          - `#2936 <https://github.com/ansys/pyansys-geometry/pull/2936>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.2.5 to 1.2.6
+          - `#2937 <https://github.com/ansys/pyansys-geometry/pull/2937>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.16.2
+          - `#2935 <https://github.com/ansys/pyansys-geometry/pull/2935>`_
+
+        * - Bump astral-sh/setup-uv from 8.3.0 to 8.3.1 in the actions group
+          - `#2938 <https://github.com/ansys/pyansys-geometry/pull/2938>`_
+
+        * - Bump the actions group across 1 directory with 20 updates
+          - `#2943 <https://github.com/ansys/pyansys-geometry/pull/2943>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Isolated face related tests and expanded its coverage
+          - `#2932 <https://github.com/ansys/pyansys-geometry/pull/2932>`_
+
+
 `0.16.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.16.2>`_ - July 14, 2026
 ==========================================================================================
 
