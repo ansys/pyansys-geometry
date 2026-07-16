@@ -636,12 +636,6 @@ def test_extend_to_same_color(modeler: Modeler):
     same color as any body in the seed selection.
     """
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_visible = modeler.create_selection_builder().bodies.get_all_visible_bodies()
-    for b in all_visible.items:
-        b.color = (255, 0, 0)
-
-    print([b.color for b in all_visible.items])
-
     wheel_bodies = modeler.create_selection_builder().bodies.get_bodies_with_name("Wheel")
 
     assert len(wheel_bodies.items) == 8
