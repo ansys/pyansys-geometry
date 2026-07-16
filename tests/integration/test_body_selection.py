@@ -632,7 +632,7 @@ def test_extend_to_same_number_of_edges(modeler: Modeler):
 
 
 def test_extend_to_same_color(modeler: Modeler):
-    """TODO: Verify that extend_to_same_color expands the selection to all bodies with the
+    """Verify that extend_to_same_color expands the selection to all bodies with the
     same color as any body in the seed selection.
     """
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
