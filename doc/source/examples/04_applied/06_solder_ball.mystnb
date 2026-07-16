@@ -422,4 +422,4 @@ rest of the PCB mesh remains undisturbed.
 - [Sketch.arc_from_start_center_and_angle](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc_from_start_center_and_angle)
 - [Component.revolve_sketch](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html#Component.revolve_sketch)
 - [Design.create_named_selection](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design.create_named_selection)
-- [GeometryCommands.create_fill_pattern](https://geometry.docs.pyansys.com/version/dev/api/ansys/geometry/core/designer/geometry_commands/GeometryCommands.html#GeometryCommands.create_fill_pattern)
+- [GeometryCommands.create_fill_pattern](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/geometry_commands/GeometryCommands.html#GeometryCommands.create_fill_pattern)
