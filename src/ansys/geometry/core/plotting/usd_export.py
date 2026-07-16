@@ -24,14 +24,17 @@
 import functools
 from pathlib import Path
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 import matplotlib.colors as mcolors
 
 if TYPE_CHECKING:
+    from pxr import Usd as UsdModule
+
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.misc.options import TessellationOptions
 
 _USD_AVAILABLE: bool | None = None
 """Cached availability flag for usd-core. ``None`` means not yet checked."""
@@ -167,7 +170,7 @@ def run_if_usd_required() -> None:
         raise ImportError(_ERROR_USD_REQUIRED)
 
 
-def usd_required(method):
+def usd_required(method: Callable) -> Callable:
     """Decorate a method as requiring usd-core.
 
     Parameters
@@ -196,6 +199,11 @@ def _validate_usd_format(file_format: str) -> None:
     ----------
     file_format : str
         Extension to validate (without the leading dot).
+
+    Raises
+    ------
+    ~ansys.geometry.core.errors.GeometryRuntimeError
+        If ``file_format`` is not one of ``"usda"``, ``"usdc"``, ``"usdz"``, or ``"usd"``.
     """
     from ansys.geometry.core.errors import GeometryRuntimeError
 
@@ -209,7 +217,7 @@ def _validate_usd_format(file_format: str) -> None:
 def export_design_to_usd(
     design: "Design",
     path: Path,
-    tess_options=None,
+    tess_options: "TessellationOptions | None" = None,
 ) -> None:
     """Export a design's tessellation to a USD stage file.
 
@@ -219,7 +227,7 @@ def export_design_to_usd(
         The design to export.
     path : ~pathlib.Path
         Output file path. Must end with ``.usda``, ``.usdc``, ``.usdz``, or ``.usd``.
-    tess_options : TessellationOptions | None, default: None
+    tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None, default: None
         Tessellation quality options. ``None`` uses the server default.
     """
     import tempfile
@@ -245,8 +253,20 @@ def export_design_to_usd(
     _write_stage(design, path, tess_options)
 
 
-def _write_stage(design: "Design", path: Path, tess_options) -> None:
-    """Write the design hierarchy to a new USD stage file at ``path``."""
+def _write_stage(
+    design: "Design", path: Path, tess_options: "TessellationOptions | None"
+) -> None:
+    """Write the design hierarchy to a new USD stage file at ``path``.
+
+    Parameters
+    ----------
+    design : Design
+        The design whose components and bodies are exported.
+    path : ~pathlib.Path
+        Destination file path for the USD stage (must not be ``.usdz``).
+    tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None
+        Tessellation quality options. ``None`` uses the server default.
+    """
     from pxr import Usd, UsdGeom
 
     stage = Usd.Stage.CreateNew(str(path))
@@ -272,23 +292,23 @@ def _write_stage(design: "Design", path: Path, tess_options) -> None:
 
 
 def _export_component(
-    stage,
+    stage: "UsdModule.Stage",
     parent_path: str,
     component: "Component",
-    tess_options,
+    tess_options: "TessellationOptions | None",
     prim_name: str,
 ) -> None:
     """Recursively export a component and all its children to the USD stage.
 
     Parameters
     ----------
-    stage : Usd.Stage
+    stage : pxr.Usd.Stage
         The USD stage to write to.
     parent_path : str
         Absolute USD prim path of the parent.
     component : Component
         The component to export.
-    tess_options : TessellationOptions | None
+    tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None
         Tessellation quality options.
     prim_name : str
         Pre-computed sanitized and de-duplicated prim name for this component.
@@ -314,23 +334,23 @@ def _export_component(
 
 
 def _export_body(
-    stage,
+    stage: "UsdModule.Stage",
     parent_path: str,
     body: "Body",
-    tess_options,
+    tess_options: "TessellationOptions | None",
     body_prim_name: str,
 ) -> bool:
     """Export a single body as a ``UsdGeom.Mesh`` prim with a ``UsdPreviewSurface`` material.
 
     Parameters
     ----------
-    stage : Usd.Stage
+    stage : pxr.Usd.Stage
         The USD stage to write to.
     parent_path : str
         Absolute USD prim path of the parent component.
     body : Body
         The body to export.
-    tess_options : TessellationOptions | None
+    tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None
         Tessellation quality options.
     body_prim_name : str
         Pre-computed sanitized and de-duplicated prim name for this body.
