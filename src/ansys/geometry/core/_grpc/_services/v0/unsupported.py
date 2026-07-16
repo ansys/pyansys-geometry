@@ -95,6 +95,12 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
             "implemented in this protofile version."
         )
 
+    def convert_to_heavyweight(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.convert_to_heavyweight' is not "
+            "implemented in this protofile version."
+        )
+
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest

@@ -1916,6 +1916,7 @@ def serialize_body(body: GRPCBodyEntity) -> dict:
         else (body.parent_id.id if hasattr(body.parent_id, "id") else "")
     )
     body_is_surface = body.is_surface
+    body_is_lightweight = getattr(body, "is_lightweight", False)
 
     # Extract transform_to_master matrix
     transform_m00 = body.transform_to_master.m00
@@ -1938,6 +1939,7 @@ def serialize_body(body: GRPCBodyEntity) -> dict:
         "master_id": body_master_id,
         "parent_id": body_parent_id,
         "is_surface": body_is_surface,
+        "is_lightweight": body_is_lightweight,
     }
 
 
