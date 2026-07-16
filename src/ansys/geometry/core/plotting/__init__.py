@@ -22,4 +22,7 @@
 
 """Provides the PyAnsys Geometry plotting subpackage."""
 
-from ansys.geometry.core.plotting.plotter import GeometryPlotter
+try:
+    from ansys.geometry.core.plotting.plotter import GeometryPlotter
+except ImportError:
+    pass
