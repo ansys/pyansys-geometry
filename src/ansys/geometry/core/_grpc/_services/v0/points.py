@@ -178,9 +178,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
         from ansys.api.geometry.v0.commands_pb2 import DeleteEntitiesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DeleteEntitiesRequest(
-            selection=[build_grpc_id(id) for id in kwargs["ids"]]
-        )
+        request = DeleteEntitiesRequest(selection=[build_grpc_id(id) for id in kwargs["ids"]])
 
         # Call the gRPC service
         self.stub.DeleteEntities(request)
