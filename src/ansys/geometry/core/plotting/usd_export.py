@@ -253,9 +253,7 @@ def export_design_to_usd(
     _write_stage(design, path, tess_options)
 
 
-def _write_stage(
-    design: "Design", path: Path, tess_options: "TessellationOptions | None"
-) -> None:
+def _write_stage(design: "Design", path: Path, tess_options: "TessellationOptions | None") -> None:
     """Write the design hierarchy to a new USD stage file at ``path``.
 
     Parameters
