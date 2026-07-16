@@ -179,7 +179,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = DeleteEntitiesRequest(
-            selection=[build_grpc_id(id) for id in kwargs["selection_ids"]]
+            selection=[build_grpc_id(id) for id in kwargs["ids"]]
         )
 
         # Call the gRPC service

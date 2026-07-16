@@ -1981,7 +1981,7 @@ class Component:
         """
         # Search in component's design curves
         for design_curve in self.design_curves:
-            if design_curve.id == id:
+            if design_curve.id == id and design_curve.is_alive:
                 return design_curve
 
         # If no luck, search on nested components
