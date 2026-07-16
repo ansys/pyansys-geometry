@@ -495,7 +495,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 else None,
                 "parent_id": design_curve.parent_id.id,
             }
-        
+
         def serialize_datum_point(datum_point):
             return {
                 "id": datum_point.id.id,

@@ -368,7 +368,7 @@ class Component:
     def design_curves(self) -> list[DesignCurve]:
         """List of ``DesignCurve`` objects inside of the component."""
         return self._design_curves
-    
+
     @property
     def datum_points(self) -> list[DatumPoint]:
         """List of ``DatumPoint`` objects inside of the component."""
@@ -1531,7 +1531,9 @@ class Component:
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
         response = self._grpc_client.services.points.create_design_points(
-            points=points, parent_id=self.id, name=name,
+            points=points,
+            parent_id=self.id,
+            name=name,
         )
         self._grpc_client.log.debug("Design points successfully created.")
 
@@ -1648,9 +1650,7 @@ class Component:
             # If the coordinate system was deleted from the server side... "kill" it
             # on the client side
             cs_requested._is_alive = False
-            self._grpc_client.log.debug(
-                f"CoordinateSystem {cs_requested.id} has been deleted."
-            )
+            self._grpc_client.log.debug(f"CoordinateSystem {cs_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
                 f"CoordinateSystem {id} not found in this component (or subcomponents)."
@@ -1670,7 +1670,7 @@ class Component:
             User-defined label for the datum point.
         point : Point3D
             3D point constituting the datum point.
-        
+
         Returns
         -------
         DatumPoint
@@ -1714,9 +1714,7 @@ class Component:
             # If the datum point was deleted from the server side... "kill" it
             # on the client side
             dp_requested._is_alive = False
-            self._grpc_client.log.debug(
-                f"DatumPoint {dp_requested.id} has been deleted."
-            )
+            self._grpc_client.log.debug(f"DatumPoint {dp_requested.id} has been deleted.")
         else:
             self._grpc_client.log.warning(
                 f"DatumPoint {id} not found in this component (or subcomponents)."
@@ -1765,10 +1763,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def delete_design_curve(
-        self,
-        design_curve: DesignCurve | str
-    ) -> None:
+    def delete_design_curve(self, design_curve: DesignCurve | str) -> None:
         """Delete an existing design curve belonging to this component's scope.
 
         Parameters
@@ -1783,7 +1778,7 @@ class Component:
         is not deleted.
         """
         id = design_curve if isinstance(design_curve, str) else design_curve.id
-        
+
         design_curve_requested = self.search_design_curve(id)
 
         if design_curve_requested:
@@ -1964,7 +1959,7 @@ class Component:
 
         # If you reached this point... this means that no plane was found!
         return None
-    
+
     @check_input_types
     def search_design_curve(self, id: str) -> DesignCurve | None:
         """Search design curves in the component's scope.

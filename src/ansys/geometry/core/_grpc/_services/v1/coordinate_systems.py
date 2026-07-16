@@ -81,7 +81,7 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
             "name": coord_system.name,
             "frame": from_grpc_frame_to_frame(coord_system.frame),
         }
-    
+
     @protect_grpc
     def delete(self, **kwargs) -> None:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import (

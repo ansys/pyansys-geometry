@@ -142,7 +142,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
             f"Method '{self.__class__.__name__}.get_interval' is not "
             "implemented in this protofile version."
         )
-    
+
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.curves_pb2 import DeleteRequest

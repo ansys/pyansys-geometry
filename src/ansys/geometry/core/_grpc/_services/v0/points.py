@@ -172,7 +172,7 @@ class GRPCPointsServiceV0(GRPCPointsService):
                 for curve in response.created_curves
             ],
         }
-    
+
     @protect_grpc
     def delete_datum_points(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2 import DeleteEntitiesRequest

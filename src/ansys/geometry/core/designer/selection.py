@@ -121,7 +121,7 @@ class NamedSelection:
         vertices = vertices if vertices is not None else []
         design_curves = design_curves if design_curves is not None else []
         datum_points = datum_points if datum_points is not None else []
-        
+
         # Instantiate
         self._bodies = bodies
         self._faces = faces
@@ -309,7 +309,7 @@ class NamedSelection:
             )
 
         return self._design_curves
-    
+
     @property
     def datum_points(self) -> list[DatumPoint]:
         """All datum points in the named selection."""

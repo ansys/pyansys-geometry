@@ -95,7 +95,6 @@ class GRPCPointsServiceV1(GRPCPointsService):
             CreateDesignPointsRequestData,
         )
 
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = CreateDesignPointsRequest(
             request_data=[
@@ -254,9 +253,7 @@ class GRPCPointsServiceV1(GRPCPointsService):
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = MultipleEntitiesRequest(
-            ids=[build_grpc_id(id) for id in kwargs["ids"]]
-        )
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
 
         # Call the gRPC service
         self.stub.Delete(request)
