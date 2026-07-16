@@ -241,6 +241,18 @@ def test_fix_small_face(modeler: Modeler):
     assert problem_areas[0].fix().success is True
 
 
+def test_find_bad_faces(modeler: Modeler):
+    """Test to read geometry and find bad faces."""
+    design = modeler.open_file(FILES_DIR / "BadFaces.dsco")
+    bad_faces = modeler.repair_tools.find_bad_faces(design.bodies)
+    assert len(bad_faces) == 1
+
+
+def test_find_bad_faces_empty_input(modeler: Modeler):
+    """Test that ``find_bad_faces`` returns an empty list for empty input."""
+    assert modeler.repair_tools.find_bad_faces([]) == []
+
+
 def test_find_stitch_faces(modeler: Modeler):
     """Test to read geometry and find it's stitch face problem areas."""
     design = modeler.open_file(FILES_DIR / "stitch_before.scdocx")
