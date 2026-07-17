@@ -60,8 +60,8 @@ class ImportOptions:
     import_using_spaceclaim_colors : bool = False
         Import geometry using SpaceClaim colors.
 
-    Note
-    ----
+    Notes
+    -----
     import_as_lightweight and import_using_spaceclaim_colors are only available
     starting in version 2027 R1.
     """
