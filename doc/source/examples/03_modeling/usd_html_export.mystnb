@@ -11,15 +11,16 @@ kernelspec:
   name: python3
 ---
 
-# Modeling: Exporting a design to HTML through USD
+# Modeling: Exporting a design directly to HTML
 
-This example shows how to create a design, export its tessellation to a
-[Universal Scene Description (USD)](https://openusd.org/release/index.html) file,
-and then convert that USD file into a self-contained HTML viewer using
+This example shows how to create a design and export it directly to a
+self-contained HTML viewer in a single step using
 [ansys-tools-visualization-interface](https://visualization-interface.tools.docs.pyansys.com).
 The resulting HTML page embeds all geometry as a GLB file and renders it with
 [Three.js](https://threejs.org) — only a CDN connection is required to view it
 in any modern browser.
+
+No intermediate USD file is written to disk.
 
 ## Prerequisites
 
@@ -69,33 +70,18 @@ print(f"Design '{design.name}' created with {len(design.components)} components.
 design.plot()
 ```
 
-## Export the design to USD
+## Export the design directly to HTML
+
+:meth:`~ansys.geometry.core.designer.design.Design.export_to_html` tessellates
+the design, builds an in-memory USD stage, and converts it to HTML in one call —
+no intermediate file is written to disk.
 
 ```{code-cell} ipython3
 from pathlib import Path
 
 output_dir = Path.cwd() / "html_export"
 
-usd_path = design.export_to_usd(output_dir, file_format="usda")
-print(f"USD file written to: {usd_path}  ({usd_path.stat().st_size} B)")
-```
-
-## Convert USD to a self-contained HTML viewer
-
-Pass the USD file path to
-:func:`~ansys.tools.visualization_interface.export_usd_to_html`.
-The function returns the path to the generated HTML file.
-
-```{code-cell} ipython3
-from ansys.tools.visualization_interface import export_usd_to_html
-
-html_path = export_usd_to_html(
-    usd_path,
-    output_dir / "HtmlExportExample_viewer.html",
-    show_mesh_lines=True,
-    line_color="#00aaff",
-    line_opacity=0.6,
-)
+html_path = design.export_to_html(output_dir)
 print(f"HTML viewer written to: {html_path}")
 ```
 

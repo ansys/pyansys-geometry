@@ -253,23 +253,26 @@ def export_design_to_usd(
     _write_stage(design, path, tess_options)
 
 
-def _write_stage(
-    design: "Design", path: Path, tess_options: "TessellationOptions | None"
-) -> None:
-    """Write the design hierarchy to a new USD stage file at ``path``.
+def _build_stage(
+    design: "Design", tess_options: "TessellationOptions | None"
+) -> "UsdModule.Stage":
+    """Build an in-memory USD stage from a design hierarchy.
 
     Parameters
     ----------
     design : Design
         The design whose components and bodies are exported.
-    path : ~pathlib.Path
-        Destination file path for the USD stage (must not be ``.usdz``).
     tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None
         Tessellation quality options. ``None`` uses the server default.
+
+    Returns
+    -------
+    pxr.Usd.Stage
+        An in-memory USD stage populated with the full design hierarchy.
     """
     from pxr import Usd, UsdGeom
 
-    stage = Usd.Stage.CreateNew(str(path))
+    stage = Usd.Stage.CreateInMemory()
     root_name = sanitize_usd_name(design.name)
     root_prim = UsdGeom.Xform.Define(stage, f"/{root_name}")
     stage.SetDefaultPrim(root_prim.GetPrim())
@@ -288,7 +291,25 @@ def _write_stage(
         used_root_names.add(comp_prim_name)
         _export_component(stage, root_path, component, tess_options, comp_prim_name)
 
-    stage.GetRootLayer().Save()
+    return stage
+
+
+def _write_stage(
+    design: "Design", path: Path, tess_options: "TessellationOptions | None"
+) -> None:
+    """Write the design hierarchy to a new USD stage file at ``path``.
+
+    Parameters
+    ----------
+    design : Design
+        The design whose components and bodies are exported.
+    path : ~pathlib.Path
+        Destination file path for the USD stage (must not be ``.usdz``).
+    tess_options : ~ansys.geometry.core.misc.options.TessellationOptions | None
+        Tessellation quality options. ``None`` uses the server default.
+    """
+    stage = _build_stage(design, tess_options)
+    stage.Export(str(path))
 
 
 def _export_component(
