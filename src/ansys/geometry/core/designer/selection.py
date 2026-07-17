@@ -151,9 +151,7 @@ class NamedSelection:
             "vertices": [vertex.id for vertex in vertices],
             "design_curves": [dc.id for dc in design_curves],
             "datum_planes": [plane.id for plane in datum_planes],
-            "coordinate_systems": [
-                cs.id.id if hasattr(cs.id, "id") else cs.id for cs in coordinate_systems
-            ],
+            "coordinate_systems": [cs.id for cs in coordinate_systems],
         }
         self._faces_meta_cached = [
             {
