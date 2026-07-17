@@ -434,7 +434,7 @@ class NamedSelection:
         NamedSelection
             The new named selection with the members removed. Changes are also reflected on
             the same named selection upon which the method is called.
-        """  # Noqa: E501
+        """  # noqa: E501
         # Update cache
         self.__verify_ns()
         self._verified = True

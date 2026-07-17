@@ -83,7 +83,7 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
         }
 
     @protect_grpc
-    def delete(self, **kwargs) -> None:  # noqa: D102
+    def delete(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import (
             MultipleEntitiesRequest,
         )

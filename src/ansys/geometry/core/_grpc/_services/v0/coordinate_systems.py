@@ -71,7 +71,7 @@ class GRPCCoordinateSystemServiceV0(GRPCCoordinateSystemService):
         }
 
     @protect_grpc
-    def delete(self, **kwargs) -> None:  # noqa: D102
+    def delete(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.coordinatesystems_pb2 import DeleteRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
