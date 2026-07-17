@@ -724,6 +724,7 @@ class Modeler:
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
         )
 
+    @min_backend_version(27, 1, 0)
     def create_selection_builder(self) -> SelectionBuilder:
         """Create a selection builder.
 
