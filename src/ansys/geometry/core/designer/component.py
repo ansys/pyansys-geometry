@@ -1530,11 +1530,19 @@ class Component:
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
-        response = self._grpc_client.services.points.create_design_points(
-            points=points,
-            parent_id=self.id,
-            name=name,
-        )
+
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            response = self._grpc_client.services.points.create_design_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
+        else:
+            response = self._grpc_client.services.points.create_datum_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
         self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
