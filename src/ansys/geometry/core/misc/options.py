@@ -59,6 +59,11 @@ class ImportOptions:
         Import bodies as lightweight.
     import_using_spaceclaim_colors : bool = False
         Import geometry using SpaceClaim colors.
+
+    Note
+    ----
+    import_as_lightweight and import_using_spaceclaim_colors are only available
+    starting in version 2027 R1.
     """
 
     cleanup_bodies: bool = False
