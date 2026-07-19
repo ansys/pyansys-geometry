@@ -30,6 +30,7 @@ import uuid
 
 from pint import Quantity
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -1531,11 +1532,21 @@ class Component:
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
 
-        response = self._grpc_client.services.points.create_design_points(
-            points=points,
-            parent_id=self.id,
-            name=name,
-        )
+        if (
+            self._grpc_client.backend_version < (27, 1, 0)
+            and self._grpc_client.services.version == GeometryApiProtos.V1
+        ):
+            response = self._grpc_client.services.points.create_datum_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
+        else:
+            response = self._grpc_client.services.points.create_design_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
         self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
