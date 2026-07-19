@@ -1531,7 +1531,7 @@ class Component:
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
 
-        response = self._grpc_client.services.points.create_datum_points(
+        response = self._grpc_client.services.points.create_design_points(
             points=points,
             parent_id=self.id,
             name=name,
