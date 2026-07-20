@@ -148,7 +148,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         from ansys.api.geometry.v0.curves_pb2 import GetAllRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = GetAllRequest(parent="parts/"+kwargs["parent_id"])
+        request = GetAllRequest(parent="parts/" + kwargs["parent_id"])
 
         # Call the gRPC service
         response = self.stub.GetAll(request)
