@@ -2539,19 +2539,25 @@ def test_named_selections_components(modeler: Modeler):
 
 
 def test_named_selection_datum_and_coordinate_systems_legacy_access(modeler: Modeler):
-    """Legacy backends should return empty NS datum planes and coordinate systems."""
+    """Pre-27R1 backends should log a warning and return empty lists for datum planes and coordinate systems."""
     design = modeler.create_design("NamedSelectionLegacyDatumCs_Test")
     component = design.add_component("Comp1")
     ns_components = design.create_named_selection("Components", components=[component])
 
-    original_backend_version = modeler._grpc_client._backend_version
-    try:
-        # Force legacy-gated property behavior to validate old-version branch logic.
-        modeler._grpc_client._backend_version = (26, 2, 0)
+    with (
+        patch.object(modeler.client, "_backend_version", (26, 1, 0)),
+        patch.object(ns_components._grpc_client.log, "warning") as warning_spy,
+    ):
         assert ns_components.datum_planes == []
         assert ns_components.coordinate_systems == []
-    finally:
-        modeler._grpc_client._backend_version = original_backend_version
+        warning_spy.assert_any_call(
+            "Accessing datum planes of named selections is only"
+            " consistent starting in version 2027 R1."
+        )
+        warning_spy.assert_any_call(
+            "Accessing coordinate systems of named selections is only"
+            " consistent starting in version 2027 R1."
+        )
 
 
 def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: Modeler):
@@ -2582,8 +2588,7 @@ def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: 
         coordinate_systems=[coordinate_system],
     )
 
-    reread_design = modeler.read_existing_design()
-    ns = next(ns for ns in reread_design.named_selections if ns.name == "DatumAndCsSelection")
+    ns = design.named_selections[0]
 
     assert len(ns.datum_planes) == 1
     assert ns.datum_planes[0].id == datum_plane.id
