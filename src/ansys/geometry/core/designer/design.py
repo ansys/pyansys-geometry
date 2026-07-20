@@ -43,6 +43,7 @@ from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffset
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
@@ -802,6 +803,7 @@ class Design(Component):
         design_curves: list[DesignCurve] | None = None,
         datum_planes: list[DatumPlane] | None = None,
         coordinate_systems: list[CoordinateSystem] | None = None,
+        datum_points: list[DatumPoint] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -829,6 +831,8 @@ class Design(Component):
             All datum planes to include in the named selection.
         coordinate_systems : list[CoordinateSystem], default: None
             All coordinate systems to include in the named selection.
+        datum_points : list[DatumPoint], default: None
+            All datum points to include in the named selection.
 
         Returns
         -------
@@ -854,12 +858,13 @@ class Design(Component):
                 design_curves,
                 datum_planes,
                 coordinate_systems,
+                datum_points,
             ]
         ):
             raise ValueError(
                 "At least one of the following must be provided: "
                 "bodies, faces, edges, beams, design_points, components, vertices, "
-                "design_curves, datum_planes, or coordinate_systems."
+                "design_curves, datum_planes, coordinate_systems, or datum_points."
             )
 
         named_selection = NamedSelection(
@@ -876,6 +881,7 @@ class Design(Component):
             design_curves=design_curves,
             datum_planes=datum_planes,
             coordinate_systems=coordinate_systems,
+            datum_points=datum_points,
         )
 
         self._named_selections[named_selection.name] = named_selection
@@ -1280,9 +1286,11 @@ class Design(Component):
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
-        lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Datum Points       : {len(self.datum_points)}")
         lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
 
@@ -1301,7 +1309,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [X] SharedTopology
         #
@@ -1312,7 +1320,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [ ] SharedTopology
         #
@@ -1564,6 +1572,18 @@ class Design(Component):
             # Append the design curve to the component to which it belongs
             created_dc.parent_component._design_curves.append(created_dc)
 
+        # Create Datum Points
+        for dp in response.get("datum_points"):
+            created_dp = DatumPoint(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("point"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the datum point to the component to which it belongs
+            created_dp.parent_component._datum_points.append(created_dp)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1615,6 +1635,7 @@ class Design(Component):
         self._named_selections = {}
         self._coordinate_systems = []
         self._datum_planes = []
+        self._datum_points = []
         self._design_curves = []
         self._design_points = []
         self._beam_profiles = {}

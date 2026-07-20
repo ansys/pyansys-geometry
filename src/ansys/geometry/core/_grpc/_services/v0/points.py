@@ -172,3 +172,23 @@ class GRPCPointsServiceV0(GRPCPointsService):
                 for curve in response.created_curves
             ],
         }
+
+    @protect_grpc
+    def delete_datum_points(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.commands_pb2 import DeleteEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteEntitiesRequest(selection=[build_grpc_id(id) for id in kwargs["ids"]])
+
+        # Call the gRPC service
+        self.stub.DeleteEntities(request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
+    def create_datum_points(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.create_datum_points' is not "
+            "implemented in this protofile version."
+        )

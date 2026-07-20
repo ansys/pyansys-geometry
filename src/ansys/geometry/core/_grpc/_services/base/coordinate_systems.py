@@ -44,3 +44,8 @@ class GRPCCoordinateSystemService(ABC):  # pragma: no cover
     def create(self, **kwargs) -> dict:
         """Create a coordinate system."""
         pass
+
+    @abstractmethod
+    def delete(self, **kwargs) -> dict:
+        """Delete a coordinate system."""
+        pass

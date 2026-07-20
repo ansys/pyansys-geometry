@@ -24,6 +24,8 @@
 
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, ExtrusionDirection, SharedTopologyType
+from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.design import Design, DesignFileFormat
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
