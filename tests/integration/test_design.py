@@ -2537,6 +2537,7 @@ def test_named_selections_components(modeler: Modeler):
     design.delete_named_selection(ns_components)
     assert len(design.named_selections) == 0
 
+
 def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: Modeler):
     """27R1+ backends should resolve NS datum planes and coordinate systems from IDs."""
     if modeler._grpc_client.backend_version < (27, 1, 0):
