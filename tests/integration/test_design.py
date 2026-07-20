@@ -2539,9 +2539,7 @@ def test_named_selections_components(modeler: Modeler):
     assert len(design.named_selections) == 0
 
 
-def test_named_selection_datum_and_coordinate_systems_legacy_access(
-    modeler: Modeler, caplog
-):
+def test_named_selection_datum_and_coordinate_systems_legacy_access(modeler: Modeler, caplog):
     """Pre-27R1 backends should log a warning and return empty lists for datum planes and coordinate systems."""
     if modeler._grpc_client.backend_version >= (27, 1, 0):
         pytest.skip("This test requires a backend older than 27R1.")
