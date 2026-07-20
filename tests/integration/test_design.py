@@ -22,6 +22,7 @@
 
 """Test design interaction."""
 
+import logging
 import os
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -2548,8 +2549,6 @@ def test_named_selection_datum_and_coordinate_systems_legacy_access(
     design = modeler.create_design("NamedSelectionLegacyDatumCs_Test")
     component = design.add_component("Comp1")
     ns_components = design.create_named_selection("Components", components=[component])
-
-    import logging
 
     with caplog.at_level(logging.WARNING):
         result_planes = ns_components.datum_planes
