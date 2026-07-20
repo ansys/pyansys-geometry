@@ -160,9 +160,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
                     "id": curve.id,
                     "name": curve.owner_name,
                     "length": to_distance(curve.length),
-                    "start": from_grpc_point_to_point3d(curve.points[0])
-                    if curve.points
-                    else None,
+                    "start": from_grpc_point_to_point3d(curve.points[0]) if curve.points else None,
                     "end": from_grpc_point_to_point3d(curve.points[1])
                     if len(curve.points) > 1
                     else None,
