@@ -1557,7 +1557,9 @@ class Design(Component):
             self._grpc_client.backend_version < (27, 1, 0)
             or self._grpc_client.services.version == GeometryApiProtos.V0
         ):
-            curves = self._grpc_client.services.curves.get_all(parent_id=self.id).get("curves", [])
+            curves = self._grpc_client.services.curves.get_all(
+                parent_id="parts/" + self.id
+            ).get("curves", [])
         else:
             curves = response.get("design_curves", [])
 

@@ -190,7 +190,7 @@ def test_delete_design_curve(modeler: Modeler):
     # Skip if v0 CoreService backend
     if (
         modeler._grpc_client.services.version == GeometryApiProtos.V0
-        and BackendType.is_core_service()
+        and BackendType.is_core_service(modeler.client.backend_type)
     ):
         pytest.skip("Design curve deletion not supported in CoreService v0 backend.")
 
