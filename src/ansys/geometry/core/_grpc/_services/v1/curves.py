@@ -188,6 +188,36 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
         }
 
     @protect_grpc
+    def get_all(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import ParentEntityRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = ParentEntityRequest(parent_id=build_grpc_id(kwargs["parent_id"]))
+
+        # Call the gRPC service
+        response = self.stub.GetAll(request)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "curves": [
+                {
+                    "id": curve.id.id,
+                    "name": curve.owner_name,
+                    "length": from_grpc_quantity_to_distance(curve.length),
+                    "start": from_grpc_point_to_point3d(curve.points[0])
+                    if curve.points
+                    else None,
+                    "end": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                    "geometry": from_grpc_curve_to_curve(curve.geometry),
+                }
+                for curve in response.curves
+            ]
+        }
+
+    @protect_grpc
     def delete(self, **kwargs) -> None:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 

@@ -65,6 +65,11 @@ class GRPCCurvesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_all(self, **kwargs) -> dict:
+        """Get all design curves belonging to a parent component."""
+        pass
+
+    @abstractmethod
     def delete(self, **kwargs) -> dict:
         """Delete a curve from the design."""
         pass

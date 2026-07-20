@@ -144,6 +144,35 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
     @protect_grpc
+    def get_all(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.curves_pb2 import GetAllRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetAllRequest(parent=kwargs["parent_id"])
+
+        # Call the gRPC service
+        response = self.stub.GetAll(request)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "curves": [
+                {
+                    "id": curve.id,
+                    "name": curve.owner_name,
+                    "length": to_distance(curve.length),
+                    "start": from_grpc_point_to_point3d(curve.points[0])
+                    if curve.points
+                    else None,
+                    "end": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.curves
+            ]
+        }
+
+    @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.curves_pb2 import DeleteRequest
 
