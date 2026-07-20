@@ -29,6 +29,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.datumpoint import DatumPoint
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -154,6 +155,11 @@ def __traverse_all_design_points(comp: Union["Design", "Component"]) -> list["De
 def __traverse_all_design_curves(comp: Union["Design", "Component"]) -> list["DesignCurve"]:
     """Traverse all design curves in a design/component and all its subcomponents."""
     return __traverse_component_elem("design_curves", comp)
+
+
+def __traverse_all_datum_points(comp: Union["Design", "Component"]) -> list["DatumPoint"]:
+    """Traverse all datum points in a design/component and all its subcomponents."""
+    return __traverse_component_elem("datum_points", comp)
 
 
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
@@ -391,6 +397,29 @@ def get_design_curves_from_ids(
     objects.
     """
     return [dc for dc in __traverse_all_design_curves(design) if dc.id in design_curve_ids]
+
+
+def get_datum_points_from_ids(design: "Design", datum_point_ids: list[str]) -> list["DatumPoint"]:
+    """Find the ``DatumPoint`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the datum points.
+    datum_point_ids : list[str]
+        List of datum point ids.
+
+    Returns
+    -------
+    list[DatumPoint]
+        List of DatumPoint objects.
+
+    Notes
+    -----
+    This method takes a design and datum point ids, and gets their corresponding ``DatumPoint``
+    objects.
+    """
+    return [dp for dp in __traverse_all_datum_points(design) if dp.id in datum_point_ids]
 
 
 def convert_color_to_hex(

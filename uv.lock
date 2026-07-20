@@ -164,16 +164,16 @@ wheels = [
 
 [[package]]
 name = "ansys-api-discovery"
-version = "1.2.6"
+version = "1.2.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-api-geometry" },
     { name = "grpcio" },
     { name = "protobuf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/62/5a/c2e5706529497078de010a1fefa56094c7785bdaf8eb4631b50bc10f8d65/ansys_api_discovery-1.2.6.tar.gz", hash = "sha256:5f8ecf54f657bcd40c837884cb95f2e5cb7b34463324ae81b34b6cdfe833ec5b", size = 85987, upload-time = "2026-07-13T18:56:09.608Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/03/97/7b392e964ec30d5ad22545d3a9cd0113bf036c48ea7e0fb9a2b67d09ead8/ansys_api_discovery-1.2.8.tar.gz", hash = "sha256:6c717cb1d14c97d8948440ac5c7c81553bcbca312791574a81ac3e15c29240d3", size = 86192, upload-time = "2026-07-16T19:39:03.941Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/da/a3886d74f58299fd547cd3a63d3f09a6862b648a91dbad96d314de3b91e6/ansys_api_discovery-1.2.6-py3-none-any.whl", hash = "sha256:d002c204c16dcaf728acd75539060dcb683583da4ed900c89bdb4b0dadc72592", size = 1169245, upload-time = "2026-07-13T18:56:07.875Z" },
+    { url = "https://files.pythonhosted.org/packages/06/8c/b86dc35686fe7ac530d70c19736a11b7ba1a7fcef4253cfbc44a854aceac/ansys_api_discovery-1.2.8-py3-none-any.whl", hash = "sha256:69e646fcf1ec1b70ce74e497d7c60fdd718daa7bed5c0fe01734e106921512e4", size = 1177757, upload-time = "2026-07-16T19:39:02.279Z" },
 ]
 
 [[package]]
@@ -378,7 +378,7 @@ tests-minimal = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-api-discovery", specifier = "==1.2.6" },
+    { name = "ansys-api-discovery", specifier = "==1.2.8" },
     { name = "ansys-platform-instancemanagement", marker = "extra == 'all'", specifier = ">=1.0.3,<2" },
     { name = "ansys-tools-common", specifier = ">=0.3,<1" },
     { name = "ansys-tools-visualization-interface", marker = "extra == 'all'", specifier = ">=0.2.6" },
