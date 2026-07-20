@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,11 +19,11 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the bodies service implementation for v0."""
 
 import grpc
 
-import ansys.geometry.core as pyansys_geom
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.bodies import GRPCBodyService
@@ -318,7 +318,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
             "id": resp.id,
             "name": resp.name,
             "master_id": resp.master_id,
-            "is_surface": resp.is_surface,
+            "is_surface": True,
         }
 
     @protect_grpc
@@ -470,6 +470,14 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
+        # If "tight" bounding box is requested, raise NotImplementedError as this is
+        # not supported in v0
+        if kwargs.get("tight", False):
+            raise NotImplementedError(
+                f"Method '{self.__class__.__name__}.get_bounding_box(..., tight=True)' is not "
+                "implemented in this protofile version."
+            )
+
         # Call the gRPC service
         resp = self.stub.GetBoundingBox(request=build_grpc_id(kwargs["id"]))
 
@@ -735,15 +743,12 @@ class GRPCBodyServiceV0(GRPCBodyService):
                 body1=kwargs["target"],
                 tool_bodies=[other for other in kwargs["other"]],
                 method=kwargs["method"],
+                keep_other=kwargs["keep_other"],
             )
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                request.keep_other = kwargs["keep_other"]
+
             resp = self.stub.Boolean(request=request)
             response_success = resp.empty_result
-            if pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-                serialized_tracker_response = serialize_tracker_command_response(
-                    response=resp.response
-                )
+            serialized_tracker_response = serialize_tracker_command_response(response=resp.response)
         except grpc.RpcError as err:  # pragma: no cover
             # TODO: to be deleted - old versions did not have "tool_bodies" in the request
             # This is a temporary fix to support old versions of the server - should be deleted
@@ -757,6 +762,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                             body1=kwargs["target"],
                             body2=body2,
                             method=kwargs["method"],
+                            keep_other=kwargs["keep_other"],
                         )
                     ).empty_result
                     all_resp.append(tmp_resp)
@@ -769,6 +775,7 @@ class GRPCBodyServiceV0(GRPCBodyService):
                         body1=kwargs["target"],
                         body2=kwargs["other"][0],
                         method=kwargs["method"],
+                        keep_other=kwargs["keep_other"],
                     )
                 )
                 response_success = resp.empty_result
@@ -911,10 +918,12 @@ class GRPCBodyServiceV0(GRPCBodyService):
         )
 
         # Call the gRPC service
-        _ = self.command_stub.CombineMergeBodies(request=request)
+        response = self.command_stub.CombineMergeBodies(request=request)
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "success": response.success,
+        }
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
@@ -1160,4 +1169,35 @@ class GRPCBodyServiceV0(GRPCBodyService):
 
     @protect_grpc
     def copy_faces(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.copy_faces' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_centroid' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def create_block_body(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.bodies_pb2 import CreateBlockBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBlockBodyRequest(
+            start_point=from_point3d_to_grpc_point(kwargs["start"]),
+            end_point=from_point3d_to_grpc_point(kwargs["end"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateBlockBody(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id,
+            "name": resp.name,
+            "master_id": resp.master_id,
+            "is_surface": resp.is_surface,
+        }

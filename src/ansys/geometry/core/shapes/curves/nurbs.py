@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,17 +19,18 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing a NURBS curve."""
 
 from functools import cached_property
 from typing import TYPE_CHECKING, Optional
 
-from beartype import beartype as check_input_types
 import numpy as np
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -42,6 +43,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
+    import pyvista as pv
 
 
 class NURBSCurve(Curve):
@@ -294,6 +296,32 @@ class NURBSCurve(Curve):
 
     def contains_point(self, point: Point3D) -> bool:  # noqa: D102
         raise NotImplementedError("contains_point() is not implemented.")
+
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """VTK polydata representation for PyVista visualization.
+
+        Returns
+        -------
+        pyvista.PolyData
+            VTK pyvista.PolyData configuration.
+        """
+        import pyvista as pv
+
+        # Evaluate the NURBS curve at multiple points for visualization
+        num_points = 100
+        domain = self._nurbs_curve.domain
+        params = np.linspace(domain[0], domain[1], num_points)
+
+        points = np.array([self._nurbs_curve.evaluate_single(u) for u in params])
+
+        # Create lines connecting the points
+        lines = np.column_stack(
+            [np.full(num_points - 1, 2), np.arange(num_points - 1), np.arange(1, num_points)]
+        ).ravel()
+
+        return pv.PolyData(points, lines=lines)
 
     def project_point(
         self, point: Point3D, initial_guess: Optional[Real] = None

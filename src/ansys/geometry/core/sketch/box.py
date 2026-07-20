@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,17 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing a box (quadrilateral)."""
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 from scipy.spatial.transform import Rotation as SpatialRotation
 
 from ansys.geometry.core.math.matrix import Matrix33
 from ansys.geometry.core.math.point import Point2D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.face import SketchFace

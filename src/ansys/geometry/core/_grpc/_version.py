@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing methods and classes to detect the gRPC version used."""
 
 from enum import Enum, unique
@@ -135,7 +136,14 @@ def set_proto_version(
     if version is None:
         version = GeometryApiProtos.get_latest_version()
         while not version.verify_supported(channel):
-            version = GeometryApiProtos.from_int_value(version.value[0] - 1)
+            new_int_value = version.value[0] - 1
+            if new_int_value < 0:
+                raise ValueError(
+                    "Server does not support any known versions of the gRPC API protocol. "
+                    "Could have been an issue with the connection or the server may be "
+                    "running an unsupported version of the software."
+                )
+            version = GeometryApiProtos.from_int_value(new_int_value)
 
     # Return the version
     return version

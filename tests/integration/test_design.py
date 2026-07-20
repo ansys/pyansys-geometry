@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,11 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Test design interaction."""
 
 import os
 from pathlib import Path
-import zipfile
+from unittest.mock import Mock, patch
 
 import matplotlib.colors as mcolors
 import numpy as np
@@ -44,6 +45,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
@@ -62,52 +64,34 @@ from ansys.geometry.core.math import (
 )
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Accuracy, Angle, Distance, checks
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.options import FMDExportOptions
 from ansys.geometry.core.parameters.parameter import ParameterType, ParameterUpdateStatus
 from ansys.geometry.core.shapes import (
     Circle,
-    Cone,
-    Cylinder,
     Ellipse,
     Line,
     ParamUV,
-    Sphere,
-    Torus,
 )
-from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.sketch import Sketch
 
 from ..conftest import are_graphics_available
-from .conftest import FILES_DIR, IMPORT_FILES_DIR
+from .conftest import FILES_DIR, IMPORT_FILES_DIR, skip_if_no_geometry_service
 
 
 def test_error_opening_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Validating error messages when opening up files"""
-    # If the protos version is v1 or higher, uploading files is not supported
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file' method is not supported in protos v1 and beyond",
-        ):
-            modeler._upload_file(fake_path)
-        with pytest.raises(
-            GeometryRuntimeError,
-            match="The '_upload_file_stream' method is not supported with protos v1 and beyond",
-        ):
-            modeler._upload_file_stream(fake_path)
-    else:
-        fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
-        temp_dir = tmp_path_factory.mktemp("test_design")
+    fake_path = Path("C:\\Users\\FakeUser\\Documents\\FakeProject\\FakeFile.scdocx")
+    temp_dir = tmp_path_factory.mktemp("test_design")
 
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file(temp_dir)
-        with pytest.raises(ValueError, match="Could not find file:"):
-            modeler._upload_file_stream(fake_path)
-        with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
-            modeler._upload_file_stream(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file(temp_dir)
+    with pytest.raises(ValueError, match="Could not find file:"):
+        modeler._upload_file_stream(fake_path)
+    with pytest.raises(ValueError, match="File path must lead to a file, not a directory"):
+        modeler._upload_file_stream(temp_dir)
 
 
 def test_modeler_open_files(modeler: Modeler):
@@ -143,7 +127,7 @@ def test_disable_active_design_check(modeler: Modeler, disable_active_design_che
 
 
 def test_design_is_close(modeler: Modeler):
-    # Testing to see if design is closed and whether more operations can be performed on it
+    """Test that operations on a closed design raise an appropriate error."""
     sketch = Sketch()
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
@@ -156,13 +140,740 @@ def test_design_is_close(modeler: Modeler):
         checks.ensure_design_is_active(design.bodies[0].edges)
 
 
+def test_design_close_handles_close_rpc_error(modeler: Modeler):
+    """Test Design.close() exception handling when RPC fails."""
+    design = modeler.create_design("close_error_path")
+    designs_svc = design._grpc_client.services.designs
+
+    with (
+        patch.object(designs_svc, "close", side_effect=RuntimeError("boom")),
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        design.close()
+
+        # Verify branch outcomes
+        assert design.is_closed
+        assert not design.is_active
+        warning_spy.assert_any_call(f"Design {design.name} could not be closed. Error: boom.")
+        warning_spy.assert_any_call("Ignoring response and assuming the design is closed.")
+
+
+def test_design_download_legacy_backend(modeler: Modeler, tmp_path):
+    """Test download() legacy backend path."""
+    design = modeler.create_design("download_test")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design.extrude_sketch("Box", sketch, 2)
+
+    file_path = tmp_path / "test_design.scdocx"
+
+    # Patch private backend version storage to trigger legacy path
+    with (
+        patch.object(modeler.client, "_backend_version", (25, 1, 0)),
+        patch.object(design, "_Design__export_and_download_legacy") as legacy_export,
+    ):
+        legacy_export.return_value = b"fake_bytes"
+        with patch.object(Path, "write_bytes"):
+            design.download(file_path)
+
+            legacy_export.assert_called_once_with(format=DesignFileFormat.SCDOCX)
+
+
+def test_design_download_v1_api(modeler: Modeler, tmp_path):
+    """Test download() V1 API zip extraction path."""
+    design = modeler.create_design("download_v1_test")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 10, 10)
+    design.extrude_sketch("Box", sketch, 2)
+
+    file_path = tmp_path / "test_design.scdocx"
+
+    with (
+        patch.object(design._grpc_client.services, "version", GeometryApiProtos.V1),
+        patch.object(design, "_Design__export_and_download") as v1_export,
+        patch("ansys.geometry.core.misc.auxiliary.extract_project_from_zip") as extract_zip,
+    ):
+        v1_export.return_value = b"fake_zip_bytes"
+        with patch.object(Path, "write_bytes"), patch.object(Path, "unlink"):
+            design.download(file_path)
+
+            v1_export.assert_called_once()
+            extract_zip.assert_called_once()
+
+
+def test_export_and_download_legacy_supported_and_unsupported(modeler: Modeler):
+    """Cover legacy export branches for supported and unsupported formats."""
+    design = modeler.create_design("legacy_export_paths")
+    fake_services = Mock()
+    fake_services.designs.download_file.return_value = {"data": b"scdocx"}
+    fake_services.parts.export.return_value = {"data": b"step"}
+
+    with (
+        patch.object(design._grpc_client, "_services", fake_services),
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        scdocx_bytes = design._Design__export_and_download_legacy(DesignFileFormat.SCDOCX)
+        step_bytes = design._Design__export_and_download_legacy(DesignFileFormat.STEP)
+        invalid_bytes = design._Design__export_and_download_legacy(DesignFileFormat.INVALID)
+
+        assert scdocx_bytes == b"scdocx"
+        assert step_bytes == b"step"
+        assert invalid_bytes is None
+        fake_services.designs.download_file.assert_called_once()
+        fake_services.parts.export.assert_called_once_with(format=DesignFileFormat.STEP)
+        warning_spy.assert_called_with(
+            "INVALID format requested is not supported. Ignoring download request."
+        )
+
+
+def test_export_and_download_v1_unsupported_format_warns(modeler: Modeler):
+    """Cover unsupported format branch in __export_and_download()."""
+    design = modeler.create_design("export_unsupported")
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        result = design._Design__export_and_download(DesignFileFormat.INVALID)
+
+        assert result is None
+        warning_spy.assert_called_with(
+            "INVALID format requested is not supported. Ignoring download request."
+        )
+
+
+def test_export_to_fmd_ignores_options_on_old_backend(modeler: Modeler, tmp_path):
+    """Cover warning path when FMD options are used on unsupported backend."""
+    design = modeler.create_design("fmd_old_backend")
+    output_dir = tmp_path
+    options = FMDExportOptions(deviation=0.001, angle=0.1)
+
+    with (
+        patch.object(modeler.client, "_backend_version", (27, 0, 0)),
+        patch.object(design, "download") as download_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+    ):
+        result = design.export_to_fmd(output_dir, options=options)
+        expected_file = output_dir / f"{design.name}.fmd"
+
+        assert result == expected_file
+        warning_spy.assert_called_once_with(
+            "FMD export options are only supported in Ansys 27.1 and later products."
+            " Ignoring provided options and exporting with default settings."
+        )
+        download_spy.assert_called_once_with(expected_file, DesignFileFormat.FMD, fmd_options=None)
+
+
+def test_insert_file_v0_uses_upload_and_insert(modeler: Modeler, tmp_path):
+    """Cover v0 insert_file branch that uploads then inserts by server path."""
+    design = modeler.create_design("insert_v0_branch")
+    file_location = tmp_path / "to_insert.scdocx"
+    component = Component("mock_component", None, modeler.client)
+
+    with (
+        patch.object(design._grpc_client.services, "version", GeometryApiProtos.V0),
+        patch.object(modeler, "_upload_file", return_value="server/path/file.scdocx") as upload_spy,
+        patch.object(design._grpc_client.services.designs, "insert") as insert_spy,
+        patch.object(design, "_update_design_inplace"),
+        patch.object(design, "_components", [component]),
+    ):
+        inserted_component = design.insert_file(file_location)
+
+        upload_spy.assert_called_once()
+        insert_call_kwargs = insert_spy.call_args.kwargs
+        assert insert_call_kwargs["filepath"] == "server/path/file.scdocx"
+        assert "import_named_selections" in insert_call_kwargs
+        assert inserted_component is component
+
+
+def test_get_raw_tessellation_returns_empty_when_not_alive(modeler: Modeler):
+    """Test that get_raw_tessellation() returns empty dict when design is not alive."""
+    design = modeler.create_design("dead_tessellation")
+    design._is_alive = False
+
+    assert design.get_raw_tessellation() == {}
+
+
+def test_activate_calls_put_active_when_not_after_creation(modeler: Modeler):
+    """Test that _activate() calls put_active RPC when not called after design creation."""
+    design = modeler.create_design("activate_normal")
+    design._is_active = False
+
+    with (
+        patch.object(design._grpc_client.services.designs, "put_active") as put_active_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._activate(called_after_design_creation=False)
+
+        put_active_spy.assert_called_once_with(design_id=design._design_id)
+        assert design._is_active is True
+        debug_spy.assert_called_with(f"Design {design.name} is activated.")
+
+
+def test_activate_skips_rpc_when_called_after_design_creation(modeler: Modeler):
+    """Test that _activate() skips put_active RPC when called after design creation."""
+    design = modeler.create_design("activate_after_creation")
+    design._is_active = False
+
+    with (
+        patch.object(design._grpc_client.services.designs, "put_active") as put_active_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._activate(called_after_design_creation=True)
+
+        put_active_spy.assert_not_called()
+        assert design._is_active is True
+        debug_spy.assert_called_with(f"Design {design.name} is activated.")
+
+
+def test_read_existing_design_raises_when_no_active_design(modeler: Modeler):
+    """Test that reading existing design raises RuntimeError when no active design exists."""
+    design = modeler.create_design("read_existing_no_active")
+    with patch.object(design._grpc_client.services.designs, "get_active", return_value=None):
+        with pytest.raises(RuntimeError, match="No existing design available at service level"):
+            design._Design__read_existing_design()
+
+
+def test_update_from_tracker_created_parts(modeler: Modeler):
+    """Test _update_from_tracker() handles newly created and existing parts correctly."""
+    design = modeler.create_design("update_tracker_parts")
+
+    existing_part = Part("part_1", "ExistingPart", [], [])
+    tracker_response = {
+        "created_parts": [
+            {"id": "part_1", "name": "ExistingName"},
+            {"id": "part_2"},
+        ],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(
+            design,
+            "_find_existing_part",
+            side_effect=lambda pid: existing_part if pid == "part_1" else None,
+        ),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("already exists" in str(call) for call in debug_spy.call_args_list)
+        assert any("Created new part" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_parts_with_fallback(modeler: Modeler):
+    """Test _update_from_tracker() for deleted parts.
+
+    Verifies parts are marked inactive and warnings are logged for missing parts.
+    """
+    design = modeler.create_design("update_tracker_deleted")
+
+    mock_part = Mock()
+    mock_part._is_alive = True
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [
+            {"id": "existing_part"},
+            {"id": "missing_part"},
+        ],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(
+            design,
+            "_find_existing_part",
+            side_effect=lambda pid: mock_part if pid == "existing_part" else None,
+        ),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        warning_spy.assert_called()
+        assert mock_part._is_alive is False
+        assert any(
+            "Could not find part to delete" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_occurrence_components_missing_part(modeler: Modeler):
+    """Test _update_from_tracker() logs warning when component part cannot be found."""
+    design = modeler.create_design("update_tracker_occ_missing")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [
+            {
+                "id": "comp_occ",
+                "master_id": "other_id",
+                "name": "OccurrenceComp",
+                "part_master": {"id": "missing_part"},
+                "placement": None,
+            }
+        ],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(design, "_find_existing_part", return_value=None),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        assert any(
+            "Could not find part for Component" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_components(modeler: Modeler):
+    """Test _update_from_tracker() creates new MasterComponent instances correctly."""
+    design = modeler.create_design("update_tracker_components")
+
+    test_part = Part("test_part", "TestPart", [], [])
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [
+            {
+                "id": "comp_1",
+                "master_id": "comp_1",
+                "name": "MasterComp1",
+                "part_master": {"id": "test_part"},
+                "placement": None,
+            }
+        ],
+        "modified_components": [],
+        "deleted_components": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_existing_part", return_value=test_part),
+        patch.object(design, "_find_and_add_component_to_design") as add_comp_spy,
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Created new MasterComponent" in str(call) for call in debug_spy.call_args_list)
+        add_comp_spy.assert_called()
+
+
+def test_update_from_tracker_modified_and_deleted_components(modeler: Modeler):
+    """Test _update_from_tracker() updates and removes components from tracker response."""
+    design = modeler.create_design("update_tracker_mod_del")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [{"id": "comp_1", "name": "ModifiedComp1"}],
+        "deleted_components": [{"id": "comp_2"}],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_update_component", return_value=True) as update_spy,
+        patch.object(design, "_find_and_remove_component", return_value=True),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        update_spy.assert_called()
+        assert any(
+            "Processing modified component" in str(call) for call in debug_spy.call_args_list
+        )
+        assert any("Processing deleted component" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_components_not_found(modeler: Modeler):
+    """Test _update_from_tracker() logs warning when deleted component cannot be found."""
+    design = modeler.create_design("update_tracker_del_notfound")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [{"id": "comp_missing"}],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "warning") as warning_spy,
+        patch.object(design, "_find_and_remove_component", return_value=False),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        assert any(
+            "Could not find component to delete" in str(call) for call in warning_spy.call_args_list
+        )
+
+
+def test_update_from_tracker_created_bodies_already_exist(modeler: Modeler):
+    """Test _update_from_tracker() handles existing bodies and logs appropriate message."""
+    design = modeler.create_design("update_tracker_bodies_exist")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    existing_body = design.extrude_sketch("existing", sketch, 1)
+    body_id = existing_body.id
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [{"id": body_id, "name": "ExistingBody", "is_surface": False}],
+        "modified_bodies": [],
+        "deleted_bodies": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_add_body", return_value=None),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("already exists at root level" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_created_bodies_fallback_creation(modeler: Modeler):
+    """Test _update_from_tracker() creates new bodies as fallback when lookup returns None."""
+    design = modeler.create_design("update_tracker_bodies_fallback")
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [{"id": "body_new", "name": "NewBody", "is_surface": True}],
+        "modified_bodies": [],
+        "deleted_bodies": [],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_add_body", return_value=None),
+        patch.object(design, "_clear_cached_bodies"),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Added new body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_modified_bodies(modeler: Modeler):
+    """Test _update_from_tracker() processes modified bodies from tracker response."""
+    design = modeler.create_design("update_tracker_mod_bodies")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    body = design.extrude_sketch("body1", sketch, 1)
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [{"id": body.id, "name": "ModifiedBody"}],
+        "deleted_bodies": [],
+    }
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        assert any("Processing modified body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_bodies(modeler: Modeler):
+    """Test _update_from_tracker() removes deleted bodies and logs appropriate info."""
+    design = modeler.create_design("update_tracker_del_bodies")
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    body1 = design.extrude_sketch("body1", sketch, 1)
+
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [],
+        "deleted_bodies": [
+            {"id": body1.id},
+            {"id": "body_missing"},
+        ],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design._grpc_client.log, "info") as info_spy,
+        patch.object(design, "_find_and_remove_body", return_value=False),
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        info_spy.assert_any_call(f"Deleted body (ID: {body1.id}) removed from root level.")
+        assert any("Processing deleted body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_update_from_tracker_deleted_bodies_fallback(modeler: Modeler):
+    """Test _update_from_tracker() handles missing deleted bodies with fallback logic."""
+    design = modeler.create_design("update_tracker_del_bodies_fallback")
+
+    design.add_component("FallbackComp")
+    tracker_response = {
+        "created_parts": [],
+        "deleted_parts": [],
+        "created_components": [],
+        "modified_components": [],
+        "deleted_components": [],
+        "created_bodies": [],
+        "modified_bodies": [],
+        "deleted_bodies": [
+            {"id": "body_missing"},
+        ],
+    }
+
+    with (
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+        patch.object(design, "_find_and_remove_body", return_value=False) as remove_body_spy,
+    ):
+        design._update_from_tracker(tracker_response)
+
+        debug_spy.assert_called()
+        remove_body_spy.assert_called_once()
+        assert any("Processing deleted body" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_find_and_update_part(modeler: Modeler):
+    """Test _find_and_update_part() successfully updates part properties and returns True."""
+    design = modeler.create_design("find_update_part")
+
+    part_info = {"id": design._master_component.part.id, "name": "UpdatedPartName"}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_update_part(part_info)
+
+        assert result is True
+        assert design._master_component.part.name == "UpdatedPartName"
+        debug_spy.assert_called()
+        assert any("Updated part" in str(call) for call in debug_spy.call_args_list)
+
+
+def test_find_and_update_part_not_found(modeler: Modeler):
+    """Test _find_and_update_part() returns False when part is not found."""
+    design = modeler.create_design("find_update_part_notfound")
+
+    part_info = {"id": "nonexistent_part", "name": "ShouldNotUpdate"}
+
+    result = design._find_and_update_part(part_info)
+
+    assert result is False
+
+
+def test_find_and_remove_part(modeler: Modeler):
+    """Test _find_and_remove_part() successfully removes part and returns True."""
+    design = modeler.create_design("find_remove_part")
+
+    part_info = {"id": design._master_component.part.id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_part(part_info)
+
+        assert result is True
+        debug_spy.assert_any_call(f"Removed part (ID: {design._master_component.part.id})")
+
+
+def test_find_and_remove_part_not_found(modeler: Modeler):
+    """Test _find_and_remove_part() returns False when part is not found."""
+    design = modeler.create_design("find_remove_part_notfound")
+
+    part_info = {"id": "nonexistent_part"}
+
+    result = design._find_and_remove_part(part_info)
+
+    assert result is False
+
+
+def test_find_and_add_component_not_found_returns_none(modeler: Modeler):
+    """Test _find_and_add_component_to_design() returns None when parent component not found."""
+    design = modeler.create_design("add_comp_notfound")
+
+    component_info = {
+        "id": "comp_orphan_1",
+        "name": "OrphanComponent",
+        "parent_id": "nonexistent_parent",
+        "master_id": None,
+    }
+
+    result = design._find_and_add_component_to_design(component_info, [], None, None)
+
+    assert result is None
+
+
+def test_find_and_update_component_updates_name(modeler: Modeler):
+    """Test _find_and_update_component() successfully updates component name and returns True."""
+    design = modeler.create_design("update_comp_name")
+    comp = design.add_component("OriginalName")
+
+    component_info = {"id": comp.id, "name": "UpdatedName"}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_update_component(component_info, design.components)
+
+        assert result is True
+        debug_spy.assert_called()
+
+
+def test_find_and_remove_component_marks_as_removed(modeler: Modeler):
+    """Test _find_and_remove_component() marks component as removed and returns True."""
+    design = modeler.create_design("remove_comp")
+    comp = design.add_component("ComponentToRemove")
+    comp_id = comp.id
+
+    component_info = {"id": comp_id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_component(component_info, design.components)
+
+        assert result is True
+        debug_spy.assert_called()
+
+
+def test_find_and_remove_component_recursive_with_parent(modeler: Modeler):
+    """Test _find_and_remove_component() recursively finds and removes nested components."""
+    design = modeler.create_design("remove_comp_recursive")
+    parent_comp = design.add_component("ParentComp")
+    nested_comp = parent_comp.add_component("NestedComp")
+    nested_id = nested_comp.id
+
+    component_info = {"id": nested_id}
+
+    with patch.object(design._grpc_client.log, "debug") as debug_spy:
+        result = design._find_and_remove_component(
+            component_info, design.components, parent_component=design
+        )
+
+        assert result is True
+        debug_spy.assert_called()
+        assert any(
+            "from root design" in str(call) or "from" in str(call)
+            for call in debug_spy.call_args_list
+        )
+
+
+@pytest.mark.parametrize(
+    "design_name,backend_version,service_version,shared_type,expect_planes_call,expect_debug_warning",
+    [
+        (
+            "read_existing_old_backend",
+            (25, 1, 0),
+            GeometryApiProtos.V1,
+            SharedTopologyType.SHARETYPE_SHARE,
+            False,
+            True,
+        ),
+        (
+            "read_existing_plane_service",
+            (26, 1, 0),
+            GeometryApiProtos.V1,
+            SharedTopologyType.SHARETYPE_MERGE,
+            True,
+            False,
+        ),
+    ],
+)
+def test_read_existing_design_plane_retrieval_paths(
+    modeler: Modeler,
+    design_name,
+    backend_version,
+    service_version,
+    shared_type,
+    expect_planes_call,
+    expect_debug_warning,
+):
+    """Test __read_existing_design() handles backend version-specific datum plane retrieval."""
+    design = modeler.create_design(design_name)
+    design_response = {
+        "design_id": "d1",
+        "main_part_id": "p_main",
+        "name": "existing_design",
+    }
+    assembly_response = {
+        "parts": [{"id": "p_main", "name": "Main"}],
+        "transformed_parts": [],
+        "components": [],
+        "bodies": [],
+        "materials": [],
+        "beams": [],
+        "named_selections": [],
+        "component_coordinate_systems": [],
+        "design_points": [],
+        "datum_planes": [],
+        "design_curves": [],
+        "component_shared_topologies": [
+            {"component_id": "p_main", "shared_topology_type": shared_type.value}
+        ],
+        "datum_points": [],
+    }
+
+    with (
+        patch.object(
+            design._grpc_client.services.designs, "get_active", return_value=design_response
+        ),
+        patch.object(
+            design._grpc_client.services.designs,
+            "get_assembly",
+            return_value=assembly_response,
+        ),
+        patch.object(modeler.client, "_backend_version", backend_version),
+        patch.object(design._grpc_client.services, "version", service_version),
+        patch.object(
+            design._grpc_client.services.planes,
+            "get_all",
+            return_value={"planes": []},
+        ) as planes_get_all_spy,
+        patch.object(design._grpc_client.log, "debug") as debug_spy,
+    ):
+        design._Design__read_existing_design()
+
+        if expect_planes_call:
+            planes_get_all_spy.assert_called_once_with(parent_id=design.id)
+        else:
+            planes_get_all_spy.assert_not_called()
+
+        if expect_debug_warning:
+            debug_spy.assert_any_call(
+                "Backend version does not support datum planes. Skipping datum plane creation."
+            )
+
+        assert design.shared_topology == shared_type
+
+
 def test_design_selection(modeler: Modeler):
     """Test to validate the designer selection for edges and __repr__ method."""
     sketch = Sketch()
     sketch.box(Point2D([0, 0]), 10, 10)
     design = modeler.create_design("Box")
     body = design.extrude_sketch("Box", sketch, Quantity(2, UNITS.m))
-    ns_edge = design.create_named_selection("The Edges", body.edges[0:2])
+    ns_edge = design.create_named_selection("The Edges", edges=body.edges[0:2])
     assert ns_edge.edges[0].start == Point3D([-5, -5, 2])
     assert ns_edge.edges[0].end == Point3D([5, -5, 2])
     assert ns_edge.edges[1].start == Point3D([-5, -5, 0])
@@ -170,33 +881,11 @@ def test_design_selection(modeler: Modeler):
     assert ns_edge.__repr__()[0:54] == "ansys.geometry.core.designer.selection.NamedSelection "
 
 
-def test_design_part(modeler: Modeler):
-    """Test to validate the designer part id, name, and setter for components and bodies."""
-    body1 = MasterBody(id="body1", name="First Only Body", grpc_client=modeler.client)
-    body2 = MasterBody(id="body2", name="Second Body in Component", grpc_client=modeler.client)
-    bodies = [body1]
-    part = Part(id="IDPart", name="NamePart", components=[], bodies=bodies)
-    masterpart = MasterComponent(id="PartMaster", name="Part Master", part=part)
-    assert masterpart.id == "PartMaster"
-    assert masterpart.name == "Part Master"
-    assert masterpart.__repr__()[0:50] == "MasterComponent(id=PartMaster, name=Part Master, t"
-    assert part.id == "IDPart"
-    assert part.name == "NamePart"
-    part.components = [body2]
-    assert part.components[0].name == "Second Body in Component"
-    part.bodies = body1
-    assert part.bodies.name == "First Only Body"
-
-
 def test_design_extrusion_and_material_assignment(modeler: Modeler):
-    """Test to validate the extrusion of a simple circle as a cylinder and the
-    assignment of materials to it.
-    """
-    # Create a Sketch and draw a circle (all client side)
+    """Test extrusion of a simple circle and material assignment."""
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
-    # Create your design on the server side
     design_name = "ExtrudeProfile"
     design = modeler.create_design(design_name)
     assert design.name == design_name
@@ -208,7 +897,6 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
     assert len(design.materials) == 0
     assert len(design.named_selections) == 0
 
-    # Add a material to your design
     density = Quantity(125, 1000 * UNITS.kg / (UNITS.m * UNITS.m * UNITS.m))
     poisson_ratio = Quantity(0.33, UNITS.dimensionless)
     tensile_strength = Quantity(45)
@@ -247,31 +935,44 @@ def test_design_extrusion_and_material_assignment(modeler: Modeler):
         == tensile_strength
     )
 
-    # Extrude the sketch to create a Body
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
     assert len(design.components) == 0
     assert len(design.bodies) == 1
 
-    # Assign a material to a Body
     body.assign_material(material)
 
-    # Not possible to save to file from a container (CI/CD)
-    # Use download approach when available.
-    #
-    # design.save(r"C:\temp\shared_volume\MyFile2.scdocx")
+    assert design.bodies[0].color == DEFAULT_COLOR
+
+    if modeler.client.backend_version >= (25, 2, 0):
+        design.bodies[0].set_color((255, 0, 0))
+        design.bodies[0]._template._color = None
+        assert design.bodies[0].color.lower() == "#ff0000ff"
+
+
+def test_vertex_repr(modeler: Modeler):
+    """Test Vertex.__repr__ coverage."""
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    design = modeler.create_design("VertexReprTest")
+    body = design.extrude_sketch("box", sketch, 1)
+
+    if len(body.vertices) > 0:
+        vertex = body.vertices[0]
+        repr_str = repr(vertex)
+        assert "Vertex" in repr_str
+        assert vertex.id in repr_str
+        assert "Position" in repr_str
+        assert body.id in repr_str
 
 
 def test_assigning_and_getting_material(modeler: Modeler):
     """Test the assignment and retrieval of materials from a design."""
-    # Create a Sketch and draw a circle (all client side)
     sketch = Sketch()
     sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
 
-    # Create your design on the server side
     design_name = "ExtrudeProfile"
     design = modeler.create_design(design_name)
 
-    # Add a material to body
     density = Quantity(125, 1000 * UNITS.kg / (UNITS.m**3))
     poisson_ratio = Quantity(0.33, UNITS.dimensionless)
     tensile_strength = Quantity(45.0, UNITS.pascal)
@@ -283,14 +984,11 @@ def test_assigning_and_getting_material(modeler: Modeler):
     material.add_property(MaterialPropertyType.TENSILE_STRENGTH, "myTensile", Quantity(45))
     design.add_material(material)
 
-    # Extrude the sketch to create a Body
     body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
 
-    # Assign a material to a Body
     body.material = material
     mat_service = body.material
 
-    # Test material and property retrieval
     assert mat_service.name == "steel"
     assert len(mat_service.properties) == 3
     assert mat_service.properties[MaterialPropertyType.DENSITY].type == MaterialPropertyType.DENSITY
@@ -312,149 +1010,104 @@ def test_assigning_and_getting_material(modeler: Modeler):
     )
 
 
-def test_get_empty_material(modeler: Modeler):
-    """Check that the material service returns an empty material."""
-    # Create a Sketch and draw a circle (all client side)
-    sketch = Sketch()
-    sketch.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create your design on the server side
-    design_name = "ExtrudeProfile"
+def test_component_body(modeler: Modeler):
+    """Test the different ``Component`` and ``Body`` creation methods."""
+    design_name = "ComponentBody_Test"
     design = modeler.create_design(design_name)
+    assert design.name == design_name
+    assert design.design_id is not None
+    assert design.id is not None
+    assert design.parent_component is None
+    assert len(design.components) == 0
+    assert len(design.bodies) == 0
+    assert len(design.materials) == 0
+    assert len(design.named_selections) == 0
+    assert len(design.coordinate_systems) == 0
 
-    # Extrude the sketch to create a Body
-    body = design.extrude_sketch("JustACircle", sketch, Quantity(10, UNITS.mm))
-
-    # Assign a material to a Body
-    mat_service = body.material
-    assert mat_service.name == ""
-    assert mat_service.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
-        0, UNITS.kg / (UNITS.m**3)
-    )
-    assert len(mat_service.properties) == 1
-
-
-def test_remove_material_from_body(modeler: Modeler):
-    """Test removing a material from a body."""
-    # Create a design and a sketch
-    design = modeler.create_design("RemoveMaterialTest")
     sketch = Sketch()
-    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(10, UNITS.mm))
+    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
 
-    # Extrude the sketch to create a body
-    body = design.extrude_sketch("CircleBody", sketch, Quantity(10, UNITS.mm))
-
-    # Create and assign a material
-    density = Quantity(7850, UNITS.kg / (UNITS.m**3))
-    material = Material(
-        "Steel",
-        density,
-        [MaterialProperty(MaterialPropertyType.POISSON_RATIO, "Poisson", Quantity(0.3))],
-    )
-    design.add_material(material)
-    body.assign_material(material)
-    assert body.material.name == "Steel"
-
-    # Remove the material from the body
-    body.remove_assigned_material()
-
-    # Check that the body no longer has a material assigned
-    assert body.material.name == ""
-    assert len(body.material.properties) == 1
-    assert body.material.properties[MaterialPropertyType.DENSITY].quantity == Quantity(
-        0, UNITS.kg / (UNITS.m**3)
+    name_extruded_body = "ExtrudedPolygon"
+    distance_extruded_body = Quantity(50, UNITS.mm)
+    body = design.extrude_sketch(
+        name=name_extruded_body, sketch=sketch, distance=distance_extruded_body
     )
 
-
-def test_face_to_body_creation(modeler: Modeler):
-    """Test in charge of validating the extrusion of an existing face."""
-    # Create a Sketch and draw a circle (all client side)
-    sketch = Sketch()
-    sketch.box(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), Quantity(10, UNITS.mm))
-
-    # Create your design on the server side
-    design_name = "BoxExtrusions"
-    design = modeler.create_design(design_name)
-
-    # Extrude the sketch to create a Body
-    box_body = design.extrude_sketch("JustABox", sketch, Quantity(10, UNITS.mm))
-
+    assert body.name == name_extruded_body
+    assert body.id is not None
+    assert body.is_surface is False
+    assert len(body.faces) == 7
+    expected_vol = sketch.faces[0].area.m * distance_extruded_body.m * 1e-9
+    assert body.volume.m == pytest.approx(expected_vol)
     assert len(design.components) == 0
     assert len(design.bodies) == 1
+    assert len(body.edges) == 15
+    assert len(body.vertices) == 10
 
-    longer_body = design.extrude_face(
-        "LongerBoxFromFace", box_body.faces[0], Quantity(20, UNITS.mm)
+    planar_component_name = "PlanarBody_Component"
+    planar_component = design.add_component(planar_component_name)
+    assert planar_component.id is not None
+    assert planar_component.name == planar_component_name
+
+    planar_sketch = Sketch()
+    planar_sketch.ellipse(
+        Point2D([50, 50], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm)
     )
+    planar_component_surface_name = "PlanarBody_Component_Surface"
+    planar_body = planar_component.create_surface(planar_component_surface_name, planar_sketch)
 
-    assert len(design.components) == 0
-    assert len(design.bodies) == 2
-    assert longer_body.volume.m == pytest.approx(Quantity(2e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-
-    longest_body = design.extrude_face(
-        "LongestBoxFromFace", box_body.faces[0], Distance(30, UNITS.mm)
-    )
-
-    assert len(design.components) == 0
-    assert len(design.bodies) == 3
-    assert longest_body.volume.m == pytest.approx(Quantity(3e-6, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-
-    nested_component = design.add_component("NestedComponent")
-    surface_body = nested_component.create_surface_from_face(
-        "SurfaceFromFace", longer_body.faces[2]
-    )
-
+    assert planar_body.name == planar_component_surface_name
+    assert planar_body.id is not None
+    assert planar_body.is_surface is True
+    assert len(planar_body.faces) == 1
+    assert planar_body.volume == 0.0
+    assert len(planar_component.components) == 0
+    assert len(planar_component.bodies) == 1
     assert len(design.components) == 1
-    assert len(design.bodies) == 3
-    assert len(nested_component.components) == 0
-    assert len(nested_component.bodies) == 1
-    assert surface_body.volume.m == Quantity(0, UNITS.m**3).m
-    assert surface_body.faces[0].area.m == pytest.approx(
-        Quantity(2e-4, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
+    assert len(design.bodies) == 1
+    assert len(planar_body.edges) == 1
+
+    assert planar_component.parent_component.id == design.id
+
+    comp_str = repr(planar_component)
+    assert "ansys.geometry.core.designer.Component" in comp_str
+    assert "Exists               : True" in comp_str
+    assert "N Bodies             : 1" in comp_str
+    assert "N Components         : 0" in comp_str
+    assert "N Coordinate Systems : 0" in comp_str
 
 
-def test_create_surface_from_copy_faces(modeler: Modeler):
-    """Test creating a surface body from copied faces."""
-    # Skip test if running v0 protos
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Skipping test for V0 protos")
-
-    # Create a design
-    design = modeler.create_design("CopyFacesTest")
-
-    # Create a cylinder
-    cylinder = design.extrude_sketch("Cylinder", Sketch().circle(Point2D([0, 0]), 5), 20)
-
-    # Get one of the ends and create a surface from it
-    face = cylinder.faces[1]
-    square_surface = design.create_surface_from_face("square", face)
-    assert square_surface.is_surface
-    assert square_surface.faces[0].area.m == pytest.approx(102.41439999, rel=1e-6, abs=1e-8)
-
-    # Create a surface with copy_faces
-    circular_surface = design.copy_faces("circular", [face])
-    assert circular_surface.is_surface
-    assert circular_surface.faces[0].area.m == pytest.approx(78.53981633974483, rel=1e-6, abs=1e-8)
+def test_design_part(modeler: Modeler):
+    """Test to validate the designer part id, name, and setter for components and bodies."""
+    body1 = MasterBody(id="body1", name="First Only Body", grpc_client=modeler.client)
+    body2 = MasterBody(id="body2", name="Second Body in Component", grpc_client=modeler.client)
+    bodies = [body1]
+    part = Part(id="IDPart", name="NamePart", components=[], bodies=bodies)
+    masterpart = MasterComponent(id="PartMaster", name="Part Master", part=part)
+    assert masterpart.id == "PartMaster"
+    assert masterpart.name == "Part Master"
+    assert masterpart.__repr__()[0:50] == "MasterComponent(id=PartMaster, name=Part Master, t"
+    assert part.id == "IDPart"
+    assert part.name == "NamePart"
+    part.components = [body2]
+    assert part.components[0].name == "Second Body in Component"
+    part.bodies = body1
+    assert part.bodies.name == "First Only Body"
 
 
 def test_extrude_negative_sketch(modeler: Modeler):
     """Test to check the extrusion of a sketch in the negative direction."""
-    # Create a sketch of a rectangle
     sk = Sketch()
     sk.box(Point2D([0, 0]), 10, 20)
 
-    # Create a design
     design = modeler.create_design("mydes")
 
-    # Create a positive extrusion and a negative one
     pos = design.extrude_sketch("positive", sk, 10)
     neg = design.extrude_sketch("negative", sk, 10, direction="-")
 
-    # Verify that the negative extrusion is in the negative direction
     assert neg.faces[0].normal() != pos.faces[0].normal()
     assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
 
-    # If an invalid direction is given, it should default to the positive direction
     invalid_neg = design.extrude_sketch("invalid", sk, 10, direction="z")
     assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
     assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
@@ -462,23 +1115,18 @@ def test_extrude_negative_sketch(modeler: Modeler):
 
 def test_extrude_negative_sketch_face(modeler: Modeler):
     """Test to check the extrusion of a face in the negative direction."""
-    # Create a sketch of a rectangle
     sk = Sketch()
     sk.box(Point2D([0, 0]), 10, 20)
 
-    # Create a design
     design = modeler.create_design("mydes")
 
-    # Create a positive extrusion and a negative one
     body = design.extrude_sketch("positive", sk, 10)
     pos = design.extrude_face("positive_face", body.faces[0], 10)
     neg = design.extrude_face("negative_face", body.faces[0], 10, direction="-")
 
-    # Verify that the negative extrusion is in the negative direction
     assert neg.faces[0].normal() != pos.faces[0].normal()
     assert np.isclose(neg.faces[0].normal().dot(pos.faces[0].normal()), -1.0)
 
-    # If an invalid direction is given, it should default to the positive direction
     invalid_neg = design.extrude_face("invalid_negative_face", body.faces[0], 10, direction="z")
     assert invalid_neg.faces[0].normal() == pos.faces[0].normal()
     assert np.isclose(invalid_neg.faces[0].normal().dot(pos.faces[0].normal()), 1.0)
@@ -495,82 +1143,6 @@ def test_modeler(modeler: Modeler):
 
     design = modeler.create_design("MyNewDesign")
     assert design is not None
-
-
-def test_component_body(modeler: Modeler):
-    """Test the different ``Component`` and ``Body`` creation methods."""
-    # Create your design on the server side
-    design_name = "ComponentBody_Test"
-    design = modeler.create_design(design_name)
-    assert design.name == design_name
-    assert design.design_id is not None
-    assert design.id is not None
-    assert design.parent_component is None
-    assert len(design.components) == 0
-    assert len(design.bodies) == 0
-    assert len(design.materials) == 0
-    assert len(design.named_selections) == 0
-    assert len(design.coordinate_systems) == 0
-
-    # Create a simple sketch of a Polygon (specifically a Pentagon)
-    sketch = Sketch()
-    sketch.polygon(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
-
-    # In the "root/base" Component (i.e. Design object) let's extrude the sketch
-    name_extruded_body = "ExtrudedPolygon"
-    distance_extruded_body = Quantity(50, UNITS.mm)
-    body = design.extrude_sketch(
-        name=name_extruded_body, sketch=sketch, distance=distance_extruded_body
-    )
-
-    assert body.name == name_extruded_body
-    assert body.id is not None
-    assert body.is_surface is False
-    assert len(body.faces) == 7  # 5 sides + top + bottom
-    expected_vol = sketch.faces[0].area.m * distance_extruded_body.m * 1e-9  # In mm -factor to m**3
-    assert body.volume.m == pytest.approx(expected_vol)
-    assert len(design.components) == 0
-    assert len(design.bodies) == 1
-    assert len(body.edges) == 15  # 5 top + 5 bottom + 5 sides
-    assert len(body.vertices) == 10  # 5 top + 5 bottom
-
-    # We have created this body on the base component. Let's add a new component
-    # and add a planar surface to it
-    planar_component_name = "PlanarBody_Component"
-    planar_component = design.add_component(planar_component_name)
-    assert planar_component.id is not None
-    assert planar_component.name == planar_component_name
-
-    planar_sketch = Sketch()
-    planar_sketch.ellipse(
-        Point2D([50, 50], UNITS.mm), Quantity(30, UNITS.mm), Quantity(10, UNITS.mm)
-    )
-    planar_component_surface_name = "PlanarBody_Component_Surface"
-    planar_body = planar_component.create_surface(planar_component_surface_name, planar_sketch)
-
-    assert planar_body.name == planar_component_surface_name
-    assert planar_body.id is not None
-    assert planar_body.is_surface is True
-    assert len(planar_body.faces) == 1  # top + bottom merged into a single face
-    assert planar_body.volume == 0.0
-    assert len(planar_component.components) == 0
-    assert len(planar_component.bodies) == 1
-    assert len(design.components) == 1
-    assert len(design.bodies) == 1
-    assert (
-        len(planar_body.edges) == 1
-    )  # top + bottom merged into a single face + ellipse is a single curve
-
-    # Check that the planar component belongs to the design
-    assert planar_component.parent_component.id == design.id
-
-    # Let's test the repr method for a component
-    comp_str = repr(planar_component)
-    assert "ansys.geometry.core.designer.Component" in comp_str
-    assert "Exists               : True" in comp_str
-    assert "N Bodies             : 1" in comp_str
-    assert "N Components         : 0" in comp_str
-    assert "N Coordinate Systems : 0" in comp_str
 
 
 def test_named_selections(modeler: Modeler):
@@ -695,6 +1267,60 @@ def test_add_member_to_named_selection(modeler: Modeler):
     assert len(ns.design_points) == 3
     assert len(ns.faces) == 1
 
+    # Add a design curve if backend is 27R1 or newer
+    if (
+        modeler._grpc_client.services.version == GeometryApiProtos.V0
+        or modeler._grpc_client.backend_version < (27, 1, 0)
+    ):
+        return
+
+    dc_pt = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
+    dc = modeler.geometry_commands.revolve_points(
+        dc_pt, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(dc) == 1 and isinstance(dc[0], DesignCurve)
+
+    ns.add_members(design_curves=dc)
+
+    assert len(ns.design_curves) == 1
+    assert ns.design_curves[0].id == dc[0].id
+
+
+def test_add_member_to_imported_named_selection(modeler: Modeler):
+    """Test for adding members to an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+    # Creating the new geometry entities to be added
+    ns = design.named_selections[1]
+    dp1 = design.add_design_point("dp1", Point3D([1, 0, 0]))
+    dp2 = design.add_design_point("dp2", Point3D([1, 0, 1]))
+    dp3 = design.add_design_point("dp3", Point3D([1, 0, 2]))
+    comp = design.add_component("comp1'")
+    circle_profile_1 = design.add_beam_circular_profile(
+        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
+    )
+    be = design.create_beam(
+        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
+    )
+    # Adding the new items to the named selection
+    ns.add_members(
+        bodies=[design.bodies[1]],
+        faces=[design.bodies[1].faces[4]],
+        design_points=[dp1, dp2, dp3],
+        edges=design.bodies[0].edges[2:5],
+        vertices=design.bodies[0].vertices[0:2],
+        components=[comp],
+        beams=[be],
+    )
+    # Confirming the new named selection
+    assert len(ns.bodies) == 1
+    assert len(ns.faces) == 2
+    assert len(ns.design_points) == 3
+    assert len(ns.edges) == 3
+    assert len(ns.vertices) == 2
+    assert len(ns.components) == 1
+    assert len(ns.beams) == 1
+
 
 def test_remove_member_from_named_selection(modeler: Modeler):
     """Test for removing members from a ``NamedSelection``."""
@@ -735,8 +1361,24 @@ def test_remove_member_from_named_selection(modeler: Modeler):
         ns.remove_members(members=[ns.bodies[0]])
 
 
-def test_old_backend_version(modeler: Modeler, use_grpc_client_old_backend: Modeler):
-    # Try to vefify name selection using earlier backend version
+def test_remove_member_from_imported_named_selection(modeler: Modeler):
+    """Test for removing members from an imported ``NamedSelection``."""
+    input_file = Path(FILES_DIR, "NamedSelectionImport.scdocx")
+    design = modeler.open_file(input_file)
+    # Removing faces
+    design.named_selections[2].remove_members(design.named_selections[2].faces)
+    assert len(design.named_selections[2].faces) == 0
+    # Removing beams
+    design.named_selections[3].remove_members(design.named_selections[3].beams)
+    assert len(design.named_selections[3].beams) == 0
+    # Removing edges
+    design.named_selections[4].remove_members(design.named_selections[4].edges[0:2])
+    assert len(design.named_selections[4].edges) == 6
+
+
+def test_old_backend_version(modeler: Modeler, fake_modeler_old_backend_242: Modeler):
+    """Test named selection compatibility with older backend version."""
+    # Try to verify name selection using earlier backend version
     design = modeler.open_file(Path(FILES_DIR, "25R1BasicBoxNameSelection.scdocx"))
     hello = design.named_selections
     assert hello[0].faces == []
@@ -779,6 +1421,17 @@ def test_named_selection_contents(modeler: Modeler):
     # Pick vertices from the box to add to the named selection
     vertices = box.vertices[0:2]
 
+    # Create a design curve by revolving a design point
+    dp = design.add_design_point("dc_pt", Point3D([1, 0, 0], UNITS.m))
+    design_curves = modeler.geometry_commands.revolve_points(
+        dp, Line(Point3D([0, 0, 0]), UNITVECTOR3D_Z), Angle(np.pi / 2, UNITS.rad)
+    )
+    assert len(design_curves) == 1 and isinstance(design_curves[0], DesignCurve)
+
+    # Create two DatumPoints
+    dp1 = design.create_datum_point("DP1", Point3D([1, 0, 0], UNITS.m))
+    dp2 = design.create_datum_point("DP2", Point3D([2, 0, 0], UNITS.m))
+
     # Create the NamedSelection
     ns = design.create_named_selection(
         "MyNamedSelection",
@@ -787,6 +1440,8 @@ def test_named_selection_contents(modeler: Modeler):
         edges=[edge],
         beams=[beam],
         vertices=vertices,
+        design_curves=design_curves,
+        datum_points=[dp1, dp2],
     )
 
     # Check that the named selection has everything
@@ -807,8 +1462,22 @@ def test_named_selection_contents(modeler: Modeler):
     assert len(ns.vertices) == 2
     assert (ns.vertices[0].id == vertices[0].id) and (ns.vertices[1].id == vertices[1].id)
 
+    # Add a design curve if backend is 27R1 or newer
+    if (
+        modeler._grpc_client.services.version == GeometryApiProtos.V0
+        or modeler._grpc_client.backend_version < (27, 1, 0)
+    ):
+        return
+
+    assert len(ns.design_curves) == 1
+    assert ns.design_curves[0].id == design_curves[0].id
+
+    assert len(ns.datum_points) == 2
+    assert np.isin([dp1.id, dp2.id], [dp.id for dp in ns.datum_points]).all()
+
 
 def test_add_component_with_instance_name(modeler: Modeler):
+    """Test adding components with custom instance names."""
     design = modeler.create_design("DesignHierarchyExample")
     circle_sketch = Sketch()
     circle_sketch.circle(Point2D([10, 10], UNITS.mm), Distance(10, UNITS.mm))
@@ -927,7 +1596,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp.create_coordinate_system("CompCS1", frame1)
     nested_comp.create_coordinate_system("CompCS2", frame2)
 
-    # Check that the named selections are available
+    # Check that the coordinate systems are available
     assert len(design.coordinate_systems) == 1
     assert all(entry.id is not None for entry in design.coordinate_systems)
     design_cs = design.coordinate_systems[0]
@@ -984,6 +1653,91 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame X-direction    : " in nested_comp_cs1_str
     assert "  Frame Y-direction    : " in nested_comp_cs1_str
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
+
+
+def test_coordinate_systems_on_design_refresh(modeler: Modeler):
+    """Test for verifying the correct behavior of ``CoordinateSystem`` after a design refresh."""
+    # Create your design on the server side
+    design = modeler.create_design("CoordinateSystem_Test")
+    frame1 = Frame(
+        Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
+    )
+
+    # Create the CoordinateSystem
+    design.create_coordinate_system("DesignCS1", frame1)
+    assert len(design.coordinate_systems) == 1
+
+    # Call the refresh method on the design and check that the coordinate system is still there
+    design._update_design_inplace()
+    assert len(design.coordinate_systems) == 1
+
+
+def test_search_component_by_name(modeler: Modeler):
+    design = modeler.create_design("Deletion_Test")
+
+    # Create the components
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_2_duplicate = comp_2.add_component("Component_2")
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+
+    # Search for component at top level
+    found_comp_1 = design.search_component_by_name("Component_1")
+    assert len(found_comp_1) == 1
+    assert comp_1 == found_comp_1[0]
+
+    # Search for nested component
+    found_nested_comp = design.search_component_by_name("Nested_1_Component_1")
+    assert len(found_nested_comp) == 1
+    assert nested_1_comp_1 == found_nested_comp[0]
+
+    # Search for a non-existing component
+    found_none = design.search_component_by_name("NonExistingComponent")
+    assert len(found_none) == 0
+
+    # Search for a component with a name that exists in multiple places
+    found_duplicate = design.search_component_by_name("Component_2")
+    assert len(found_duplicate) == 2
+    assert found_duplicate[0] == comp_2
+    assert found_duplicate[1] == comp_2_duplicate
+
+
+def test_delete_component_lifecycle_with_existing_bodies(modeler: Modeler):
+    """Deleting components should preserve unrelated body state and hierarchy consistency."""
+    design = modeler.create_design("Deletion_Test")
+
+    sketch = Sketch()
+    sketch.circle(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm))
+    distance = Quantity(30, UNITS.mm)
+
+    comp_1 = design.add_component("Component_1")
+    comp_2 = design.add_component("Component_2")
+    comp_3 = design.add_component("Component_3")
+
+    nested_1_comp_1 = comp_1.add_component("Nested_1_Component_1")
+    nested_1_nested_1_comp_1 = nested_1_comp_1.add_component("Nested_1_Nested_1_Component_1")
+    nested_2_comp_1 = comp_1.add_component("Nested_2_Component_1")
+    _ = comp_2.add_component("Nested_1_Component_2")
+
+    _ = comp_3.extrude_sketch(name="comp_3_circle", sketch=sketch, distance=distance)
+    _ = nested_2_comp_1.extrude_sketch(
+        name="nested_2_comp_1_circle", sketch=sketch, distance=distance
+    )
+    _ = nested_1_nested_1_comp_1.extrude_sketch(
+        name="nested_1_nested_1_comp_1_circle", sketch=sketch, distance=distance
+    )
+
+    comp_1.delete_component(comp_3)
+    assert comp_3.is_alive
+
+    comp_2.delete_component(comp_2)
+    assert not comp_2.is_alive
+    assert comp_3.bodies[0].is_alive
+
+    design.delete_component(comp_1)
+    assert not comp_1.is_alive
+    assert comp_3.is_alive
+    assert comp_3.bodies[0].is_alive
 
 
 def test_delete_body_component(modeler: Modeler):
@@ -1176,8 +1930,12 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Coordinate Systems : 0" in design_str
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
+    assert "N Beams              : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Datum Points       : 0" in design_str
+    assert "N Datum Planes       : 0" in design_str
     assert "N Design Points      : 0" in design_str
+    assert "N Design Curves      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -1231,33 +1989,6 @@ def test_shared_topology(modeler: Modeler):
         design.set_shared_topology(SharedTopologyType.SHARETYPE_NONE)
 
 
-def test_single_body_translation(modeler: Modeler):
-    """Test for verifying the correct translation of a ``Body``.
-
-    Notes
-    -----
-    Requires storing scdocx file and checking manually (for now).
-    """
-    # Create your design on the server side
-    design = modeler.create_design("SingleBodyTranslation_Test")
-
-    # Create 2 Sketch objects and draw a circle and a polygon (all client side)
-    sketch_1 = Sketch()
-    sketch_1.circle(Point2D([10, 10], UNITS.mm), Quantity(10, UNITS.mm))
-    sketch_2 = Sketch()
-    sketch_2.polygon(Point2D([-30, -30], UNITS.mm), Quantity(10, UNITS.mm), sides=5)
-
-    # Build 2 independent components and bodies
-    circle_comp = design.add_component("CircleComponent")
-    body_circle_comp = circle_comp.extrude_sketch("Circle", sketch_1, Quantity(50, UNITS.mm))
-    polygon_comp = design.add_component("PolygonComponent")
-    body_polygon_comp = polygon_comp.extrude_sketch("Polygon", sketch_2, Quantity(30, UNITS.mm))
-
-    body_circle_comp.translate(UnitVector3D([1, 0, 0]), Distance(50, UNITS.mm))
-    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), Quantity(88, UNITS.mm))
-    body_polygon_comp.translate(UnitVector3D([-1, 1, -1]), 101)
-
-
 def test_bodies_translation(modeler: Modeler):
     """Test for verifying the correct translation of list of ``Body``.
 
@@ -1293,28 +2024,6 @@ def test_bodies_translation(modeler: Modeler):
     circle_comp.translate_bodies(
         [body_polygon_comp], UnitVector3D([0, -1, 1]), Quantity(88, UNITS.mm)
     )
-
-
-def test_body_rotation(modeler: Modeler):
-    """Test for verifying the correct rotation of a ``Body``."""
-    # Create your design on the server side
-    design = modeler.create_design("BodyRotation_Test")
-
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    original_vertices = []
-    for edge in body.edges:
-        original_vertices.extend([edge.shape.start, edge.shape.end])
-
-    body.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi / 4)
-
-    new_vertices = []
-    for edge in body.edges:
-        new_vertices.extend([edge.shape.start, edge.shape.end])
-
-    # Make sure no vertices are in the same position as in before rotation
-    for old_vertex, new_vertex in zip(original_vertices, new_vertices):
-        assert not np.allclose(old_vertex, new_vertex)
 
 
 def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
@@ -1361,9 +2070,19 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
         assert iges_file.exists()
 
     # Linux backend...
-    else:
+    elif (
+        BackendType.is_linux_service(modeler.client.backend_type)
+        and modeler._grpc_client._services.version == GeometryApiProtos.V0
+    ):
         binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_bin"
         text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.xmt_txt"
+    # Windows backend...
+    elif (
+        BackendType.is_windows_service(modeler.client.backend_type)
+        or modeler._grpc_client._services.version == GeometryApiProtos.V1
+    ):
+        binary_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_b"
+        text_parasolid_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.x_t"
 
     # FMD
     fmd_file = tmp_path_factory.mktemp("scdoc_files_download") / "cylinder.fmd"
@@ -1394,12 +2113,8 @@ def test_upload_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory)
     assert file.exists()
 
     # Upload file
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        with pytest.raises(match="The '_upload_file' method is not supported in protos v1"):
-            modeler._upload_file(file)
-    else:
-        path_on_server = modeler._upload_file(file)
-        assert path_on_server is not None
+    path_on_server = modeler._upload_file(file)
+    assert path_on_server is not None
 
 
 def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_mode: str):
@@ -1424,15 +2139,9 @@ def test_stream_upload_file(tmp_path_factory: pytest.TempPathFactory, transport_
         from ansys.geometry.core import Modeler
 
         modeler = Modeler(transport_mode=transport_mode)
-        if modeler.client.services.version == GeometryApiProtos.V0:
-            path_on_server = modeler._upload_file_stream(file)
-            assert path_on_server is not None
-        else:
-            with pytest.raises(
-                GeometryRuntimeError,
-                match="The '_upload_file_stream' method is not supported with protos v1 and beyond.",  # noqa: E501
-            ):
-                modeler._upload_file_stream(file)
+        path_on_server = modeler._upload_file_stream(file)
+        assert path_on_server is not None
+
     finally:
         pygeom_defaults.MAX_MESSAGE_LENGTH = old_value
 
@@ -1627,149 +2336,6 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
-def test_beams(modeler: Modeler):
-    """Test beam creation."""
-    # Create your design on the server side
-    design = modeler.create_design("BeamCreation")
-
-    circle_profile_1 = design.add_beam_circular_profile(
-        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
-    )
-
-    assert circle_profile_1.id is not None
-    assert circle_profile_1.center == Point3D([0, 0, 0])
-    assert circle_profile_1.radius.value.m_as(DEFAULT_UNITS.LENGTH) == 0.01
-    assert circle_profile_1.direction_x == UNITVECTOR3D_X
-    assert circle_profile_1.direction_y == UNITVECTOR3D_Y
-
-    circle_profile_2 = design.add_beam_circular_profile(
-        "CircleProfile2",
-        Distance(20, UNITS.mm),
-        Point3D([10, 20, 30], UNITS.mm),
-        UnitVector3D([1, 1, 1]),
-        UnitVector3D([0, -1, 1]),
-    )
-
-    assert circle_profile_2.id is not None
-    assert circle_profile_2.id is not circle_profile_1.id
-
-    with pytest.raises(ValueError, match="Radius must be a real positive value."):
-        design.add_beam_circular_profile(
-            "InvalidProfileRadius",
-            Quantity(-10, UNITS.mm),
-            Point3D([0, 0, 0]),
-            UNITVECTOR3D_X,
-            UNITVECTOR3D_Y,
-        )
-
-    with pytest.raises(ValueError, match="Direction X and direction Y must be perpendicular."):
-        design.add_beam_circular_profile(
-            "InvalidUnitVectorAlignment",
-            Quantity(10, UNITS.mm),
-            Point3D([0, 0, 0]),
-            UNITVECTOR3D_X,
-            UnitVector3D([-1, -1, -1]),
-        )
-
-    # Create a beam at the root component level
-    beam_1 = design.create_beam(
-        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
-    )
-
-    assert beam_1.id is not None
-    assert beam_1.start == Point3D([9, 99, 999], UNITS.mm)
-    assert beam_1.end == Point3D([8, 88, 888], UNITS.mm)
-    assert beam_1.profile == circle_profile_1
-    assert beam_1.parent_component.id == design.id
-    assert beam_1.is_alive
-    assert len(design.beams) == 1
-    assert design.beams[0] == beam_1
-
-    beam_1_str = str(beam_1)
-    assert "ansys.geometry.core.designer.Beam" in beam_1_str
-    assert "  Exists               : True" in beam_1_str
-    assert "  Start                : [0.009" in beam_1_str
-    assert "  End                  : [0.008" in beam_1_str
-    assert "  Parent component     : BeamCreation" in beam_1_str
-    assert "  Beam Profile info" in beam_1_str
-    assert "  -----------------" in beam_1_str
-    assert "ansys.geometry.core.designer.BeamCircularProfile " in beam_1_str
-    assert "  Name                 : CircleProfile1" in beam_1_str
-    assert "  Radius               : 10.0 millimeter" in beam_1_str
-    assert "  Center               : [0.0,0.0,0.0] in meters" in beam_1_str
-    assert "  Direction x          : [1.0,0.0,0.0]" in beam_1_str
-    assert "  Direction y          : [0.0,1.0,0.0]" in beam_1_str
-
-    # Now, let's create two beams at a nested component, with the same profile
-    nested_component = design.add_component("NestedComponent")
-    beam_2 = nested_component.create_beam(
-        Point3D([7, 77, 777], UNITS.mm), Point3D([6, 66, 666], UNITS.mm), circle_profile_2
-    )
-    beam_3 = nested_component.create_beam(
-        Point3D([8, 88, 888], UNITS.mm), Point3D([7, 77, 777], UNITS.mm), circle_profile_2
-    )
-
-    assert beam_2.id is not None
-    assert beam_2.profile == circle_profile_2
-    assert beam_2.parent_component.id == nested_component.id
-    assert beam_2.is_alive
-    assert beam_3.id is not None
-    assert beam_3.profile == circle_profile_2
-    assert beam_3.parent_component.id == nested_component.id
-    assert beam_3.is_alive
-    assert beam_2.id != beam_3.id
-    assert len(nested_component.beams) == 2
-    assert nested_component.beams[0] == beam_2
-    assert nested_component.beams[1] == beam_3
-
-    # Once the beams are created, let's try deleting it.
-    # For example, we shouldn't be able to delete beam_1 from the nested component.
-    nested_component.delete_beam(beam_1)
-
-    assert beam_2.is_alive
-    assert nested_component.beams[0].is_alive
-    assert beam_3.is_alive
-    assert nested_component.beams[1].is_alive
-    assert beam_1.is_alive
-    assert design.beams[0].is_alive
-
-    # Let's try deleting one of the beams from the nested component
-    nested_component.delete_beam(beam_2)
-    assert not beam_2.is_alive
-    assert not nested_component.beams[0].is_alive
-    assert beam_3.is_alive
-    assert nested_component.beams[1].is_alive
-    assert beam_1.is_alive
-    assert design.beams[0].is_alive
-
-    # Now, let's try deleting it from the design directly - this should be possible
-    design.delete_beam(beam_3)
-    assert not beam_2.is_alive
-    assert not nested_component.beams[0].is_alive
-    assert not beam_3.is_alive
-    assert not nested_component.beams[1].is_alive
-    assert beam_1.is_alive
-    assert design.beams[0].is_alive
-
-    # Finally, let's delete the beam from the root component
-    design.delete_beam(beam_1)
-    assert not beam_2.is_alive
-    assert not nested_component.beams[0].is_alive
-    assert not beam_3.is_alive
-    assert not nested_component.beams[1].is_alive
-    assert not beam_1.is_alive
-    assert not design.beams[0].is_alive
-
-    # Now, let's try deleting the beam profiles!
-    assert len(design.beam_profiles) == 2
-    design.delete_beam_profile("MyInventedBeamProfile")
-    assert len(design.beam_profiles) == 2
-    design.delete_beam_profile(circle_profile_1)
-    assert len(design.beam_profiles) == 1
-    design.delete_beam_profile(circle_profile_2)
-    assert len(design.beam_profiles) == 0
-
-
 def test_midsurface_properties(modeler: Modeler):
     """Test mid-surface properties assignment."""
     # Create your design on the server side
@@ -1930,29 +2496,6 @@ def test_design_points(modeler: Modeler):
         assert isinstance(pd, pv.PolyData)
 
 
-def test_named_selections_beams(modeler: Modeler):
-    """Test for verifying the correct creation of ``NamedSelection`` with
-    beams.
-    """
-    # Create your design on the server side
-    design = modeler.create_design("NamedSelectionBeams_Test")
-
-    # Test creating a named selection out of beams
-    circle_profile_1 = design.add_beam_circular_profile(
-        "CircleProfile1", Quantity(10, UNITS.mm), Point3D([0, 0, 0]), UNITVECTOR3D_X, UNITVECTOR3D_Y
-    )
-    beam_1 = design.create_beam(
-        Point3D([9, 99, 999], UNITS.mm), Point3D([8, 88, 888], UNITS.mm), circle_profile_1
-    )
-    ns_beams = design.create_named_selection("CircleProfile", beams=[beam_1])
-    assert len(design.named_selections) == 1
-    assert design.named_selections[0].name == "CircleProfile"
-
-    # Try deleting this named selection
-    design.delete_named_selection(ns_beams)
-    assert len(design.named_selections) == 0
-
-
 def test_named_selections_design_points(modeler: Modeler):
     """Test for verifying the correct creation of ``NamedSelection`` with
     design points.
@@ -2067,253 +2610,6 @@ def test_component_instances(modeler: Modeler):
     assert len(car2.components[1].components[1].bodies[0].faces) > 0
 
 
-def test_boolean_body_operations(modeler: Modeler):
-    """
-    Test cases:
-
-    1) master/master
-        a) intersect
-            i) normal
-                x) identity
-                y) transform
-            ii) empty failure
-        b) subtract
-            i) normal
-                x) identity
-                y) transform
-            ii) empty failure
-            iii) disjoint
-        c) unite
-            i) normal
-                x) identity
-                y) transform
-            ii) disjoint
-    2) instance/instance
-        a) intersect
-            i) normal
-                x) identity
-                y) transform
-            ii) empty failure
-        b) subtract
-            i) normal
-                x) identity
-                y) transform
-            ii) empty failure
-        c) unite
-            i) normal
-                x) identity
-                y) transform
-    """
-    design = modeler.create_design("TestBooleanOperations")
-
-    comp1 = design.add_component("Comp1")
-    comp2 = design.add_component("Comp2")
-    comp3 = design.add_component("Comp3")
-
-    body1 = comp1.extrude_sketch("Body1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    body2 = comp2.extrude_sketch("Body2", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
-    body3 = comp3.extrude_sketch("Body3", Sketch().box(Point2D([5, 0]), 1, 1), 1)
-
-    # 1.a.i.x
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 1.a.i.y
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
-
-    # 1.a.ii
-    copy1 = body1.copy(comp1, "Copy1")
-    copy3 = body3.copy(comp3, "Copy3")
-    with pytest.raises(ValueError, match="bodies do not intersect"):
-        copy1.intersect(copy3)
-
-    assert copy1.is_alive
-    assert copy3.is_alive
-
-    # 1.b.i.x
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 1.b.i.y
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.75)
-
-    # 1.b.ii
-    copy1 = body1.copy(comp1, "Copy1")
-    copy1a = body1.copy(comp1, "Copy1a")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy1a)
-
-    assert copy1.is_alive
-    assert copy1a.is_alive
-
-    # 1.b.iii
-    copy1 = body1.copy(comp1, "Copy1")
-    copy3 = body3.copy(comp3, "Copy3")
-    copy1.subtract(copy3)
-
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-    assert copy1.volume
-    assert not copy3.is_alive
-
-    # 1.c.i.x
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.5)
-
-    # 1.c.i.y
-    copy1 = body1.copy(comp1, "Copy1")
-    copy2 = body2.copy(comp2, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.75)
-
-    # 1.c.ii
-    copy1 = body1.copy(comp1, "Copy1")
-    copy3 = body3.copy(comp3, "Copy3")
-    copy1.unite(copy3)
-
-    assert not copy3.is_alive
-    assert body3.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-
-    # Test instance/instance
-    comp1_i = design.add_component("Comp1_i", comp1)
-    comp2_i = design.add_component("Comp2_i", comp2)
-    comp3_i = design.add_component("Comp3_i", comp3)
-
-    comp1_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-    comp2_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-    comp3_i.modify_placement(
-        Vector3D([52, 61, -43]), Point3D([-4, 26, 66]), UnitVector3D([-21, 20, 87]), np.pi / 4
-    )
-
-    body1 = comp1_i.bodies[0]
-    body2 = comp2_i.bodies[0]
-    body3 = comp3_i.bodies[0]
-
-    # 2.a.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 2.a.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.intersect(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.25)
-
-    # 2.a.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    with pytest.raises(ValueError, match="bodies do not intersect"):
-        copy1.intersect(copy3)
-
-    assert copy1.is_alive
-    assert copy3.is_alive
-
-    # 2.b.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.5)
-
-    # 2.b.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.subtract(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 0.75)
-
-    # 2.b.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy1a = body1.copy(comp1_i, "Copy1a")
-    with pytest.raises(ValueError):
-        copy1.subtract(copy1a)
-
-    assert copy1.is_alive
-    assert copy1a.is_alive
-
-    # 2.b.iii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.subtract(copy3)
-
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-    assert copy1.volume
-    assert not copy3.is_alive
-
-    # 2.c.i.x
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert body2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.5)
-
-    # 2.c.i.y
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy2 = body2.copy(comp2_i, "Copy2")
-    copy2.translate(UnitVector3D([1, 0, 0]), 0.25)
-    copy1.unite(copy2)
-
-    assert not copy2.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1.75)
-
-    # 2.c.ii
-    copy1 = body1.copy(comp1_i, "Copy1")
-    copy3 = body3.copy(comp3_i, "Copy3")
-    copy1.unite(copy3)
-
-    assert not copy3.is_alive
-    assert body3.is_alive
-    assert Accuracy.length_is_equal(copy1.volume.m, 1)
-
-
 def test_multiple_bodies_boolean_operations(modeler: Modeler):
     """Test boolean operations with multiple bodies."""
     design = modeler.create_design("TestBooleanOperationsMultipleBodies")
@@ -2331,6 +2627,11 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy2_sub = body2.copy(comp2, "Copy2_subtract")
     copy3_sub = body3.copy(comp3, "Copy3_subtract")
     copy1_sub.subtract([copy2_sub, copy3_sub])
+
+    # Refresh stale variables - necessary in non-tracker mode
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
 
     assert not copy2_sub.is_alive
     assert not copy3_sub.is_alive
@@ -2350,17 +2651,22 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_uni = body3.copy(comp3, "Copy3_unite")
     copy1_uni.unite([copy2_uni, copy3_uni])
 
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_uni.is_alive
     assert not copy3_uni.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 1
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_uni)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
 
     ################# Check intersect operation #################
     copy1_int = body1.copy(comp1, "Copy1_intersect")
@@ -2368,18 +2674,23 @@ def test_multiple_bodies_boolean_operations(modeler: Modeler):
     copy3_int = body3.copy(comp3, "Copy3_intersect")  # Body 3 does not intersect them
     copy1_int.intersect([copy2_int])
 
+    # Refresh stale variables
+    comp1 = design.components[0]
+    comp2 = design.components[1]
+    comp3 = design.components[2]
+
     assert not copy2_int.is_alive
     assert copy3_int.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 2
+    assert len(comp1.bodies) == 3
     assert len(comp2.bodies) == 1
     assert len(comp3.bodies) == 2
 
     # Cleanup previous subtest
     comp1.delete_body(copy1_int)
     comp3.delete_body(copy3_int)
-    assert len(comp1.bodies) == 1
+    assert len(comp1.bodies) == 2
     assert len(comp3.bodies) == 1
 
 
@@ -2401,18 +2712,18 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 1
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify unite operation ----
     body1.unite([body2, body3], keep_other=True)
 
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
     # ---- Verify intersect operation ----
     body1.intersect(body2, keep_other=True)
@@ -2420,9 +2731,9 @@ def test_bool_operations_with_keep_other(modeler: Modeler):
     assert body1.is_alive
     assert body2.is_alive
     assert body3.is_alive
-    assert len(comp1.bodies) == 1
-    assert len(comp2.bodies) == 1
-    assert len(comp3.bodies) == 1
+    assert len(design.components[0].bodies) == 2
+    assert len(design.components[1].bodies) == 1
+    assert len(design.components[2].bodies) == 1
 
 
 def test_child_component_instances(modeler: Modeler):
@@ -2537,25 +2848,6 @@ def test_get_collision(modeler: Modeler):
     assert body2.get_collision(body3) == CollisionType.NONE
 
 
-def test_set_body_name(modeler: Modeler):
-    """Test the setting the name of a body."""
-    design = modeler.create_design("simple_cube")
-    unit = DEFAULT_UNITS.LENGTH
-    plane = Plane(
-        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
-        UNITVECTOR3D_X,
-        UNITVECTOR3D_Y,
-    )
-    box_plane = Sketch(plane)
-    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
-    box = design.extrude_sketch("first_name", box_plane, 1 * unit)
-    assert box.name == "first_name"
-    box.set_name("updated_name")
-    assert box.name == "updated_name"
-    box.name = "updated_name2"
-    assert box.name == "updated_name2"
-
-
 def test_set_fill_style(modeler: Modeler):
     """Test the setting the fill style of a body."""
     design = modeler.create_design("RVE")
@@ -2578,192 +2870,6 @@ def test_set_fill_style(modeler: Modeler):
     assert box.fill_style == FillStyle.OPAQUE
 
 
-def test_body_suppression(modeler: Modeler):
-    """Test the suppression of a body."""
-
-    design = modeler.create_design("RVE")
-    unit = DEFAULT_UNITS.LENGTH
-
-    plane = Plane(
-        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
-        UNITVECTOR3D_X,
-        UNITVECTOR3D_Y,
-    )
-
-    box_plane = Sketch(plane)
-    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
-    box = design.extrude_sketch("Matrix", box_plane, 1 * unit)
-
-    assert box.is_suppressed is False
-    box.set_suppressed(True)
-    assert box.is_suppressed is True
-    box.is_suppressed = False
-    assert box.is_suppressed is False
-
-
-def test_set_body_color(modeler: Modeler):
-    """Test the getting and setting of body color."""
-
-    design = modeler.create_design("RVE2")
-    unit = DEFAULT_UNITS.LENGTH
-
-    plane = Plane(
-        Point3D([1 / 2, 1 / 2, 0.0], unit=unit),
-        UNITVECTOR3D_X,
-        UNITVECTOR3D_Y,
-    )
-    box_plane = Sketch(plane)
-    box_plane.box(Point2D([0.0, 0.0]), width=1 * unit, height=1 * unit)
-    box = design.extrude_sketch("Block", box_plane, 1 * unit)
-
-    # Default body color is if it is not set on server side.
-    assert box.color == DEFAULT_COLOR
-
-    # Set the color of the body using hex code.
-    box.color = "#0000ff"
-    assert box.color[0:7] == "#0000ff"
-
-    box.color = "#ffc000"
-    assert box.color[0:7] == "#ffc000"
-
-    # Set the color of the body using color name.
-    box.set_color("green")
-    box.color[0:7] == "#008000"
-
-    # Set the color of the body using RGB values between (0,1) as floats.
-    box.set_color((1.0, 0.0, 0.0))
-    box.color[0:7] == "#ff0000"
-
-    # Set the color of the body using RGB values between (0,255) as integers).
-    box.set_color((0, 255, 0))
-    box.color[0:7] == "#00ff00"
-
-    # Assigning color object directly
-    blue_color = mcolors.to_rgba("#0000FF")
-    box.color = blue_color
-    assert box.color[0:7] == "#0000ff"
-
-    # Test an RGBA color
-    box.color = "#ff00003c"
-    assert box.color == "#ff00003c"
-
-    # Test setting the opacity separately
-    box.opacity = 0.8
-    assert box.color == "#ff0000cc"
-
-    # Try setting the opacity to an invalid value
-    with pytest.raises(
-        ValueError, match="Invalid color value: Opacity value must be between 0 and 1."
-    ):
-        box.opacity = 255
-
-
-def test_body_scale(modeler: Modeler):
-    """Verify the correct scaling of a body."""
-    design = modeler.create_design("BodyScale_Test")
-
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    assert Accuracy.length_is_equal(body.volume.m, 1)
-
-    body.scale(2)
-    assert Accuracy.length_is_equal(body.volume.m, 8)
-
-    body.scale(0.25)
-    assert Accuracy.length_is_equal(body.volume.m, 1 / 8)
-
-
-def test_body_mapping(modeler: Modeler):
-    """Verify the correct mapping of a body."""
-    design = modeler.create_design("BodyMap_Test")
-
-    # non-symmetric shape to allow determination of mirroring
-    body = design.extrude_sketch(
-        "box",
-        Sketch()
-        .segment(Point2D([1, 1]), Point2D([-1, 1]))
-        .segment_to_point(Point2D([0, 0.5]))
-        .segment_to_point(Point2D([-1, -1]))
-        .segment_to_point(Point2D([1, -1]))
-        .segment_to_point(Point2D([1, 1])),
-        1,
-    )
-
-    # Test 1: identity mapping - everything should be the same
-    copy = body.copy(body.parent_component, "copy")
-    copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
-
-    vertices = []
-    for edge in body.edges:
-        vertices.extend([edge.shape.start, edge.shape.end])
-
-    copy_vertices = []
-    for edge in copy.edges:
-        copy_vertices.extend([edge.shape.start, edge.shape.end])
-
-    assert np.allclose(vertices, copy_vertices)
-
-    # Test 2: mirror the body - flips only the x direction
-    copy = body.copy(body.parent_component, "copy")
-    copy.map(Frame(Point3D([-4, 0, 1]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, 1, 0])))
-
-    copy_vertices = []
-    for edge in copy.edges:
-        copy_vertices.extend([edge.shape.start, edge.shape.end])
-
-    # expected vertices from confirmed mirror
-    expected_vertices = [
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, -1.0, 0.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-4.0, 0.5, 0.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-3.0, 1.0, 0.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-5.0, 1.0, 0.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 0.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-3.0, -1.0, 1.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-4.0, 0.5, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-        Point3D([-3.0, 1.0, 1.0]),
-        Point3D([-5.0, -1.0, 1.0]),
-        Point3D([-5.0, 1.0, 1.0]),
-    ]
-
-    assert np.allclose(expected_vertices, copy_vertices)
-
-    # Test 3: rotate body 180 degrees - flip x and y direction
-    map_copy = body.copy(body.parent_component, "copy")
-    map_copy.map(Frame(Point3D([0, 0, 0]), UnitVector3D([-1, 0, 0]), UnitVector3D([0, -1, 0])))
-
-    rotate_copy = body.copy(body.parent_component, "copy")
-    rotate_copy.rotate(Point3D([0, 0, 0]), UnitVector3D([0, 0, 1]), np.pi)
-
-    map_vertices = []
-    for edge in map_copy.edges:
-        map_vertices.extend([edge.shape.start, edge.shape.end])
-
-    rotate_vertices = []
-    for edge in rotate_copy.edges:
-        rotate_vertices.extend([edge.shape.start, edge.shape.end])
-
-    assert np.allclose(map_vertices, rotate_vertices)
-
-
 def test_sphere_creation(modeler: Modeler):
     """Test the creation of a sphere body with a given radius."""
     design = modeler.create_design("Spheretest")
@@ -2772,124 +2878,18 @@ def test_sphere_creation(modeler: Modeler):
     spherebody = design.create_sphere("testspherebody", center_point, radius)
     assert spherebody.name == "testspherebody"
     assert len(spherebody.faces) == 1
-    assert round(spherebody.volume._magnitude, 3) == round(4.1887902, 3)
+    assert spherebody.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
 
-
-def test_body_mirror(modeler: Modeler):
-    """Test the mirroring of a body."""
-    design = modeler.create_design("Design1")
-
-    # Create shape with no lines of symmetry in any axis
-    body = design.extrude_sketch(
-        "box",
-        Sketch()
-        .segment(Point2D([1, 1]), Point2D([-1, 1]))
-        .segment_to_point(Point2D([0, 0.5]))
-        .segment_to_point(Point2D([-1, -1]))
-        .segment_to_point(Point2D([1, -1]))
-        .segment_to_point(Point2D([1, 1])),
-        1,
+    # Create a nested sphere and verify that it reports the correct parent component.
+    nested = design.add_component("NestedBlockComp")
+    nested_sphere = nested.create_sphere(
+        "nestedspherebody", Point3D([0, 0, 0]), Distance(1, UNITS.m)
     )
-    top = design.extrude_sketch(
-        "top", Sketch(Plane(Point3D([0, 0, 1]))).box(Point2D([0.5, 0.5]), 0.1, 0.1), 0.1
-    )
-    body.unite(top)
 
-    # Mirror across YZ plane
-    copy1 = body.copy(body.parent_component, "box2")
-    copy1.mirror(Plane(Point3D([2, 0, 0]), UnitVector3D([0, 0, 1]), UnitVector3D([0, 1, 0])))
-
-    # results from SpaceClaim
-    expected_vertices = [
-        Point3D([5.0, -1.0, 1.0]),
-        Point3D([5.0, -1.0, 0.0]),
-        Point3D([4.0, 0.5, 1.0]),
-        Point3D([4.0, 0.5, 0.0]),
-        Point3D([5.0, 1.0, 1.0]),
-        Point3D([5.0, 1.0, 0.0]),
-        Point3D([3.0, 1.0, 1.0]),
-        Point3D([3.0, 1.0, 0.0]),
-        Point3D([3.0, -1.0, 1.0]),
-        Point3D([3.0, -1.0, 0.0]),
-        Point3D([3.55, 0.45, 1.1]),
-        Point3D([3.55, 0.45, 1.0]),
-        Point3D([3.55, 0.55, 1.1]),
-        Point3D([3.55, 0.55, 1.0]),
-        Point3D([3.45, 0.55, 1.1]),
-        Point3D([3.45, 0.55, 1.0]),
-        Point3D([3.45, 0.45, 1.1]),
-        Point3D([3.45, 0.45, 1.0]),
-    ]
-
-    copy_vertices = []
-    for edge in copy1.edges:
-        if edge.shape.start not in copy_vertices:
-            copy_vertices.append(edge.shape.start)
-    assert np.allclose(expected_vertices, copy_vertices)
-
-    # Mirror across XY plane
-    copy2 = body.copy(body.parent_component, "box3")
-    copy2.mirror(Plane(Point3D([0, 0, -5]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0])))
-
-    # results from SpaceClaim
-    expected_vertices = [
-        Point3D([-1.0, -1.0, -11.0]),
-        Point3D([-1.0, -1.0, -10.0]),
-        Point3D([0.0, 0.5, -11.0]),
-        Point3D([0.0, 0.5, -10.0]),
-        Point3D([-1.0, 1.0, -11.0]),
-        Point3D([-1.0, 1.0, -10.0]),
-        Point3D([1.0, 1.0, -11.0]),
-        Point3D([1.0, 1.0, -10.0]),
-        Point3D([1.0, -1.0, -11.0]),
-        Point3D([1.0, -1.0, -10.0]),
-        Point3D([0.45, 0.45, -11.1]),
-        Point3D([0.45, 0.45, -11.0]),
-        Point3D([0.45, 0.55, -11.1]),
-        Point3D([0.45, 0.55, -11.0]),
-        Point3D([0.55, 0.55, -11.1]),
-        Point3D([0.55, 0.55, -11.0]),
-        Point3D([0.55, 0.45, -11.1]),
-        Point3D([0.55, 0.45, -11.0]),
-    ]
-
-    copy_vertices = []
-    for edge in copy2.edges:
-        if edge.shape.start not in copy_vertices:
-            copy_vertices.append(edge.shape.start)
-    assert np.allclose(expected_vertices, copy_vertices)
-
-    # Mirror across XZ plane
-    copy3 = body.copy(body.parent_component, "box4")
-    copy3.mirror(Plane(Point3D([0, 3, 0]), UnitVector3D([1, 0, 0]), UnitVector3D([0, 0, 1])))
-
-    # results from SpaceClaim
-    expected_vertices = [
-        Point3D([-1.0, 7.0, 1.0]),
-        Point3D([-1.0, 7.0, 0.0]),
-        Point3D([0.0, 5.5, 1.0]),
-        Point3D([0.0, 5.5, 0.0]),
-        Point3D([-1.0, 5.0, 1.0]),
-        Point3D([-1.0, 5.0, 0.0]),
-        Point3D([1.0, 5.0, 1.0]),
-        Point3D([1.0, 5.0, 0.0]),
-        Point3D([1.0, 7.0, 1.0]),
-        Point3D([1.0, 7.0, 0.0]),
-        Point3D([0.45, 5.55, 1.1]),
-        Point3D([0.45, 5.55, 1.0]),
-        Point3D([0.45, 5.45, 1.1]),
-        Point3D([0.45, 5.45, 1.0]),
-        Point3D([0.55, 5.45, 1.1]),
-        Point3D([0.55, 5.45, 1.0]),
-        Point3D([0.55, 5.55, 1.1]),
-        Point3D([0.55, 5.55, 1.0]),
-    ]
-
-    copy_vertices = []
-    for edge in copy3.edges:
-        if edge.shape.start not in copy_vertices:
-            copy_vertices.append(edge.shape.start)
-    assert np.allclose(expected_vertices, copy_vertices)
+    assert nested_sphere.name == "nestedspherebody"
+    assert len(nested_sphere.faces) == 1
+    assert nested_sphere.volume.m == pytest.approx(np.pi * 4 / 3, rel=1e-6)
+    assert nested_sphere.parent_component.id == nested.id
 
 
 def test_sweep_sketch(modeler: Modeler):
@@ -2971,29 +2971,6 @@ def test_sweep_chain(modeler: Modeler):
     # check volume of body
     # expected is 0 since it's not a closed surface
     assert body.volume.m == 0
-
-
-def test_create_body_from_loft_profile(modeler: Modeler):
-    """Test the ``create_body_from_loft_profile()`` method to create a vase
-    shape.
-    """
-    design_sketch = modeler.create_design("loftprofile")
-
-    profile1 = Circle(origin=[0, 0, 0], radius=8).trim(Interval(0, 2 * np.pi))
-    profile2 = Circle(origin=[0, 0, 10], radius=10).trim(Interval(0, 2 * np.pi))
-    profile3 = Circle(origin=[0, 0, 20], radius=5).trim(Interval(0, 2 * np.pi))
-
-    # Call the method
-    result = design_sketch.create_body_from_loft_profile(
-        "vase", [[profile1], [profile2], [profile3]], False, False
-    )
-
-    # Assert that the resulting body has only one face.
-    assert len(result.faces) == 1
-
-    # check volume of body
-    # expected is 0 since it's not a closed surface
-    assert result.volume.m == 0
 
 
 def test_revolve_sketch(modeler: Modeler):
@@ -3238,78 +3215,19 @@ def test_component_tree_print(modeler: Modeler):
     assert check_list_equality(lines, ref) is True
 
 
-def test_surface_body_creation(modeler: Modeler):
-    """Test surface body creation from trimmed surfaces."""
-    design = modeler.create_design("Design1")
-
-    # half sphere
-    surface = Sphere([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi / 2)))
-    body = design.create_body_from_surface("sphere", trimmed_surface)
-    assert len(design.bodies) == 1
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
-
-    # cylinder
-    surface = Cylinder([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, 1)))
-    body = design.create_body_from_surface("cylinder", trimmed_surface)
-
-    assert len(design.bodies) == 2
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 2)
-
-    # cone
-    surface = Cone([0, 0, 0], 1, np.pi / 4)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(surface.apex.z.m, 0)))
-    body = design.create_body_from_surface("cone", trimmed_surface)
-
-    assert len(design.bodies) == 3
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(4.44288293816)
-
-    # half torus
-    surface = Torus([0, 0, 0], 2, 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi), Interval(0, np.pi * 2)))
-    body = design.create_body_from_surface("torus", trimmed_surface)
-
-    assert len(design.bodies) == 4
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(39.4784176044)
-
-    # SOLID BODIES
-
-    # sphere
-    surface = Sphere([0, 0, 0], 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(-np.pi / 2, np.pi / 2)))
-    body = design.create_body_from_surface("sphere_solid", trimmed_surface)
-    assert len(design.bodies) == 5
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(np.pi * 4)
-
-    # torus
-    surface = Torus([0, 0, 0], 2, 1)
-    trimmed_surface = surface.trim(BoxUV(Interval(0, np.pi * 2), Interval(0, np.pi * 2)))
-    body = design.create_body_from_surface("torus_solid", trimmed_surface)
-
-    assert len(design.bodies) == 6
-    assert not body.is_surface
-    assert body.faces[0].area.m == pytest.approx(39.4784176044 * 2)
-
-
 def test_design_parameters(modeler: Modeler):
     """Test the design parameter's functionality."""
     design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
     test_parameters = design.parameters
 
     # Verify the initial parameters
-    assert len(test_parameters) == 2
+    assert len(test_parameters) == 4
     assert test_parameters[0].name == "p1"
-    assert abs(test_parameters[0].dimension_value - 0.00010872999999999981) < 1e-8
+    assert abs(test_parameters[0].dimension_value.m - 0.00010872999999999981) < 1e-8
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     assert test_parameters[1].name == "p2"
-    assert abs(test_parameters[1].dimension_value - 0.0002552758322160813) < 1e-8
+    assert abs(test_parameters[1].dimension_value.m - 0.0002552758322160813) < 1e-8
     assert test_parameters[1].dimension_type == ParameterType.DIMENSIONTYPE_AREA
 
     # Update the second parameter and verify the status
@@ -3327,6 +3245,38 @@ def test_design_parameters(modeler: Modeler):
 
     test_parameters[0].dimension_type = ParameterType.DIMENSIONTYPE_AREA
     assert test_parameters[0].dimension_type == ParameterType.DIMENSIONTYPE_AREA
+
+    # Update a parameter with a unit value
+    test_parameters[1].dimension_value = Quantity(800, UNITS.mm**2)
+    status = design.set_parameter(test_parameters[1])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[1].dimension_value.m == pytest.approx(800, rel=1e-8)
+    assert test_parameters[1].dimension_value.m_as(DEFAULT_UNITS.AREA) == pytest.approx(
+        0.0008, rel=1e-8
+    )
+
+
+def test_unitless_design_parameters(modeler: Modeler):
+    """Test the design parameter's functionality for unitless parameters."""
+    design = modeler.open_file(FILES_DIR / "blockswithparameters.dsco")
+    test_parameters = design.parameters
+    assert len(test_parameters) == 4
+
+    # Test the unitless parameter (pattern count)
+    assert test_parameters[2].name == "PatternCount"
+    assert test_parameters[2].dimension_type == ParameterType.DIMENSIONTYPE_COUNT
+    assert test_parameters[2].dimension_value == Quantity(3, "")
+
+    # Change the pattern separation and count
+    test_parameters[3].dimension_value = Quantity(50, UNITS.mm)
+    status = design.set_parameter(test_parameters[3])
+    assert status == ParameterUpdateStatus.SUCCESS
+    assert test_parameters[3].dimension_value == Quantity(50, UNITS.mm)
+
+    test_parameters[2].dimension_value = Quantity(2, "")
+    status = design.set_parameter(test_parameters[2])
+    assert status == ParameterUpdateStatus.CONSTRAINED_PARAMETERS
+    assert test_parameters[2].dimension_value == Quantity(2, "")
 
 
 def test_cached_bodies(modeler: Modeler):
@@ -3451,51 +3401,6 @@ def test_extrude_sketch_with_cut_request_no_collision(modeler: Modeler):
     assert design.bodies[0].volume == volume_box
 
 
-def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
-    design = modeler.create_design("surface")
-
-    # pill shape
-    circle1 = Circle(Point3D([0, 0, 0]), 1).trim(Interval(0, np.pi))
-    line1 = Line(Point3D([-1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
-    circle2 = Circle(Point3D([0, -1, 0]), 1).trim(Interval(np.pi, np.pi * 2))
-    line2 = Line(Point3D([1, 0, 0]), UnitVector3D([0, -1, 0])).trim(Interval(0, 1))
-
-    body = design.create_surface_from_trimmed_curves("body", [circle1, line1, line2, circle2])
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(
-        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
-
-    # create from edges (by getting their trimmed curves)
-    trimmed_curves_from_edges = [edge.shape for edge in body.edges]
-    body = design.create_surface_from_trimmed_curves("body2", trimmed_curves_from_edges)
-    assert body.is_surface
-    assert body.faces[0].area.m == pytest.approx(
-        Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
-    )
-
-
-def test_shell_body(modeler: Modeler):
-    """Test shell command."""
-    design = modeler.create_design("shell")
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    assert base.volume.m == pytest.approx(Quantity(1, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 6
-
-    # shell
-    success = base.shell_body(0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.728, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 12
-
-    base = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-    success = base.shell_body(-0.1)
-    assert success
-    assert base.volume.m == pytest.approx(Quantity(0.488, UNITS.m**3).m, rel=1e-6, abs=1e-8)
-    assert len(base.faces) == 12
-
-
 def test_shell_faces(modeler: Modeler):
     """Test shell commands for a single face."""
     design = modeler.create_design("shell")
@@ -3586,19 +3491,9 @@ def test_set_component_name(modeler: Modeler):
     component.name = "ChangedComponentName"
     assert component.name == "ChangedComponentName"
 
-
-def test_get_face_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of a face."""
-    design = modeler.create_design("face_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    bounding_box = body.faces[0].bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
-
-    bounding_box = body.faces[1].bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
+    # Call update to ensure the name change is reflected in the design
+    design._update_design_inplace()
+    assert design.components[0].name == "ChangedComponentName"
 
 
 def test_get_edge_bounding_box(modeler: Modeler):
@@ -3621,61 +3516,441 @@ def test_get_edge_bounding_box(modeler: Modeler):
     assert center.z.m == 1
 
 
-def test_get_body_bounding_box(modeler: Modeler):
-    """Test getting the bounding box of a body."""
-    design = modeler.create_design("body_bounding_box")
-    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
-
-    bounding_box = body.bounding_box
-    assert bounding_box.min_corner.x.m == bounding_box.min_corner.y.m == -0.5
-    assert bounding_box.min_corner.z.m == 0
-    assert bounding_box.max_corner.x.m == bounding_box.max_corner.y.m == 0.5
-    assert bounding_box.max_corner.z.m == 1
-
-    # Test center
-    center = bounding_box.center
-    assert center.x.m == 0
-    assert center.y.m == 0
-    assert center.z.m == 0.5
+def _entity(entity_id: str) -> Mock:
+    entity = Mock()
+    entity.id = entity_id
+    return entity
 
 
-def test_get_body_bounding_box_with_tight_tolerance(modeler: Modeler):
-    """Test getting the bounding box of a body with tight tolerance."""
-    if modeler.client.services.version == GeometryApiProtos.V0:
-        pytest.skip("Tight bounding boxes only supported in protos v1 and newer.")
+def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
+    from ansys.geometry.core.designer.selection import NamedSelection
 
+    grpc_client = Mock()
+    grpc_client.backend_version = backend_version
+    grpc_client.log = Mock()
+    grpc_client.services = Mock()
+    grpc_client.services.named_selection = Mock()
+    return NamedSelection(
+        "test_ns",
+        Mock(),
+        grpc_client,
+        bodies=bodies or [],
+        preexisting_id="ns-id",
+    )
+
+
+def test_named_selection_faces_fallback_to_id_lookup():
+    """Test faces property falls back to ID lookup when metadata build fails."""
+    import ansys.geometry.core.designer.selection as selection_module
+
+    ns = _named_selection()
+    faces = [Mock()]
+
+    ns._verified = True
+    ns._faces = None
+    ns._ids_cached["faces"] = ["face-1"]
+
+    with (
+        patch.object(ns, "_NamedSelection__build_faces_from_metadata", return_value=None),
+        patch.object(selection_module, "get_faces_from_ids", return_value=faces) as get_faces_spy,
+    ):
+        assert ns.faces is faces
+
+    get_faces_spy.assert_called_once_with(ns._design, ["face-1"])
+
+
+def test_named_selection_build_faces_from_metadata_returns_none_when_body_missing():
+    """Test face metadata build returns None when a referenced body is unavailable."""
+    import ansys.geometry.core.designer.selection as selection_module
+
+    ns = _named_selection()
+    ns._faces_meta_cached = [
+        {
+            "id": "face-1",
+            "surface_type": 1,
+            "is_reversed": False,
+            "body_id": "missing-body",
+        }
+    ]
+
+    with patch.object(selection_module, "get_all_bodies_from_design", return_value=[]):
+        assert ns._NamedSelection__build_faces_from_metadata() is None
+
+
+@pytest.mark.parametrize(
+    "property_name,backend_version,expected_text",
+    [
+        ("components", (25, 2, 0), "2026 R1"),
+        ("vertices", (25, 2, 0), "2026 R1"),
+        ("design_curves", (27, 0, 0), "2027 R1"),
+    ],
+)
+def test_named_selection_warns_for_unsupported_member_access(
+    property_name: str, backend_version: tuple, expected_text: str
+):
+    """Test unsupported member access warns and returns an empty list."""
+    ns = _named_selection(backend_version=backend_version)
+
+    with patch.object(ns, "_NamedSelection__verify_ns"):
+        assert getattr(ns, property_name) == []
+
+    ns._grpc_client.log.warning.assert_called_once()
+    assert expected_text in ns._grpc_client.log.warning.call_args[0][0]
+
+
+def test_named_selection_design_curves_loads_from_ids():
+    """Test design_curves property loads curves from cached IDs on demand."""
+    import ansys.geometry.core.designer.selection as selection_module
+
+    ns = _named_selection()
+    design_curves = [Mock()]
+
+    ns._design_curves = None
+    ns._ids_cached["design_curves"] = ["curve-1"]
+
+    with (
+        patch.object(ns, "_NamedSelection__verify_ns"),
+        patch.object(
+            selection_module,
+            "get_design_curves_from_ids",
+            return_value=design_curves,
+        ) as get_curves_spy,
+    ):
+        assert ns.design_curves is design_curves
+
+    get_curves_spy.assert_called_once_with(ns._design, ["curve-1"])
+
+
+def test_named_selection_remove_members_raises_when_empty():
+    """Test remove_members rejects removing the last member from a named selection."""
+    body = _entity("body-1")
+    ns = _named_selection(bodies=[body])
+
+    with patch.object(ns, "_NamedSelection__verify_ns"):
+        with pytest.raises(GeometryRuntimeError, match="cannot be empty"):
+            ns.remove_members(members=[body])
+
+
+def test_named_selection_verify_ns_warns_and_returns_on_old_backend():
+    """Test verify_ns warns and returns early on unsupported backend versions."""
+    ns = _named_selection(backend_version=(25, 1, 0))
+
+    ns._NamedSelection__verify_ns()
+
+    ns._grpc_client.log.warning.assert_called_once()
+    ns._grpc_client.services.named_selection.get_named_selection.assert_not_called()
+
+
+def test_named_selection_verify_ns_clears_changed_cached_members():
+    """Test verify_ns clears changed cached member lists through setattr."""
+    body = _entity("body-1")
+    ns = _named_selection(backend_version=(26, 0, 0), bodies=[body])
+
+    ns._edges = [Mock()]
+    ns._ids_cached["edges"] = []
+    ns._grpc_client.services.named_selection.get_named_selection.return_value = {
+        "bodies": [body.id],
+        "faces": [],
+        "edges": ["edge-1"],
+        "beams": [],
+        "design_points": [],
+        "components": [],
+        "vertices": [],
+        "design_curves": [],
+        "faces_meta": [],
+    }
+
+    ns._NamedSelection__verify_ns()
+
+    assert ns._edges is None
+    assert ns._ids_cached["edges"] == ["edge-1"]
+
+
+def test_named_selection_build_faces_from_metadata_returns_none_when_metadata_empty():
+    """Test face metadata build returns None when there is no cached face metadata."""
+    ns = _named_selection()
+    ns._faces_meta_cached = []
+
+    assert ns._NamedSelection__build_faces_from_metadata() is None
+
+
+def test_tracker_response_missing_part_for_master_component(
+    modeler: Modeler, tracker_payload_factory
+):
+    """Test _update_from_tracker handles missing part for MasterComponent."""
+    design = modeler.create_design("missing_part_design")
+
+    tracker_response = tracker_payload_factory(
+        created_components=[
+            {
+                "id": "master_comp_1",
+                "master_id": "master_comp_1",
+                "name": "MissingPartMaster",
+                "part_master": {"id": "nonexistent_part_id"},
+                "parent_id": design.id,
+                "placement": None,
+            }
+        ],
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        assert any(
+            "Could not find part for MasterComponent" in str(call)
+            for call in warning_spy.call_args_list
+        )
+
+
+def test_tracker_response_deleted_component_not_found(modeler: Modeler, tracker_payload_factory):
+    """Test _update_from_tracker warning when modified/deleted components not found."""
+    design = modeler.create_design("deleted_comp_notfound")
+
+    tracker_response = tracker_payload_factory(
+        modified_components=[{"id": "nonexistent_mod_comp", "name": "NonexistentMod"}],
+        deleted_components=[{"id": "nonexistent_del_comp"}],
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+        warning_spy.assert_called()
+        warning_messages = [str(call) for call in warning_spy.call_args_list]
+        assert any("Could not find component to update" in msg for msg in warning_messages) or any(
+            "Could not find component to delete" in msg for msg in warning_messages
+        )
+
+
+def test_tracker_response_delete_nested_component(modeler: Modeler, tracker_payload_factory):
+    """Test _update_from_tracker deleting nested components."""
+    design = modeler.create_design("delete_nested_comp")
+
+    parent_comp = design.add_component("ParentComp")
+    nested_comp = parent_comp.add_component("NestedComp")
+    nested_id = nested_comp.id
+
+    tracker_response = tracker_payload_factory(
+        deleted_components=[{"id": nested_id}],
+    )
+
+    assert nested_comp.is_alive
+    design._update_from_tracker(tracker_response)
+    assert not nested_comp.is_alive
+
+
+def test_get_all_components_recursive(modeler: Modeler):
+    """Test _get_all_components recursively finds all nested components."""
+    design = modeler.create_design("recursive_comps")
+
+    comp1 = design.add_component("Comp1")
+    comp2 = design.add_component("Comp2")
+    nested_comp1 = comp1.add_component("NestedComp1")
+    nested_comp2 = comp1.add_component("NestedComp2")
+    deeply_nested = nested_comp1.add_component("DeeplyNested")
+
+    all_comps = design._get_all_components()
+
+    assert len(all_comps) >= 5
+    assert comp1 in all_comps
+    assert comp2 in all_comps
+    assert nested_comp1 in all_comps
+    assert nested_comp2 in all_comps
+    assert deeply_nested in all_comps
+
+
+def test_find_and_remove_part_marks_not_alive(modeler: Modeler):
+    """Test _find_and_remove_part marks part as not alive."""
+    design = modeler.create_design("remove_part_alive")
+
+    part = design._master_component.part
+    part_id = part.id
+    part._is_alive = True
+
+    part_info = {"id": part_id}
+
+    result = design._find_and_remove_part(part_info)
+
+    assert result is True
+    assert part._is_alive is False
+    existing = design._find_existing_part(part_id)
+    assert existing is not None
+
+
+def test_find_and_add_component_to_root_design(modeler: Modeler):
+    """Test _find_and_add_component_to_design adds component to root design."""
+    design = modeler.create_design("add_comp_to_root")
+
+    component_info = {
+        "id": "new_root_comp",
+        "master_id": design._master_component.id,
+        "name": "NewRootComponent",
+        "parent_id": design.id,
+        "part_master": {"id": design._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {design._master_component.id: design._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "NewRootComponent"
+
+
+def test_find_and_add_component_to_nested_parent(modeler: Modeler):
+    """Test _find_and_add_component_to_design with nested parent components."""
+    design = modeler.create_design("add_nested_comp")
+
+    grandparent_comp = design.add_component("GrandParentComp")
+    parent_comp = grandparent_comp.add_component("ParentComp")
+    parent_id = parent_comp.id
+
+    component_info = {
+        "id": "child_comp_id",
+        "master_id": parent_comp._master_component.id,
+        "name": "ChildComponent",
+        "parent_id": parent_id,
+        "part_master": {"id": parent_comp._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {parent_comp._master_component.id: parent_comp._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "ChildComponent"
+
+
+def test_find_and_add_component_parent_not_found(modeler: Modeler):
+    """Test _find_and_add_component_to_design returns None when parent not found."""
+    design = modeler.create_design("parent_notfound")
+
+    component_info = {
+        "id": "orphan_comp",
+        "name": "OrphanComponent",
+        "parent_id": "nonexistent_parent_id",
+    }
+
+    result = design._find_and_add_component_to_design(component_info, design.components, {}, {})
+
+    assert result is None
+    assert len(design.components) == 0
+
+
+def test_tracker_response_full_cycle_with_nested_structure(
+    modeler: Modeler, unit_box_sketch: Sketch, tracker_payload_factory
+):
+    """Integration test: full tracker response cycle with complex hierarchy."""
+    design = modeler.create_design("full_cycle_tracker")
+
+    parent_comp = design.add_component("ParentComp")
+    child_comp = parent_comp.add_component("ChildComp")
+    body1 = child_comp.extrude_sketch("Body1", unit_box_sketch, 1)
+    body2 = design.extrude_sketch("Body2", unit_box_sketch, 1)
+
+    body1_id = body1.id.split("/")[-1]
+    body2_id = body2.id
+
+    tracker_response = tracker_payload_factory(
+        deleted_bodies=[{"id": body1_id}, {"id": body2_id}],
+    )
+
+    design._update_from_tracker(tracker_response)
+
+    assert not body1.is_alive
+    assert not body2.is_alive
+
+
+def test_find_existing_part_searches_all_components(modeler: Modeler):
+    """Test _find_existing_part searches through all components recursively."""
+    design = modeler.create_design("find_part_nested")
+
+    comp1 = design.add_component("Comp1")
+    nested = comp1.add_component("Nested")
+
+    part1 = comp1._master_component.part
+    part2 = nested._master_component.part
+
+    found_part1 = design._find_existing_part(part1.id)
+    found_part2 = design._find_existing_part(part2.id)
+    found_nonexistent = design._find_existing_part("nonexistent_id")
+
+    assert found_part1 == part1
+    assert found_part2 == part2
+    assert found_nonexistent is None
+
+
+def test_find_and_update_component_by_name(modeler: Modeler):
+    """Test _find_and_update_component updates component name."""
+    design = modeler.create_design("update_comp_name")
+
+    parent_comp = design.add_component("ParentComp")
+    nested_comp = parent_comp.add_component("OriginalName")
+    original_id = nested_comp.id
+
+    component_info = {"id": original_id, "name": "UpdatedName"}
+
+    result = design._find_and_update_component(component_info, design.components)
+
+    assert result is True
+    assert nested_comp.name == "UpdatedName"
+
+
+def test_find_and_update_part_by_name(modeler: Modeler):
+    """Test _find_and_update_part updates part name."""
+    design = modeler.create_design("update_part_name")
+
+    part = design._master_component.part
+    part_id = part.id
+
+    part_info = {"id": part_id, "name": "UpdatedPartName"}
+
+    result = design._find_and_update_part(part_info)
+
+    assert result is True
+    assert part.name == "UpdatedPartName"
+
+
+def test_get_edge_tight_bounding_box(modeler: Modeler):
+    """Test getting the tight bounding box of a face."""
     design = modeler.open_file(Path(FILES_DIR, "yarn.scdocx"))
-    yarn_body = design.bodies[0]
+    yarn_body_edge = design.bodies[0].faces[0].edges[2]
 
-    # Test getting regular bounding box
-    bounding_box = yarn_body.bounding_box
+    # Test the regular bounding box
+    bounding_box = yarn_body_edge.bounding_box
 
-    assert bounding_box.min_corner.x.m == pytest.approx(0.750637531716012)
-    assert bounding_box.min_corner.y.m == pytest.approx(-0.340634843063073)
-    assert bounding_box.min_corner.z.m == pytest.approx(0.0134380239342444)
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754594817788194)
+    assert bounding_box.min_corner.y.m == pytest.approx(-5.00000000813239e-07)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105039551163695)
 
-    assert bounding_box.max_corner.x.m == pytest.approx(1.75484840496883)
-    assert bounding_box.max_corner.y.m == pytest.approx(0.663576030656712)
-    assert bounding_box.max_corner.z.m == pytest.approx(0.288244080618053)
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421406237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618744585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.150000500138633)
 
-    assert bounding_box.center.x.m == pytest.approx(1.25274296834242)
-    assert bounding_box.center.y.m == pytest.approx(0.161470593796819)
-    assert bounding_box.center.z.m == pytest.approx(0.150841052276149)
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025651164)
 
-    # Test getting tight bounding box
-    tight_bounding_box = yarn_body.get_bounding_box(tight_tolerance=True)
+    # Test the tight bounding box
+    bounding_box = yarn_body_edge.get_bounding_box(tight=True)
 
-    assert tight_bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
-    assert tight_bounding_box.min_corner.y.m == pytest.approx(5.2771026530260073e-17)
-    assert tight_bounding_box.min_corner.z.m == pytest.approx(0.100708473482868)
+    assert bounding_box.min_corner.x.m == pytest.approx(0.754595317788195)
+    assert bounding_box.min_corner.y.m == pytest.approx(3.05311331771918e-16)
+    assert bounding_box.min_corner.z.m == pytest.approx(0.105040051163695)
 
-    assert tight_bounding_box.max_corner.x.m == pytest.approx(1.41421356238489)
-    assert tight_bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
-    assert tight_bounding_box.max_corner.z.m == pytest.approx(0.196642053388603)
+    assert bounding_box.max_corner.x.m == pytest.approx(1.41421356237309)
+    assert bounding_box.max_corner.y.m == pytest.approx(0.659618244585186)
+    assert bounding_box.max_corner.z.m == pytest.approx(0.15)
 
-    assert tight_bounding_box.center.x.m == pytest.approx(1.08440444008654)
-    assert tight_bounding_box.center.y.m == pytest.approx(0.329809122292593)
-    assert tight_bounding_box.center.z.m == pytest.approx(0.148675263435735)
+    assert bounding_box.center.x.m == pytest.approx(1.08440444008064)
+    assert bounding_box.center.y.m == pytest.approx(0.329809122292593)
+    assert bounding_box.center.z.m == pytest.approx(0.127520025581848)
 
 
 def test_extrude_faces_failure_log_to_file(modeler: Modeler):
@@ -3865,68 +4140,32 @@ def test_vertices(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     testns = design._named_selections["Test"]
     assert len(testns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file = design.export_to_scdocx(location, write_body_facets=True)
-    assert exported_file.stat().st_size == pytest.approx(216551, 1e-3, 100)
-    assert file_location.exists()
-    design_read = modeler.open_file(file_location)
-    assert len(design_read.named_selections) == 5
+    # Test only against CoreService since the file size is different when exported from
+    # SpaceClaim or Discovery.
+    if modeler.client.backend_type.is_core_service:
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_with_facets = design.export_to_scdocx(location, write_body_facets=True)
+        size_with_facets = exported_file_with_facets.stat().st_size
+        assert size_with_facets == pytest.approx(216551, 1e-3, 150)
+        assert file_location.exists()
+        design_read = modeler.open_file(file_location)
+        assert len(design_read.named_selections) == 5
 
-    exportedtestns = design_read._named_selections["Test"]
-    assert len(exportedtestns.vertices) == 2
+        exportedtestns = design_read._named_selections["Test"]
+        assert len(exportedtestns.vertices) == 2
 
-    location = tmp_path_factory.mktemp("test_export_to_scdocx")
-    file_location = location / f"{design.name}.scdocx"
-    exported_file = design_read.export_to_scdocx(location, write_body_facets=False)
-    assert exported_file.stat().st_size == pytest.approx(26202, 1e-3, 100)
-
-
-@pytest.mark.parametrize(
-    "file_extension, design_format",
-    [
-        ("scdocx", None),  # For .scdocx files
-        ("dsco", DesignFileFormat.DISCO),  # For .dsco files
-    ],
-)
-def test_write_body_facets_on_save(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, file_extension: str, design_format
-):
-    design = modeler.open_file(Path(FILES_DIR, "cars.scdocx"))
-
-    # First file without body facets
-    filepath_no_facets = tmp_path_factory.mktemp("test_design") / f"cars_no_facets.{file_extension}"
-    if design_format:
-        design.download(filepath_no_facets, design_format)
-    else:
-        design.download(filepath_no_facets)
-
-    # Second file with body facets
-    filepath_with_facets = (
-        tmp_path_factory.mktemp("test_design") / f"cars_with_facets.{file_extension}"
-    )
-    if design_format:
-        design.download(filepath_with_facets, design_format, write_body_facets=True)
-    else:
-        design.download(filepath_with_facets, write_body_facets=True)
-
-    # Compare file sizes
-    size_no_facets = filepath_no_facets.stat().st_size
-    size_with_facets = filepath_with_facets.stat().st_size
-
-    assert size_with_facets > size_no_facets
-
-    # Ensure facets.bin and renderlist.xml files exist
-    with zipfile.ZipFile(filepath_with_facets, "r") as zip_ref:
-        namelist = set(zip_ref.namelist())
-
-    expected_files = {
-        "SpaceClaim/Graphics/facets.bin",
-        "SpaceClaim/Graphics/renderlist.xml",
-    }
-
-    missing = expected_files - namelist
-    assert not missing
+        location = tmp_path_factory.mktemp("test_export_to_scdocx")
+        file_location = location / f"{design.name}.scdocx"
+        exported_file_without_facets = design_read.export_to_scdocx(
+            location, write_body_facets=False
+        )
+        size_without_facets = exported_file_without_facets.stat().st_size
+        assert size_without_facets == pytest.approx(26202, 1e-3, 150)
+        assert size_with_facets > size_without_facets, (
+            f"Expected export with facets to be larger than without facets. "
+            f"Got with_facets={size_with_facets}, without_facets={size_without_facets}."
+        )
 
 
 def test_updating_design_from_tracker(modeler: Modeler):
@@ -3999,12 +4238,10 @@ def test_updating_design_from_tracker(modeler: Modeler):
 
 
 def test_legacy_export_download(
-    modeler: Modeler, tmp_path_factory: pytest.TempPathFactory, use_grpc_client_old_backend: Modeler
+    modeler: Modeler,
+    tmp_path_factory: pytest.TempPathFactory,
+    fake_modeler_old_backend_242: Modeler,
 ):
-    # Test is meant to add test coverage for using an old backend to export and download
-    if modeler.client.services.version != GeometryApiProtos.V0:
-        pytest.skip("Test only applies to v0 backend")
-
     # Creating the directory and file to export
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
@@ -4025,6 +4262,12 @@ def test_legacy_export_download(
 
 def test_failure_for_export(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     # # Creating the directory and file to export
+    skip_if_no_geometry_service(
+        modeler,
+        test_failure_for_export.__name__,
+        "different_hierarchy_in_tree_on_insert",
+    )  # Skip test on Discovery and SpaceClaim
+
     working_directory = tmp_path_factory.mktemp("test_import_export_reimport")
     original_file = Path(FILES_DIR, "reactorWNS.scdocx")
     reexported_file = Path(working_directory, "reexported.scdocx")
@@ -4052,7 +4295,6 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box2])
-    design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(1.75, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
@@ -4063,23 +4305,45 @@ def test_combine_merge(modeler: Modeler):
 
     # combine the two boxes and check body count and volume
     box1.combine_merge([box3])
-    design._update_design_inplace()
     assert len(design.bodies) == 1
     assert box1.volume.m == pytest.approx(Quantity(2.5, UNITS.m**3).m, rel=1e-6, abs=1e-8)
 
 
 def test_combine_subtract_transfer_ns(modeler: Modeler):
+    """Testing the transfer of named selection during an intersect"""
     input_file = Path(FILES_DIR, "sub_valid.scdocx")
     design = modeler.open_file(input_file)
 
     inside = design.bodies[0]
     outside = design.bodies[1]
-
-    assert len(design.named_selections) == 2
+    # Confirm the number of named selection then subtract
+    assert len(design.named_selections) == 4
     outside._combine_subtract(inside)
-
+    # Confirm the subtraction worked
     assert len(design.bodies) == 1
-    assert len(design.named_selections) == 2
+    assert len(design.named_selections) == 4
+    # Then confirm the named selections
+    assert design.named_selections[0].faces[0].area.m == design.bodies[0].faces[9].area.m
+    assert design.named_selections[1].faces[0].area.m == design.bodies[0].faces[11].area.m
+    assert design.named_selections[3].faces[0].area.m == design.bodies[0].faces[6].area.m
+    assert len(design.named_selections[2].edges) == 4
+    assert len(design.named_selections[3].edges) == 2
+
+
+def test_combine_subtract_transfer_ns_default_options_changed(modeler: Modeler):
+    """Testing the transfer of named selection during an
+    intersect with default options overridden"""
+    input_file = Path(FILES_DIR, "sub_valid.scdocx")
+    design = modeler.open_file(input_file)
+    # Confirm the number of named selection then subtract
+    inside = design.bodies[0]
+    outside = design.bodies[1]
+
+    assert len(design.named_selections) == 4
+    outside._combine_subtract(inside, keep_other=True, transfer_named_selections=False)
+    # Then confirm the named selections
+    assert len(design.bodies) == 2
+    assert len(design.named_selections) == 4
 
 
 def test_faces_get_named_selections(modeler: Modeler):
@@ -4151,30 +4415,6 @@ def test_body_get_named_selections(modeler: Modeler):
             assert any(ns.name == "body_ns_2" for ns in ns_list)
         else:
             assert len(ns_list) == 0  # No named selection for this body
-
-
-def test_beams_get_named_selections(modeler: Modeler):
-    """Test getting named selections associated with beams."""
-    design = modeler.create_design("beam_named_selections")
-    profile = design.add_beam_circular_profile("profile1", Distance(0.1, UNITS.m))
-    beam1 = design.create_beam(Point3D([0, 0, 0]), Point3D([1, 0, 0]), profile)
-    beam2 = design.create_beam(Point3D([0, 1, 0]), Point3D([1, 1, 0]), profile)
-
-    # create named selection from beams
-    design.create_named_selection("beam_ns_1", beams=[beam1])
-    design.create_named_selection("beam_ns_2", beams=[beam2])
-
-    # Check that beams return the correct named selections
-    for beam in design.beams:
-        ns_list = beam.get_named_selections()
-        if beam.id == beam1.id:
-            assert len(ns_list) == 1
-            assert any(ns.name == "beam_ns_1" for ns in ns_list)
-        elif beam.id == beam2.id:
-            assert len(ns_list) == 1
-            assert any(ns.name == "beam_ns_2" for ns in ns_list)
-        else:
-            assert len(ns_list) == 0  # No named selection for this beam
 
 
 def test_vertices_get_named_selections(modeler: Modeler):
@@ -4360,3 +4600,623 @@ def test_check_design_update_2(modeler: Modeler):
     # Verify new component was created with the extracted body
     assert len(design.components[1].bodies) > 0, "Component 1 should have bodies"
     assert design.components[1].bodies[0].name, "Body in component 1 should have a name"
+
+
+def test_datum_planes(modeler: Modeler):
+    """Test datum planes imported from a file."""
+    design = modeler.open_file(Path(FILES_DIR, "planes.dsco"))
+
+    assert len(design.bodies) == 1
+    assert len(design.datum_planes) == 2
+
+    # Test properties of the planes
+    assert design.datum_planes[0].name == "Plane_1"
+    assert design.datum_planes[0].value.origin == Point3D([0.01, 0.01, 0])
+    assert list(design.datum_planes[0].value.normal) == pytest.approx(
+        [0.89442719, -0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[0].id == "0:2075"
+    assert design.datum_planes[0].parent_component == design
+
+    assert design.datum_planes[1].name == "Plane_2"
+    assert design.datum_planes[1].value.origin == Point3D([-0.01, 0.01, 0])
+    assert list(design.datum_planes[1].value.normal) == pytest.approx(
+        [0.89442719, 0.4472136, 0], abs=1e-6
+    )
+    assert design.datum_planes[1].id == "0:2080"
+    assert design.datum_planes[1].parent_component == design
+
+    # Test evaluating at (u, v) coordinates on the first datum plane
+    plane1 = design.datum_planes[0]
+    point1 = plane1.evaluate(0, 0)
+    point2 = plane1.evaluate(0, 0.01)
+    point3 = plane1.evaluate(0.01, 0)
+
+    assert point1 == Point3D([0.010000, 0.010000, 0])
+    assert point2 == Point3D([0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test evaluating at (u, v) coordinates on the second datum plane
+    plane2 = design.datum_planes[1]
+    point1 = plane2.evaluate(0, 0)
+    point2 = plane2.evaluate(0, 0.01)
+    point3 = plane2.evaluate(0.01, 0)
+
+    assert point1 == Point3D([-0.010000, 0.010000, 0])
+    assert point2 == Point3D([-0.010000, 0.010000, 0.010000])
+    assert [point3.x.m, point3.y.m, point3.z.m] == pytest.approx(
+        [-0.01447214, 0.01894427, 0], abs=1e-6
+    )
+
+    # Test deleting a datum plane
+    design.delete_datum_plane(design.datum_planes[0])
+    assert not design.datum_planes[0].is_alive
+
+
+def test_create_datum_plane(modeler: Modeler):
+    """Test for verifying the ``create_datum_plane`` functionality."""
+    # Create a design
+    design = modeler.create_design("DatumPlaneTest")
+
+    # Test 1: Create a datum plane with the default XY plane
+    plane1 = Plane(
+        origin=Point3D([0, 0, 0]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane1 = design.create_datum_plane("XY_Plane", plane1)
+
+    # Verify basic properties
+    assert datum_plane1.id is not None
+    assert datum_plane1.name == "XY_Plane"
+    assert datum_plane1.value == plane1
+    assert datum_plane1.parent_component == design
+    assert len(design.datum_planes) == 1
+    assert design.datum_planes[0] == datum_plane1
+
+    # Test 2: Create a datum plane with an offset origin
+    plane2 = Plane(
+        origin=Point3D([10, 20, 30], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane2 = design.create_datum_plane("Offset_Plane", plane2)
+
+    assert datum_plane2.id is not None
+    assert datum_plane2.name == "Offset_Plane"
+    assert datum_plane2.value.origin == Point3D([10, 20, 30], UNITS.mm)
+    assert len(design.datum_planes) == 2
+
+    # Test 3: Create a datum plane with custom orientation (YZ plane)
+    plane3 = Plane(
+        origin=Point3D([5, 0, 0], UNITS.m), direction_x=UNITVECTOR3D_Y, direction_y=UNITVECTOR3D_Z
+    )
+    datum_plane3 = design.create_datum_plane("YZ_Plane", plane3)
+
+    assert datum_plane3.id is not None
+    assert datum_plane3.name == "YZ_Plane"
+    assert datum_plane3.value.direction_x == UNITVECTOR3D_Y
+    assert datum_plane3.value.direction_y == UNITVECTOR3D_Z
+    assert len(design.datum_planes) == 3
+
+    # Test 4: Create a datum plane with arbitrary orientation
+    custom_x = UnitVector3D([1, 1, 0])
+    custom_y = UnitVector3D([0, 0, 1])
+    plane4 = Plane(origin=Point3D([1, 2, 3]), direction_x=custom_x, direction_y=custom_y)
+    datum_plane4 = design.create_datum_plane("Custom_Plane", plane4)
+
+    assert datum_plane4.id is not None
+    assert datum_plane4.name == "Custom_Plane"
+    assert len(design.datum_planes) == 4
+
+    # Test 5: Create datum plane in a nested component
+    nested_component = design.add_component("NestedComponent")
+    plane5 = Plane(
+        origin=Point3D([100, 200, 300], UNITS.mm),
+        direction_x=UNITVECTOR3D_X,
+        direction_y=UNITVECTOR3D_Y,
+    )
+    datum_plane5 = nested_component.create_datum_plane("Nested_Plane", plane5)
+
+    assert datum_plane5.id is not None
+    assert datum_plane5.name == "Nested_Plane"
+    assert datum_plane5.parent_component == nested_component
+    assert len(nested_component.datum_planes) == 1
+    assert nested_component.datum_planes[0] == datum_plane5
+    # Design should still have 4 datum planes (not including nested)
+    assert len(design.datum_planes) == 4
+
+    # Test 6: Evaluate points on datum planes
+    # For datum_plane1 (XY plane at origin)
+    eval_point1 = datum_plane1.evaluate(1.0, 0.0)
+    assert eval_point1 == Point3D([1.0, 0.0, 0.0])
+
+    eval_point2 = datum_plane1.evaluate(0.0, 1.0)
+    assert eval_point2 == Point3D([0.0, 1.0, 0.0])
+
+    eval_point3 = datum_plane1.evaluate(2.0, 3.0)
+    assert eval_point3 == Point3D([2.0, 3.0, 0.0])
+
+    # For datum_plane2 (offset plane at [10, 20, 30] mm = [0.01, 0.02, 0.03] m)
+    eval_point4 = datum_plane2.evaluate(1.0, 0.0)
+    assert eval_point4.x.m == pytest.approx(1010, abs=1e-6)
+    assert eval_point4.y.m == pytest.approx(20, abs=1e-6)
+    assert eval_point4.z.m == pytest.approx(30, abs=1e-6)
+
+    # For datum_plane3 (YZ plane)
+    eval_point5 = datum_plane3.evaluate(1.0, 0.0)
+    assert eval_point5 == Point3D([5.0, 1.0, 0.0])
+
+    eval_point6 = datum_plane3.evaluate(0.0, 1.0)
+    assert eval_point6 == Point3D([5.0, 0.0, 1.0])
+
+    # Test 7: String representation
+    datum_plane_str = str(datum_plane1)
+    assert "ansys.geometry.core.design.DatumPlane" in datum_plane_str
+
+    # Test 8: Verify plane properties are properly stored
+    assert datum_plane1.value.origin == Point3D([0, 0, 0])
+    assert datum_plane2.value.origin == Point3D([0.010, 0.020, 0.030])
+    assert datum_plane3.value.origin == Point3D([5.0, 0.0, 0.0])
+
+    # Test 9: Create multiple datum planes with the same name (should be allowed)
+    plane6 = Plane(
+        origin=Point3D([1, 1, 1]), direction_x=UNITVECTOR3D_X, direction_y=UNITVECTOR3D_Y
+    )
+    datum_plane6 = design.create_datum_plane("XY_Plane", plane6)
+
+    assert datum_plane6.id is not None
+    assert datum_plane6.name == "XY_Plane"
+    assert datum_plane6.id != datum_plane1.id  # Different IDs
+    assert len(design.datum_planes) == 5
+
+    # Test 10: Verify datum plane remains accessible through component
+    all_datum_planes = design.datum_planes
+    assert datum_plane1 in all_datum_planes
+    assert datum_plane2 in all_datum_planes
+    assert datum_plane3 in all_datum_planes
+    assert datum_plane4 in all_datum_planes
+    assert datum_plane6 in all_datum_planes
+
+
+def test_get_centroid(modeler: Modeler):
+    """Test get_centroid() method on body, face, and edge objects.
+
+    This test validates that the centroid calculation works correctly for:
+    - Body: Tests a simple box and a cylinder
+    - Face: Tests face centroids from various geometries
+    - Edge: Tests edge centroids from various geometries
+    """
+    # Create a design
+    design = modeler.create_design("CentroidTest")
+
+    # Test 1: Body centroid - Box centered at origin
+    sketch_box = Sketch()
+    sketch_box.box(Point2D([0, 0], UNITS.mm), Quantity(20, UNITS.mm), Quantity(10, UNITS.mm))
+    box_body = design.extrude_sketch("TestBox", sketch_box, Quantity(5, UNITS.mm))
+
+    # Get centroid of the box body
+    # Expected: center of a 20x10x5 mm box, centered at origin
+    # The box is drawn from [0,0] with width=20, height=10, so center is at [0, 0] in XY
+    # Extruded by 5mm, so center in Z is at 2.5mm
+    box_centroid = box_body.centroid
+    assert isinstance(box_centroid, Point3D)
+    assert box_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert box_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)  # 2.5mm in meters
+
+    # Test 2: Body centroid - Cylinder
+    sketch_circle = Sketch()
+    sketch_circle.circle(Point2D([50, 50], UNITS.mm), Quantity(10, UNITS.mm))
+    cylinder_body = design.extrude_sketch("TestCylinder", sketch_circle, Quantity(30, UNITS.mm))
+
+    # Get centroid of the cylinder body
+    # Expected: center of cylinder with base at [50, 50, 0] and height 30mm
+    # So centroid should be at [50, 50, 15] mm
+    cylinder_centroid = cylinder_body.centroid
+    assert isinstance(cylinder_centroid, Point3D)
+    assert cylinder_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)  # 50mm in meters
+    assert cylinder_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)  # 15mm in meters
+
+    # Test 3: Face centroid - Top face of the box
+    # The box has 6 faces. Let's test the top face (typically the last face after extrusion)
+    top_face = next(f for f in box_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(5e-3, rel=1e-6, abs=1e-8)  # Top face at 5mm
+
+    # Test 4: Face centroid - Circular face of cylinder
+    top_face = next(f for f in cylinder_body.faces if np.allclose(f.normal(0, 0), UNITVECTOR3D_Z))
+    top_face_centroid = top_face.centroid
+    assert isinstance(top_face_centroid, Point3D)
+    assert top_face_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert top_face_centroid.z.m == pytest.approx(30e-3, rel=1e-6, abs=1e-8)
+
+    # Test 5: Edge centroid - Edges of the box
+    box_edges = box_body.edges
+    edge_centroid = box_edges[0].centroid  # Edge at the bottom of the box
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(0, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(2.5e-3, rel=1e-6, abs=1e-8)
+
+    # Test 6: Edge centroid - Edges of the cylinder
+    cylinder_edges = cylinder_body.edges
+    edge_centroid = cylinder_edges[0].centroid
+    assert isinstance(edge_centroid, Point3D)
+    assert edge_centroid.x.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.y.m == pytest.approx(50e-3, rel=1e-6, abs=1e-8)
+    assert edge_centroid.z.m == pytest.approx(15e-3, rel=1e-6, abs=1e-8)
+
+
+def test_tracking_changes_dict(modeler: Modeler):
+    """Test the return-type and dict keys of start_tracking / stop_tracking.
+
+    - ``start_tracking`` must return ``None``.
+    - ``stop_tracking`` must return a ``dict``.
+    """
+    design = modeler.create_design("tracking_dict_keys")
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # start_tracking must return None
+    result = modeler.unsupported.start_tracking()
+    assert result is None
+
+    modeler.geometry_commands.extrude_faces(box.faces[0], 0.1)
+    changes = modeler.unsupported.stop_tracking()
+
+    # stop_tracking must return a dict
+    assert isinstance(changes, dict)
+
+    # Keys guaranteed by both v0 and v1 protocols
+    for key in ("created_bodies", "modified_bodies", "deleted_bodies"):
+        assert key in changes
+        assert isinstance(changes[key], list)
+
+    # Additional keys provided by the v1 protocol only
+    if modeler._grpc_client._services.version == "v1":
+        v1_keys = (
+            "created_parts",
+            "modified_parts",
+            "deleted_parts",
+            "created_components",
+            "modified_components",
+            "deleted_components",
+            "created_faces",
+            "modified_faces",
+            "deleted_faces",
+            "created_edges",
+            "modified_edges",
+            "deleted_edges",
+        )
+        for key in v1_keys:
+            assert key in changes
+            assert isinstance(changes[key], list)
+
+    # No geometry operations between start and stop
+    modeler.unsupported.start_tracking()
+    changes = modeler.unsupported.stop_tracking()
+
+    assert isinstance(changes, dict)
+    assert "created_bodies" in changes
+    assert "modified_bodies" in changes
+    assert "deleted_bodies" in changes
+
+    # No operations were performed so every change list should be empty
+    assert changes["created_bodies"] == []
+    assert changes["modified_bodies"] == []
+    assert changes["deleted_bodies"] == []
+
+
+def test_tracking_captures_face_extrude_changes(modeler: Modeler):
+    """Test that face extrusion operations performed between start_tracking and
+    stop_tracking are reflected in the returned changes summary.
+    """
+    design = modeler.create_design("tracking_extrude_faces")
+    box1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    box2 = design.extrude_sketch("box2", Sketch().box(Point2D([5, 5]), 1, 1), 1)
+
+    modeler.unsupported.start_tracking()
+
+    # Extrude one face on each box — the tracker must capture these modifications
+    modeler.geometry_commands.extrude_faces(box1.faces[0], 0.1)
+    modeler.geometry_commands.extrude_faces(box2.faces[0], 0.1)
+
+    changes = modeler.unsupported.stop_tracking()
+
+    assert len(changes["modified_bodies"]) == 2
+
+
+def test_tracking_captures_boolean_operations(modeler: Modeler):
+    """Test that boolean subtract and unite operations are each captured by the tracker."""
+    # --- subtract ---
+    design = modeler.create_design("tracking_subtract")
+
+    # Overlapping boxes so the subtract succeeds
+    body1 = design.extrude_sketch("body1", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body2 = design.extrude_sketch("body2", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    assert len(design.bodies) == 2
+
+    modeler.unsupported.start_tracking()
+    body1.subtract(body2)  # body1 modified, body2 deleted
+    subtract_changes = modeler.unsupported.stop_tracking()
+
+    assert len(subtract_changes["modified_bodies"]) == 1
+    assert len(subtract_changes["deleted_bodies"]) == 1
+
+    design.close()
+
+    # --- unite ---
+    design = modeler.create_design("tracking_unite")
+    # Overlapping boxes so the unite has visible geometry change
+    body3 = design.extrude_sketch("body3", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body4 = design.extrude_sketch("body4", Sketch().box(Point2D([0.5, 0]), 1, 1), 1)
+
+    modeler.unsupported.start_tracking()
+    body3.unite(body4)  # body3 modified, body4 deleted
+    unite_changes = modeler.unsupported.stop_tracking()
+
+    assert len(unite_changes["modified_bodies"]) == 1
+    assert len(unite_changes["deleted_bodies"]) == 1
+
+
+def test_tracker_response_missing_master_part_warns(modeler: Modeler, tracker_payload_factory):
+    """Test _update_from_tracker warns when master part not found for MasterComponent."""
+    design = modeler.create_design("cov_missing_master_part")
+
+    tracker_response = tracker_payload_factory(
+        created_components=[
+            {
+                "id": "master_comp_cov",
+                "master_id": "master_comp_cov",
+                "name": "MissingPartMaster",
+                "part_master": {"id": "part_does_not_exist"},
+                "parent_id": design.id,
+                "placement": None,
+            }
+        ]
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+    assert any(
+        "Could not find part for MasterComponent" in str(c) for c in warning_spy.call_args_list
+    )
+
+
+def test_tracker_response_modified_deleted_component_not_found(
+    modeler: Modeler, tracker_payload_factory
+):
+    """Test _update_from_tracker warns when modified/deleted components not found."""
+    design = modeler.create_design("cov_component_not_found")
+
+    tracker_response = tracker_payload_factory(
+        modified_components=[{"id": "missing_mod", "name": "MissingMod"}],
+        deleted_components=[{"id": "missing_del"}],
+    )
+
+    with patch.object(design._grpc_client.log, "warning") as warning_spy:
+        design._update_from_tracker(tracker_response)
+
+    warning_messages = [str(c) for c in warning_spy.call_args_list]
+    assert any("Could not find component to update" in msg for msg in warning_messages)
+    assert any("Could not find component to delete" in msg for msg in warning_messages)
+
+
+def test_find_existing_part_nested_components(modeler: Modeler):
+    """Test _find_existing_part searches nested components for parts."""
+    design = modeler.create_design("cov_find_part_nested")
+    nested = design.add_component("Parent").add_component("Child")
+
+    found = design._find_existing_part(nested._master_component.part.id)
+
+    assert found == nested._master_component.part
+
+
+def test_find_and_remove_part_sets_alive_flag(modeler: Modeler):
+    """Test _find_and_remove_part marks part as not alive."""
+    design = modeler.create_design("cov_remove_part_flag")
+    part = design._master_component.part
+    part._is_alive = True
+
+    removed = design._find_and_remove_part({"id": part.id})
+
+    assert removed is True
+    assert part._is_alive is False
+
+
+def test_find_and_add_component_to_root_design_tracker(modeler: Modeler):
+    """Test _find_and_add_component_to_design adds component to root design."""
+    design = modeler.create_design("cov_add_component_root")
+
+    component_info = {
+        "id": "new_root_cov",
+        "master_id": design._master_component.id,
+        "name": "RootCov",
+        "parent_id": design.id,
+        "part_master": {"id": design._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {design._master_component.id: design._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "RootCov"
+
+
+def test_find_and_add_component_nested_parent_recurses(modeler: Modeler):
+    """Test _find_and_add_component_to_design recurses through nested parents."""
+    design = modeler.create_design("cov_add_component_nested")
+    grandparent = design.add_component("GrandParent")
+    parent = grandparent.add_component("Parent")
+
+    component_info = {
+        "id": "new_child_cov",
+        "master_id": parent._master_component.id,
+        "name": "ChildCov",
+        "parent_id": parent.id,
+        "part_master": {"id": parent._master_component.part.id},
+    }
+
+    result = design._find_and_add_component_to_design(
+        component_info,
+        design.components,
+        {},
+        {parent._master_component.id: parent._master_component},
+    )
+
+    assert result is not None
+    assert result.name == "ChildCov"
+
+
+def test_find_and_update_component_nested_and_missing(modeler: Modeler):
+    """Test _find_and_update_component finds nested component or returns False."""
+    design = modeler.create_design("cov_update_component")
+    nested = design.add_component("Parent").add_component("Original")
+
+    updated = design._find_and_update_component(
+        {"id": nested.id, "name": "Updated"}, design.components
+    )
+    not_found = design._find_and_update_component(
+        {"id": "missing", "name": "Nope"}, design.components
+    )
+
+    assert updated is True
+    assert nested.name == "Updated"
+    assert not_found is False
+
+
+def test_move_bodies_to_component(modeler: Modeler):
+    """Test moving bodies between components.
+
+    Covers:
+    - Single body moved from a source component into a target component.
+    - Multiple bodies moved at once.
+    """
+    design = modeler.create_design("move_bodies_to_component")
+    source = design.add_component("source")
+    target = design.add_component("target")
+
+    body1 = source.extrude_sketch("Box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # --- Single body ---
+    assert len(source.bodies) == 1
+    assert len(target.bodies) == 0
+
+    target.move_bodies_to_component([body1])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source = design.components[0]  # Need to re-query source component if tracker is off
+        target = design.components[1]  # Need to re-query target component if tracker is off
+
+    assert len(target.bodies) == 1
+    assert target.bodies[0].name == "Box1"
+    assert len(source.bodies) == 0
+
+    # --- Multiple bodies ---
+    source2 = design.add_component("source2")
+    target2 = design.add_component("target2")
+
+    body_a = source2.extrude_sketch("BodyA", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    body_b = source2.extrude_sketch("BodyB", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    assert len(source2.bodies) == 2
+    assert len(target2.bodies) == 0
+
+    target2.move_bodies_to_component([body_a, body_b])
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        source2 = design.components[2]  # Need to re-query source component if tracker is off
+        target2 = design.components[3]  # Need to re-query target component if tracker is off
+
+    assert len(target2.bodies) == 2
+    moved_names = {b.name for b in target2.bodies}
+    assert moved_names == {"BodyA", "BodyB"}
+    assert len(source2.bodies) == 0
+
+
+def test_delete_coordinate_system(modeler: Modeler):
+    """Test deletion of coordinate systems from a component."""
+    design = modeler.create_design("DeleteCoordinateSystem_Test")
+
+    # Create a component with coordinate systems
+    comp = design.add_component("CompWithCS")
+    frame1 = Frame(
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 0, 0]),
+        UnitVector3D([0, 1, 0]),
+    )
+    frame2 = Frame(
+        Point3D([40, 50, 60], UNITS.mm),
+        UnitVector3D([0, 1, 0]),
+        UnitVector3D([0, 0, 1]),
+    )
+    cs1 = comp.create_coordinate_system("CS1", frame1)
+    cs2 = comp.create_coordinate_system("CS2", frame2)
+
+    # Verify both coordinate systems exist
+    assert len(comp.coordinate_systems) == 2
+    assert cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the first coordinate system by object
+    comp.delete_coordinate_system(cs1)
+    assert not cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the second coordinate system by ID
+    comp.delete_coordinate_system(cs2.id)
+    assert not cs2.is_alive
+
+    # Attempt to delete a coordinate system that does not belong to the component
+    comp2 = design.add_component("CompWithCS2")
+    cs3 = comp2.create_coordinate_system("CS3", frame1)
+    assert cs3.is_alive
+
+    # Trying to delete cs3 from comp (wrong component) should not delete it
+    comp.delete_coordinate_system(cs3)
+    assert cs3.is_alive
+
+    # Delete cs3 from the correct component
+    comp2.delete_coordinate_system(cs3)
+    assert not cs3.is_alive
+
+    # Delete a coordinate system from the root design (top-level component)
+    cs_root = design.create_coordinate_system("RootCS", frame1)
+    assert cs_root.is_alive
+    assert len(design.coordinate_systems) == 1
+
+    design.delete_coordinate_system(cs_root)
+    assert not cs_root.is_alive
+
+
+def test_search_coordinate_system(modeler: Modeler):
+    """Test recursive search for coordinate systems across nested components."""
+    design = modeler.create_design("SearchCS_Test")
+    frame = Frame(Point3D([10, 20, 30], UNITS.mm), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
+
+    cs1 = design.create_coordinate_system("CS1", frame)
+    nested = design.add_component("Nested")
+    cs2 = nested.create_coordinate_system("CS2", frame)
+    deep = nested.add_component("Deep")
+    cs3 = deep.create_coordinate_system("CS3", frame)
+
+    # Root search finds coordinate systems at all depths
+    assert design.search_coordinate_system(cs1.id) is cs1
+    assert design.search_coordinate_system(cs2.id) is cs2
+    assert design.search_coordinate_system(cs3.id) is cs3
+
+    # Nested search finds its own and deeper coordinate systems but not the root one
+    assert nested.search_coordinate_system(cs2.id) is cs2
+    assert nested.search_coordinate_system(cs3.id) is cs3
+    assert nested.search_coordinate_system(cs1.id) is None
+
+    # Unknown id returns None
+    assert design.search_coordinate_system("non_existent_id") is None

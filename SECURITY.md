@@ -28,11 +28,10 @@ SOFTWARE.
 
 | Version    | Supported          |
 | ---------- | ------------------ |
-| <= 0.11    | :x:                |
-| 0.12.x     | :white_check_mark: |
+| <= 0.12    | :x:                |
 | 0.13.x     | :white_check_mark: |
 | 0.14.x     | :white_check_mark: |
-| 0.15.dev0  | :white_check_mark: |
+| 0.15.x     | :white_check_mark: |
 
 ## Reporting a vulnerability
 

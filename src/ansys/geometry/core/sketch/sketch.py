@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,18 +19,18 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing a sketch."""
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector2D, Vector3D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.sketch.arc import Arc
 from ansys.geometry.core.sketch.box import Box
@@ -781,6 +781,54 @@ class Sketch:
         """
         ellipse = SketchEllipse(center, major_radius, minor_radius, angle)
         return self.face(ellipse, tag)
+
+    def partial_ellipse(
+        self,
+        center: Point2D,
+        major_radius: Quantity | Distance | Real,
+        minor_radius: Quantity | Distance | Real,
+        start_angle: Quantity | Angle | Real,
+        end_angle: Quantity | Angle | Real,
+        angle: Quantity | Angle | Real = 0,
+        tag: str | None = None,
+    ) -> "Sketch":
+        """Add a partial ellipse arc to the sketch as an exact rational NURBS edge.
+
+        Parameters
+        ----------
+        center : Point2D
+            Center point of the ellipse.
+        major_radius : ~pint.Quantity | Distance | Real
+            Semi-major axis length (x-direction before rotation).
+        minor_radius : ~pint.Quantity | Distance | Real
+            Semi-minor axis length (y-direction before rotation).
+        start_angle : ~pint.Quantity | Angle | Real
+            Parametric start angle. Defaults to radians when given as a ``Real``.
+        end_angle : ~pint.Quantity | Angle | Real
+            Parametric end angle. Defaults to radians when given as a ``Real``.
+            The arc sweeps counter-clockwise when ``end_angle > start_angle``.
+        angle : ~pint.Quantity | Angle | Real, default: 0
+            Rotation of the ellipse about its center (radians when ``Real``).
+        tag : str, default: None
+            User-defined label for identifying the edge.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+
+        Notes
+        -----
+        The arc is represented as an exact degree-2 rational NURBS (no approximation).
+        Internally it is split into segments of at most 90° for numerical stability.
+        Use this method instead of :meth:`ellipse` when only a partial arc is needed,
+        for example to build watertight profiles that mix segments, arcs, and elliptic
+        curves.
+        """
+        partial = SketchNurbs.partial_ellipse(
+            center, major_radius, minor_radius, start_angle, end_angle, angle
+        )
+        return self.edge(partial, tag)
 
     def polygon(
         self,

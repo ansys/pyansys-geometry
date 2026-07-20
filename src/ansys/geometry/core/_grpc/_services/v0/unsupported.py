@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the unsupported service implementation for v0."""
 
 import grpc
@@ -84,6 +85,24 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    def load_addin(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.load_addin' is not "
+            "implemented in this protofile version."
+        )
+
+    def run_addin_method(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.run_addin_method' is not "
+            "implemented in this protofile version."
+        )
+
+    def convert_to_heavyweight(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.convert_to_heavyweight' is not "
+            "implemented in this protofile version."
+        )
 
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102

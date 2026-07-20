@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the parts service implementation for v1."""
 
 import grpc
@@ -43,8 +44,13 @@ class GRPCPartsServiceV1(GRPCPartsService):  # pragma: no cover
 
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        raise NotImplementedError("GRPCPartsServiceV1 is not implemented.")
+        raise NotImplementedError(
+            f"Class '{self.__class__.__name__}' is not implemented in this protofile version."
+        )
 
     @protect_grpc
     def export(self, **kwargs) -> dict:  # noqa: D102
-        raise NotImplementedError("GRPCPartsServiceV1.export is not implemented.")
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.export' is not "
+            "implemented in this protofile version."
+        )

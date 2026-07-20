@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.13'
+  MAIN_PYTHON_VERSION: '3.14'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
@@ -37,25 +37,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image-tag: "windows-24.1"
-            backend-version: "24.1"
           - image-tag: "windows-24.2"
             backend-version: "24.2"
           - image-tag: "windows-25.1"
             backend-version: "25.1"
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Create Python venv
         run: |
@@ -70,7 +68,7 @@ jobs:
           pip install . --group tests
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -99,7 +97,7 @@ jobs:
           }
 
       - name: Define SERVER_ENDPOINT variable if needed
-        if: matrix.backend-version == '24.1' || matrix.backend-version == '24.2' || matrix.backend-version == '25.1'
+        if: matrix.backend-version == '24.2' || matrix.backend-version == '25.1'
         run: |
           $env:SERVER_ENDPOINT = "-e SERVER_ENDPOINT=50051@0.0.0.0"
           echo "SERVER_ENDPOINT variable set to: $env:SERVER_ENDPOINT"
@@ -126,10 +124,11 @@ jobs:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
+          # These older images only support proto v0, so no need to loop over proto versions here
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -165,31 +164,35 @@ jobs:
           - image-tag: "core-windows-25.2"
             backend-version: "25.2"
             windows-runner: "windows-2025"
+            proto-version: "v0"
+          - image-tag: "core-windows-26.1"
+            backend-version: "26.1"
+            windows-runner: "windows-2025"
+            proto-version: "v1"
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install packages for testing
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade build wheel
-          pip install -e . --group tests
+        run: uv sync --group tests
 
       - name: Download Geometry service container (if needed)
         env:
@@ -216,11 +219,12 @@ jobs:
         timeout-minutes: 20 # Sometimes hangs...
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
+          PROTO_VERSION: ${{ matrix.proto-version }}
         run: |
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION -rf
+          uv run pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=$env:PROTO_VERSION -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:

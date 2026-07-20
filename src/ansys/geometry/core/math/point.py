@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,16 +19,20 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides geometry primitive representation for 2D and 3D points."""
 
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, Unit
 
 from ansys.geometry.core.math.matrix import Matrix44
-from ansys.geometry.core.misc.checks import check_ndarray_is_float_int, check_type
+from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    check_ndarray_is_float_int,
+    check_type,
+)
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 from ansys.geometry.core.typing import RealSequence

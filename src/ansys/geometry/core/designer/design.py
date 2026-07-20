@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,13 +19,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing designs."""
 
 from enum import Enum, unique
 from pathlib import Path
 from typing import Union
 
-from beartype import beartype as check_input_types
 import numpy as np
 from pint import Quantity, UndefinedUnitError
 
@@ -42,6 +42,9 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
 from ansys.geometry.core.designer.face import Face
@@ -57,13 +60,17 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
+    FMDExportOptions,
     ImportOptions,
     ImportOptionsDefinitions,
+    PMDBExportOptions,
     TessellationOptions,
 )
 from ansys.geometry.core.modeler import Modeler
@@ -123,6 +130,17 @@ class Design(Component):
         Whether an existing design on the service should be read. This parameter is
         only valid when connecting to an existing service session. Otherwise, avoid
         using this optional parameter.
+
+    Warnings
+    --------
+    To ensure design objects are up to date, it is recommended to access design
+    information (e.g. bodies, components, etc.) via the design instance properties
+    and methods, rather than storing this information separately. For example, to get
+    the bodies in a design, it is recommended to use ``design.bodies`` rather than
+    storing the bodies in a separate variable (e.g. ``bodies = design.bodies``) and
+    using that variable for future reference. This is because the design may be
+    updated after the initial retrieval of the bodies, which would make the separate
+    variable out of date.
     """
 
     # Types of the class instance private attributes
@@ -251,6 +269,12 @@ class Design(Component):
 
     @check_input_types
     @ensure_design_is_active
+    @deprecated_method(
+        "export_to_*",
+        "use the export_to_* or download methods instead",
+        "0.15.2",
+        "0.17.0",
+    )
     def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
         """Save a design to disk on the active Geometry server instance.
 
@@ -280,6 +304,8 @@ class Design(Component):
         file_location: Path | str,
         format: DesignFileFormat = DesignFileFormat.SCDOCX,
         write_body_facets: bool = False,
+        fmd_options: FMDExportOptions | None = None,
+        pmdb_options: PMDBExportOptions | None = None,
     ) -> None:
         """Export and download the design from the server.
 
@@ -291,7 +317,19 @@ class Design(Component):
             Format for the file to save to.
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        fmd_options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
+        pmdb_options : PMDBExportOptions | None, default: None
+            Options for PMDB export. Only applicable when format is PMDB.
+
+        Warnings
+        --------
+        FMD and PMDB export options are only available in Ansys 27.1 and later
+        products. If options are provided but the backend version does not support
+        them, the options will be ignored.
         """
+        from ansys.geometry.core.misc.auxiliary import extract_project_from_zip
+
         # Sanity checks on inputs
         if isinstance(file_location, str):
             file_location = Path(file_location)
@@ -316,11 +354,31 @@ class Design(Component):
             received_bytes = self.__export_and_download_legacy(format=format)
         else:
             received_bytes = self.__export_and_download(
-                format=format, write_body_facets=write_body_facets
+                format=format,
+                write_body_facets=write_body_facets,
+                file_location=file_location,
+                fmd_options=fmd_options,
+                pmdb_options=pmdb_options,
             )
 
         # Write to file
-        file_location.write_bytes(received_bytes)
+        if (
+            self._grpc_client.services.version == GeometryApiProtos.V0
+            or self._grpc_client.backend_version < (27, 1, 0)
+        ):
+            file_location.write_bytes(received_bytes)
+        elif self._grpc_client.services.version == GeometryApiProtos.V1:
+            # In v1 - the file is sent as a zip containing the main file
+            zipped_file = file_location.parent / f"{file_location.stem}.zip"
+            zipped_file.write_bytes(received_bytes)
+            # Extract the main file from the zip and save to the specified location
+            extract_project_from_zip(zipped_file, file_location.parent)
+            # If extraction is successful, remove the zip file
+            zipped_file.unlink()
+        else:  # pragma: no cover
+            # This should never happen as the version is set in the constructor
+            raise ValueError(f"Unsupported version: {self.version}")
+
         self._grpc_client.log.debug(f"Design downloaded at location {file_location}.")
 
     @min_backend_version(24, 1, 0)
@@ -389,6 +447,9 @@ class Design(Component):
         self,
         format: DesignFileFormat,
         write_body_facets: bool = False,
+        file_location: Path | str | None = None,
+        fmd_options: FMDExportOptions | None = None,
+        pmdb_options: PMDBExportOptions | None = None,
     ) -> bytes:
         """Export and download the design from the server.
 
@@ -396,6 +457,14 @@ class Design(Component):
         ----------
         format : DesignFileFormat
             Format for the file to save to.
+        write_body_facets : bool, default: False
+            Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
+        file_location : ~pathlib.Path | str, optional
+            Location on disk to save the file to.
+        fmd_options : FMDExportOptions | None, default: None
+            Options for FMD export. Only applicable when format is FMD.
+        pmdb_options : PMDBExportOptions | None, default: None
+            Options for PMDB export. Only applicable when format is PMDB.
 
         Returns
         -------
@@ -421,6 +490,9 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
+                    filename=file_location,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
             except Exception:
                 self._grpc_client.log.warning(
@@ -432,6 +504,9 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
+                    filepath=file_location,
+                    fmd_options=fmd_options,
+                    pmdb_options=pmdb_options,
                 )
         else:
             self._grpc_client.log.warning(
@@ -551,7 +626,12 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "xmt_txt" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_t"
+        ext = (
+            "xmt_txt"
+            if BackendType.is_linux_service(self._grpc_client.backend_type)
+            and self._grpc_client._services.version == GeometryApiProtos.V0
+            else "x_t"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -577,7 +657,12 @@ class Design(Component):
             The path to the saved file.
         """
         # Determine the extension based on the backend type
-        ext = "xmt_bin" if BackendType.is_linux_service(self._grpc_client.backend_type) else "x_b"
+        ext = (
+            "xmt_bin"
+            if BackendType.is_linux_service(self._grpc_client.backend_type)
+            and self._grpc_client._services.version == GeometryApiProtos.V0
+            else "x_b"
+        )
 
         # Define the file location
         file_location = self.__build_export_file_location(location, ext)
@@ -588,7 +673,11 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_fmd(self, location: Path | str | None = None) -> Path:
+    def export_to_fmd(
+        self,
+        location: Path | str | None = None,
+        options: FMDExportOptions | None = None,
+    ) -> Path:
         """Export the design to an FMD file.
 
         Parameters
@@ -596,17 +685,32 @@ class Design(Component):
         location : ~pathlib.Path | str, optional
             Location on disk to save the file to. If None, the file will be saved
             in the current working directory.
+        options : FMDExportOptions, optional
+            Options for FMD export. If None, default options will be used.
 
         Returns
         -------
         ~pathlib.Path
             The path to the saved file.
+
+        Warnings
+        --------
+        FMD export options are only available in Ansys 27.1 and later products. If options are
+        provided but the backend version does not support them, a warning will be issued and the
+        options will be ignored.
         """
         # Define the file location
         file_location = self.__build_export_file_location(location, "fmd")
 
         # Export the design to an FMD file
-        self.download(file_location, DesignFileFormat.FMD)
+        if options and self._grpc_client.backend_version < (27, 1, 0):
+            self._grpc_client.log.warning(
+                "FMD export options are only supported in Ansys 27.1 and later products."
+                " Ignoring provided options and exporting with default settings."
+            )
+            options = None
+
+        self.download(file_location, DesignFileFormat.FMD, fmd_options=options)
 
         # Return the file location
         return file_location
@@ -657,7 +761,11 @@ class Design(Component):
         # Return the file location
         return file_location
 
-    def export_to_pmdb(self, location: Path | str | None = None) -> Path:
+    def export_to_pmdb(
+        self,
+        location: Path | str | None = None,
+        options: PMDBExportOptions | None = None,
+    ) -> Path:
         """Export the design to a PMDB file.
 
         Parameters
@@ -675,7 +783,7 @@ class Design(Component):
         file_location = self.__build_export_file_location(location, "pmdb")
 
         # Export the design to a PMDB file
-        self.download(file_location, DesignFileFormat.PMDB)
+        self.download(file_location, DesignFileFormat.PMDB, pmdb_options=options)
 
         # Return the file location
         return file_location
@@ -692,6 +800,8 @@ class Design(Component):
         design_points: list[DesignPoint] | None = None,
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
+        design_curves: list[DesignCurve] | None = None,
+        datum_points: list[DatumPoint] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -713,6 +823,10 @@ class Design(Component):
             All components to include in the named selection.
         vertices : list[Vertex], default: None
             All vertices to include in the named selection.
+        design_curves : list[DesignCurve], default: None
+            All design curves to include in the named selection.
+        datum_points : list[DatumPoint], default: None
+            All datum points to include in the named selection.
 
         Returns
         -------
@@ -726,10 +840,23 @@ class Design(Component):
             one of the optional parameters must be provided.
         """
         # Verify that at least one entity is provided
-        if not any([bodies, faces, edges, beams, design_points, components, vertices]):
+        if not any(
+            [
+                bodies,
+                faces,
+                edges,
+                beams,
+                design_points,
+                components,
+                vertices,
+                design_curves,
+                datum_points,
+            ]
+        ):
             raise ValueError(
                 "At least one of the following must be provided: "
-                "bodies, faces, edges, beams, design_points, components, or vertices."
+                "bodies, faces, edges, beams, design_points, components, vertices, "
+                "design_curves, or datum_points."
             )
 
         named_selection = NamedSelection(
@@ -743,6 +870,8 @@ class Design(Component):
             design_points=design_points,
             components=components,
             vertices=vertices,
+            design_curves=design_curves,
+            datum_points=datum_points,
         )
 
         self._named_selections[named_selection.name] = named_selection
@@ -1147,8 +1276,12 @@ class Design(Component):
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
+        lines.append(f"  N Datum Points       : {len(self.datum_points)}")
+        lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
 
     def __read_existing_design(self) -> None:
@@ -1166,7 +1299,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [X] SharedTopology
         #
@@ -1177,7 +1310,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [ ] SharedTopology
         #
@@ -1241,6 +1374,7 @@ class Design(Component):
                 body.get("name"),
                 self._grpc_client,
                 is_surface=body.get("is_surface"),
+                is_lightweight=body.get("is_lightweight", False),
             )
             part.bodies.append(tb)
             created_bodies[body.get("id")] = tb
@@ -1388,6 +1522,58 @@ class Design(Component):
             # Append the design point to the component to which it belongs
             created_dp.parent_component._design_points.append(created_dp)
 
+        # Create DatumPlanes - different retrieval methods based on backends for best compatibility
+        planes = []
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.debug(
+                "Backend version does not support datum planes. Skipping datum plane creation."
+            )
+        elif (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            planes = self._grpc_client.services.planes.get_all(parent_id=self.id).get("planes", [])
+        else:
+            planes = response.get("datum_planes", [])
+
+        for dp in planes:
+            created_dp = DatumPlane(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("plane"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the datum plane to the component to which it belongs
+            created_dp.parent_component._datum_planes.append(created_dp)
+
+        # Create DesignCurves
+        for dc in response.get("design_curves"):
+            created_dc = DesignCurve(
+                dc.get("id"),
+                dc.get("name"),
+                dc.get("length"),
+                dc.get("start"),
+                dc.get("end"),
+                self._grpc_client,
+                created_components.get(dc.get("parent_id"), self),
+            )
+
+            # Append the design curve to the component to which it belongs
+            created_dc.parent_component._design_curves.append(created_dc)
+
+        # Create Datum Points
+        for dp in response.get("datum_points"):
+            created_dp = DatumPoint(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("point"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the datum point to the component to which it belongs
+            created_dp.parent_component._datum_points.append(created_dp)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1411,6 +1597,10 @@ class Design(Component):
         self._grpc_client.log.debug(f"NamedSelections created: {len(self.named_selections)}")
         self._grpc_client.log.debug(f"CoordinateSystems created: {num_created_coord_systems}")
         self._grpc_client.log.debug(f"SharedTopologyTypes set: {num_created_shared_topologies}")
+        self._grpc_client.log.debug(f"Beams created: {len(self.beams)}")
+        self._grpc_client.log.debug(f"Design points created: {len(self.design_points)}")
+        self._grpc_client.log.debug(f"Datum planes created: {len(self.datum_planes)}")
+        self._grpc_client.log.debug(f"Design curves created: {len(self.design_curves)}")
 
         self._grpc_client.log.debug(f"\nSuccessfully read design in: {end - start} s")
 
@@ -1433,7 +1623,12 @@ class Design(Component):
         self._clear_cached_bodies()
         self._materials = []
         self._named_selections = {}
-        self._coordinate_systems = {}
+        self._coordinate_systems = []
+        self._datum_planes = []
+        self._datum_points = []
+        self._design_curves = []
+        self._design_points = []
+        self._beam_profiles = {}
 
         # Read the existing design
         self.__read_existing_design()
@@ -1582,6 +1777,7 @@ class Design(Component):
             body_id = created_body_info["id"]
             body_name = created_body_info["name"]
             is_surface = created_body_info.get("is_surface", False)
+            is_lightweight = created_body_info.get("is_lightweight", False)
             self._grpc_client.log.debug(
                 f"Processing created body: ID={body_id}, Name='{body_name}'"
             )
@@ -1595,8 +1791,15 @@ class Design(Component):
             new_body = self._find_and_add_body(
                 created_body_info, self.components, created_parts_dict, created_components_dict
             )
+
             if not new_body:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                new_body = MasterBody(
+                    body_id,
+                    body_name,
+                    self._grpc_client,
+                    is_surface=is_surface,
+                    is_lightweight=is_lightweight,
+                )
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(
@@ -1719,6 +1922,31 @@ class Design(Component):
             return True
 
         return False
+
+    def _clear_body_cache_for_part(self, part: Part) -> None:
+        """Clear body cache on all components that reference a specific part.
+
+        Parameters
+        ----------
+        part : Part
+            The part whose body cache should be cleared on all referencing components.
+        """
+        # Check root component
+        if (
+            hasattr(self, "_master_component")
+            and self._master_component
+            and self._master_component.part == part
+        ):
+            self._clear_cached_bodies()
+
+        # Check all child components recursively
+        for component in self._get_all_components():
+            if (
+                hasattr(component, "_master_component")
+                and component._master_component
+                and component._master_component.part == part
+            ):
+                component._clear_cached_bodies()
 
     def _find_and_add_component_to_design(
         self,
@@ -1843,6 +2071,7 @@ class Design(Component):
         )
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
+        existing_body._template._is_lightweight = body_info.get("is_lightweight", False)
 
     def _find_and_add_body(
         self,
@@ -1880,11 +2109,14 @@ class Design(Component):
                     tracked_body_info["name"],
                     self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
+                    is_lightweight=tracked_body_info.get("is_lightweight", False),
                 )
 
                 component._master_component.part.bodies.append(new_master_body)
 
-                component._clear_cached_bodies()
+                # Clear cached bodies on all components that reference this part
+                self._clear_body_cache_for_part(component._master_component.part)
+
                 self._grpc_client.log.debug(
                     f"Added new body '{new_master_body.name}' (ID: {new_master_body.id}) "
                     f"to component '{component.name}' (ID: {component.id})"

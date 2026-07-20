@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,6 +23,7 @@
 import warnings
 
 import numpy as np
+from pint import Quantity
 import pytest
 
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -44,10 +45,21 @@ from ansys.geometry.core.misc import (
     kwargs_passed_not_accepted,
     min_backend_version,
 )
+from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.misc.options import (
+    AnalysisType,
+    FMDExportOptions,
+    PMDBAttachWeightClass,
+    PMDBExportOptions,
+    PMDBImportParameterType,
+    PMDBMixedPartExportType,
+    PMDBPlugInFacetQuality,
+    PMDBTargetApplication,
+)
 
 
 def test_tessellation_options():
-    # Testing tessellation options
+    # Testing tessellation options with Real values
     tessellation_options = TessellationOptions(
         surface_deviation=0.01,
         angle_deviation=0.1,
@@ -55,11 +67,159 @@ def test_tessellation_options():
         max_edge_length=5.0,
         watertight=True,
     )
-    assert tessellation_options.surface_deviation == 0.01
-    assert tessellation_options.angle_deviation == 0.1
+    assert isinstance(tessellation_options.surface_deviation, Distance)
+    assert isinstance(tessellation_options.angle_deviation, Angle)
+    assert isinstance(tessellation_options.max_edge_length, Distance)
+    assert tessellation_options.surface_deviation.value.m_as("m") == 0.01
+    assert tessellation_options.angle_deviation.value.m_as("rad") == 0.1
     assert tessellation_options.max_aspect_ratio == 2.0
-    assert tessellation_options.max_edge_length == 5.0
+    assert tessellation_options.max_edge_length.value.m_as("m") == 5.0
     assert tessellation_options.watertight is True
+
+    # Testing tessellation options with Distance and Angle objects
+    tessellation_options_with_measurements = TessellationOptions(
+        surface_deviation=Distance(0.02, UNITS.meter),
+        angle_deviation=Angle(0.2, UNITS.radian),
+        max_aspect_ratio=3.0,
+        max_edge_length=Distance(10.0, UNITS.meter),
+        watertight=False,
+    )
+    assert isinstance(tessellation_options_with_measurements.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_measurements.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_measurements.max_edge_length, Distance)
+    assert tessellation_options_with_measurements.surface_deviation.value.m_as(UNITS.m) == 0.02
+    assert tessellation_options_with_measurements.angle_deviation.value.m_as(UNITS.rad) == 0.2
+    assert tessellation_options_with_measurements.max_aspect_ratio == 3.0
+    assert tessellation_options_with_measurements.max_edge_length.value.m_as(UNITS.m) == 10.0
+    assert tessellation_options_with_measurements.watertight is False
+
+    # Testing tessellation options with Quantity objects
+    tessellation_options_with_quantities = TessellationOptions(
+        surface_deviation=Quantity(0.03, UNITS.meter),
+        angle_deviation=Quantity(0.3, UNITS.radian),
+        max_aspect_ratio=4.0,
+        max_edge_length=Quantity(15.0, UNITS.meter),
+        watertight=True,
+    )
+    assert isinstance(tessellation_options_with_quantities.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_quantities.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_quantities.max_edge_length, Distance)
+    assert tessellation_options_with_quantities.surface_deviation.value.m_as(UNITS.m) == 0.03
+    assert tessellation_options_with_quantities.angle_deviation.value.m_as(UNITS.rad) == 0.3
+    assert tessellation_options_with_quantities.max_aspect_ratio == 4.0
+    assert tessellation_options_with_quantities.max_edge_length.value.m_as(UNITS.m) == 15.0
+    assert tessellation_options_with_quantities.watertight is True
+
+    # Testing tessellation options with unit conversions (Distance and Angle)
+    tessellation_options_with_conversions = TessellationOptions(
+        surface_deviation=Distance(10, UNITS.millimeter),  # 10mm = 0.01m
+        angle_deviation=Angle(180, UNITS.degree),  # 180 degrees = π radians
+        max_edge_length=Distance(5, UNITS.centimeter),  # 5cm = 0.05m
+    )
+    import math
+
+    assert isinstance(tessellation_options_with_conversions.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_conversions.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_conversions.max_edge_length, Distance)
+    assert (
+        abs(tessellation_options_with_conversions.surface_deviation.value.m_as(UNITS.m) - 0.01)
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_conversions.angle_deviation.value.m_as(UNITS.rad) - math.pi)
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_conversions.max_edge_length.value.m_as(UNITS.m) - 0.05) < 1e-9
+    )
+
+    # Testing tessellation options with unit conversions (Quantity)
+    tessellation_options_with_qty_conversions = TessellationOptions(
+        surface_deviation=Quantity(20, UNITS.millimeter),  # 20mm = 0.02m
+        angle_deviation=Quantity(90, UNITS.degree),  # 90 degrees = π/2 radians
+        max_edge_length=Quantity(10, UNITS.centimeter),  # 10cm = 0.1m
+    )
+    assert isinstance(tessellation_options_with_qty_conversions.surface_deviation, Distance)
+    assert isinstance(tessellation_options_with_qty_conversions.angle_deviation, Angle)
+    assert isinstance(tessellation_options_with_qty_conversions.max_edge_length, Distance)
+    assert (
+        abs(tessellation_options_with_qty_conversions.surface_deviation.value.m_as(UNITS.m) - 0.02)
+        < 1e-9
+    )
+    assert (
+        abs(
+            tessellation_options_with_qty_conversions.angle_deviation.value.m_as(UNITS.rad)
+            - math.pi / 2
+        )
+        < 1e-9
+    )
+    assert (
+        abs(tessellation_options_with_qty_conversions.max_edge_length.value.m_as(UNITS.m) - 0.1)
+        < 1e-9
+    )
+
+
+def test_fmd_export_options():
+    """Test FMDExportOptions properties with Real, Distance/Angle, and Quantity inputs."""
+    import math
+
+    # --- Real values (assumed meters / radians) ---
+    opts = FMDExportOptions(
+        deviation=0.001,
+        angle=0.5,
+        aspect_ratio=-2,
+        max_edge_length=0.05,
+    )
+    assert isinstance(opts.deviation, Distance)
+    assert isinstance(opts.angle, Angle)
+    assert opts.deviation.value.m_as("m") == 0.001
+    assert opts.angle.value.m_as("rad") == 0.5
+    assert opts.aspect_ratio == -2
+    assert isinstance(opts.max_edge_length, Distance)
+    assert opts.max_edge_length.value.m_as("m") == 0.05
+
+    # --- Distance / Angle objects ---
+    opts_meas = FMDExportOptions(
+        deviation=Distance(0.75, UNITS.millimeter),
+        angle=Angle(8.0, UNITS.degree),
+        aspect_ratio=-3,
+        max_edge_length=Distance(2.0, UNITS.centimeter),
+    )
+    assert isinstance(opts_meas.deviation, Distance)
+    assert isinstance(opts_meas.angle, Angle)
+    assert abs(opts_meas.deviation.value.m_as("m") - 0.00075) < 1e-12
+    assert abs(opts_meas.angle.value.m_as("rad") - math.radians(8.0)) < 1e-12
+    assert opts_meas.aspect_ratio == -3
+    assert abs(opts_meas.max_edge_length.value.m_as("m") - 0.02) < 1e-12
+
+    # --- Quantity objects ---
+    opts_qty = FMDExportOptions(
+        deviation=Quantity(1.0, UNITS.millimeter),
+        angle=Quantity(25.0, UNITS.degree),
+        aspect_ratio=0,
+        max_edge_length=Quantity(10.0, UNITS.centimeter),
+    )
+    assert isinstance(opts_qty.deviation, Distance)
+    assert isinstance(opts_qty.angle, Angle)
+    assert abs(opts_qty.deviation.value.m_as("m") - 0.001) < 1e-12
+    assert abs(opts_qty.angle.value.m_as("rad") - math.radians(25.0)) < 1e-12
+    assert opts_qty.aspect_ratio == 0
+    assert abs(opts_qty.max_edge_length.value.m_as("m") - 0.1) < 1e-12
+
+
+def test_fmd_export_options_invalid():
+    """Test that FMDExportOptions raises ValueError for out-of-range deviation and angle."""
+    with pytest.raises(ValueError, match="deviation must be between"):
+        FMDExportOptions(deviation=0.00001, angle=0.5)
+
+    with pytest.raises(ValueError, match="deviation must be between"):
+        FMDExportOptions(deviation=0.003, angle=0.5)
+
+    with pytest.raises(ValueError, match="angle must be between"):
+        FMDExportOptions(deviation=0.001, angle=0.0001)  # ~0.006 degrees
+
+    with pytest.raises(ValueError, match="angle must be between"):
+        FMDExportOptions(deviation=0.001, angle=1.0)  # ~57.3 degrees
 
 
 def test_misc_checks():
@@ -518,3 +678,156 @@ def test_rayfire_options():
     assert rayfire_options.max_hits == 15
     assert rayfire_options.request_params is True
     assert rayfire_options.request_secondary is False
+
+    
+def test_pmdb_export_options_defaults():
+    """Test that PMDBExportOptions defaults are set correctly."""
+    opts = PMDBExportOptions()
+
+    assert opts.parameter_prefixes == ""
+    assert opts.cad_attribute_prefixes == ""
+    assert opts.named_selection_prefixes == ""
+    assert opts.analysis_type is AnalysisType.THREE_D
+    assert opts.mixed_part_export_type is PMDBMixedPartExportType.ALL
+    assert opts.attach_flattened_assembly is True
+    assert opts.use_cad_mass_properties is True
+    assert opts.plane_prefixes == ""
+    assert opts.coordinate_system_prefixes == ""
+    assert opts.advanced_geom_processing is False
+    assert opts.angular_deviation == 0.0
+    assert opts.attach_weight_class is PMDBAttachWeightClass.HEAVYWEIGHT
+    assert opts.cad_associativity is False
+    assert opts.cad_attribute_transfer is True
+    assert opts.do_smart_update is False
+    assert opts.geometry_deviation == 0.0
+    assert opts.process_coordinate_sys is True
+    assert opts.process_planes is True
+    assert opts.import_using_instances is True
+    assert opts.process_work_points is True
+    assert opts.is_selective_update is False
+    assert opts.material_properties is True
+    assert opts.granta_material_properties is False
+    assert opts.max_facet_size == 0.0
+    assert opts.named_selection is True
+    assert opts.parameter_processing_type is PMDBImportParameterType.ALL
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.SOURCE
+    assert opts.process_enclosure_and_symmetry is True
+    assert opts.reader_save_part is False
+    assert opts.target_application is PMDBTargetApplication.PARTMGR
+    assert opts.temp_directory is None
+    assert opts.process_physics_definition is True
+    assert opts.process_solid_bodies is True
+    assert opts.process_surface_bodies is True
+    assert opts.process_line_bodies is True
+
+
+def test_pmdb_export_options_custom_values():
+    """Test that PMDBExportOptions accepts and stores non-default values correctly."""
+    opts = PMDBExportOptions(
+        parameter_prefixes="DS_",
+        cad_attribute_prefixes="attr_",
+        named_selection_prefixes="ns_",
+        analysis_type=AnalysisType.TWO_D,
+        mixed_part_export_type=PMDBMixedPartExportType.SOLID_SHEET,
+        attach_flattened_assembly=True,
+        use_cad_mass_properties=True,
+        plane_prefixes="pl_",
+        coordinate_system_prefixes="cs_",
+        advanced_geom_processing=True,
+        angular_deviation=1.5,
+        attach_weight_class=PMDBAttachWeightClass.LIGHTWEIGHT,
+        cad_associativity=True,
+        cad_attribute_transfer=True,
+        do_smart_update=True,
+        geometry_deviation=0.001,
+        process_coordinate_sys=True,
+        process_planes=True,
+        import_using_instances=True,
+        process_work_points=True,
+        is_selective_update=True,
+        material_properties=True,
+        granta_material_properties=True,
+        max_facet_size=0.5,
+        named_selection=True,
+        parameter_processing_type=PMDBImportParameterType.ALL,
+        plug_in_facet_quality=PMDBPlugInFacetQuality.FINE,
+        process_enclosure_and_symmetry=True,
+        reader_save_part=True,
+        target_application=PMDBTargetApplication.FLUENTMESHING,
+        temp_directory="/tmp/pmdb",
+        process_physics_definition=True,
+        process_solid_bodies=True,
+        process_surface_bodies=True,
+        process_line_bodies=True,
+    )
+
+    assert opts.parameter_prefixes == "DS_"
+    assert opts.cad_attribute_prefixes == "attr_"
+    assert opts.named_selection_prefixes == "ns_"
+    assert opts.analysis_type is AnalysisType.TWO_D
+    assert opts.mixed_part_export_type is PMDBMixedPartExportType.SOLID_SHEET
+    assert opts.attach_flattened_assembly is True
+    assert opts.use_cad_mass_properties is True
+    assert opts.plane_prefixes == "pl_"
+    assert opts.coordinate_system_prefixes == "cs_"
+    assert opts.advanced_geom_processing is True
+    assert opts.angular_deviation == 1.5
+    assert opts.attach_weight_class is PMDBAttachWeightClass.LIGHTWEIGHT
+    assert opts.cad_associativity is True
+    assert opts.cad_attribute_transfer is True
+    assert opts.do_smart_update is True
+    assert opts.geometry_deviation == 0.001
+    assert opts.process_coordinate_sys is True
+    assert opts.process_planes is True
+    assert opts.import_using_instances is True
+    assert opts.process_work_points is True
+    assert opts.is_selective_update is True
+    assert opts.material_properties is True
+    assert opts.granta_material_properties is True
+    assert opts.max_facet_size == 0.5
+    assert opts.named_selection is True
+    assert opts.parameter_processing_type is PMDBImportParameterType.ALL
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.FINE
+    assert opts.process_enclosure_and_symmetry is True
+    assert opts.reader_save_part is True
+    assert opts.target_application is PMDBTargetApplication.FLUENTMESHING
+    assert opts.temp_directory == "/tmp/pmdb"
+    assert opts.process_physics_definition is True
+    assert opts.process_solid_bodies is True
+    assert opts.process_surface_bodies is True
+    assert opts.process_line_bodies is True
+
+
+def test_pmdb_export_options_enum_values():
+    """Test all enum classes used by PMDBExportOptions have expected members and values."""
+    # AnalysisType
+    assert AnalysisType.THREE_D.value == 0
+    assert AnalysisType.TWO_D.value == 1
+
+    # PMDBMixedPartExportType — spot-check key members
+    assert PMDBMixedPartExportType.NONE.value == 0
+    assert PMDBMixedPartExportType.SOLID.value == 1
+    assert PMDBMixedPartExportType.SOLID_SHEET.value == 5
+    assert PMDBMixedPartExportType.ALL.value == 15
+    assert len(PMDBMixedPartExportType) == 16
+
+    # PMDBAttachWeightClass
+    assert PMDBAttachWeightClass.HEAVYWEIGHT.value == 0
+    assert PMDBAttachWeightClass.FEATHERWEIGHT.value == 3
+    assert len(PMDBAttachWeightClass) == 4
+
+    # PMDBImportParameterType
+    assert PMDBImportParameterType.NONE.value == 0
+    assert PMDBImportParameterType.INDEPENDENT.value == 1
+    assert PMDBImportParameterType.ALL.value == 2
+    assert len(PMDBImportParameterType) == 3
+
+    # PMDBPlugInFacetQuality
+    assert PMDBPlugInFacetQuality.NONE.value == 0
+    assert PMDBPlugInFacetQuality.USER_DEFINED.value == 7
+    assert len(PMDBPlugInFacetQuality) == 8
+
+    # PMDBTargetApplication
+    assert PMDBTargetApplication.PARTMGR.value == 0
+    assert PMDBTargetApplication.SPACECLAIM.value == 4
+    assert len(PMDBTargetApplication) == 5

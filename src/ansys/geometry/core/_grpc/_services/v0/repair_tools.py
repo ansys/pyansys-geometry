@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the repair tools service implementation for v0."""
 
 from google.protobuf.wrappers_pb2 import Int32Value
@@ -796,6 +797,13 @@ class GRPCRepairToolsServiceV0(GRPCRepairToolsService):  # noqa: D102
             "created_bodies_monikers": response.result.created_bodies_monikers,
             "modified_bodies_monikers": response.result.modified_bodies_monikers,
         }
+
+    @protect_grpc
+    def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.find_bad_faces' is not "
+            "implemented in this protofile version."
+        )
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):

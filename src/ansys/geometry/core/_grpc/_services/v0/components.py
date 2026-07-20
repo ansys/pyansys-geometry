@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the components service implementation for v0."""
 
 import grpc
@@ -76,6 +77,8 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
             "instance_name": response.component.instance_name,
             "template": response.template,
             "component": response.component,
+            "component_master_id": response.component.master_id,
+            "component_part_master_id": response.component.part_master.id,
         }
 
     @protect_grpc
@@ -97,7 +100,7 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
 
         # Create the direction and point objects
         translation = (
-            from_unit_vector_to_grpc_direction(kwargs["translation"].normalize())
+            from_unit_vector_to_grpc_direction(kwargs["translation"])
             if kwargs["translation"] is not None
             else None
         )
@@ -183,3 +186,10 @@ class GRPCComponentsServiceV0(GRPCComponentsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def move_bodies_to_component(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.move_bodies_to_component' is not "
+            "implemented in this protofile version."
+        )

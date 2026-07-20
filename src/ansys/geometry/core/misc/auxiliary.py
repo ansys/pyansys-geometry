@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Auxiliary functions for the PyAnsys Geometry library."""
 
 from pathlib import Path
@@ -28,7 +29,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.datumpoint import DatumPoint
     from ansys.geometry.core.designer.design import Design
+    from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
@@ -149,6 +152,16 @@ def __traverse_all_design_points(comp: Union["Design", "Component"]) -> list["De
     return __traverse_component_elem("design_points", comp)
 
 
+def __traverse_all_design_curves(comp: Union["Design", "Component"]) -> list["DesignCurve"]:
+    """Traverse all design curves in a design/component and all its subcomponents."""
+    return __traverse_component_elem("design_curves", comp)
+
+
+def __traverse_all_datum_points(comp: Union["Design", "Component"]) -> list["DatumPoint"]:
+    """Traverse all datum points in a design/component and all its subcomponents."""
+    return __traverse_component_elem("datum_points", comp)
+
+
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
     """Find all the ``Body`` objects inside a ``Design``.
 
@@ -263,6 +276,29 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     ]  # noqa: E501
 
 
+def build_edge_id_map(design: "Design") -> "dict[str, Edge]":
+    """Build a mapping of edge id to ``Edge`` object for all edges in a ``Design``.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design to traverse.
+
+    Returns
+    -------
+    dict[str, Edge]
+        Dictionary mapping each edge id to its corresponding ``Edge`` object.
+
+    Notes
+    -----
+    This method traverses the design tree once and issues one gRPC call per body
+    (``body.edges``). Use this instead of repeated calls to ``get_edges_from_ids``
+    when you need to resolve multiple sets of edge ids from the same design, so that
+    the full traversal is paid only once.
+    """
+    return {edge.id: edge for body in __traverse_all_bodies(design) for edge in body.edges}
+
+
 def get_vertices_from_ids(design: "Design", vertex_ids: list[str]) -> list["Vertex"]:
     """Find the ``Vertex`` objects inside a ``Design`` from its ids.
 
@@ -337,6 +373,54 @@ def get_design_points_from_ids(
     return [dp for dp in __traverse_all_design_points(design) if dp.id in design_point_ids]
 
 
+def get_design_curves_from_ids(
+    design: "Design", design_curve_ids: list[str]
+) -> list["DesignCurve"]:
+    """Find the ``DesignCurve`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the design curves.
+    design_curve_ids : list[str]
+        List of design curve ids.
+
+    Returns
+    -------
+    list[DesignCurve]
+        List of DesignCurve objects.
+
+    Notes
+    -----
+    This method takes a design and design curve ids, and gets their corresponding ``DesignCurve``
+    objects.
+    """
+    return [dc for dc in __traverse_all_design_curves(design) if dc.id in design_curve_ids]
+
+
+def get_datum_points_from_ids(design: "Design", datum_point_ids: list[str]) -> list["DatumPoint"]:
+    """Find the ``DatumPoint`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the datum points.
+    datum_point_ids : list[str]
+        List of datum point ids.
+
+    Returns
+    -------
+    list[DatumPoint]
+        List of DatumPoint objects.
+
+    Notes
+    -----
+    This method takes a design and datum point ids, and gets their corresponding ``DatumPoint``
+    objects.
+    """
+    return [dp for dp in __traverse_all_datum_points(design) if dp.id in datum_point_ids]
+
+
 def convert_color_to_hex(
     color: str | tuple[float, float, float] | tuple[float, float, float, float],
 ) -> str:
@@ -407,7 +491,7 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
 
     Parameters
     ----------
-    file_path : str
+    file_path : Path
         The path to the file to be zipped.
 
     Returns
@@ -428,11 +512,36 @@ def prepare_file_for_server_upload(file_path: Path) -> Path:
         zipf.write(file_path, file_path.name)
 
         # If it's an assembly format, add all files from the same directory
-        assembly_extensions = [".CATProduct", ".asm", ".solution", ".sldasm"]
-        if any(ext in str(file_path) for ext in assembly_extensions):
+        assembly_extensions = [".catproduct", ".asm", ".solution", ".sldasm"]
+        if any(ext in str(file_path).lower() for ext in assembly_extensions):
             dir_path = file_path.parent
             for file in dir_path.iterdir():
                 if file.is_file() and file != file_path:
                     zipf.write(file, file.name)
 
     return temp_zip_path
+
+
+def extract_project_from_zip(file_path: Path, extract_to: Path) -> Path:
+    """Extract a zip file to a specified directory.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the zip file to be extracted.
+    extract_to : str
+        The path to the directory where the zip file should be extracted.
+
+    Returns
+    -------
+    Path
+        The path to the directory where the zip file was extracted.
+
+    """
+    from zipfile import ZipFile
+
+    # Extract zip archive
+    with ZipFile(file_path, "r") as zipf:
+        zipf.extractall(extract_to)
+
+    return extract_to

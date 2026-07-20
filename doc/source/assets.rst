@@ -18,17 +18,17 @@ If you lack an internet connection on your installation machine, you should inst
 by downloading the wheelhouse archive.
 
 Each wheelhouse archive contains all the Python wheels necessary to install PyAnsys Geometry from scratch on Windows,
-Linux, and MacOS from Python 3.10 to 3.13. You can install this on an isolated system with a fresh Python
+Linux, and MacOS from Python 3.12 to 3.14. You can install this on an isolated system with a fresh Python
 installation or on a virtual environment.
 
-For example, on Linux with Python 3.10, unzip the wheelhouse archive and install it with:
+For example, on Linux with Python 3.12, unzip the wheelhouse archive and install it with:
 
 .. code:: bash
 
-    unzip ansys-geometry-core-v0.15.dev0-all-wheelhouse-ubuntu-latest-3.10.zip wheelhouse
+    unzip ansys_geometry_core-v0.16.dev0-all-wheelhouse-ubuntu-latest-3.12.zip wheelhouse
     pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
 
-If you are on Windows with Python 3.10, unzip to a wheelhouse directory by running ``-d wheelhouse``
+If you are on Windows with Python 3.12, unzip to a wheelhouse directory by running ``-d wheelhouse``
 (this is required for unzipping to a directory on Windows) and install using the preceding command.
 
 Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
@@ -43,7 +43,7 @@ The following wheelhouse files are available for download:
     {{ "^" * os_name|length }}
 
     {%- for link in download_links %}
-    * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys-geometry-core-{{ link.latest_released_version }}-all-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
+    * `{{ link.os }} wheelhouse for Python {{ link.python_versions }} <{{ link.prefix_url }}/ansys_geometry_core-{{ link.latest_released_version }}-all-wheelhouse-{{ link.runner }}-{{ link.python_versions }}.zip>`_
     {%- endfor %}
 
     {%- endfor %}

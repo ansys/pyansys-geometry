@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,16 +19,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing a circle."""
 
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
-from ansys.geometry.core.misc.checks import graphics_required
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.sketch.face import SketchFace
@@ -118,17 +118,20 @@ class SketchCircle(SketchFace, Circle):
         -------
         pyvista.PolyData
             VTK pyvista.Polydata configuration.
-        """
-        import pyvista as pv
 
-        circle = pv.Circle(radius=self.radius.m_as(DEFAULT_UNITS.LENGTH))
-        return circle.translate(
-            [
-                self.center.x.m_as(DEFAULT_UNITS.LENGTH),
-                self.center.y.m_as(DEFAULT_UNITS.LENGTH),
-                0,
-            ],
-            inplace=True,
+        Warnings
+        --------
+        This method uses a discretized circle constructed of line segments for visualization
+        purposes.
+        """
+        from ansys.geometry.core.plotting.utils import create_elliptical_polydata
+
+        return create_elliptical_polydata(
+            origin=self.origin,
+            dir_x=self.dir_x,
+            dir_y=self.dir_y,
+            dir_z=self.dir_z,
+            major_radius=self.radius.m_as(DEFAULT_UNITS.LENGTH),
         )
 
     def plane_change(self, plane: Plane) -> None:

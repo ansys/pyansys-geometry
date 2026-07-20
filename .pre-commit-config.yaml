@@ -1,39 +1,39 @@
 ci:
   autofix_commit_msg: 'chore: auto fixes from pre-commit hooks'
-  autoupdate_commit_msg: 'chore: pre-commit automatic update'
-  autoupdate_schedule: weekly
 
-exclude: "tests/integration/files"
+exclude: "tests/integration/files|uv\\.lock"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: v0.21.0
+    rev: 21ca5323a9c87ee37a434e0ca908efc0a89daa07 # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
           - "-formatter"
           - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+          - "-exclude"
+          - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: v2.12.1
+    rev: cf78bb920f358be6dea099e6b1fd6f67bccb0955 # frozen: v2.25.2
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.14
+    rev: 01a675ea018f2fb714478a5ffb83fcea8374bb06 # frozen: v0.15.21
     hooks:
       - id: ruff-check
       - id: ruff-format
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.4.1
+    rev: 2ccb47ff45ad361a21071a7eedda4c37e6ae8c5a # frozen: v2.4.2
     hooks:
       - id: codespell
         args: ["--ignore-words", "doc/styles/config/vocabularies/ANSYS/accept.txt", "-w"]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: debug-statements
@@ -41,7 +41,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.5.2
+    rev: 55c5b6a5439abd847613579c6924da750e8b78b2 # frozen: v0.8.0
     hooks:
       - id: add-license-headers
         args:
@@ -49,12 +49,12 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.36.1
+    rev: 6b63472e72e1a91ed8a2f6d483790dfb644fa1d3 # frozen: 0.37.4
     hooks:
       - id: check-github-workflows
 
   # this validates our pre-commit.ci configuration
   - repo: https://github.com/pre-commit-ci/pre-commit-ci-config
-    rev: v1.6.1
+    rev: 500543de231a91e6157db630075d70320709b834 # frozen: v1.6.1
     hooks:
       - id: check-pre-commit-ci-config

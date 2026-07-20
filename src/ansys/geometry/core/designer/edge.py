@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module for managing an edge."""
 
 from enum import Enum, unique
@@ -229,6 +230,33 @@ class Edge:
         self._grpc_client.log.debug("Requesting bounding box from server.")
 
         response = self._grpc_client.services.edges.get_bounding_box(id=self._id)
+        return BoundingBox(
+            response.get("min_corner"), response.get("max_corner"), response.get("center")
+        )
+
+    @property
+    @min_backend_version(27, 1, 0)
+    def centroid(self) -> Point3D:
+        """Get the centroid for the edge.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Getting centroid for {self.id}.")
+        response = self._grpc_client.services.edges.get_centroid(id=self.id)
+        return response.get("centroid")
+
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:
+        """Get the tight bounding box for the face.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Getting tight bounding box for {self.id}.")
+        response = self._grpc_client.services.edges.get_bounding_box(id=self.id, tight=tight)
         return BoundingBox(
             response.get("min_corner"), response.get("max_corner"), response.get("center")
         )

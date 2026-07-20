@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,17 +19,19 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for creating and managing a plane."""
 
 from functools import cached_property
+from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -40,6 +42,9 @@ from ansys.geometry.core.shapes.parameterization import (
 from ansys.geometry.core.shapes.surfaces.surface import Surface
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real, RealSequence
+
+if TYPE_CHECKING:
+    import pyvista as pv
 
 
 class PlaneSurface(Surface):
@@ -52,7 +57,7 @@ class PlaneSurface(Surface):
     reference : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
         X-axis direction.
     axis : ~numpy.ndarray | RealSequence | UnitVector3D | Vector3D
-        X-axis direction.
+        Z-axis direction.
     """
 
     def __init__(
@@ -137,6 +142,20 @@ class PlaneSurface(Surface):
         """Evaluate the plane at a given u and v parameter."""
         return PlaneEvaluation(self, parameter)
 
+    @property
+    @graphics_required
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the plane.
+
+        Returns
+        -------
+        pv.PolyData
+            Polydata representation of the plane for visualization.
+        """
+        import pyvista as pv
+
+        return pv.Plane(center=self.origin.flat, direction=self.dir_z.flat)
+
 
 class PlaneEvaluation(SurfaceEvaluation):
     """Provides evaluation of a plane at given parameters.
@@ -181,7 +200,7 @@ class PlaneEvaluation(SurfaceEvaluation):
     @cached_property
     def u_derivative(self) -> Vector3D:
         """First derivative with respect to u."""
-        return self.plane.dir_z
+        return self.plane.dir_x
 
     @cached_property
     def v_derivative(self) -> Vector3D:

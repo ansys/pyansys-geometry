@@ -16,6 +16,8 @@ with PyAnsys Geometry.
     examples/01_getting_started/03_sketching.mystnb
     examples/01_getting_started/04_modeling.mystnb
     examples/01_getting_started/05_plotter_picker.mystnb
+    examples/01_getting_started/06_curve_surface_plotting.mystnb
+    examples/01_getting_started/07_master_bodies.mystnb
 
 Sketching examples
 ------------------
@@ -51,6 +53,7 @@ These examples demonstrate service-based modeling operations.
     examples/03_modeling/surface_bodies.mystnb
     examples/03_modeling/design_parameters.mystnb
     examples/03_modeling/chamfer.mystnb
+    examples/03_modeling/detach_faces.mystnb
 
 Applied examples
 ----------------
@@ -64,6 +67,25 @@ applications.
     examples/04_applied/01_naca_airfoils.mystnb
     examples/04_applied/02_naca_fluent.mystnb
     examples/04_applied/03_ahmed_body_fluent.mystnb
+    examples/04_applied/04_mechanical_named_selections.mystnb
+    examples/04_applied/05_pmdb_export_options.mystnb
+    examples/04_applied/06_solder_ball.mystnb
+
+Tools examples
+--------------
+
+These examples demonstrate how to use the tools available in PyAnsys Geometry,
+such as the ``RepairTools`` class for detecting and fixing geometry issues,
+the ``PrepareTools`` class for preparing geometry for simulation, and
+the ``MeasurementTools`` class for measuring distances between geometric objects.
+
+
+.. nbgallery::
+    :caption: Tools examples
+
+    examples/05_tools/repair_tools.mystnb
+    examples/05_tools/prepare_tools.mystnb
+    examples/05_tools/measurement_tools.mystnb
 
 Miscellaneous examples
 ----------------------

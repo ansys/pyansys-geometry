@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,15 +19,17 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the curves service implementation for v0."""
 
 import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_angle
+from ..base.conversions import from_measurement_to_server_angle, to_distance
 from ..base.curves import GRPCCurvesService
 from .conversions import (
+    build_grpc_id,
     from_curve_to_grpc_curve,
     from_grpc_point_to_point3d,
     from_line_to_grpc_line,
@@ -52,8 +54,10 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
     @protect_grpc
     def __init__(self, channel: grpc.Channel):  # noqa: D102
         from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
+        from ansys.api.geometry.v0.curves_pb2_grpc import CurvesStub
 
-        self.stub = CommandsStub(channel)
+        self.stub = CurvesStub(channel)
+        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def revolve_edges(self, **kwargs) -> dict:  # noqa: D102
@@ -68,7 +72,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        _ = self.stub.RevolveCurves(request)
+        _ = self.commands_stub.RevolveCurves(request)
 
         # Return the result - formatted as a dictionary
         return {}
@@ -84,7 +88,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        response = self.stub.IntersectCurves(request)
+        response = self.commands_stub.IntersectCurves(request)
 
         # Return the result - formatted as a dictionary
         return {
@@ -113,10 +117,68 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         )
 
         # Call the gRPC service
-        response = self.stub.IntersectCurveAndSurface(request).response_data[0]
+        response = self.commands_stub.IntersectCurveAndSurface(request).response_data[0]
 
         # Return the result - formatted as a dictionary
         return {
             "intersect": response.intersect,
             "points": [from_grpc_point_to_point3d(point) for point in response.points],
         }
+
+    @protect_grpc
+    def get(self, **kwargs) -> dict:  # noqa: D102
+        # Call the gRPC service
+        response = self.stub.Get(build_grpc_id(kwargs["id"]))
+
+        # Return the result - formatted as a dictionary
+        return {
+            "end_point": from_grpc_point_to_point3d(response.points[0]),
+            "length": to_distance(response.length),
+        }
+
+    @protect_grpc
+    def get_interval(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_interval' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def get_all(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.curves_pb2 import GetAllRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetAllRequest(parent=kwargs["parent_id"])
+
+        # Call the gRPC service
+        response = self.stub.GetAll(request)
+
+        # Return the result - formatted as a dictionary
+        return {
+            "curves": [
+                {
+                    "id": curve.id,
+                    "name": curve.owner_name,
+                    "length": to_distance(curve.length),
+                    "start": from_grpc_point_to_point3d(curve.points[0]) if curve.points else None,
+                    "end": from_grpc_point_to_point3d(curve.points[1])
+                    if len(curve.points) > 1
+                    else None,
+                    "parent_id": curve.parent_id.id,
+                }
+                for curve in response.curves
+            ]
+        }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.curves_pb2 import DeleteRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteRequest(selection=build_grpc_id(kwargs["curve_id"]))
+
+        # Call the gRPC service
+        self.stub.Delete(request)
+
+        # Return the result - formatted as a dictionary
+        return {}

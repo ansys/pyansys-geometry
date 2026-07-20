@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the repair tools service implementation (abstraction layer).
 
 This module defines an abstract base class for a gRPC-based repair tools service.
@@ -177,4 +178,9 @@ class GRPCRepairToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def fix_interference(self, **kwargs) -> dict:  # noqa: D102
         """Fix interferences in the geometry."""
+        pass
+
+    @abstractmethod
+    def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Identify bad faces in the geometry."""
         pass

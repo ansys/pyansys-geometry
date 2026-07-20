@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the ``ProductInstance`` class."""
 
 import logging
@@ -138,6 +139,12 @@ BACKEND_DISCOVERY_HIDDEN = "--hidden"
 To be used only with Ansys Discovery.
 """
 
+BACKEND_DISCOVERY_REMOVE_HOMEPAGE = ["-f", "DisableHomePage"]
+"""The argument to remove Discovery's home page on the backend.
+
+To be used only with Ansys Discovery.
+"""
+
 BACKEND_SPLASH_OFF = "/Splash=False"
 """The argument to specify the backend's add-in manifest file's path.
 
@@ -196,6 +203,8 @@ def prepare_and_start_backend(
     certs_dir: Path | str | None = None,
     specific_minimum_version: int = None,
     server_working_dir: str | Path | None = None,
+    proto_version: str | None = None,
+    bypass_token: str | None = None,
 ) -> "Modeler":
     """Start the requested service locally using the ``ProductInstance`` class.
 
@@ -247,12 +256,6 @@ def prepare_and_start_backend(
     client_log_file : str, optional
         Sets the client's log file path. If nothing is defined,
         the client will log to the console.
-    specific_minimum_version : int, optional
-        Sets a specific minimum version to be checked. If this is not defined,
-        the minimum version will be set to 24.1.0.
-    server_working_dir : str | Path, optional
-        Sets the working directory for the product instance. If nothing is defined,
-        the working directory will be inherited from the parent process.
     transport_mode : str | None
         Transport mode selected, by default `None` and thus it will be selected
         for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
@@ -268,6 +271,17 @@ def prepare_and_start_backend(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    specific_minimum_version : int, optional
+        Sets a specific minimum version to be checked. If this is not defined,
+        the minimum version will be set to 24.1.0.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
+    proto_version: str | None, optional
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
+    bypass_token: str | None, optional
+        The token to bypass the license checkout process. For use with vertical applications.
 
     Returns
     -------
@@ -293,6 +307,15 @@ def prepare_and_start_backend(
 
     port = _check_port_or_get_one(port)
     installations = get_available_ansys_installations()
+    if version is not None:
+        # Sanitize the version input to ensure it's an integer.
+        try:
+            version = int(version)
+        except ValueError:
+            raise ValueError(
+                "The 'version' argument must be an integer representing the product version."
+            )
+
     if os.getenv(ANSYS_GEOMETRY_SERVICE_ROOT) is not None and backend_type in (
         BackendType.WINDOWS_SERVICE,
         BackendType.LINUX_SERVICE,
@@ -304,14 +327,6 @@ def prepare_and_start_backend(
         pass
     else:
         if version is not None:
-            # Sanitize the version input to ensure it's an integer.
-            try:
-                version = int(version)
-            except ValueError:
-                raise ValueError(
-                    "The 'version' argument must be an integer representing the product version."
-                )
-
             try:
                 _check_version_is_available(version, installations)
             except SystemError as serr:
@@ -366,6 +381,8 @@ def prepare_and_start_backend(
         args.append(Path(installations[version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         if hidden is True:
             args.append(BACKEND_DISCOVERY_HIDDEN)
+        else:
+            args.extend(BACKEND_DISCOVERY_REMOVE_HOMEPAGE)
 
         # Here begins the spaceclaim arguments.
         args.append(BACKEND_SPACECLAIM_OPTIONS)
@@ -448,8 +465,17 @@ def prepare_and_start_backend(
             pass  # Do nothing... the user has defined the license server.
         elif "ANSRV_GEO_LICENSE_SERVER" in os.environ:
             env_copy["LICENSE_SERVER"] = os.getenv("ANSRV_GEO_LICENSE_SERVER")
+        elif "ANSYSLMD_LICENSE_FILE" in os.environ:
+            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE")
         else:
-            env_copy["LICENSE_SERVER"] = os.getenv("ANSYSLMD_LICENSE_FILE", "1055@localhost")
+            LOG.warning(
+                "No license server environment variable found. "
+                "The Geometry Service will use the information from Ansys Licensing Settings."
+            )
+
+        # If token is provided, set the environment variable to bypass the license checkout process.
+        if bypass_token:
+            env_copy["ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN"] = bypass_token
 
         # Adapt the path environment variable to the OS and
         # modify the PATH/LD_LIBRARY_PATH variable to include the path
@@ -532,7 +558,7 @@ def prepare_and_start_backend(
     #
     # Assign environment variables as needed
     if transport_values["certs_dir"]:
-        env_copy["ANSYS_GRPC_CERTIFICATES"] = certs_dir
+        env_copy["ANSYS_GRPC_CERTIFICATES"] = transport_values["certs_dir"]
 
     # On SpaceClaim and Discovery, we need to change the "--" to "/"
     if backend_type in (BackendType.DISCOVERY, BackendType.SPACECLAIM):
@@ -542,7 +568,9 @@ def prepare_and_start_backend(
     LOG.debug(f"Args: {args}")
     LOG.debug(f"Exe args: {exe_args}")
     LOG.debug(f"Transport mode values: {transport_values}")
-    LOG.debug(f"Environment variables: {env_copy}")
+    sensitive_envs = {"ANSYS_GEOMETRY_SERVICE_LICENSE_BYPASS_TOKEN"}
+    env_copy_safe = {k: ("***" if k in sensitive_envs else v) for k, v in env_copy.items()}
+    LOG.debug(f"Environment variables: {env_copy_safe}")
 
     instance = ProductInstance(
         __start_program(args, exe_args, env_copy, server_working_dir=server_working_dir).pid
@@ -560,6 +588,7 @@ def prepare_and_start_backend(
         product_instance=instance,
         logging_level=client_log_level,
         logging_file=client_log_file,
+        proto_version=_determine_proto_version(proto_version, version),
         transport_mode=transport_values["transport_mode"],
         uds_id=transport_values["uds_id"],
         uds_dir=transport_values["uds_dir"],
@@ -792,7 +821,7 @@ def _handle_transport_mode(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
-) -> tuple[list[str], dict[str, str], str]:
+) -> tuple[list[str], dict[str, str | None]]:
     """Handle transport mode conditions.
 
     Parameters
@@ -817,14 +846,14 @@ def _handle_transport_mode(
 
     Returns
     -------
-    tuple[str, dict[str, str]]
+    tuple[list[str], dict[str, str | None]]
 
     """
     # Localhost addresses
     loopback_localhosts = ("localhost", "127.0.0.1")
 
     # Command line arguments to be passed to the backend
-    exe_args = []
+    exe_args: list[str] = []
 
     # If the transport mode is selected, simply use it... with caution.
     if transport_mode is not None:
@@ -849,20 +878,23 @@ def _handle_transport_mode(
         if certs_dir is None:
             certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
             if certs_dir_env is not None:
-                certs_dir = certs_dir_env
+                certs_dir = Path(certs_dir_env)
             else:
                 certs_dir = Path.cwd() / "certs"
+        else:
+            # Make sure it's a Path object
+            certs_dir = Path(certs_dir)
 
-        if not Path(certs_dir).is_dir():  # pragma: no cover
+        if not certs_dir.is_dir():  # pragma: no cover
             raise RuntimeError(
                 "Transport mode 'mtls' was selected, but the expected"
                 f" certificates directory does not exist: {certs_dir}"
             )
-        LOG.info(f"Using certificates directory: {Path(certs_dir).resolve().as_posix()}")
+        LOG.info(f"Using certificates directory: {certs_dir.resolve().as_posix()}")
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--certs-dir={Path(certs_dir).resolve().as_posix()}")
+        exe_args.append(f"--certs-dir={certs_dir.resolve().as_posix()}")
     elif transport_mode == "uds":
         # UDS is only available for localhost connections
         if host not in loopback_localhosts:
@@ -870,6 +902,9 @@ def _handle_transport_mode(
         # Share the uds_dir if needed
         if uds_dir is None:
             uds_dir = Path.home() / ".conn"
+        else:
+            # Make sure it's a Path object
+            uds_dir = Path(uds_dir)
 
         # If the folder does not exist, create it
         uds_dir.mkdir(parents=True, exist_ok=True)
@@ -880,7 +915,7 @@ def _handle_transport_mode(
 
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--uds-dir={Path(uds_dir).resolve().as_posix()}")
+        exe_args.append(f"--uds-dir={uds_dir.resolve().as_posix()}")
         if uds_id is not None:
             exe_args.append(f"--uds-id={uds_id}")
 
@@ -904,10 +939,54 @@ def _handle_transport_mode(
     # Store the final transport values
     transport_values = {
         "transport_mode": transport_mode,
-        "uds_dir": uds_dir,
+        "uds_dir": str(uds_dir) if transport_mode == "uds" else None,
         "uds_id": uds_id,
-        "certs_dir": certs_dir,
+        "certs_dir": str(certs_dir) if transport_mode == "mtls" else None,
     }
 
     # Return the args to be passed to the backend, and the transport values
     return exe_args, transport_values
+
+
+def _determine_proto_version(
+    proto_version: str | None, product_version: int | str | None
+) -> str | None:
+    """Determine the gRPC API protocol version to use.
+
+    Parameters
+    ----------
+    proto_version: str | None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
+    product_version: int | str | None
+        The version of the product being used. Might be None if the
+        product version is not determined at the moment of calling this function.
+
+    Returns
+    -------
+    str | None
+        The gRPC API protocol version to use. Returns the input if it's valid,
+        otherwise returns None.
+    """
+    if proto_version is not None:
+        proto_version = proto_version.lower()
+        if proto_version not in ("v0", "v1"):
+            LOG.warning(
+                f"Proto version '{proto_version}' is not recognized. "
+                "Defaulting to the latest proto version supported by the server."
+            )
+            return None
+
+    # v1 is only supported in versions 261 and later, so if the user requests v1 but
+    # the version is older, we will throw a warning and default to None.
+    if proto_version == "v1":
+        if product_version and int(product_version) < 261:
+            LOG.warning(
+                "Proto version 'v1' is only supported in versions 261 and later. "
+                f"Version '{product_version}' was detected as input. "
+                "Defaulting to the latest proto version supported by the server."
+            )
+            return None
+
+    # If we get here, the proto_version is valid and can be returned as is.
+    return proto_version

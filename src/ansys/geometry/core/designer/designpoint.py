@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,9 +19,10 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module for creating and managing design points."""
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
@@ -50,7 +51,7 @@ class DesignPoint:
         Parent component to place the new design point under within the design assembly.
     """
 
-    def __init__(self, id: str, name: str, point: Point3D, parent_component: Union["Component"]):
+    def __init__(self, id: str, name: str, point: Point3D, parent_component: "Component"):
         """Initialize the ``DesignPoints`` class."""
         self._id = id
         self._name = name

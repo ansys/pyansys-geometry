@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the faces service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -157,4 +158,19 @@ class GRPCFacesService(ABC):  # pragma: no cover
     @abstractmethod
     def setup_offset_relationship(self, **kwargs) -> dict:
         """Set up an offset relationship between two faces."""
+        pass
+
+    @abstractmethod
+    def sweep_faces(self, **kwargs) -> dict:
+        """Sweep faces along trajectory curves."""
+        pass
+
+    @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of a face."""
+        pass
+
+    @abstractmethod
+    def split_faces(self, **kwargs) -> dict:
+        """Split faces by specified criteria."""
         pass

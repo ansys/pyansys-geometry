@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module providing definitions for the backend types."""
 
 from enum import Enum, unique
@@ -95,6 +96,25 @@ class BackendType(Enum):
         return backend_type in (
             BackendType.LINUX_SERVICE,
             BackendType.CORE_LINUX,
+        )
+
+    @staticmethod
+    def is_windows_service(backend_type: "BackendType") -> bool:
+        """Determine whether the backend is a Windows service or not.
+
+        Parameters
+        ----------
+        backend_type : BackendType
+            The backend type to check whether or not it's running on Windows.
+
+        Returns
+        -------
+        bool
+            True if the backend is running on Windows, False otherwise.
+        """
+        return backend_type in (
+            BackendType.WINDOWS_SERVICE,
+            BackendType.CORE_WINDOWS,
         )
 
 

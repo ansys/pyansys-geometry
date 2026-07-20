@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,14 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides the data structure for material and material properties."""
 
 from collections.abc import Sequence
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
+from ansys.geometry.core.misc.checks import check_input_types
 
 
 class Material:

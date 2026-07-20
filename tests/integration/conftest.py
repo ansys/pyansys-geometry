@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """This testing module automatically connects to the Geometry service running
 at localhost:50051.
 
@@ -49,6 +50,8 @@ from pathlib import Path
 import pytest
 
 from ansys.geometry.core import Modeler
+from ansys.geometry.core._grpc._services._service import _GRPCServices
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.connection.docker_instance import GeometryContainers, LocalDockerInstance
@@ -94,6 +97,42 @@ def skip_if_discovery(modeler: Modeler, test_name: str, element_not_available: s
     ):
         pytest.skip(
             reason=f"Skipping '{test_name}'. '{element_not_available}' not on Discovery."
+        )  # skip!
+
+
+def skip_if_no_geometry_service(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on SpaceClaim or Discovery."""
+    if (
+        modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco or SC."
+        )  # skip!
+
+
+def skip_if_desktop_or_dms_geometry_service(
+    modeler: Modeler, test_name: str, element_not_available: str
+):
+    """Skip test if running on Desktop or DMS Geometry Service."""
+    if (
+        modeler.client.backend_type == BackendType.WINDOWS_SERVICE
+        or modeler.client.backend_type == BackendType.LINUX_SERVICE
+        or modeler.client.backend_type == BackendType.DISCOVERY
+        or modeler.client.backend_type == BackendType.DISCOVERY_HEADLESS
+        or modeler.client.backend_type == BackendType.SPACECLAIM
+    ):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Disco, SC or DMS."
+        )  # skip!
+
+
+def skip_if_linux(modeler: Modeler, test_name: str, element_not_available: str):
+    """Skip test if running on Linux."""
+    if BackendType.is_linux_service(modeler.client.backend_type):
+        pytest.skip(
+            reason=f"Skipping '{test_name}'. '{element_not_available}' not on Linux services."
         )  # skip!
 
 
@@ -222,36 +261,65 @@ def use_service_colors():
 
 
 @pytest.fixture(scope="function")
-def use_grpc_client_old_backend(modeler: Modeler):
+def fake_modeler_old_backend_242(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     modeler._grpc_client._backend_version = (24, 2, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield  # This allows the test to run
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_251(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     modeler._grpc_client._backend_version = (25, 1, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield modeler
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")
 def fake_modeler_old_backend_252(modeler: Modeler):
     currentbackend = modeler._grpc_client._backend_version
+    currentservices = modeler._grpc_client._services
+    # Check if server supports v0 protocol
+    if not GeometryApiProtos.V0.verify_supported(modeler._grpc_client.channel):
+        pytest.skip("Server does not support v0 protocol needed for this test")
+
     modeler._grpc_client._backend_version = (25, 2, 0)
+    modeler._grpc_client._services = _GRPCServices(
+        channel=modeler._grpc_client.channel, version="v0"
+    )
 
     yield modeler
 
     # Code here runs after the test, reverting the state
     modeler._grpc_client._backend_version = currentbackend
+    modeler._grpc_client._services = currentservices
 
 
 @pytest.fixture(scope="function")
@@ -263,3 +331,35 @@ def disable_active_design_check_true():
     yield
 
     pyansys_geometry.DISABLE_ACTIVE_DESIGN_CHECK = False
+
+
+@pytest.fixture
+def tracker_payload_factory():
+    """Factory fixture for creating tracker payload dictionaries."""
+
+    def _factory(**overrides):
+        payload = {
+            "created_parts": [],
+            "deleted_parts": [],
+            "created_components": [],
+            "modified_components": [],
+            "deleted_components": [],
+            "created_bodies": [],
+            "modified_bodies": [],
+            "deleted_bodies": [],
+        }
+        payload.update(overrides)
+        return payload
+
+    return _factory
+
+
+@pytest.fixture
+def unit_box_sketch():
+    """Fixture providing a simple 1x1 box sketch."""
+    from ansys.geometry.core.math import Point2D
+    from ansys.geometry.core.sketch import Sketch
+
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0]), 1, 1)
+    return sketch

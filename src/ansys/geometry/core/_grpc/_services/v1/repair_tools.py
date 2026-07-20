@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the repair tools service implementation for v1."""
 
 import grpc
@@ -489,6 +490,19 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
 
         # Return the response - formatted as a dictionary
         return serialize_repair_command_response(response.result)
+
+    @protect_grpc
+    def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.repair_pb2 import FindBadFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FindBadFacesRequest(body_ids=[build_grpc_id(item) for item in kwargs["body_ids"]])
+
+        # Call the gRPC service
+        response = self.stub.FindBadFaces(request)
+
+        # Return the response - formatted as a dictionary
+        return {"face_ids": [face_id.id for face_id in response.face_ids]}
 
     def __serialize_inspect_result_response(self, response) -> dict:  # noqa: D102
         def serialize_body(body):

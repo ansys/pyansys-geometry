@@ -38,6 +38,10 @@ BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 BUILD_CHEATSHEET = True if os.environ.get("BUILD_CHEATSHEET", "true") == "true" else False
 
+# Make sure it gets defined.. to skip warnings in docs build
+if BUILD_EXAMPLES:
+    os.environ["PYANSYS_GEOMETRY_BUILD_EXAMPLES"] = "true"
+
 ############################################################################
 
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
@@ -47,7 +51,7 @@ def get_wheelhouse_assets_dictionary():
     """Auxiliary method to build the wheelhouse assets dictionary."""
     assets_context_os = ["Linux", "Windows", "MacOS"]
     assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.10", "3.11", "3.12", "3.13"]
+    assets_context_python_versions = ["3.12", "3.13", "3.14"]
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -208,7 +212,7 @@ extensions = [
 
 # Intersphinx mapping
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.13", None),
+    "python": ("https://docs.python.org/3.14", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
     "pyvista": ("https://docs.pyvista.org", None),
@@ -265,6 +269,10 @@ html_css_files = [
     "custom.css",
 ]
 
+html_js_files = [
+    "js/download_notebooks.js",
+]
+
 html_favicon = ansys_favicon
 
 # Add any paths that contain templates here, relative to this directory.
@@ -300,6 +308,8 @@ nbsphinx_thumbnails = {
     "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
     "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
+    "examples/01_getting_started/06_curve_surface_plotting": "_static/thumbnails/101_getting_started.png",  # noqa: E501
+    "examples/01_getting_started/07_master_bodies": "_static/thumbnails/101_getting_started.png",
     "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
     "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
     "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
@@ -318,9 +328,16 @@ nbsphinx_thumbnails = {
     "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
     "examples/03_modeling/design_parameters": "_static/thumbnails/block_with_parameters.png",
     "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
+    "examples/03_modeling/detach_faces": "_static/thumbnails/detach_faces.png",
     "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
     "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
     "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
+    "examples/04_applied/04_mechanical_named_selections": "_static/thumbnails/mechanical_ns.png",
+    "examples/04_applied/05_pmdb_export_options": "_static/thumbnails/pmdb_export_options.png",
+    "examples/04_applied/06_solder_ball": "_static/thumbnails/solder_ball.png",
+    "examples/05_tools/repair_tools": "_static/thumbnails/repair_tools.png",
+    "examples/05_tools/prepare_tools": "_static/thumbnails/prepare_tools.png",
+    "examples/05_tools/measurement_tools": "_static/thumbnails/measurement_tools.png",
     "examples/99_misc/template": "_static/thumbnails/101_getting_started.png",
 }
 nbsphinx_epilog = """
@@ -361,12 +378,18 @@ latex_additional_files = [watermark, ansys_logo_white, ansys_logo_white_cropped]
 # variables are the title of pdf, watermark
 latex_elements = {"preamble": latex.generate_preamble(html_title)}
 
-linkcheck_exclude_documents = ["index", "getting_started/local/index", "changelog"]
+linkcheck_exclude_documents = [
+    "index",
+    "getting_started/local/index",
+    "changelog",
+    "examples/04_applied/05_pmdb_export_options",
+]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
     r"https://download.ansys.com/",
     r"https://stackoverflow.com/",  # Requires human authentication
     r"https://docs.pyvista.org/",  # Intermittent timeout issues
+    r"https://docs.conda.io/",  # Intermittent timeout issues
     r".*/examples/.*.py",
     r".*/examples/.*.ipynb",
     r"_static/assets/.*",

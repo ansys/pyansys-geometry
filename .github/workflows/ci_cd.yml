@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.13'
+  MAIN_PYTHON_VERSION: '3.14'
   PACKAGE_NAME: 'ansys-geometry-core'
   DOCUMENTATION_CNAME: 'geometry.docs.pyansys.com'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
@@ -17,7 +17,7 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   GEO_CONT_NAME: ans_geo
-  RESET_IMAGE_CACHE: 1
+  RESET_IMAGE_CACHE: 2
   IS_WORKFLOW_RUNNING: True
   ARTIFACTORY_VERSION: v271
 
@@ -38,7 +38,7 @@ jobs:
       contents: write # Required to create the changelog on the release branch
       pull-requests: write # Required to create on main the associated PR with the changelog
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+      - uses: ansys/actions/doc-deploy-changelog@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -48,7 +48,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+      - uses: ansys/actions/check-vulnerabilities@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -59,7 +59,7 @@ jobs:
     name: Actions Security
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+      - uses: ansys/actions/check-actions-security@main
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/check-pr-title@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/doc-style@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -91,7 +91,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.12', '3.13', '3.14']
+        target: ['', 'all']
         should-release:
           - ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags') }}
         exclude:
@@ -99,19 +100,19 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/build-wheelhouse@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
           python-version: ${{ matrix.python-version }}
-          target: 'all'
+          target: ${{ matrix.target }}
 
   docker-style:
     name: Docker Style Check
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/docker-style@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           directory: docker
           recursive: true
@@ -135,7 +136,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -167,8 +168,7 @@ jobs:
           fi
 
   testing-windows:
-    name: Testing and coverage (Windows) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
-      }})
+    name: Testing and coverage (Windows) (${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: windows-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -177,7 +177,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: ["v1", "v0"]
         use-tracker: ["no", "yes"]
         docker-image: ["core-windows-latest", "core-windows-latest-unstable"]
         include:
@@ -191,10 +190,6 @@ jobs:
             experimental: false
           - docker-image: "core-windows-latest-unstable"
             experimental: true
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -222,31 +217,30 @@ jobs:
           Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Output "SKIP_UNSTABLE will be: $Result"
 
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         if: env.SKIP_UNSTABLE == 'false'
         with:
           persist-credentials: false
 
-      - name: Set up Python
+      - name: Setup UV
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Install packages for testing
         if: env.SKIP_UNSTABLE == 'false'
-        run: |
-          python -m pip install --upgrade pip
-          pip install --upgrade build wheel
-          pip install -e . --group tests
+        run: uv sync --group tests
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -268,16 +262,18 @@ jobs:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           # Write command to file launch.txt for sanitizing purposes
-          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING -v $env:GITHUB_WORKSPACE\tests\integration\files:C:\test-files $env:FULL_IMAGE_NAME $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          uv run python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -288,38 +284,36 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         timeout-minutes: 20 # Sometimes hangs...
         env:
-          PROTO_VERSION: ${{ matrix.proto-version }}
           USE_TRACKER: ${{ matrix.use-tracker }}
-        run: |
-          pytest -v --proto-version=$env:PROTO_VERSION --use-tracker=$env:USE_TRACKER
+        run: uv run pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
           retention-days: 7
 
       - name: Upload Coverage Results
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           include-hidden-files: true
-          name: coverage-html-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: coverage-html-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: .cov/html
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: matrix.docker-image == 'core-windows-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -342,10 +336,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -359,12 +353,13 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/doc-build@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
-          needs-quarto: true
-          dependencies: 'pandoc'
+          needs-quarto: false
+          dependencies: 'pandoc texlive-xetex texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-science
+            texlive-luatex lmodern latexmk'
           sphinxopts: '-j 1 -W --color'
           group-dependencies-name: "doc"
 
@@ -375,9 +370,25 @@ jobs:
           docker logs ${GEO_CONT_NAME}
           docker rm ${GEO_CONT_NAME}
 
+  doc-deploy-pr:
+    name: Deploy PR documentation
+    if: contains(github.event.pull_request.labels.*.name, 'deploy-pr-doc')
+    needs: [docs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to update files on the gh-pages branch
+      pull-requests: write # Needed to create deployment comments on PRs
+    steps:
+      - uses: ansys/actions/doc-deploy-pr@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        with:
+          bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+          cname: ${{ env.DOCUMENTATION_CNAME }}
+          maximum-pr-doc-deployments: 5
+          token: ${{ secrets.GITHUB_TOKEN }}
+
   testing-linux:
-    name: Testing and coverage (Linux) (${{ matrix.proto-version }}, ${{ matrix.tracker-label }}, ${{ matrix.docker-image
-      }})
+    name: Testing and coverage (Linux) (${{ matrix.tracker-label }}, ${{ matrix.docker-image }})
     needs: [smoke-tests, manifests]
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
@@ -386,7 +397,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        proto-version: ["v1", "v0"]
         use-tracker: ["no", "yes"]
         docker-image: ["core-linux-latest", "core-linux-latest-unstable"]
         include:
@@ -400,10 +410,6 @@ jobs:
             experimental: false
           - docker-image: "core-linux-latest-unstable"
             experimental: true
-        exclude:
-          # Only use tracker with proto-version v1
-          - proto-version: "v0"
-            use-tracker: "yes"
 
     steps:
       - name: Calculate SKIP_UNSTABLE
@@ -434,11 +440,11 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -456,13 +462,19 @@ jobs:
 
       - name: Checkout repository
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
+      - name: Copy test files into geometry service container
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
+
       - name: Restore images cache
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: tests/integration/image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -471,18 +483,18 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/tests-pytest@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         env:
           ALLOW_PLOTTING: true
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          pytest-extra-args: "--proto-version=${{ matrix.proto-version }} --use-tracker=${{ matrix.use-tracker }}"
+          pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
           checkout: false
           randomize: true
           group-dependencies-name: "tests"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
+        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
         if: matrix.docker-image == 'core-linux-latest'
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -491,17 +503,17 @@ jobs:
 
       - name: Upload integration test logs
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: integration-test-logs-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/logs/integration_tests_logs.txt
           retention-days: 7
 
       - name: Upload PyVista generated images (cache and results)
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.proto-version }}-${{ matrix.use-tracker }}
+          name: pytest-pyvista-images-${{ matrix.docker-image }}-${{ matrix.use-tracker }}
           path: tests/integration/image_cache
           retention-days: 7
 
@@ -524,32 +536,32 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.12', '3.13', '3.14']
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Login in Github Container registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: ${{ matrix.python-version }}
+          activate-environment: true
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Install minimum requirements
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e .[all] --group tests-minimal
+        run: uv sync --extra all --group tests-minimal
 
       - name: Start Geometry service and verify start
         env:
@@ -559,9 +571,13 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Run pytest
+      - name: Copy test files into geometry service container
         run: |
-          pytest -v
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
+
+      - name: Run pytest
+        run: uv run pytest -v
 
       - name: Stop the Geometry service
         if: always()
@@ -579,22 +595,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.13']
+        python-version: ['3.12', '3.14']
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -615,9 +631,13 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_MINREQS} ${TRANSPORT_MODE_SELECTION}
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
-      - name: Run pytest
+      - name: Copy test files into geometry service container
         run: |
-          pytest -v -c pytest-nographics.ini
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
+
+      - name: Run pytest
+        run: pytest -v -c pytest-nographics.ini
 
       - name: Stop the Geometry service
         if: always()
@@ -636,7 +656,7 @@ jobs:
       id-token: write # Required for OIDC authentication to upload provenance attestations
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/build-library@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -658,7 +678,7 @@ jobs:
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
@@ -694,14 +714,14 @@ jobs:
           cp ./$env:PREVIOUS_VERSION/linux-core-binaries.zip linux-core-binaries.zip
 
       - name: Upload Linux Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: linux-core-binaries.zip
           path: linux-core-binaries.zip
           retention-days: 1
 
       - name: Upload Windows Core service binaries as workflow artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: windows-core-binaries.zip
           path: windows-core-binaries.zip
@@ -737,20 +757,20 @@ jobs:
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Download Windows binaries for ${{ matrix.mode }}
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ matrix.zip-file }}
           path: docker/${{ matrix.zip-file }}
@@ -777,7 +797,7 @@ jobs:
           pip install -e . --group tests
 
       - name: Restore images cache
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -791,10 +811,12 @@ jobs:
         run: |
           .\.venv\Scripts\Activate.ps1
           # Write command to file launch.txt for sanitizing purposes
-          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING ghcr.io/ansys/geometry:windows-tmp $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
+          echo "docker run --detach --name $env:GEO_CONT_NAME -e LICENSE_SERVER=$env:ANSRV_GEO_LICENSE_SERVER -p $env:PORT_MAPPING -v $env:GITHUB_WORKSPACE\tests\integration\files:C:\test-files ghcr.io/ansys/geometry:windows-tmp $env:TRANSPORT_MODE_SELECTION" | Out-File -FilePath launch.txt
           # Read the file and execute the command
           $command = Get-Content -Path launch.txt | Select-String -Pattern "docker run"
           Invoke-Expression $command.Line
+          # Make the container-internal path available to the Python test process
+          "ANSYS_GEOMETRY_TEST_FILES=C:/test-files" | Out-File -FilePath $env:GITHUB_ENV -Append
           Start-Sleep -Seconds 10
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
@@ -805,13 +827,13 @@ jobs:
           pytest -v --use-existing-service=yes
 
       - name: "Compressing Windows Dockerfile"
-        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
+        uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
           files: docker/windows/${{ matrix.mode }}/Dockerfile
           dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.docker-file }}
           path: ${{ matrix.docker-file }}
@@ -849,20 +871,22 @@ jobs:
     needs: [fetch-release-artifacts]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+      - name: Setup UV
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          activate-environment: true
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Download Linux binaries
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: linux-core-binaries.zip
           path: docker/linux-core-binaries.zip
@@ -872,20 +896,23 @@ jobs:
         run: |
           docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
 
-      - name: Validate connection using PyAnsys Geometry
-        run: |
-          python -m pip install --upgrade pip
-          pip install -e . --group tests
+      - name: Install test dependencies
+        run: uv sync --group tests
 
       - name: Start Geometry service and verify start
         env:
           TRANSPORT_MODE_SELECTION: ${{ secrets.TRANSPORT_MODE_SELECTION }}
         run: |
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ghcr.io/ansys/geometry:linux-tmp ${TRANSPORT_MODE_SELECTION}
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+          uv run python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Copy test files into geometry service container
+        run: |
+          docker cp tests/integration/files/. ${GEO_CONT_NAME}:/test-files
+          echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Restore images cache
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .\tests\integration\image_cache
           key: pyvista-image-cache-${{ runner.os }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
@@ -893,7 +920,7 @@ jobs:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/tests-pytest@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         env:
           ALLOW_PLOTTING: true
         with:
@@ -901,16 +928,16 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
-          group-dependencies-name: "tests"
+          skip-install: true
 
       - name: "Compressing Linux Dockerfile"
-        uses: vimtor/action-zip@1379ea20d4c5705669ba81fd626dd01b1c738f26 # v1.2
+        uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
           files: docker/linux/coreservice/Dockerfile
           dest: linux-core-dockerfile.zip
 
       - name: Upload Linux Dockerfile
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: linux-core-dockerfile.zip
           path: linux-core-dockerfile.zip
@@ -935,7 +962,7 @@ jobs:
       contents: write # Required for GitHub release
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/release-github@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -955,13 +982,13 @@ jobs:
       contents: write # Required for OIDC authentication with PyPI
     steps:
       - name: "Download the library artifacts from build-library step"
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ env.PACKAGE_NAME }}-artifacts
           path: ${{ env.PACKAGE_NAME }}-artifacts
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
           repository-url: "https://upload.pypi.org/legacy/"
           print-hash: true
@@ -977,7 +1004,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/doc-deploy-dev@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -993,7 +1020,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/doc-deploy-stable@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -1010,7 +1037,7 @@ jobs:
       pull-requests: write # Required to allow automerge
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@41f86da4c9ead510db9135e428e33df9cc6f92e1 # v10.2.3
+        uses: ansys/actions/hk-automerge-prs@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

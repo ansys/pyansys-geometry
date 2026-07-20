@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing v0 related conversions from PyAnsys Geometry objects to gRPC messages."""
 
 from typing import TYPE_CHECKING
@@ -54,6 +55,7 @@ from ansys.api.geometry.v0.models_pb2 import (
     SurfaceType as GRPCSurfaceType,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
+    TrackerCommandResponse as GRPCTrackerCommandResponse,
     TrimmedCurve as GRPCTrimmedCurve,
     TrimmedSurface as GRPCTrimmedSurface,
 )
@@ -402,6 +404,25 @@ def from_plane_to_grpc_plane(plane: "Plane") -> GRPCPlane:
     )
 
 
+def from_grpc_plane_to_plane(plane: GRPCPlane) -> "Plane":
+    """Convert a plane gRPC message to a ``Plane`` class.
+
+    Parameters
+    ----------
+    plane : GRPCPlane
+        Source plane data.
+
+    Returns
+    -------
+    Plane
+        Converted plane.
+    """
+    from ansys.geometry.core.math.plane import Plane
+
+    frame = from_grpc_frame_to_frame(plane.frame)
+    return Plane(frame.origin, frame.direction_x, frame.direction_y)
+
+
 @graphics_required
 def from_grpc_tess_to_pd(tess: GRPCTessellation) -> "pv.PolyData":
     """Convert a ``Tessellation`` to ``pyvista.PolyData``."""
@@ -458,11 +479,13 @@ def from_tess_options_to_grpc_tess_options(
     GRPCTessellationOptions
         Geometry service gRPC tessellation options message.
     """
+    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
+
     return GRPCTessellationOptions(
-        surface_deviation=options.surface_deviation,
-        angle_deviation=options.angle_deviation,
+        surface_deviation=options.surface_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        angle_deviation=options.angle_deviation.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
         maximum_aspect_ratio=options.max_aspect_ratio,
-        maximum_edge_length=options.max_edge_length,
+        maximum_edge_length=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         watertight=options.watertight,
     )
 
@@ -1274,11 +1297,17 @@ def from_driving_dimension_to_grpc_driving_dimension(
     GRPCDrivingDimension
         Converted driving dimension.
     """
+    from ansys.geometry.core.parameters.parameter import Parameter
+
+    value = Parameter.convert_quantity_to_server_units(
+        driving_dimension.dimension_value, driving_dimension.dimension_type
+    )
+
     return GRPCDrivingDimension(
         id=driving_dimension.id,
         name=driving_dimension.name,
         dimension_type=driving_dimension.dimension_type.value,
-        dimension_value=driving_dimension.dimension_value,
+        dimension_value=value,
     )
 
 
@@ -1476,7 +1505,7 @@ def _check_write_body_facets_input(backend_version: "semver.Version", write_body
         )
 
 
-def serialize_tracker_command_response(**kwargs) -> dict:
+def serialize_tracker_command_response(response: GRPCTrackerCommandResponse) -> dict:
     """Serialize a TrackerCommandResponse object into a dictionary.
 
     Parameters
@@ -1512,7 +1541,6 @@ def serialize_tracker_command_response(**kwargs) -> dict:
             "id": entity.id,
         }
 
-    response = kwargs["response"]
     return {
         "success": response.success,
         "created_bodies": [

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the components service implementation for v1."""
 
 import grpc
@@ -32,6 +33,7 @@ from .conversions import (
     from_grpc_matrix_to_matrix,
     from_point3d_to_grpc_point,
     from_unit_vector_to_grpc_direction,
+    serialize_tracked_changes,
 )
 
 
@@ -85,6 +87,8 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
             "instance_name": component.instance_name,
             "template": kwargs["template_id"],  # template_id from input
             "component": component,
+            "component_master_id": component.master_id.id,
+            "component_part_master_id": component.part_master.id.id,
         }
 
     @protect_grpc
@@ -119,7 +123,7 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
         # Create the direction and point objects
         translation = (
-            from_unit_vector_to_grpc_direction(kwargs["translation"].normalize())
+            from_unit_vector_to_grpc_direction(kwargs["translation"])
             if kwargs["translation"] is not None
             else None
         )
@@ -221,3 +225,27 @@ class GRPCComponentsServiceV1(GRPCComponentsService):
 
         # Return the response - formatted as a dictionary
         return {}
+
+    @protect_grpc
+    def move_bodies_to_component(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.component_pb2 import (
+            MoveBodiesToComponentRequest,
+            MoveBodiesToComponentRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MoveBodiesToComponentRequest(
+            request_data=[
+                MoveBodiesToComponentRequestData(
+                    body_ids=[build_grpc_id(body_id) for body_id in kwargs["body_ids"]],
+                    target_component_id=build_grpc_id(kwargs["target_component_id"]),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.MoveBodiesToComponent(request=request)
+        tracked_changes = serialize_tracked_changes(response.tracked_changes)
+
+        # Return tracked changes for client-side design updates
+        return {"tracked_changes": tracked_changes}

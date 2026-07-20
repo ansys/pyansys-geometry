@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the curves service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -51,4 +52,24 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     @abstractmethod
     def intersect_curve_and_surface(self, **kwargs) -> dict:
         """Get intersection points of a curve and surface."""
+        pass
+
+    @abstractmethod
+    def get(self, **kwargs) -> dict:
+        """Get curve object from id."""
+        pass
+
+    @abstractmethod
+    def get_interval(self, **kwargs) -> dict:
+        """Get the parametric interval (start and end parameter values) of a curve."""
+        pass
+
+    @abstractmethod
+    def get_all(self, **kwargs) -> dict:
+        """Get all design curves belonging to a parent component."""
+        pass
+
+    @abstractmethod
+    def delete(self, **kwargs) -> dict:
+        """Delete a curve from the design."""
         pass

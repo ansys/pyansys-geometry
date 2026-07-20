@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the coordinate systems service implementation for v0."""
 
 import grpc
@@ -68,3 +69,16 @@ class GRPCCoordinateSystemServiceV0(GRPCCoordinateSystemService):
             "name": response.name,
             "frame": from_grpc_frame_to_frame(response.frame),
         }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.geometry.v0.coordinatesystems_pb2 import DeleteRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = DeleteRequest(id=kwargs["id"])
+
+        # Call the gRPC service
+        self.stub.Delete(request=request)
+
+        # Return the result - formatted as a dictionary
+        return {}

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides plotting for various PyAnsys Geometry objects."""
 
 # First, verify graphics are available
@@ -45,10 +46,19 @@ from pygltflib.utils import gltf2glb
 import pyvista as pv
 from pyvista.plotting.tools import create_axes_marker
 
+# Suppress VTK-level warnings (such as texture unit limits) when running
+# off-screen/headlessly, where they are expected and not actionable.
+if pv.OFF_SCREEN:
+    from vtkmodules.vtkCommonCore import vtkObject
+
+    vtkObject.GlobalWarningDisplayOff()
+
 import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.designer.body import Body, MasterBody
 from ansys.geometry.core.designer.component import Component
+from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.design import Design
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.errors import GeometryRuntimeError
@@ -57,6 +67,8 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
+from ansys.geometry.core.shapes.curves import Curve
+from ansys.geometry.core.shapes.surfaces import Surface
 from ansys.geometry.core.sketch.sketch import Sketch
 
 POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
@@ -208,6 +220,32 @@ class GeometryPlotter(PlotterInterface):
             sketch.sketch_polydata_faces(), sketch, opacity=0.7, **plotting_options
         )
         self.add_sketch_polydata(sketch.sketch_polydata_edges(), sketch, **plotting_options)
+
+    def add_surface(self, surface: Surface, **plotting_options) -> None:
+        """Add a surface to the scene.
+
+        Parameters
+        ----------
+        surface : Surface
+            Surface to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self.plot(surface.visualization_polydata, **plotting_options)
+
+    def add_curve(self, curve: Curve, **plotting_options) -> None:
+        """Add a curve to the scene.
+
+        Parameters
+        ----------
+        curve : Curve
+            Curve to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        self.plot(curve.visualization_polydata, **plotting_options)
 
     def add_body_edges(self, body_plot: MeshObjectPlot, **plotting_options: dict | None) -> None:
         """Add the outer edges of a body to the plot.
@@ -380,9 +418,11 @@ class GeometryPlotter(PlotterInterface):
         This will allow to make use of the service colors. At the same time, it will be
         slower than the add_component method.
         """
-        # Recursively add the bodies and components
+        # Recursively add the bodies, design curves, and components
         for body in component.bodies:
             self.add_body(body, merge=merge_bodies, **plotting_options)
+        for design_curve in component.design_curves:
+            self.add_design_curve(design_curve, **plotting_options)
         for comp in component.components:
             self.add_component_by_body(comp, merge_bodies=merge_bodies, **plotting_options)
 
@@ -424,6 +464,23 @@ class GeometryPlotter(PlotterInterface):
 
         # get the actor for the DesignPoint
         self._backend.pv_interface.plot(design_point, **plotting_options)
+
+    def add_design_curve(self, design_curve: DesignCurve, **plotting_options) -> None:
+        """Add a DesignCurve object to the plotter.
+
+        Parameters
+        ----------
+        design_curve : DesignCurve
+            DesignCurve to add.
+        **plotting_options : dict, default: None
+            Keyword arguments. For allowable keyword arguments, see the
+            :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+        """
+        shape = design_curve.shape.geometry
+        points = np.array([shape.evaluate(t).position for t in np.linspace(0, 1, 100)])
+        spline = pv.Spline(points)
+        dc_plot = MeshObjectPlot(custom_object=design_curve, mesh=spline)
+        self._backend.pv_interface.plot(dc_plot, **plotting_options)
 
     def plot_iter(
         self,
@@ -478,8 +535,16 @@ class GeometryPlotter(PlotterInterface):
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, DesignCurve):
+            self.add_design_curve(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, DatumPlane):
+            self.add_plane(plottable_object.value, **plotting_options)
         elif isinstance(plottable_object, Sketch):
             self.add_sketch(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, Surface):
+            self.add_surface(plottable_object, **plotting_options)
+        elif isinstance(plottable_object, Curve):
+            self.add_curve(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(plottable_object, merge_bodies, **plotting_options)
         elif isinstance(plottable_object, Face):

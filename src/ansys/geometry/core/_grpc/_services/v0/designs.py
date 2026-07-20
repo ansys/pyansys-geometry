@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the designs service implementation for v0."""
 
 from google.protobuf.empty_pb2 import Empty
@@ -26,6 +27,7 @@ import grpc
 
 from ansys.geometry.core.errors import protect_grpc
 
+from ..base.conversions import to_distance
 from ..base.designs import GRPCDesignsService
 from .conversions import (
     _check_write_body_facets_input,
@@ -290,6 +292,7 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
                 "master_id": body.master_id,
                 "parent_id": body.parent_id,
                 "is_surface": body.is_surface,
+                "is_lightweight": False,
             }
 
         def serialize_component(component):
@@ -437,6 +440,26 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
                 "parent_id": design_point.parent_id.id,
             }
 
+        def serialize_design_curve(design_curve):
+            return {
+                "id": design_curve.id,
+                "name": design_curve.owner_name,
+                "length": to_distance(design_curve.length),
+                "start": from_grpc_point_to_point3d(design_curve.points[0]),
+                "end": from_grpc_point_to_point3d(design_curve.points[1])
+                if len(design_curve.points) > 1
+                else None,
+                "parent_id": design_curve.parent_id.id,
+            }
+
+        def serialize_datum_point(datum_point):
+            return {
+                "id": datum_point.id.id,
+                "name": datum_point.name,
+                "point": from_grpc_point_to_point3d(datum_point.position),
+                "parent_id": datum_point.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -446,7 +469,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
         component_coordinate_systems = getattr(response, "component_coord_systems", [])
         component_shared_topologies = getattr(response, "component_shared_topologies", [])
         beams = getattr(response, "beams", [])
-        design_points = getattr(response, "design_points", [])
+        design_points = [dp for dp in getattr(response, "design_points", []) if dp.length == 0]
+        design_curves = [dc for dc in getattr(response, "design_points", []) if dc.length != 0]
+        datum_points = getattr(response, "datum_points", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -462,6 +487,9 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
             ),
             "beams": [serialize_beam(beam) for beam in beams],
             "design_points": [serialize_design_point(dp) for dp in design_points],
+            "datum_planes": [],
+            "design_curves": [serialize_design_curve(dc) for dc in design_curves],
+            "datum_points": [serialize_datum_point(dp) for dp in datum_points],
         }
 
     @protect_grpc

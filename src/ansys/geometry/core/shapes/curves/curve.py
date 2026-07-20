@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides the ``Curve`` class."""
 
 from abc import ABC, abstractmethod
@@ -31,6 +32,8 @@ from ansys.geometry.core.shapes.parameterization import Interval, Parameterizati
 from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
+    import pyvista as pv
+
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
@@ -76,6 +79,11 @@ class Curve(ABC):
 
         This method returns the evaluation at the closest point.
         """
+        return
+
+    @abstractmethod
+    def visualization_polydata(self) -> "pv.PolyData":
+        """Get the visualization polydata for the curve."""
         return
 
     def trim(self, interval: Interval) -> "TrimmedCurve":

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the coordinate systems service implementation for v1."""
 
 import grpc
@@ -76,7 +77,22 @@ class GRPCCoordinateSystemServiceV1(GRPCCoordinateSystemService):
         # Note: response.coordinate_systems is a repeated field, we return the first one
         coord_system = response.coordinate_systems[0]
         return {
-            "id": coord_system.id,
+            "id": coord_system.id.id,
             "name": coord_system.name,
             "frame": from_grpc_frame_to_frame(coord_system.frame),
         }
+
+    @protect_grpc
+    def delete(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import (
+            MultipleEntitiesRequest,
+        )
+
+        # Create the request data - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        self.stub.Delete(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the Named Selection service implementation for v1."""
 
 import grpc
@@ -66,11 +67,22 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "name": response.name,
             "bodies": [body.id.id for body in response.bodies],
             "faces": [face.id.id for face in response.faces],
+            "faces_meta": [
+                {
+                    "id": face.id.id,
+                    "surface_type": face.surface_type,
+                    "is_reversed": face.is_reversed,
+                    "body_id": face.parent.id.id,
+                }
+                for face in response.faces
+            ],
             "edges": [edge.id.id for edge in response.edges],
             "beams": [beam.id.id for beam in response.beams],
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
+            "datum_points": [dp.id.id for dp in response.datum_points],
         }
 
     @protect_grpc
@@ -104,6 +116,8 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "design_points": [dp.id.id for dp in response.design_points],
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
+            "design_curves": [curve.id.id for curve in response.curves],
+            "datum_points": [dp.id.id for dp in response.datum_points],
         }
 
     @protect_grpc

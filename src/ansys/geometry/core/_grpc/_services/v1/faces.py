@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the faces service implementation for v1."""
 
 from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
@@ -39,7 +40,9 @@ from .conversions import (
     from_grpc_surface_to_surface,
     from_length_to_grpc_quantity,
     from_line_to_grpc_line,
+    from_parameter_to_grpc_quantity,
     from_point3d_to_grpc_point,
+    from_trimmed_curve_to_grpc_trimmed_curve,
     from_unit_vector_to_grpc_direction,
     serialize_tracked_command_response,
 )
@@ -189,17 +192,32 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
-        # Create the request - assumes all inputs are valid and of the proper type
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        from ansys.api.discovery.v1.design.designmessages_pb2 import (
+            GetBoundingBoxRequest,
+            GetBoundingBoxRequestData,
+        )
 
-        # Call the gRPC service
-        response = self.stub.GetBoundingBox(request=request).response_data[0]
+        # Create the request to the proper method depending on tight tolerenace
+        if kwargs.get("tight"):
+            request = GetBoundingBoxRequest(
+                request_data=[
+                    GetBoundingBoxRequestData(
+                        id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight", False),
+                    )
+                ]
+            )
+
+            resp = self.stub.GetTightBoundingBox(request).response_data[0]
+        else:
+            request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+            resp = self.stub.GetBoundingBox(request).response_data[0]
 
         # Return the response - formatted as a dictionary
         return {
-            "min_corner": from_grpc_point_to_point3d(response.box.min),
-            "max_corner": from_grpc_point_to_point3d(response.box.max),
-            "center": from_grpc_point_to_point3d(response.box.center),
+            "min_corner": from_grpc_point_to_point3d(resp.box.min),
+            "max_corner": from_grpc_point_to_point3d(resp.box.max),
+            "center": from_grpc_point_to_point3d(resp.box.center),
         }
 
     @protect_grpc
@@ -293,7 +311,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                 CreateIsoParamCurvesRequestData(
                     id=build_grpc_id(kwargs["id"]),
                     u_dir_curve=kwargs["use_u_param"],
-                    proportion=kwargs["parameter"],
+                    proportion=from_parameter_to_grpc_quantity(kwargs["parameter"]),
                 )
             ]
         )
@@ -309,7 +327,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
                     "start": from_grpc_point_to_point3d(curve.start),
                     "end": from_grpc_point_to_point3d(curve.end),
                     "interval": Interval(curve.interval_start, curve.interval_end),
-                    "length": to_distance(curve.length).value,
+                    "length": to_distance(curve.length.value_in_geometry_units).value,
                 }
                 for curve in response.curves
             ]
@@ -352,7 +370,9 @@ class GRPCFacesServiceV1(GRPCFacesService):
         # Return the response - formatted as a dictionary
         return {
             "success": tracked_response.get("success"),
-            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "created_bodies": [
+                body.get("id") for body in tracked_response.get("created_bodies", [])
+            ],
             "tracked_response": tracked_response,
         }
 
@@ -388,7 +408,7 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {
             "success": tracked_response.get("success"),
             "created_bodies": [
-                body.get("id").id for body in tracked_response.get("created_bodies")
+                body.get("id") for body in tracked_response.get("created_bodies", [])
             ],
             "tracked_response": tracked_response,
         }
@@ -668,6 +688,107 @@ class GRPCFacesServiceV1(GRPCFacesService):
 
         # Call the gRPC service
         response = self.edit_stub.FaceOffset(request=request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracked_response": tracked_response,
+        }
+
+    @protect_grpc
+    def sweep_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SweepFacesRequest,
+            SweepFacesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        distance = kwargs.get("distance")
+        request = SweepFacesRequest(
+            request_data=[
+                SweepFacesRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["face_ids"]],
+                    trajectory_ids=[build_grpc_id(id) for id in kwargs["trajectory_ids"]],
+                    optional_distance=(
+                        from_length_to_grpc_quantity(distance) if distance is not None else None
+                    ),
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.edit_stub.SweepFaces(request)
+        tracked_response = serialize_tracked_command_response(response.tracked_command_response)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "created_bodies": [body.get("id") for body in tracked_response.get("created_bodies")],
+            "tracked_response": tracked_response,
+        }
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetCentroid(request=request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
+    @protect_grpc
+    def split_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.edit_pb2 import (
+            SplitFaceRequest,
+            SplitFaceRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SplitFaceRequest(
+            request_data=[
+                SplitFaceRequestData(
+                    selection_id=build_grpc_id(kwargs["face_id"]),
+                    split_parameter=(
+                        from_point3d_to_grpc_point(kwargs["split_parameter"])
+                        if kwargs["split_parameter"] is not None
+                        else None
+                    ),
+                    split_start=(
+                        from_point3d_to_grpc_point(kwargs["split_start"])
+                        if kwargs["split_start"] is not None
+                        else None
+                    ),
+                    split_end=(
+                        from_point3d_to_grpc_point(kwargs["split_end"])
+                        if kwargs["split_end"] is not None
+                        else None
+                    ),
+                    face_cutter_id=(
+                        build_grpc_id(kwargs["face_cutter_id"])
+                        if kwargs["face_cutter_id"] is not None
+                        else None
+                    ),
+                    split_curves=(
+                        [
+                            from_trimmed_curve_to_grpc_trimmed_curve(curve)
+                            for curve in kwargs["split_curves"]
+                        ]
+                        if kwargs["split_curves"] is not None
+                        else None
+                    ),
+                    split_type=kwargs["split_type"].value,
+                    parameter_type=kwargs["parameter_type"].value,
+                )
+            ]
+        )
+
+        # Call the gRPC service and serialize the response
+        response = self.edit_stub.SplitFaces(request=request)
         tracked_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary

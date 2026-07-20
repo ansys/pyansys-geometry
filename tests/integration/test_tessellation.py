@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Test tessellation and plotting."""
 
 import pytest
@@ -147,7 +148,6 @@ def test_body_tessellate(modeler: Modeler):
 @pytest.mark.skipif(
     not are_graphics_available(), reason="Skipping due to graphics requirements missing"
 )
-@pytest.mark.skip(reason="Skipping due to known issue with tessellation options.")
 def test_body_tessellate_with_options(modeler: Modeler):
     """Test the body tessellation with custom tessellation options."""
     # Create a simple body
@@ -165,8 +165,8 @@ def test_body_tessellate_with_options(modeler: Modeler):
     )
     mesh_fine = body.tessellate(merge=True, tess_options=fine_options, reset_cache=True)
     assert "PolyData" in str(mesh_fine)
-    assert mesh_fine.n_cells == 156
-    assert mesh_fine.n_points == 160
+    assert mesh_fine.n_cells == 268
+    assert mesh_fine.n_points == 272
 
     # Test with different tessellation options
     coarse_options = TessellationOptions(

@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,11 +19,13 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module for connecting to instances of the Geometry service."""
 
 import logging
 import os
 from pathlib import Path
+import tempfile
 from typing import TYPE_CHECKING
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
@@ -297,11 +299,12 @@ def launch_docker_modeler(
     connect_to_existing_service: bool = True,
     restart_if_existing_service: bool = False,
     name: str | None = None,
-    image: GeometryContainers | None = None,
+    image: GeometryContainers | str | None = None,
     client_log_level: int = logging.INFO,
     client_log_file: str | None = None,
     transport_mode: str | None = None,
     certs_dir: Path | str | None = None,
+    bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using Docker.
@@ -326,11 +329,15 @@ def launch_docker_modeler(
     name : str, default: None
         Name of the Docker container to deploy. The default is ``None``,
         in which case Docker assigns it a random name.
-    image : GeometryContainers, default: None
-        The Geometry service Docker image to deploy. The default is ``None``,
-        in which case the ``LocalDockerInstance`` class identifies the OS of your
-        Docker engine and deploys the latest version of the Geometry service for
-        that OS.
+    image : GeometryContainers | str, default: None
+        The Geometry service Docker image to deploy. This can be either:
+
+        * A ``GeometryContainers`` enum value for predefined images
+        * A string containing a custom Docker image name (e.g., myregistry.com/my-geometry:tag)
+
+        The default is ``None``, in which case the ``LocalDockerInstance`` class identifies
+        the OS of your Docker engine and deploys the latest version of the Geometry service
+        for that OS.
     client_log_level : int, default: logging.INFO
         Log level for the client. The default is ``logging.INFO``.
     client_log_file : str, default: None
@@ -344,6 +351,8 @@ def launch_docker_modeler(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    bypass_token : str | None, default: None
+        Bypass token to use to bypass license checkout when connecting to the Geometry service.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -367,6 +376,7 @@ def launch_docker_modeler(
         image=image,
         transport_mode=transport_mode,
         certs_dir=certs_dir,
+        bypass_token=bypass_token,
     )
 
     # Once the local Docker instance is ready... return the Modeler
@@ -526,6 +536,7 @@ def launch_modeler_with_geometry_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
@@ -593,6 +604,9 @@ def launch_modeler_with_geometry_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -653,6 +667,7 @@ def launch_modeler_with_geometry_service(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -673,6 +688,7 @@ def launch_modeler_with_discovery(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ):
     """Start Ansys Discovery locally using the ``ProductInstance`` class.
@@ -742,6 +758,9 @@ def launch_modeler_with_discovery(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -797,6 +816,7 @@ def launch_modeler_with_discovery(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -817,6 +837,7 @@ def launch_modeler_with_spaceclaim(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str = None,
     **kwargs: dict | None,
 ):
     """Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
@@ -886,6 +907,9 @@ def launch_modeler_with_spaceclaim(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -941,6 +965,7 @@ def launch_modeler_with_spaceclaim(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        proto_version=proto_version,
     )
 
 
@@ -960,6 +985,8 @@ def launch_modeler_with_core_service(
     uds_dir: Path | str | None = None,
     uds_id: str | None = None,
     certs_dir: Path | str | None = None,
+    proto_version: str | None = None,
+    bypass_token: str | None = None,
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry Core service locally using the ``ProductInstance`` class.
@@ -1028,6 +1055,12 @@ def launch_modeler_with_core_service(
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    proto_version : str | None, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
+    bypass_token : str | None, default: None
+        Token used to bypass license checks when connecting to the service.
+        If None, no bypass token is used.
     **kwargs : dict, default: None
         Placeholder to prevent errors when passing additional arguments that
         are not compatible with this method.
@@ -1070,6 +1103,10 @@ def launch_modeler_with_core_service(
         # Writing to the "Public" folder by default - no write permissions specifically required.
         server_logs_folder = Path(os.getenv("PUBLIC"), "Documents", "Ansys", "GeometryService")
         LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
+    elif server_logs_folder is None:
+        # Writing to the system temp folder by default - no write permissions specifically required.
+        server_logs_folder = Path(tempfile.gettempdir(), "Ansys", "GeometryService")
+        LOG.info(f"Writing server logs to the default folder at {server_logs_folder}.")
 
     return prepare_and_start_backend(
         BackendType.LINUX_SERVICE,
@@ -1089,6 +1126,8 @@ def launch_modeler_with_core_service(
         uds_id=uds_id,
         certs_dir=certs_dir,
         specific_minimum_version=252,
+        proto_version=proto_version,
+        bypass_token=bypass_token,
     )
 
 

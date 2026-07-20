@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the bodies service implementation for v1."""
 
 import grpc
@@ -645,13 +646,13 @@ class GRPCBodyServiceV1(GRPCBodyService):
             GetBoundingBoxRequestData,
         )
 
-        # Create the request to the proper method depending on tight tolerenace
-        if kwargs.get("tight_tolerance"):
+        # Create the request to the proper method depending on tight tolerance
+        if kwargs.get("tight"):
             request = GetBoundingBoxRequest(
                 request_data=[
                     GetBoundingBoxRequestData(
-                        body_id=build_grpc_id(kwargs["id"]),
-                        tight_tolerance=kwargs.get("tight_tolerance", False),
+                        id=build_grpc_id(kwargs["id"]),
+                        tight_tolerance=kwargs.get("tight", False),
                     )
                 ]
             )
@@ -1017,6 +1018,7 @@ class GRPCBodyServiceV1(GRPCBodyService):
             raise ValueError(f"Boolean operation failed: {kwargs['err_msg']}")
 
         serialized_response = serialize_tracked_command_response(response.tracked_command_response)
+
         # Return the response - formatted as a dictionary
         return {"tracker_response": serialized_response}
 
@@ -1142,10 +1144,15 @@ class GRPCBodyServiceV1(GRPCBodyService):
         )
 
         # Call the gRPC service
-        _ = self.edit_stub.CombineMergeBodies(request=request)
+        response = self.edit_stub.CombineMergeBodies(request=request)
+
+        serialized_response = serialize_tracked_command_response(response.tracked_command_response)
 
         # Return the response - formatted as a dictionary
-        return {}
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialized_response,
+        }
 
     @protect_grpc
     def assign_midsurface_thickness(self, **kwargs) -> dict:  # noqa: D102
@@ -1446,4 +1453,42 @@ class GRPCBodyServiceV1(GRPCBodyService):
             "name": body.name,
             "master_id": body.master_id.id,
             "is_surface": body.is_surface,
+        }
+
+    @protect_grpc
+    def get_centroid(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetCentroid(request=request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "centroid": from_grpc_point_to_point3d(response.centroid),
+        }
+
+    @protect_grpc
+    def create_block_body(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import CreateBlockBodyRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = CreateBlockBodyRequest(
+            start_point=from_point3d_to_grpc_point(kwargs["start"]),
+            end_point=from_point3d_to_grpc_point(kwargs["end"]),
+            name=kwargs["name"],
+            parent_id=build_grpc_id(kwargs["parent_id"]),
+        )
+
+        # Call the gRPC service
+        resp = self.stub.CreateBlockBody(request=request).body
+
+        # Return the response - formatted as a dictionary
+        return {
+            "id": resp.id.id,
+            "name": resp.name,
+            "master_id": resp.master_id.id,
+            "is_surface": resp.is_surface,
         }

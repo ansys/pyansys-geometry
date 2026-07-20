@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides a general framework for logging in PyAnsys Geometry.
 
 This module is built on the `Logging facility for
@@ -129,8 +130,10 @@ these loggers.
 from copy import copy
 from datetime import datetime
 import logging
+import os
 import sys
 from typing import TYPE_CHECKING
+import warnings
 import weakref
 
 from ansys.geometry.core.misc.checks import check_type
@@ -648,5 +651,13 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 # Finally define logger
 # ===============================================================
 
-LOG = Logger(level=logging.ERROR, to_file=False, to_stdout=True)
+LOG = Logger(level=logging.WARNING, to_file=False, to_stdout=True)
 LOG.debug("Loaded logging module as LOG")
+
+# For documentation build
+if os.environ.get("PYANSYS_GEOMETRY_BUILD_EXAMPLES", "false") == "true":
+    LOG.setLevel(logging.ERROR)
+    # Skip UserWarning as well...
+    warnings.filterwarnings(
+        "ignore", category=UserWarning, message="Starting gRPC client without TLS .*"
+    )

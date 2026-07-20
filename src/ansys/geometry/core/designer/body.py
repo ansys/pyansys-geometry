@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing a body."""
 
 from abc import ABC, abstractmethod
@@ -27,7 +28,6 @@ from enum import Enum, unique
 from functools import wraps
 from typing import TYPE_CHECKING, Union
 
-from beartype import beartype as check_input_types
 import matplotlib.colors as mcolors
 from pint import Quantity
 
@@ -48,9 +48,12 @@ from ansys.geometry.core.misc.auxiliary import (
     DEFAULT_COLOR,
     convert_color_to_hex,
     convert_opacity_to_hex,
+    get_bodies_from_ids,
     get_design_from_body,
 )
 from ansys.geometry.core.misc.checks import (
+    _F,
+    check_input_types,
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
@@ -110,7 +113,7 @@ class FillStyle(Enum):
     TRANSPARENT = 2
 
 
-class IBody(ABC):
+class IBody(ABC):  # pragma: no cover
     """Defines the common methods for a body, providing the abstract body interface.
 
     Both the ``MasterBody`` class and ``Body`` class both inherit from the ``IBody``
@@ -241,6 +244,11 @@ class IBody(ABC):
         return
 
     @abstractmethod
+    def is_lightweight(self) -> bool:
+        """Check if the body is lightweight."""
+        return
+
+    @abstractmethod
     def surface_thickness(self) -> Quantity | None:
         """Get the surface thickness of a surface body.
 
@@ -297,12 +305,27 @@ class IBody(ABC):
         return
 
     @abstractmethod
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:
+    def centroid(self) -> Point3D:
+        """Get the centroid of the body.
+
+        Returns
+        -------
+        Point3D
+            Centroid of the body.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 25R2.
+        """
+        return
+
+    @abstractmethod
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:
         """Get the bounding box of the body.
 
         Parameters
         ----------
-        tight_tolerance : bool, default: False
+        tight : bool, default: False
             Whether to use a tight tolerance when calculating the bounding box.
 
         Returns
@@ -986,17 +1009,20 @@ class MasterBody(IBody):
         name: str,
         grpc_client: GrpcClient,
         is_surface: bool = False,
+        is_lightweight: bool = False,
     ):
         """Initialize the ``MasterBody`` class."""
         check_type(id, str)
         check_type(name, str)
         check_type(grpc_client, GrpcClient)
         check_type(is_surface, bool)
+        check_type(is_lightweight, bool)
 
         self._id = id
         self._name = name
         self._grpc_client = grpc_client
         self._is_surface = is_surface
+        self._is_lightweight = is_lightweight
         self._surface_thickness = None
         self._surface_offset = None
         self._is_alive = True
@@ -1005,7 +1031,7 @@ class MasterBody(IBody):
         self._fill_style = FillStyle.DEFAULT
         self._color = None
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``MasterBody`` methods that need tessellation cache update.
 
         Parameters
@@ -1025,7 +1051,7 @@ class MasterBody(IBody):
             self._raw_tessellation = None
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     @property
     def id(self) -> str:  # noqa: D102
@@ -1093,6 +1119,14 @@ class MasterBody(IBody):
     @property
     def is_surface(self) -> bool:  # noqa: D102
         return self._is_surface
+
+    @property
+    def is_lightweight(self) -> bool:  # noqa: D102
+        return self._is_lightweight
+
+    @is_lightweight.setter
+    def is_lightweight(self, value: bool):  # noqa: D102
+        self._is_lightweight = value
 
     @property
     def surface_thickness(self) -> Quantity | None:  # noqa: D102
@@ -1192,12 +1226,20 @@ class MasterBody(IBody):
             center=response.get("center"),
         )
 
+    @property
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
-        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight_tolerance=tight_tolerance
+    def centroid(self) -> Point3D:  # noqa: D102
+        raise NotImplementedError(
+            """
+            Centroid is not implemented at the MasterBody level.
+            Instead, call this method on a body.
+            """
         )
+
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
@@ -1327,7 +1369,10 @@ class MasterBody(IBody):
     @check_input_types
     @min_backend_version(25, 1, 0)
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         self._grpc_client.log.debug(f"Setting body color of {self.id} to {color}.")
         color = convert_color_to_hex(color)
@@ -1336,7 +1381,7 @@ class MasterBody(IBody):
 
     @check_input_types
     @min_backend_version(25, 2, 0)
-    def set_opacity(self, opacity: float) -> None:
+    def set_opacity(self, opacity: int | float) -> None:
         """Set the opacity of the body.
 
         Warnings
@@ -1544,7 +1589,7 @@ class MasterBody(IBody):
                             i += count + 1
                         else:
                             break
-                    else:
+                    else:  # pragma: no cover
                         break
             return cells
 
@@ -1565,7 +1610,7 @@ class MasterBody(IBody):
 
         def _create_polydata_from_tess_data(tess_data: dict):
             """Create a VTK PolyData object from tessellation data."""
-            if not tess_data or len(tess_data.get("vertices", [])) == 0:
+            if not tess_data or len(tess_data.get("vertices", [])) == 0:  # pragma: no cover
                 return None
 
             polydata = vtkPolyData()
@@ -1683,9 +1728,21 @@ class MasterBody(IBody):
         check_type_all_elements_in_iterable(other, Body)
 
         self._grpc_client.log.debug(f"Combining and merging to body {self.id}.")
-        self._grpc_client.services.bodies.combine_merge(
+        response = self._grpc_client.services.bodies.combine_merge(
             body_ids=[self.id] + [body.id for body in other]
         )
+
+        if not response.get("success"):
+            self._grpc_client.log.warning(f"Failed to combine and merge body {self.id}.")
+            return
+
+        # Get the parent design from any of the bodies
+        parent_design = get_design_from_body(other[0] if other else self)
+
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            parent_design._update_design_inplace()
+        else:
+            parent_design._update_from_tracker(response["tracker_response"])
 
     def _combine_subtract(  # noqa: D102
         self,
@@ -1762,7 +1819,7 @@ class Body(IBody):
         self._template = template
         self._grpc_client = template._grpc_client
 
-    def reset_tessellation_cache(func):  # noqa: N805
+    def reset_tessellation_cache(func: _F) -> _F:  # noqa: N805
         """Decorate ``Body`` methods that require a tessellation cache update.
 
         Parameters
@@ -1781,7 +1838,7 @@ class Body(IBody):
             self._reset_tessellation_cache()
             return func(self, *args, **kwargs)
 
-        return wrapper
+        return wrapper  # type: ignore[return-value]
 
     def _reset_tessellation_cache(self):  # noqa: N805
         """Reset the cached tessellation for a body."""
@@ -1881,6 +1938,14 @@ class Body(IBody):
         return self._template.is_surface
 
     @property
+    def is_lightweight(self) -> bool:  # noqa: D102
+        return self._template.is_lightweight
+
+    @is_lightweight.setter
+    def is_lightweight(self, value: bool):  # noqa: D102
+        self._template.is_lightweight = value
+
+    @property
     def _surface_thickness(self) -> Quantity | None:  # noqa: D102
         return self._template.surface_thickness
 
@@ -1930,12 +1995,17 @@ class Body(IBody):
             center=response.get("center"),
         )
 
+    @property
     @min_backend_version(27, 1, 0)
-    def get_bounding_box(self, tight_tolerance: bool = False) -> BoundingBox:  # noqa: D102
+    def centroid(self) -> Point3D:  # noqa: D102
+        self._grpc_client.log.debug(f"Retrieving centroid for body {self.id} from server.")
+        response = self._template._grpc_client.services.bodies.get_centroid(id=self.id)
+        return response.get("centroid")
+
+    @min_backend_version(27, 1, 0)
+    def get_bounding_box(self, tight: bool = False) -> BoundingBox:  # noqa: D102
         self._grpc_client.log.debug(f"Retrieving bounding box for body {self.id} from server.")
-        response = self._grpc_client.services.bodies.get_bounding_box(
-            id=self.id, tight_tolerance=tight_tolerance
-        )
+        response = self._grpc_client.services.bodies.get_bounding_box(id=self.id, tight=tight)
 
         return BoundingBox(
             min_corner=response.get("min"),
@@ -2099,7 +2169,10 @@ class Body(IBody):
 
     @ensure_design_is_active
     def set_color(  # noqa: D102
-        self, color: str | tuple[float, float, float] | tuple[float, float, float, float]
+        self,
+        color: str
+        | tuple[int | float, int | float, int | float]
+        | tuple[int | float, int | float, int | float, int | float],
     ) -> None:
         return self._template.set_color(color)
 
@@ -2298,7 +2371,7 @@ class Body(IBody):
     def intersect(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "intersect", "bodies do not intersect")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "intersect", "bodies do not intersect"
             )
@@ -2306,7 +2379,7 @@ class Body(IBody):
     def subtract(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "subtract", "empty (complete) subtraction")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(
                 other, keep_other, "subtract", "empty (complete) subtraction"
             )
@@ -2314,11 +2387,44 @@ class Body(IBody):
     def unite(self, other: Union["Body", Iterable["Body"]], keep_other: bool = False) -> None:  # noqa: D102
         if self._template._grpc_client.backend_version < __TEMPORARY_BOOL_OPS_FIX__:
             self.__generic_boolean_op(other, keep_other, "unite", "union operation failed")
-        else:
+        else:  # pragma: no cover
             self.__generic_boolean_command(other, False, "unite", "union operation failed")
 
     def combine_merge(self, other: Union["Body", list["Body"]]) -> None:  # noqa: D102
         self._template.combine_merge(other)
+
+    @min_backend_version(27, 1, 0)
+    def detach_faces(self) -> list["Body"]:
+        """Detach all the faces from the body.
+
+        This method will result in the original body
+        becoming a surface body and a list of new surface bodies being created for every
+        detached face.
+
+        Returns
+        -------
+        list[Body]
+            Bodies created by the detach if any.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        response = self._grpc_client.services.model_tools.detach_faces(selections=[[self.id]])
+
+        parent_design = get_design_from_body(self)
+
+        if response.get("success"):
+            if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+                parent_design._update_design_inplace()
+            else:
+                parent_design._update_from_tracker(response.get("tracked_response"))
+
+            result_bodies = response.get("created_bodies")
+            return get_bodies_from_ids(parent_design, result_bodies)
+        else:
+            self._grpc_client.log.info("Failed to detach faces.")
+            return []
 
     @min_backend_version(26, 1, 0)
     def _combine_subtract(  # noqa: D102
@@ -2346,7 +2452,7 @@ class Body(IBody):
     @reset_tessellation_cache
     @ensure_design_is_active
     @check_input_types
-    def __generic_boolean_command(
+    def __generic_boolean_command(  # pragma: no cover
         self,
         other: Union["Body", Iterable["Body"]],
         keep_other: bool,
@@ -2381,13 +2487,10 @@ class Body(IBody):
         err_msg: str,
     ) -> None:
         grpc_other = other if isinstance(other, Iterable) else [other]
-        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
-            if keep_other:
-                # Make a copy of the other body to keep it...
-                # stored temporarily in the parent component - since it will be deleted
-                grpc_other = [
-                    b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other
-                ]
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN and keep_other:
+            # Make a copy of the other body to keep it...
+            # stored temporarily in the parent component - since it will be deleted
+            grpc_other = [b.copy(self.parent_component, f"BoolOpCopy_{b.name}") for b in grpc_other]
 
         response = self._template._grpc_client.services.bodies.boolean(
             target=self.id,
@@ -2397,13 +2500,14 @@ class Body(IBody):
             keep_other=keep_other,
         )
 
+        parent_design = get_design_from_body(self)
         if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
             for b in grpc_other:
                 b.parent_component.delete_body(b)
+            parent_design._update_design_inplace()
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
-            parent_design = get_design_from_body(self)
             parent_design._update_from_tracker(response["tracker_response"])
 
     def __repr__(self) -> str:

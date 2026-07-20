@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides tools for repairing bodies."""
 
 from typing import TYPE_CHECKING
@@ -29,9 +30,9 @@ import ansys.geometry.core as pyansys_geometry
 from ansys.geometry.core.connection import GrpcClient
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import (
+    build_edge_id_map,
     get_bodies_from_ids,
     get_design_from_body,
-    get_edges_from_ids,
     get_faces_from_ids,
 )
 from ansys.geometry.core.misc.checks import (
@@ -61,6 +62,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.face import Face
     from ansys.geometry.core.modeler import Modeler
 
 
@@ -144,11 +146,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
         return [
             SplitEdgeProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
@@ -175,12 +178,13 @@ class RepairTools:
         body_ids = [body.id for body in bodies]
         response = self._grpc_client.services.repair_tools.find_extra_edges(selection=body_ids)
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
 
         return [
             ExtraEdgeProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
@@ -208,12 +212,13 @@ class RepairTools:
         response = self._grpc_client.services.repair_tools.find_inexact_edges(selection=body_ids)
 
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
 
         return [
             InexactEdgeProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
@@ -251,11 +256,12 @@ class RepairTools:
         )
 
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
         return [
             ShortEdgeProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
@@ -336,12 +342,13 @@ class RepairTools:
             backend_version=self._grpc_client.backend_version,
         )
         parent_design = get_design_from_body(bodies[0])
+        edge_map = build_edge_id_map(parent_design)
 
         return [
             MissingFaceProblemAreas(
                 f"{res.get('id')}",
                 self._grpc_client,
-                get_edges_from_ids(parent_design, res.get("edges")),
+                [edge_map[eid] for eid in res.get("edges", []) if eid in edge_map],
             )
             for res in response.get("problems")
         ]
@@ -399,6 +406,29 @@ class RepairTools:
             )
             for res in response.get("problems")
         ]
+
+    @min_backend_version(27, 1, 0)
+    def find_bad_faces(self, bodies: list["Body"]) -> list["Face"]:
+        """Find bad faces in the given list of bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies where bad faces are searched.
+
+        Returns
+        -------
+        list[Face]
+            List of bad faces found in the provided bodies.
+        """
+        if not bodies:
+            return []
+
+        body_ids = [body.id for body in bodies]
+        response = self._grpc_client.services.repair_tools.find_bad_faces(body_ids=body_ids)
+
+        parent_design = get_design_from_body(bodies[0])
+        return get_faces_from_ids(parent_design, response.get("face_ids", []))
 
     def find_stitch_faces(
         self,

@@ -7,7 +7,7 @@
 |pyansys| |python| |MIT| |ruff|
 |codecov| |GH-CI| |pre-commit|
 |pypi| |pypi-downloads| |conda| |conda-downloads|
-|deep-wiki|
+|deep-wiki| |codacy|
 
 .. |pyansys| image:: https://img.shields.io/badge/Py-Ansys-ffc107.svg?logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAABDklEQVQ4jWNgoDfg5mD8vE7q/3bpVyskbW0sMRUwofHD7Dh5OBkZGBgW7/3W2tZpa2tLQEOyOzeEsfumlK2tbVpaGj4N6jIs1lpsDAwMJ278sveMY2BgCA0NFRISwqkhyQ1q/Nyd3zg4OBgYGNjZ2ePi4rB5loGBhZnhxTLJ/9ulv26Q4uVk1NXV/f///////69du4Zdg78lx//t0v+3S88rFISInD59GqIH2esIJ8G9O2/XVwhjzpw5EAam1xkkBJn/bJX+v1365hxxuCAfH9+3b9/+////48cPuNehNsS7cDEzMTAwMMzb+Q2u4dOnT2vWrMHu9ZtzxP9vl/69RVpCkBlZ3N7enoDXBwEAAA+YYitOilMVAAAAAElFTkSuQmCC
    :target: https://docs.pyansys.com/
@@ -49,13 +49,17 @@
    :target: https://github.com/astral-sh/ruff
    :alt: Ruff
 
-.. |pre-commit| image:: https://results.pre-commit.ci/badge/github/ansys/pyansys-geometry/main.svg
-   :target: https://results.pre-commit.ci/latest/github/ansys/pyansys-geometry/main
-   :alt: pre-commit.ci
+.. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+   :target: https://pre-commit.com/
+   :alt: pre-commit
 
 .. |deep-wiki| image:: https://deepwiki.com/badge.svg
    :target: https://deepwiki.com/ansys/pyansys-geometry
    :alt: Ask DeepWiki
+
+.. |codacy| image:: https://api.codacy.com/project/badge/Grade/d0c3ff02603e4dfb806fba3411ee9d8f
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/gh/ansys/pyansys-geometry?utm_source=github.com&utm_medium=referral&utm_content=ansys/pyansys-geometry&utm_campaign=Badge_Grade
 
 .. contents::
 
@@ -73,6 +77,25 @@ You can use `pip <https://pypi.org/project/pip/>`_ to install PyAnsys Geometry.
 
     pip install ansys-geometry-core
 
+Or, using `uv <https://docs.astral.sh/uv/>`_:
+
+.. code:: bash
+
+    uv add ansys-geometry-core
+
+For optional graphics support (PyVista, VTK, pygltflib), install the ``graphics`` extra.
+To include all optional dependencies, use the ``all`` extra instead:
+
+.. code:: bash
+
+    pip install "ansys-geometry-core[graphics]"
+    pip install "ansys-geometry-core[all]"
+
+.. code:: bash
+
+    uv add "ansys-geometry-core[graphics]"
+    uv add "ansys-geometry-core[all]"
+
 You can also install PyAnsys Geometry from `Conda-Forge <https://anaconda.org/conda-forge/ansys-geometry-core>`_:
 
 .. code:: bash
@@ -81,11 +104,21 @@ You can also install PyAnsys Geometry from `Conda-Forge <https://anaconda.org/co
 
 To install the latest development version, run these commands:
 
+Using ``pip``:
+
 .. code:: bash
 
    git clone https://github.com/ansys/pyansys-geometry
    cd pyansys-geometry
    pip install -e .
+
+Using ``uv``:
+
+.. code:: bash
+
+   git clone https://github.com/ansys/pyansys-geometry
+   cd pyansys-geometry
+   uv sync
 
 For more information, see `Getting Started`_.
 

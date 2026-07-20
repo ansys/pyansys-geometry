@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the edges service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -97,4 +98,24 @@ class GRPCEdgesService(ABC):  # pragma: no cover
     @abstractmethod
     def offset_edges(self, **kwargs) -> dict:
         """Offset edges."""
+        pass
+
+    @abstractmethod
+    def sweep_edges(self, **kwargs) -> dict:
+        """Sweep edges along trajectories."""
+        pass
+
+    @abstractmethod
+    def get_centroid(self, **kwargs) -> dict:
+        """Get the centroid of an edge."""
+        pass
+
+    @abstractmethod
+    def split_edges(self, **kwargs) -> dict:
+        """Split edges."""
+        pass
+
+    @abstractmethod
+    def fill_edge_loops(self, **kwargs) -> dict:
+        """Fill the surfaces bounded by the given edge loops."""
         pass

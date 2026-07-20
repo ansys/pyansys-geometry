@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the Prepare Tools service implementation for v1."""
 
 import grpc
@@ -429,5 +430,25 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
             "results": [
                 {"sweepable": result.result, "face_ids": [face.id for face in result.face_ids]}
                 for result in response.response_data
+            ]
+        }
+
+    @protect_grpc
+    def find_mappable_faces(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import FindMappableFacesRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = FindMappableFacesRequest(
+            face_ids=[build_grpc_id(face) for face in kwargs["face_ids"]],
+        )
+
+        # Call the gRPC service
+        response = self.stub.FindMappableFaces(request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "results": [
+                {"face_id": item.face.id, "mappable": item.mappable}
+                for item in response.response_data
             ]
         }

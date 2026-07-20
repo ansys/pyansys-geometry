@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the model tools service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -67,4 +68,14 @@ class GRPCModelToolsService(ABC):  # pragma: no cover
     @abstractmethod
     def create_sketch_line(self, **kwargs) -> dict:
         """Create a sketch line in the design."""
+        pass
+
+    @abstractmethod
+    def detach_faces(self, **kwargs) -> dict:
+        """Detach faces from several bodies selection."""
+        pass
+
+    @abstractmethod
+    def project_to_solid(self, **kwargs) -> dict:
+        """Project a sketch onto a solid body."""
         pass

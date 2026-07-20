@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for interacting with the Geometry service."""
 
 import logging
@@ -33,7 +34,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
-from ansys.geometry.core.misc.checks import check_type, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
@@ -216,7 +217,7 @@ class Modeler:
                 self._design._update_design_inplace()
             return self._design
         else:
-            self.client.log.warning("No active design available.")
+            self.client.log.info("No active design available.")
 
         return None
 
@@ -292,40 +293,38 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
 
+        Warnings
+        --------
+        This method is not supported with protos v1 and beyond. Use 'modeler.open_file()' to open
+        files or 'design.insert_file()' to insert files into an existing design.
+
         Notes
         -----
         This method creates a file on the server that has the same name and extension
         as the file on the client.
         """
-        if self.client.services.version == GeometryApiProtos.V0:
-            from pathlib import Path
+        from pathlib import Path
 
-            fp_path = Path(file_path).resolve()
+        fp_path = Path(file_path).resolve()
 
-            if not fp_path.exists():
-                raise ValueError(f"Could not find file: {file_path}")
-            if fp_path.is_dir():
-                raise ValueError("File path must lead to a file, not a directory.")
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
 
-            file_name = fp_path.name
+        file_name = fp_path.name
 
-            with fp_path.open(mode="rb") as file:
-                data = file.read()
+        with fp_path.open(mode="rb") as file:
+            data = file.read()
 
-            response = self.client.services.designs.upload_file(
-                data=data,
-                file_name=file_name,
-                open_file=open_file,
-                import_options=import_options,
-            )
+        response = self.client.services.designs.upload_file(
+            data=data,
+            file_name=file_name,
+            open_file=open_file,
+            import_options=import_options,
+        )
 
-            return response.get("file_path")
-        else:
-            raise GeometryRuntimeError(
-                "The '_upload_file' method is not supported in protos v1 and beyond. "
-                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
-                "to insert files into an existing design."
-            )
+        return response.get("file_path")
 
     def _upload_file_stream(
         self,
@@ -349,32 +348,30 @@ class Modeler:
         file_path : str
             Full path of the file uploaded to the server.
 
+        Warnings
+        --------
+        This method is not supported with protos v1 and beyond. Use 'modeler.open_file()' to open
+        files or 'design.insert_file()' to insert files into an existing design.
+
         Notes
         -----
         This method creates a file on the server that has the same name and extension
         as the file on the client.
         """
-        if self.client.services.version == GeometryApiProtos.V0:
-            from pathlib import Path
+        from pathlib import Path
 
-            fp_path = Path(file_path).resolve()
+        fp_path = Path(file_path).resolve()
 
-            if not fp_path.exists():
-                raise ValueError(f"Could not find file: {file_path}")
-            if fp_path.is_dir():
-                raise ValueError("File path must lead to a file, not a directory.")
+        if not fp_path.exists():
+            raise ValueError(f"Could not find file: {file_path}")
+        if fp_path.is_dir():
+            raise ValueError("File path must lead to a file, not a directory.")
 
-            response = self.client.services.designs.upload_file_stream(
-                file_path=fp_path, open_file=open_file, import_options=import_options
-            )
+        response = self.client.services.designs.upload_file_stream(
+            file_path=fp_path, open_file=open_file, import_options=import_options
+        )
 
-            return response.get("file_path")
-        else:
-            raise GeometryRuntimeError(
-                "The '_upload_file_stream' method is not supported with protos v1 and beyond. "
-                "Use 'modeler.open_file()' to open files or 'design.insert_file()' "
-                "to insert files into an existing design."
-            )
+        return response.get("file_path")
 
     def open_file(
         self,
@@ -386,7 +383,8 @@ class Modeler:
         """Open a file.
 
         This method imports a design into the service. On Windows and Linux, ``.scdocx``, ``.dsco``,
-        and reader formats are supported. Please see notes for supported reader formats.
+        ``.pmdb`` (beginning in 27.1), and reader formats are supported. Please see notes for
+        supported reader formats.
 
         If the file is a shattered assembly with external references, the whole containing folder
         will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
@@ -410,25 +408,46 @@ class Modeler:
         Notes
         -----
         Format and latest supported version
-            * AutoCAD 2024
-            * CATIA V5 2024
+            * AutoCAD 2025
+            * CATIA V5 2025
             * CATIA V6 2024
-            * Creo Parametric 11
+            * Creo Parametric 12.4
             * IGES 5.3
-            * Inventor 2025
+            * Inventor 2026
             * JT 10.10
-            * NX 2412
+            * NX 2506
             * Rhino 8
             * Solid Edge 2025
             * SOLIDWORKS 2025
             * STEP AP242
         """
+        # Check if file exists
+        if not Path(file_path).exists():
+            raise GeometryRuntimeError(f"File {file_path} does not exist.")
+
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
         # Close the existing design if it is active
         if self._design is not None and self._design.is_active:
             self._design.close()
+
+        # Check for PMDB file and make sure backend supports it
+        if file_path.endswith(".pmdb") and (
+            self.client.backend_version < (27, 1, 0)
+            or self.client.services.version == GeometryApiProtos.V0
+        ):
+            raise GeometryRuntimeError(
+                "PMDB import requires a minimum Ansys release version of 27.1 "
+                "and is not implemented in this protofile version."
+            )
+
+        # Warn the user if importing as lightweight
+        if import_options.import_as_lightweight:
+            self.client.log.warning(
+                "Importing as lightweight bodies. "
+                "Some geometry operations are not supported with lightweight bodies."
+            )
 
         # Format-specific logic - upload the whole containing folder for assemblies. If backend's
         # version is > 26.1.0 we're going to upload the file no matter what, as streaming is
@@ -437,7 +456,8 @@ class Modeler:
             fp_path = Path(file_path)
             file_size_kb = fp_path.stat().st_size
             if any(
-                ext in str(file_path) for ext in [".CATProduct", ".asm", ".solution", ".sldasm"]
+                ext in str(file_path).lower()
+                for ext in [".catproduct", ".asm", ".solution", ".sldasm"]
             ):
                 dir = fp_path.parent
                 for file in dir.iterdir():
@@ -497,12 +517,12 @@ class Modeler:
         lines.append(str(self.client))
         return "\n".join(lines)
 
-    def run_discovery_script_file(
+    def run_script_file(
         self,
         file_path: str | Path,
         script_args: dict[str, str] | None = None,
         import_design: bool = False,
-        api_version: int | str | ApiVersions = None,
+        api_version: int | str | ApiVersions | None = None,
     ) -> tuple[dict[str, str], Optional["Design"]]:
         """Run a Discovery script file.
 
@@ -616,6 +636,29 @@ class Modeler:
             return response.get("values"), self.read_existing_design()
         else:
             return response.get("values"), None
+
+    @deprecated_method(
+        alternative="run_script_file",
+        version="0.15.2",
+        remove="0.17.0",
+    )
+    def run_discovery_script_file(
+        self,
+        file_path: str | Path,
+        script_args: dict[str, str] | None = None,
+        import_design: bool = False,
+        api_version: int | str | ApiVersions | None = None,
+    ) -> tuple[dict[str, str], Optional["Design"]]:
+        """Run a script file.
+
+        This is a deprecated method. Use ``run_script_file()`` instead.
+        """
+        return self.run_script_file(
+            file_path=file_path,
+            script_args=script_args,
+            import_design=import_design,
+            api_version=api_version,
+        )
 
     @property
     def repair_tools(self) -> RepairTools:

@@ -7,6 +7,7 @@ backends:
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -33,6 +34,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_box_enclosure
       - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
       - tests/integration/test_prepare_tools.py::test_sphere_enclosure
+      - tests/integration/test_repair_tools.py::test_find_bad_faces
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -66,12 +68,18 @@ backends:
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_face.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_body.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # Components and vertex only available from 26.1 onwards
@@ -80,10 +88,15 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Bounding box center is only available from 25R2 onwards
-      - tests/integration/test_design.py::test_get_body_bounding_box
+      - tests/integration/test_body.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES/FMD-with-options is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      - tests/integration/test_design_export.py::test_export_to_fmd_with_options
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_import.py::test_design_import_acad_2024
       - tests/integration/test_design_import.py::test_design_import_cat5_2024
@@ -93,7 +106,6 @@ backends:
       - tests/integration/test_design_import.py::test_design_import_solid_edge2025
       - tests/integration/test_design_import.py::test_design_import_nx2412
       - tests/integration/test_design_import.py::test_design_import_inventor2026
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_failure_for_export
       # Bug fix included from 25.2 onwards
       - tests/integration/test_issues.py::test_issue_1192_temp_body_on_empty_intersect
@@ -107,6 +119,7 @@ backends:
       - tests/integration/test_design.py::test_midsurface_properties
       - tests/integration/test_issues.py::test_issue_834_design_import_with_surfaces
       - tests/integration/test_geometry_commands.py::test_thicken_surface_body
+      - tests/integration/test_geometry_commands.py::test_project_to_solid_face_onto_face
       # Ordering of faces/edges changed from 24R2 onwards
       - tests/integration/test_design.py::test_faces_edges
       # Due to test setup, these tests error out and are not caught by the backend version error
@@ -124,8 +137,8 @@ backends:
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
       - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets added in 26.1
-      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
-      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[dsco-DISCO]
       - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
@@ -133,11 +146,22 @@ backends:
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # Heavyweight conversion is only available from 27R1 onwards
+      - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
+      # SC color tones import added in 27.1
+      - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "24.2"
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
       - tests/integration/test_design_import.py::test_design_import_with_named_selections
       - tests/integration/test_design_import.py::test_design_import_stride_with_named_selections
@@ -164,6 +188,7 @@ backends:
       - tests/integration/test_prepare_tools.py::test_box_enclosure
       - tests/integration/test_prepare_tools.py::test_cylinder_enclosure
       - tests/integration/test_prepare_tools.py::test_sphere_enclosure
+      - tests/integration/test_repair_tools.py::test_find_bad_faces
       - tests/integration/test_repair_tools.py::test_fix_small_face
       - tests/integration/test_repair_tools.py::test_find_interference
       - tests/integration/test_repair_tools.py::test_fix_interference
@@ -193,16 +218,21 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_face.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_body.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
@@ -214,15 +244,20 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Bounding box center is only available from 25R2 onwards
-      - tests/integration/test_design.py::test_get_body_bounding_box
+      - tests/integration/test_body.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES/FMD-with-options is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      - tests/integration/test_design_export.py::test_export_to_fmd_with_options
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
       - tests/integration/test_design_export.py::test_import_export_glb
-      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-1-1]
       - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
       - tests/integration/test_design_import.py::test_design_insert_id_bug
       - tests/integration/test_design_import.py::test_design_import_acad_2024
@@ -251,8 +286,8 @@ backends:
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
       - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
-      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
-      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[dsco-DISCO]
       - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
@@ -260,6 +295,18 @@ backends:
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # Heavyweight conversion is only available from 27R1 onwards
+      - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # SC color tones import added in 27.1
+      - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "25.1"
     incompatible_tests:
@@ -271,16 +318,22 @@ backends:
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_combine_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_pull_example
       - tests/integration/test_spaceclaim_tutorial_examples.py::test_intersect_example
-      - tests/integration/test_design.py::test_legacy_export_download
       - tests/integration/test_design.py::test_updating_design_from_tracker
       - tests/integration/test_design.py::test_failure_for_export
       - tests/integration/test_design.py::test_combine_subtract_transfer_ns
+      - tests/integration/test_design.py::test_combine_subtract_transfer_ns_default_options_changed
+      - tests/integration/test_face.py::test_get_face_tight_bounding_box
+      - tests/integration/test_design.py::test_get_edge_tight_bounding_box
+      - tests/integration/test_body.py::test_get_body_tight_bounding_box
+      - tests/integration/test_design.py::test_datum_planes
+      - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_repair_tools.py::test_find_bad_faces
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
       - tests/integration/test_design.py::test_design_selection
       # Empty materials are only supported from 25.2 onwards
-      - tests/integration/test_design.py::test_get_empty_material
+      - tests/integration/test_body.py::test_get_empty_material
       # File streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_stream_upload_file
       # No sketch on imprinted curves is only supported from 25.2 onwards
@@ -292,18 +345,24 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Potential problem in model/reading design for importing parameters
       - tests/integration/test_design.py::test_design_parameters
+      - tests/integration/test_design.py::test_unitless_design_parameters
       # Bounding box center is only available from 25R2 onwards
-      - tests/integration/test_design.py::test_get_body_bounding_box
+      - tests/integration/test_body.py::test_get_body_bounding_box
       # Export to DSCO files is only available from 25R2 onwards
       - tests/integration/test_design_export.py::test_export_to_disco
+      # Export to STEP/IGES/FMD-with-options is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      - tests/integration/test_design_export.py::test_export_to_fmd_with_options
+      # Stitch faces fixed in 25R2
       - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces
       - tests/integration/test_repair_tools.py::test_find_and_fix_stitch_faces_comprehensive
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_glb
-      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
       - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
       - tests/integration/test_design_import.py::test_design_insert_id_bug
       - tests/integration/test_design_import.py::test_design_import_acad_2024
@@ -344,21 +403,35 @@ backends:
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
       - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
       # Export body facets add in 26.1
-      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
-      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[dsco-DISCO]
       - tests/integration/test_design_export.py::test_export_to_disco_with_facets
       # NURBS surface creation only available from 26.1 onwards
-      - tests/integration/test_design.py::test_nurbs_surface_body_creation
+      - tests/integration/test_nurbs.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
       # Tracker is introduced in 25.2
       - tests/integration/test_design.py::test_design_update_with_booleans
       - tests/integration/test_design.py::test_check_design_update
       - tests/integration/test_design.py::test_check_design_update_2
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # Heavyweight conversion is only available from 27R1 onwards
+      - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # SC color tones import added in 27.1
+      - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_repair_tools.py::test_find_bad_faces
       # Components and vertex only available on 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
@@ -366,11 +439,12 @@ backends:
       - tests/integration/test_design.py::test_vertices
       - tests/integration/test_design.py::test_components_get_named_selections
       - tests/integration/test_design.py::test_vertices_get_named_selections
+      - tests/integration/test_design.py::test_add_member_to_imported_named_selection
       # Insert/Import file operations caused problems prior to 26.1
       - tests/integration/test_design_export.py::test_import_export_reimport_design_scdocx
       - tests/integration/test_design_export.py::test_import_export_reimport_design_x_t
       - tests/integration/test_design_export.py::test_import_export_glb
-      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-2-1]
+      - tests/integration/test_design_export.py::test_import_export_open_file_design[PARASOLID_TEXT-x_t-rci_std.x_t-1-1]
       - tests/integration/test_design_export.py::test_import_export_open_file_design[SCDOCX-scdocx-reactorWNS.scdocx-1-3]
       - tests/integration/test_design_import.py::test_design_insert_id_bug
       - tests/integration/test_design.py::test_legacy_export_download
@@ -390,12 +464,63 @@ backends:
       - tests/integration/test_design_import.py::test_named_selections_after_file_open
       - tests/integration/test_design_import.py::test_file_insert_import_named_selections_post_import
       - tests/integration/test_geometry_commands.py::test_circular_pattern_about_line
+      # Bug fix included from 27.1 onwards
+      - tests/integration/test_geometry_commands.py::test_project_to_solid_face_onto_face
+      - tests/integration/test_geometry_commands.py::test_project_to_solid_edge_onto_face
+      - tests/integration/test_geometry_commands.py::test_project_to_solid_multiple_sources
       # Export body facets add in 26.1
-      - tests/integration/test_design.py::test_write_body_facets_on_save[scdocx-None]
-      - tests/integration/test_design.py::test_write_body_facets_on_save[dsco-DISCO]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[scdocx-None]
+      - tests/integration/test_design_export.py::test_write_body_facets_on_save[dsco-DISCO]
       - tests/integration/test_design_export.py::test_export_to_disco_with_facets
+      # Export to STEP/IGES/FMD-with-options is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      - tests/integration/test_design_export.py::test_export_to_fmd_with_options
       # NURBS surface creation only available from 26.1 onwards
-      - tests/integration/test_design.py::test_nurbs_surface_body_creation
+      - tests/integration/test_nurbs.py::test_nurbs_surface_body_creation
       # Edge tessellation added in 26.1
       - tests/integration/test_tessellation.py::test_body_tessellate_with_edges
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # Heavyweight conversion is only available from 27R1 onwards
+      - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # Update design in place breaks component rename before 27.1 (Core Service)
+      - tests/integration/test_design.py::test_set_component_name
+      # SC color tones import added in 27.1
+      - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # DesignCurve import broken in 25.2
+      - tests/integration/test_curves.py::test_search_design_curve
+      - tests/integration/test_curves.py::test_delete_design_curve
 
+  - version: "26.1"
+    incompatible_tests:
+      # Fix for pattern introduced in 27.1
+      - tests/integration/test_design.py::test_unitless_design_parameters
+      # NURBS Curves and surfaces for intersection was introduced in 27.1
+      - tests/integration/test_geometry_commands.py::test_intersect_curve_and_surface
+      # Export to STEP/IGES/FMD-with-options is only available from 27R1 onwards
+      - tests/integration/test_design_export.py::test_export_to_step
+      - tests/integration/test_design_export.py::test_export_to_iges
+      - tests/integration/test_design_export.py::test_export_to_fmd_with_options
+      # Tessellation options provide different results prior to 27.1
+      - tests/integration/test_tessellation.py::test_body_tessellate_with_options
+      # Import error message added in 27.1
+      - tests/integration/test_design_import.py::test_import_unsupported_filetype
+      # Heavyweight conversion is only available from 27R1 onwards
+      - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
+      # No support before 27.1
+      - tests/integration/test_design.py::test_design_download_v1_api
+      # Update design in place breaks component rename before 27.1 (Core Service)
+      - tests/integration/test_design.py::test_set_component_name
+      # SC color tones import added in 27.1
+      - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh

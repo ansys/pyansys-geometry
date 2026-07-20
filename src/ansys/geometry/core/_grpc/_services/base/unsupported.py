@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the unsupported service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -52,4 +53,19 @@ class GRPCUnsupportedService(ABC):  # pragma: no cover
     @abstractmethod
     def set_single_export_id(self, **kwargs) -> dict:
         """Set a single export ID for an entity."""
+        pass
+
+    @abstractmethod
+    def load_addin(self, **kwargs) -> dict:
+        """Load an addin by name."""
+        pass
+
+    @abstractmethod
+    def run_addin_method(self, **kwargs) -> dict:
+        """Run a method on a loaded addin."""
+        pass
+
+    @abstractmethod
+    def convert_to_heavyweight(self, **kwargs) -> dict:
+        """Convert lightweight bodies to heavyweight."""
         pass

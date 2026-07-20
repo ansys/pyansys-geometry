@@ -1,3 +1,5 @@
 /.quarto/
 MyDesign.*
 _extensions
+
+**/*.quarto_ipynb

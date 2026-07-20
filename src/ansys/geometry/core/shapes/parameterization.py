@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,14 +19,15 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides the parametrization-related classes."""
 
 from enum import Enum, unique
 
-from beartype import beartype as check_input_types
 import numpy as np
 
 from ansys.geometry.core.misc.accuracy import Accuracy
+from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.typing import Real
 
 
@@ -171,7 +172,7 @@ class Interval:
         """Compare two intervals."""
         if not isinstance(other, Interval):
             # don't attempt to compare against unrelated types
-            return NotImplemented
+            raise TypeError(f"Cannot compare Interval with {type(other).__name__}")
         return Accuracy.equal_doubles(self.start, other.start) and Accuracy.equal_doubles(
             self.end, other.end
         )

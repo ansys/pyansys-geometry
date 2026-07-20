@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,12 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides tools for preparing geometry for use with simulation."""
 
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
 import ansys.geometry.core as pyansys_geom
@@ -40,7 +40,11 @@ from ansys.geometry.core.misc.auxiliary import (
     get_design_from_face,
     get_faces_from_ids,
 )
-from ansys.geometry.core.misc.checks import check_type_all_elements_in_iterable, min_backend_version
+from ansys.geometry.core.misc.checks import (
+    check_input_types,
+    check_type_all_elements_in_iterable,
+    min_backend_version,
+)
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
@@ -378,10 +382,10 @@ class PrepareTools:
     @min_backend_version(25, 2, 0)
     def find_logos(
         self,
-        bodies: list["Body"] = None,
-        min_height: Distance | Quantity | Real = None,
-        max_height: Distance | Quantity | Real = None,
-    ) -> "LogoProblemArea":
+        bodies: list["Body"] | None = None,
+        min_height: Distance | Quantity | Real | None = None,
+        max_height: Distance | Quantity | Real | None = None,
+    ) -> "LogoProblemArea | None":
         """Detect logos in geometry.
 
         Detects logos, using a list of bodies if provided.
@@ -398,8 +402,8 @@ class PrepareTools:
 
         Returns
         -------
-        LogoProblemArea
-            Problem area with logo faces.
+        LogoProblemArea or None
+            Problem area with logo faces. Returns ``None`` if no logos are found.
 
         Warnings
         --------
@@ -412,7 +416,7 @@ class PrepareTools:
         ) and self._grpc_client.backend_version < (26, 1, 0):
             # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
-            return
+            return None
 
         # Verify inputs
         if bodies and len(bodies) > 0:
@@ -442,9 +446,9 @@ class PrepareTools:
     @min_backend_version(25, 2, 0)
     def find_and_remove_logos(
         self,
-        bodies: list["Body"] = None,
-        min_height: Distance | Quantity | Real = None,
-        max_height: Distance | Quantity | Real = None,
+        bodies: list["Body"] | None = None,
+        min_height: Distance | Quantity | Real | None = None,
+        max_height: Distance | Quantity | Real | None = None,
     ) -> bool:
         """Detect and remove logos in geometry.
 
@@ -454,9 +458,9 @@ class PrepareTools:
         ----------
         bodies : list[Body], optional
             List of bodies where logos should be detected and removed.
-        min_height : Distance | Quantity | Real, optional
+        min_height : Distance | Quantity | Real | None, optional
             The minimum height when searching for logos
-        max_height: Distance | Quantity | Real, optional
+        max_height: Distance | Quantity | Real | None, optional
             The maximum height when searching for logos
 
         Returns
@@ -474,7 +478,7 @@ class PrepareTools:
         ) and self._grpc_client.backend_version < (26, 1, 0):
             # not yet available on Linux until 26.1.0
             LOG.warning("Logo detection not available on Linux")
-            return
+            return False
 
         # Verify inputs
         if bodies and len(bodies) > 0:
@@ -844,3 +848,43 @@ class PrepareTools:
             results.append((result_data.get("sweepable"), faces))
 
         return results
+
+    @min_backend_version(27, 1, 0)
+    def find_mappable_faces(self, faces: list["Face"]) -> list[tuple["Face", bool]]:
+        """Find which faces are mappable.
+
+        Queries the server to determine which of the provided faces are mappable,
+        meaning they can be used as source or target faces for mesh mapping operations.
+
+        Parameters
+        ----------
+        faces : list[Face]
+            List of faces to check.
+
+        Returns
+        -------
+        list[tuple[Face, bool]]
+            List of tuples pairing each face with a boolean indicating whether it
+            is mappable (``True``) or not (``False``).
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 26R1.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        check_type_all_elements_in_iterable(faces, Face)
+
+        if not faces:
+            return []
+
+        response = self._grpc_client._services.prepare_tools.find_mappable_faces(
+            face_ids=[face.id for face in faces],
+        )
+
+        # The server returns exactly one result per requested face, in request order,
+        # each echoing back the original face ID. Zip directly with the input list.
+        return [
+            (face, bool(result_data.get("mappable", False)))
+            for face, result_data in zip(faces, response.get("results", []))
+        ]

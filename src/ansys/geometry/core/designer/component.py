@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Provides for managing components."""
 
 from dataclasses import dataclass
@@ -27,9 +28,9 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Any, Optional, Union
 import uuid
 
-from beartype import beartype as check_input_types
 from pint import Quantity
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -40,16 +41,21 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
+from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.math.constants import IDENTITY_MATRIX44
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.matrix import Matrix44
+from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
+    check_input_types,
     check_nurbs_compatibility,
     ensure_design_is_active,
     graphics_required,
@@ -179,6 +185,9 @@ class Component:
     _beams: list[Beam]
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
+    _datum_planes: list[DatumPlane]
+    _design_curves: list[DesignCurve]
+    _datum_points: list[DatumPoint]
 
     @check_input_types
     def __init__(
@@ -222,6 +231,8 @@ class Component:
                 self._instance_name = response.get("instance_name")
                 self._template = response.get("template")
                 self._component = response.get("component")
+                self._component_master_id = response.get("component_master_id")
+                self._component_part_master_id = response.get("component_part_master_id")
             else:
                 self._name = name
                 self._id = None
@@ -234,6 +245,9 @@ class Component:
         self._beams = []
         self._coordinate_systems = []
         self._design_points = []
+        self._datum_planes = []
+        self._design_curves = []
+        self._datum_points = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -245,7 +259,7 @@ class Component:
             if not master_component:
                 # Create new MasterComponent, but use template's Part
                 master = MasterComponent(
-                    uuid.uuid4(),
+                    self._component_master_id,
                     f"master_{name}",
                     template._master_component.part,
                     template._master_component.transform,
@@ -257,9 +271,14 @@ class Component:
 
         elif not read_existing_comp:
             # This is an independent Component - Create new Part and MasterComponent
-            p = Part(uuid.uuid4() if not self._template else self._template, f"p_{name}", [], [])
+            p = Part(
+                uuid.uuid4() if not self._component else self._component_part_master_id,
+                f"p_{name}",
+                [],
+                [],
+            )
             master = MasterComponent(
-                uuid.uuid4() if not self._template else self._component.master_id,
+                uuid.uuid4() if not self._component else self._component_master_id,
                 f"master_{name}",
                 p,
             )
@@ -340,6 +359,21 @@ class Component:
     def design_points(self) -> list[DesignPoint]:
         """List of ``DesignPoint`` objects inside of the component."""
         return self._design_points
+
+    @property
+    def datum_planes(self) -> list[DatumPlane]:
+        """List of ``DatumPlane`` objects inside of the component."""
+        return self._datum_planes
+
+    @property
+    def design_curves(self) -> list[DesignCurve]:
+        """List of ``DesignCurve`` objects inside of the component."""
+        return self._design_curves
+
+    @property
+    def datum_points(self) -> list[DatumPoint]:
+        """List of ``DatumPoint`` objects inside of the component."""
+        return self._datum_points
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -800,7 +834,7 @@ class Component:
         self,
         name: str,
         face: Face,
-        distance: Quantity | Distance,
+        distance: Quantity | Distance | Real,
         direction: ExtrusionDirection | str = ExtrusionDirection.POSITIVE,
     ) -> Body:
         """Extrude the face profile by a given distance to create a solid body.
@@ -874,6 +908,36 @@ class Component:
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
             name=name, parent=self.id, center=center, radius=radius
+        )
+        return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_block(self, name: str, start: Point3D, end: Point3D) -> Body:
+        """Create a block body defined by the start and end points.
+
+        Parameters
+        ----------
+        name : str
+            Body name.
+        start : Point3D
+            Start point of the block (one corner).
+        end : Point3D
+            End point of the block (opposite corner).
+
+        Returns
+        -------
+        Body
+            Block body object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating a block body on {self.id}.")
+        response = self._grpc_client.services.bodies.create_block_body(
+            name=name, parent_id=self.id, start=start, end=end
         )
         return self.__build_body_from_response(response)
 
@@ -1467,9 +1531,22 @@ class Component:
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
-        response = self._grpc_client.services.points.create_design_points(
-            points=points, parent_id=self.id
-        )
+
+        if (
+            self._grpc_client.backend_version < (27, 1, 0)
+            and self._grpc_client.services.version == GeometryApiProtos.V1
+        ):
+            response = self._grpc_client.services.points.create_datum_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
+        else:
+            response = self._grpc_client.services.points.create_design_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
         self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
@@ -1481,6 +1558,181 @@ class Component:
 
         # Finally return the list of created DesignPoint objects
         return self._design_points[-n_design_points:]
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_datum_plane(self, name: str, plane: Plane) -> DatumPlane:
+        """Create a datum plane on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum plane.
+        plane : Plane
+            Plane object defining the datum plane's geometry.
+
+        Returns
+        -------
+        DatumPlane
+            Created datum plane object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating datum plane on {self.id}...")
+        response = self._grpc_client.services.planes.create(
+            name=name,
+            parent_id=self.id,
+            plane=plane,
+        )
+        self._grpc_client.log.debug("Datum plane successfully created.")
+        datum_plane = DatumPlane(response.get("id"), name, plane, self)
+        self._datum_planes.append(datum_plane)
+        return datum_plane
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_datum_plane(self, plane: DatumPlane | str) -> None:
+        """Delete a datum plane from this component.
+
+        Parameters
+        ----------
+        plane : DatumPlane | str
+            ID of the datum plane or instance to delete.
+
+        Notes
+        -----
+        If the datum plane belongs to this component's children, it is deleted.
+        If the datum plane does not belong to this component, it is not deleted.
+        """
+        id = plane if isinstance(plane, str) else plane.id
+        plane_requested = self.search_plane(id)
+
+        if plane_requested:
+            # If the plane belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.planes.delete(plane_id=plane_requested.id)
+
+            # If the plane was deleted from the server side... "kill" it
+            # on the client side
+            plane_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumPlane {plane_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumPlane {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_coordinate_system(self, coordinate_system: CoordinateSystem | str) -> None:
+        """Delete a coordinate system from this component.
+
+        Parameters
+        ----------
+        coordinate_system : CoordinateSystem | str
+            ID of the coordinate system or instance to delete.
+
+        Notes
+        -----
+        If the coordinate system belongs to this component's children, it is deleted.
+        If the coordinate system does not belong to this component, it is not deleted.
+        """
+        id = coordinate_system if isinstance(coordinate_system, str) else coordinate_system.id
+        cs_requested = self.search_coordinate_system(id)
+
+        if cs_requested:
+            # If the coordinate system belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.coordinate_systems.delete(id=cs_requested.id)
+
+            # If the coordinate system was deleted from the server side... "kill" it
+            # on the client side
+            cs_requested._is_alive = False
+            self._grpc_client.log.debug(f"CoordinateSystem {cs_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"CoordinateSystem {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_datum_point(self, name: str, point: Point3D) -> DatumPoint:
+        """Create a datum point on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum point.
+        point : Point3D
+            3D point constituting the datum point.
+
+        Returns
+        -------
+        DatumPoint
+            Created datum point object.
+        """
+        self._grpc_client.log.debug(f"Creating datum point on {self.id}...")
+        response = self._grpc_client.services.points.create_datum_points(
+            parent_id=self.id,
+            points=[point],
+            name=name,
+        )
+        self._grpc_client.log.debug("Datum point successfully created.")
+        datum_point = DatumPoint(response.get("point_ids")[0], name, point, self)
+        self._datum_points.append(datum_point)
+        return datum_point
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_datum_point(self, datum_point: DatumPoint | str) -> None:
+        """Delete a datum point from this component.
+
+        Parameters
+        ----------
+        datum_point : DatumPoint | str
+            ID of the datum point or instance to delete.
+
+        Notes
+        -----
+        If the datum point belongs to this component's children, it is deleted.
+        If the datum point does not belong to this component, it is not deleted.
+        """
+        id = datum_point if isinstance(datum_point, str) else datum_point.id
+        dp_requested = self.search_datum_point(id)
+
+        if dp_requested:
+            # If the datum point belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.points.delete_datum_points(ids=[dp_requested.id])
+
+            # If the datum point was deleted from the server side... "kill" it
+            # on the client side
+            dp_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumPoint {dp_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumPoint {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
 
     @check_input_types
     @ensure_design_is_active
@@ -1522,8 +1774,50 @@ class Component:
             pass
 
     @check_input_types
+    @ensure_design_is_active
+    def delete_design_curve(self, design_curve: DesignCurve | str) -> None:
+        """Delete an existing design curve belonging to this component's scope.
+
+        Parameters
+        ----------
+        design_curve : DesignCurve | str
+            ID of the design curve or instance to delete.
+
+        Notes
+        -----
+        If the design curve belongs to this component's children, it is deleted.
+        If the design curve does not belong to this component (or its children), it
+        is not deleted.
+        """
+        id = design_curve if isinstance(design_curve, str) else design_curve.id
+
+        design_curve_requested = self.search_design_curve(id)
+
+        if design_curve_requested:
+            # If the design curve belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.curves.delete(curve_id=id)
+
+            # If the design curve was deleted from the server side... "kill" it
+            # on the client side
+            design_curve_requested._is_alive = False
+            self._grpc_client.log.debug(
+                f"DesignCurve {design_curve_requested.id} has been deleted."
+            )
+        else:
+            self._grpc_client.log.warning(
+                f"DesignCurve {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
     def search_component(self, id: str) -> Union["Component", None]:
-        """Search nested components recursively for a component.
+        """Search this component and nested components recursively for a component by id.
 
         Parameters
         ----------
@@ -1548,6 +1842,33 @@ class Component:
 
         # If you reached this point... this means that no component was found!
         return None
+
+    @check_input_types
+    def search_component_by_name(self, name: str) -> list["Component"]:
+        """Search this component and nested components recursively for a component by name.
+
+        Parameters
+        ----------
+        name : str
+            Name of the component to search for.
+
+        Returns
+        -------
+        list[Component]
+           Component(s) with the requested name.
+        """
+        results = []
+
+        # Check if this component matches
+        if self.name == name and self.is_alive:
+            results.append(self)
+
+        # Recurse into nested components and collect all matches
+        for component in self.components:
+            result = component.search_component_by_name(name)
+            results.extend(result)
+
+        return results
 
     @check_input_types
     def search_body(self, id: str) -> Body | None:
@@ -1618,6 +1939,142 @@ class Component:
         return None
 
     @check_input_types
+    def search_plane(self, id: str) -> DatumPlane | None:
+        """Search planes in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the plane to search for.
+
+        Returns
+        -------
+        DatumPlane | None
+            DatumPlane with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for planes in the component and nested components
+        recursively.
+        """
+        # Search in component's planes
+        for plane in self.datum_planes:
+            if plane.id == id:
+                return plane
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_plane(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no plane was found!
+        return None
+
+    @check_input_types
+    def search_design_curve(self, id: str) -> DesignCurve | None:
+        """Search design curves in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the design curve to search for.
+
+        Returns
+        -------
+        DesignCurve | None
+            DesignCurve with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for design curves in the component and nested components
+        recursively.
+        """
+        # Search in component's design curves
+        for design_curve in self.design_curves:
+            if design_curve.id == id and design_curve.is_alive:
+                return design_curve
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_design_curve(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no design curve was found!
+        return None
+
+    @check_input_types
+    def search_coordinate_system(self, id: str) -> CoordinateSystem | None:
+        """Search coordinate systems in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the coordinate system to search for.
+
+        Returns
+        -------
+        CoordinateSystem | None
+            CoordinateSystem with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for coordinate systems in the component and nested components
+        recursively.
+        """
+        # Search in component's coordinate systems
+        for cs in self.coordinate_systems:
+            if cs.id == id and cs.is_alive:
+                return cs
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_coordinate_system(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no coordinate system was found!
+        return None
+
+    @check_input_types
+    def search_datum_point(self, id: str) -> DatumPoint | None:
+        """Search datum points in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum point to search for.
+
+        Returns
+        -------
+        DatumPoint | None
+            DatumPoint with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum points in the component and nested components
+        recursively.
+        """
+        # Search in component's datum points
+        for dp in self.datum_points:
+            if dp.id == id and dp.is_alive:
+                return dp
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_point(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum point was found!
+        return None
+
+    @check_input_types
     @min_backend_version(27, 1, 0)
     def copy_faces(self, name: str, faces: list[Face]) -> Body:
         """Create a surface body from the faces provided.
@@ -1645,6 +2102,42 @@ class Component:
             face_ids=[face.id for face in faces],
         )
         return self.__build_body_from_response(response)
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def move_bodies_to_component(self, bodies: list[Body]) -> None:
+        """Move bodies to this component, changing the design hierarchy.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies to move to this component.
+
+        Raises
+        ------
+        TypeError
+            If ``bodies`` is not a list of :class:`Body` objects.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 27R1.
+        """
+        import ansys.geometry.core as pyansys_geo
+
+        self._grpc_client.log.debug(f"Moving {len(bodies)} body/bodies to component {self.id}...")
+
+        response = self._grpc_client._services.components.move_bodies_to_component(
+            body_ids=[body.id for body in bodies],
+            target_component_id=self.id,
+        )
+
+        design = get_design_from_component(self)
+        if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+            design._update_from_tracker(response.get("tracked_changes"))
+
+        else:
+            design._update_design_inplace()
 
     def _kill_component_on_client(self) -> None:
         """Set the ``is_alive`` property of nested objects to ``False``.
@@ -1850,6 +2343,7 @@ class Component:
         lines.append(f"  N Beams              : {sum(alive_beams)}")
         lines.append(f"  N Coordinate Systems : {sum(alive_coords)}")
         lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
         lines.append(f"  N Components         : {sum(alive_comps)}")
         return "\n".join(lines)
 
@@ -2038,6 +2532,9 @@ class Component:
         """
         ids = [self.id, *[o.id for o in others or []]]
         self._grpc_client._services.components.make_independent(ids=ids)
+
+        design = get_design_from_component(self)
+        design._update_design_inplace()
 
     def get_named_selections(self) -> list["NamedSelection"]:
         """Get the named selections of the component.

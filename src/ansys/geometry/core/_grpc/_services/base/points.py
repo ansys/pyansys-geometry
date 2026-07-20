@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Module containing the points service implementation (abstraction layer)."""
 
 from abc import ABC, abstractmethod
@@ -40,6 +41,31 @@ class GRPCPointsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def create_datum_points(self, **kwargs) -> dict:
+        """Create datum points."""
+        pass
+
+    @abstractmethod
     def create_design_points(self, **kwargs) -> dict:
         """Create design points."""
+        pass
+
+    @abstractmethod
+    def revolve_points(self, **kwargs) -> dict:
+        """Revolve design points around an axis to create curves."""
+        pass
+
+    @abstractmethod
+    def revolve_points_by_helix(self, **kwargs) -> dict:
+        """Revolve design points around an axis in a helix shape to create curves."""
+        pass
+
+    @abstractmethod
+    def sweep_points(self, **kwargs) -> dict:
+        """Sweep design points along a trajectory to create curves."""
+        pass
+
+    @abstractmethod
+    def delete_datum_points(self, **kwargs) -> dict:
+        """Delete datum points."""
         pass
