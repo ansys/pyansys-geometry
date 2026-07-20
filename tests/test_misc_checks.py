@@ -679,7 +679,7 @@ def test_rayfire_options():
     assert rayfire_options.request_params is True
     assert rayfire_options.request_secondary is False
 
-    
+
 def test_pmdb_export_options_defaults():
     """Test that PMDBExportOptions defaults are set correctly."""
     opts = PMDBExportOptions()

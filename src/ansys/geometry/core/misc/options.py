@@ -225,8 +225,8 @@ class RayfireOptions:
     def to_dict(self):
         """Provide the dictionary representation of the RayFireOptions class."""
         return {k: v for k, v in asdict(self).items()}
-    
-    
+
+
 class FMDExportOptions:
     """Provides options for FMD export.
 
