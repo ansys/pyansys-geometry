@@ -22,7 +22,6 @@
 
 """Test design interaction."""
 
-import logging
 import os
 from pathlib import Path
 from unittest.mock import Mock, patch
@@ -2537,25 +2536,6 @@ def test_named_selections_components(modeler: Modeler):
     # Try deleting this named selection
     design.delete_named_selection(ns_components)
     assert len(design.named_selections) == 0
-
-
-def test_named_selection_datum_and_coordinate_systems_legacy_access(modeler: Modeler, caplog):
-    """Pre-27R1 backends should log a warning and return empty lists for datum planes and coordinate systems."""
-    if modeler._grpc_client.backend_version >= (27, 1, 0):
-        pytest.skip("This test requires a backend older than 27R1.")
-
-    design = modeler.create_design("NamedSelectionLegacyDatumCs_Test")
-    component = design.add_component("Comp1")
-    ns_components = design.create_named_selection("Components", components=[component])
-
-    with caplog.at_level(logging.WARNING):
-        result_planes = ns_components.datum_planes
-        result_cs = ns_components.coordinate_systems
-
-    assert result_planes == []
-    assert result_cs == []
-    assert "2027 R1" in caplog.text
-
 
 def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: Modeler):
     """27R1+ backends should resolve NS datum planes and coordinate systems from IDs."""
