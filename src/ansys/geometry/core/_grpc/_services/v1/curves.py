@@ -192,7 +192,7 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
         from ansys.api.discovery.v1.commonmessages_pb2 import ParentEntityRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = ParentEntityRequest(parent_id=build_grpc_id(kwargs["parent_id"]))
+        request = ParentEntityRequest(parent_id=build_grpc_id("parts/"+kwargs["parent_id"]))
 
         # Call the gRPC service
         response = self.stub.GetAll(request)
@@ -209,7 +209,11 @@ class GRPCCurvesServiceV1(GRPCCurvesService):
                     if len(curve.points) > 1
                     else None,
                     "parent_id": curve.parent_id.id,
-                    "geometry": from_grpc_curve_to_curve(curve.geometry),
+                    "geometry": (
+                        from_grpc_curve_to_curve(curve.geometry)
+                        if curve.HasField("geometry")
+                        else None
+                    ),
                 }
                 for curve in response.curves
             ]

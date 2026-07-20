@@ -25,6 +25,8 @@
 import numpy as np
 import pytest
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
+from ansys.geometry.core.connection.backend import BackendType
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.math.point import Point3D
@@ -184,6 +186,13 @@ def test_delete_design_curve(modeler: Modeler):
     assert len(curves2) == 1
     assert isinstance(curves2[0], DesignCurve)
     assert curves2[0].is_alive
+
+    # Skip if v0 CoreService backend
+    if (
+        modeler._grpc_client.services.version == GeometryApiProtos.V0
+        and BackendType.is_core_service()
+    ):
+        pytest.skip("Design curve deletion not supported in CoreService v0 backend.")
 
     # Delete the first curve by object
     design.delete_design_curve(curves1[0])
