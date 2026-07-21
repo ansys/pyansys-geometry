@@ -333,6 +333,9 @@ def test_trimmed_curve(modeler: Modeler):
         grpc_client=modeler.client,  # Pass the gRPC client here
     )
 
+    print(edge0)
+    print(edge1)
+    print(modeler.client.services.version)
     # Perform assertions and call intersect_curve
     assert (
         edge0.__repr__()
