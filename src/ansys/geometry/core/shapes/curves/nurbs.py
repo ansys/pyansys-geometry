@@ -265,9 +265,9 @@ class NURBSCurve(Curve):
                     raise ValueError("No valid NURBS curve element was found in JSON payload.")
                 source = selected
 
-        # If weights are not provided, set all weights to 1.0.
+        # If weights are not provided (or are empty), set all weights to 1.0.
         weights = source.get("weights")
-        if weights is None:
+        if weights is None or len(weights) == 0:
             weights = [1.0] * len(source["control_points"])
 
         return cls.from_control_points(

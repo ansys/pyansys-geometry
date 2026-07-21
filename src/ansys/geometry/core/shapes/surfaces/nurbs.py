@@ -193,8 +193,8 @@ class NURBSSurface(Surface):
         nurbs_surface._nurbs_surface.ctrlpts_size_u = len(knots_u) - degree_u - 1
         nurbs_surface._nurbs_surface.ctrlpts_size_v = len(knots_v) - degree_v - 1
 
-        # If no weights are provided, set all weights to 1.0
-        if weights is None:
+        # If no weights are provided (or the list is empty), set all weights to 1.0.
+        if weights is None or len(weights) == 0:
             weights = [1.0] * len(control_points)
         ctrlpts_homogenous = [[*pt, w] for (pt, w) in zip(control_points, weights)]
 

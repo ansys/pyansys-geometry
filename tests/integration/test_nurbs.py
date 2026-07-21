@@ -554,6 +554,20 @@ def test_nurbs_curve_from_json_defaults_weights_when_missing():
     assert curve.weights == [1.0, 1.0, 1.0]
 
 
+def test_nurbs_curve_from_json_defaults_weights_when_empty_list():
+    """Test that NURBSCurve.from_json defaults weights when an empty list is provided."""
+    payload = {
+        "degree": 2,
+        "knots": [0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "control_points": [[0.0, 0.0, 0.0], [1.0, 0.5, 0.0], [2.0, 0.0, 0.0]],
+        "weights": [],
+    }
+
+    curve = NURBSCurve.from_json(payload)
+
+    assert curve.weights == [1.0, 1.0, 1.0]
+
+
 def test_nurbs_curve_from_control_points_invalid_knot_vector_raises():
     """Test that invalid curve knot vectors raise errors with real inputs."""
     with pytest.raises(ValueError, match="valid knot vector"):
@@ -634,6 +648,41 @@ def test_sketch_nurbs_from_json_path_and_auto_selection_and_default_weights():
     sketch_default_weights = SketchNurbs.from_json(payload_without_weights)
 
     assert sketch_default_weights.weights == [1.0, 1.0, 1.0]
+
+
+def test_sketch_nurbs_from_json_defaults_weights_when_empty_list():
+    """Test that SketchNurbs.from_json defaults weights when an empty list is provided."""
+    payload = {
+        "degree": 2,
+        "knots": [0.0, 0.0, 0.0, 1.0, 1.0, 1.0],
+        "control_points": [[1.0, 0.0], [0.0, 1.0], [-1.0, 0.0]],
+        "weights": [],
+    }
+
+    sketch = SketchNurbs.from_json(payload)
+
+    assert sketch.weights == [1.0, 1.0, 1.0]
+
+
+def test_nurbs_surface_from_json_defaults_weights_when_empty_list():
+    """Test that NURBSSurface.from_json defaults weights when an empty list is provided."""
+    payload = {
+        "degree_u": 1,
+        "degree_v": 1,
+        "knots_u": [0.0, 0.0, 1.0, 1.0],
+        "knots_v": [0.0, 0.0, 1.0, 1.0],
+        "control_points": [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+        "weights": [],
+    }
+
+    surface = NURBSSurface.from_json(payload)
+
+    assert surface.weights == [1.0, 1.0, 1.0, 1.0]
 
 
 def test_sketch_nurbs_from_json_element_name_not_found_raises():
