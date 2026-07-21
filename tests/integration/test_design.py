@@ -850,6 +850,11 @@ def test_read_existing_design_plane_retrieval_paths(
             "get_all",
             return_value={"planes": []},
         ) as planes_get_all_spy,
+        patch.object(
+            design._grpc_client.services.curves,
+            "get_all",
+            return_value={"curves": []},
+        ),
         patch.object(design._grpc_client.log, "debug") as debug_spy,
     ):
         design._Design__read_existing_design()
