@@ -844,7 +844,6 @@ def test_read_existing_design_plane_retrieval_paths(
             return_value=assembly_response,
         ),
         patch.object(modeler.client, "_backend_version", backend_version),
-        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(
             design._grpc_client.services.planes,
             "get_all",
@@ -855,6 +854,7 @@ def test_read_existing_design_plane_retrieval_paths(
             "get_all",
             return_value={"curves": []},
         ),
+        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(design._grpc_client.log, "debug") as debug_spy,
     ):
         design._Design__read_existing_design()
