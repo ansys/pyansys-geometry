@@ -23,7 +23,9 @@
 """Provides for creating and managing a NURBS curve."""
 
 from functools import cached_property
-from typing import TYPE_CHECKING, Optional
+import json
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from scipy.integrate import quad
@@ -221,6 +223,59 @@ class NURBSCurve(Curve):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return nurbs_curve
+
+    @classmethod
+    @check_input_types
+    def from_json(cls, source: Union[dict, str, Path], element_name: str = None) -> "NURBSCurve":
+        """Create a NURBS curve from a JSON file.
+
+        Parameters
+        ----------
+        source : Union[dict, str, Path]
+            JSON file path or dictionary containing the NURBS curve data.
+        element_name : str, optional
+            Name of the element to load when the JSON payload contains
+            multiple top-level named elements.
+
+        Returns
+        -------
+        NURBSCurve
+            NURBS curve created exactly from the given data.
+        """
+        if not isinstance(source, dict):
+            source = json.loads(Path(source).read_text(encoding="utf-8"))
+
+        required_keys = {"control_points", "degree", "knots"}
+        if not required_keys.issubset(source):
+            if element_name is not None:
+                if element_name not in source:
+                    raise ValueError(f"Element '{element_name}' was not found in JSON payload.")
+                source = source[element_name]
+                if not isinstance(source, dict) or not required_keys.issubset(source):
+                    raise ValueError(
+                        f"Element '{element_name}' is not a valid NURBS curve payload."
+                    )
+            else:
+                selected = None
+                for _, element in source.items():
+                    if isinstance(element, dict) and required_keys.issubset(element):
+                        selected = element
+                        break
+                if selected is None:
+                    raise ValueError("No valid NURBS curve element was found in JSON payload.")
+                source = selected
+
+        # If weights are not provided, set all weights to 1.0.
+        weights = source.get("weights")
+        if weights is None:
+            weights = [1.0] * len(source["control_points"])
+
+        return cls.from_control_points(
+            control_points=[Point3D(cp) for cp in source["control_points"]],
+            degree=source["degree"],
+            knots=source["knots"],
+            weights=weights,
+        )
 
     def __eq__(self, other: "NURBSCurve") -> bool:
         """Determine if two curves are equal."""

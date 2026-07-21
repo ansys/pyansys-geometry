@@ -22,7 +22,9 @@
 
 """Provides for creating and managing a nurbs sketch curve."""
 
-from typing import TYPE_CHECKING
+import json
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from pint import Quantity
@@ -214,6 +216,103 @@ class SketchNurbs(SketchEdge):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return nurbs_curve
+
+    @classmethod
+    @check_input_types
+    def from_control_points(
+        cls,
+        control_points: list[Point2D],
+        degree: int,
+        knots: list[Real],
+        weights: list[Real] = None,
+    ) -> "SketchNurbs":
+        """Create a NURBS curve from control points.
+
+        Parameters
+        ----------
+        control_points : list[Point2D]
+            Control points of the curve.
+        degree : int
+            Degree of the curve.
+        knots : list[Real]
+            Knot vector of the curve.
+        weights : list[Real], optional
+            Weights of the control points.
+
+        Returns
+        -------
+        SketchNurbs
+            NURBS curve.
+        """
+        curve = cls()
+        curve._nurbs_curve.degree = degree
+        curve._nurbs_curve.ctrlpts = control_points
+        curve._nurbs_curve.knotvector = knots
+        if weights:
+            curve._nurbs_curve.weights = weights
+
+        # Verify the curve is valid
+        try:
+            curve._nurbs_curve._check_variables()
+        except ValueError as e:
+            raise ValueError(f"Invalid NURBS curve: {e}")
+
+        return curve
+
+    @classmethod
+    @check_input_types
+    def from_json(
+        cls, source: Union[dict, str, Path], element_name: Optional[str] = None
+    ) -> "SketchNurbs":
+        """Create a NURBS sketch curve from a JSON file.
+
+        Parameters
+        ----------
+        source : Union[dict, str, Path]
+            JSON file path or dictionary containing the NURBS sketch curve data.
+        element_name : str, optional
+            Name of the element to load when the JSON payload contains
+            multiple top-level named elements.
+
+        Returns
+        -------
+        SketchNurbs
+            NURBS sketch curve created exactly from the given data.
+        """
+        if not isinstance(source, dict):
+            source = json.loads(Path(source).read_text(encoding="utf-8"))
+
+        required_keys = {"control_points", "degree", "knots"}
+        if not required_keys.issubset(source):
+            if element_name is not None:
+                if element_name not in source:
+                    raise ValueError(f"Element '{element_name}' was not found in JSON payload.")
+                source = source[element_name]
+                if not isinstance(source, dict) or not required_keys.issubset(source):
+                    raise ValueError(
+                        f"Element '{element_name}' is not a valid sketch NURBS payload."
+                    )
+            else:
+                selected = None
+                for _, element in source.items():
+                    if isinstance(element, dict) and required_keys.issubset(element):
+                        selected = element
+                        break
+                if selected is None:
+                    raise ValueError("No valid sketch NURBS element was found in JSON payload.")
+                source = selected
+
+        # If weights are not provided, set all weights to 1.0.
+        weights = source.get("weights")
+        if weights is None:
+            weights = [1.0] * len(source["control_points"])
+
+        return cls.from_control_points(
+            control_points=[Point2D(cp) for cp in source["control_points"]],
+            degree=source["degree"],
+            knots=source["knots"],
+            weights=weights,
+        )
 
     @classmethod
     @check_input_types

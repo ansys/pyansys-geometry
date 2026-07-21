@@ -23,7 +23,9 @@
 """Provides for creating and managing a NURBS surface."""
 
 from functools import cached_property
-from typing import TYPE_CHECKING
+import json
+from pathlib import Path
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 
@@ -274,6 +276,63 @@ class NURBSSurface(Surface):
         nurbs_surface._nurbs_surface.weights = surface.weights
 
         return nurbs_surface
+
+    @classmethod
+    @check_input_types
+    def from_json(
+        cls, source: Union[dict, str, Path], element_name: Optional[str] = None
+    ) -> "NURBSSurface":
+        """Create a NURBS surface from a JSON file.
+
+        Parameters
+        ----------
+        source : Union[dict, str, Path]
+            JSON file path or dictionary containing the NURBS surface data.
+        element_name : str, optional
+            Name of the element to load when the JSON payload contains
+            multiple top-level named elements.
+
+        Returns
+        -------
+        NURBSSurface
+            NURBS surface created exactly from the given data.
+        """
+        if not isinstance(source, dict):
+            source = json.loads(Path(source).read_text(encoding="utf-8"))
+
+        required_keys = {"degree_u", "degree_v", "knots_u", "knots_v", "control_points"}
+        if not required_keys.issubset(source):
+            if element_name is not None:
+                if element_name not in source:
+                    raise ValueError(f"Element '{element_name}' was not found in JSON payload.")
+                source = source[element_name]
+                if not isinstance(source, dict) or not required_keys.issubset(source):
+                    raise ValueError(
+                        f"Element '{element_name}' is not a valid NURBS surface payload."
+                    )
+            else:
+                selected = None
+                for _, element in source.items():
+                    if isinstance(element, dict) and required_keys.issubset(element):
+                        selected = element
+                        break
+                if selected is None:
+                    raise ValueError("No valid NURBS surface element was found in JSON payload.")
+                source = selected
+
+        return cls.from_control_points(
+            degree_u=source["degree_u"],
+            degree_v=source["degree_v"],
+            knots_u=source["knots_u"],
+            knots_v=source["knots_v"],
+            control_points=[Point3D(pt) for pt in source["control_points"]],
+            weights=source.get("weights"),
+            origin=Point3D(source["origin"]) if "origin" in source else ZERO_POINT3D,
+            reference=(
+                UnitVector3D(source["reference"]) if "reference" in source else UNITVECTOR3D_X
+            ),
+            axis=UnitVector3D(source["axis"]) if "axis" in source else UNITVECTOR3D_Z,
+        )
 
     def __eq__(self, other: Surface) -> bool:
         """Determine if two surfaces are equal."""

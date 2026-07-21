@@ -1,0 +1,6 @@
+{
+  "curve_missing_knots": {
+    "degree": 2,
+    "control_points": [[0.0, 0.0, 0.0], [1.0, 1.0, 0.0], [2.0, 0.0, 0.0]]
+  }
+}
