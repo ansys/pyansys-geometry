@@ -631,12 +631,16 @@ def test_extend_to_same_number_of_edges(modeler: Modeler):
     assert len(result.items) == 8
 
 
-@pytest.skip(reason="extend_to_same_color has a backend bug")
 def test_extend_to_same_color(modeler: Modeler):
     """Verify that extend_to_same_color expands the selection to all bodies with the
     same color as any body in the seed selection.
     """
-    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_bodies = design.get_all_bodies()
+    assert len(all_bodies) == 19
+    for body in all_bodies[:-1]:
+        body.color = (255, 255, 0)
+
     wheel_bodies = modeler.create_selection_builder().bodies.get_bodies_with_name("Wheel")
 
     assert len(wheel_bodies.items) == 8
