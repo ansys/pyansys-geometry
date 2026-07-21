@@ -1557,8 +1557,23 @@ class Design(Component):
             # Append the datum plane to the component to which it belongs
             created_dp.parent_component._datum_planes.append(created_dp)
 
-        # Create DesignCurves
-        for dc in response.get("design_curves"):
+        # Create DesignCurves - different retrieval methods based on backends for best compatibility
+        curves = []
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.debug(
+                "Backend version does not support design curves. Skipping design curve creation."
+            )
+        elif (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            curves = self._grpc_client.services.curves.get_all(parent_id="parts/" + self.id).get(
+                "curves", []
+            )
+        else:
+            curves = response.get("design_curves", [])
+
+        for dc in curves:
             created_dc = DesignCurve(
                 dc.get("id"),
                 dc.get("name"),
