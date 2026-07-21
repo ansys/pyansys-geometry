@@ -40,10 +40,7 @@ def test_rayfire_simple_case(modeler: Modeler):
         body=box, faces=[face], direction=direction, points=points, max_distance=10.0
     )
 
-    assert len(result) == 2
-
-    # TODO: Issue #2037
-    # test the actual intersection points returned by the rayfire operation
+    assert len(result) == 10
 
 
 def test_rayfire_faces(modeler: Modeler):
@@ -61,7 +58,7 @@ def test_rayfire_faces(modeler: Modeler):
     )
 
     assert result is not None
-    assert len(result) == 2
+    assert len(result) == 12
 
 
 def test_rayfire_ordered(modeler: Modeler):
