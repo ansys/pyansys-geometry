@@ -844,12 +844,17 @@ def test_read_existing_design_plane_retrieval_paths(
             return_value=assembly_response,
         ),
         patch.object(modeler.client, "_backend_version", backend_version),
-        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(
             design._grpc_client.services.planes,
             "get_all",
             return_value={"planes": []},
         ) as planes_get_all_spy,
+        patch.object(
+            design._grpc_client.services.curves,
+            "get_all",
+            return_value={"curves": []},
+        ),
+        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(design._grpc_client.log, "debug") as debug_spy,
     ):
         design._Design__read_existing_design()
@@ -2536,6 +2541,42 @@ def test_named_selections_components(modeler: Modeler):
     # Try deleting this named selection
     design.delete_named_selection(ns_components)
     assert len(design.named_selections) == 0
+
+
+def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: Modeler):
+    """27R1+ backends should resolve NS datum planes and coordinate systems from IDs."""
+    if modeler._grpc_client.backend_version < (27, 1, 0):
+        pytest.skip("This test requires backend 27R1 or newer.")
+    if modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        pytest.skip("This test requires proto v1 support.")
+
+    design = modeler.create_design("NamedSelectionDatumCs_Test")
+
+    plane = Plane(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        direction_x=UnitVector3D([1, 0, 0]),
+        direction_y=UnitVector3D([0, 1, 0]),
+    )
+    frame = Frame(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        direction_x=UnitVector3D([1, 0, 0]),
+        direction_y=UnitVector3D([0, 1, 0]),
+    )
+
+    datum_plane = design.create_datum_plane("smoke_dp", plane)
+    coordinate_system = design.create_coordinate_system("smoke_cs", frame)
+    design.create_named_selection(
+        "DatumAndCsSelection",
+        datum_planes=[datum_plane],
+        coordinate_systems=[coordinate_system],
+    )
+
+    ns = design.named_selections[0]
+
+    assert len(ns.datum_planes) == 1
+    assert ns.datum_planes[0].id == datum_plane.id
+    assert len(ns.coordinate_systems) == 1
+    assert ns.coordinate_systems[0].id == coordinate_system.id
 
 
 def test_component_instances(modeler: Modeler):
