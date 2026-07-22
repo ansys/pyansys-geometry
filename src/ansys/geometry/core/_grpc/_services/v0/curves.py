@@ -175,7 +175,7 @@ class GRPCCurvesServiceV0(GRPCCurvesService):
         from ansys.api.geometry.v0.curves_pb2 import DeleteRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = DeleteRequest(selection=build_grpc_id(kwargs["curve_id"]))
+        request = DeleteRequest(selection=[build_grpc_id(kwargs["curve_id"])])
 
         # Call the gRPC service
         self.stub.Delete(request)

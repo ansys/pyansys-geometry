@@ -27,6 +27,7 @@ from .base.admin import GRPCAdminService
 from .base.assembly_condition import GRPCAssemblyConditionService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
+from .base.body_selection import GRPCBodySelectionService
 from .base.commands import GRPCCommandsService
 from .base.commands_script import GRPCCommandsScriptService
 from .base.components import GRPCComponentsService
@@ -92,6 +93,7 @@ class _GRPCServices:
         self._assembly_condition = None
         self._beams = None
         self._bodies = None
+        self._body_selection = None
         self._commands = None
         self._components = None
         self._coordinate_systems = None
@@ -213,6 +215,31 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._bodies
+
+    @property
+    def body_selection(self) -> GRPCBodySelectionService:
+        """
+        Get the body selection service for the specified version.
+
+        Returns
+        -------
+        GRPCBodySelectionService
+            The body selection service for the specified version.
+        """
+        if not self._body_selection:
+            # Import the appropriate body selection service based on the version
+            from .v0.body_selection import GRPCBodySelectionServiceV0
+            from .v1.body_selection import GRPCBodySelectionServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._body_selection = GRPCBodySelectionServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._body_selection = GRPCBodySelectionServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._body_selection
 
     @property
     def commands(self) -> GRPCCommandsService:

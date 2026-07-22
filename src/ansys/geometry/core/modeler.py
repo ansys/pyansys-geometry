@@ -36,6 +36,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
+from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
 from ansys.geometry.core.tools.rayfire_tools import RayfireTools
@@ -746,3 +747,24 @@ class Modeler:
         return self.client._get_service_logs(
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
         )
+
+    @min_backend_version(27, 1, 0)
+    def create_selection_builder(self) -> SelectionBuilder:
+        """Create a selection builder.
+
+        Returns
+        -------
+        SelectionBuilder
+            A selection builder object for creating custom selections.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 27R1.
+        """
+        if self._design is None or not self._design.is_active:
+            raise GeometryRuntimeError(
+                "No active design available. Please create or open a design before "
+                "creating a selection builder."
+            )
+
+        return SelectionBuilder(self._design, self._grpc_client)

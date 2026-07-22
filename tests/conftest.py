@@ -127,11 +127,15 @@ def _load_incompatible_tests(version):
 
 
 def pytest_collection_modifyitems(config, items):
+    import fnmatch
+
     incompatible = config.incompatible_tests
     skipped = []
 
     for item in items:
-        if item.nodeid in incompatible:
+        if item.nodeid in incompatible or any(
+            fnmatch.fnmatch(item.nodeid, pattern) for pattern in incompatible
+        ):
             item.add_marker(pytest.mark.skip(reason="Skipped due to known server incompatibility"))
             skipped.append(item.nodeid)
 
