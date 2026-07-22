@@ -253,9 +253,7 @@ def export_design_to_usd(
     _write_stage(design, path, tess_options)
 
 
-def _build_stage(
-    design: "Design", tess_options: "TessellationOptions | None"
-) -> "UsdModule.Stage":
+def _build_stage(design: "Design", tess_options: "TessellationOptions | None") -> "UsdModule.Stage":
     """Build an in-memory USD stage from a design hierarchy.
 
     Parameters
@@ -294,9 +292,7 @@ def _build_stage(
     return stage
 
 
-def _write_stage(
-    design: "Design", path: Path, tess_options: "TessellationOptions | None"
-) -> None:
+def _write_stage(design: "Design", path: Path, tess_options: "TessellationOptions | None") -> None:
     """Write the design hierarchy to a new USD stage file at ``path``.
 
     Parameters
