@@ -24,11 +24,11 @@
 
 Geometry overview (cars-windshield.scdocx):
  - 19 bodies total (18 visible):
-     - Wheel × 8   : 3 faces each (1 cylinder + 2 flat circular), 2 circle edges each
-     - Top × 2     : 6 box faces each, 4 line edges per face
-     - BaseBody × 2: 6 box faces each, 4 line edges per face
-     - Solid × 1   : 6 box faces, red colour
-     - Surface × 6 : 1 face each (4 triangular, 2 quadrilateral)
+     - Wheel x 8   : 3 faces each (1 cylinder + 2 flat circular), 2 circle edges each
+     - Top x 2     : 6 box faces each, 4 line edges per face
+     - BaseBody x 2: 6 box faces each, 4 line edges per face
+     - Solid x 1   : 6 box faces, red colour
+     - Surface x 6 : 1 face each (4 triangular, 2 quadrilateral)
  - Total faces: 8*3 + 5*6 + 6*1 = 60
  - Faces with circle edges (CURVETYPE_CIRCLE): 24  (all Wheel faces)
  - Faces with line edges only: 36  (all non-Wheel faces)
@@ -48,7 +48,7 @@ from ansys.geometry.core.selection_builder.selection_builder import (
 from .conftest import FILES_DIR
 
 
-def test_set_operator_add(modeler: Modeler):
+def test_face_selection_add(modeler: Modeler):
     """Verify that __add__ returns a deduplicated union of two face selections.
 
     Uses two disjoint wheel-face subsets (cylindrical vs. flat circular) to confirm
@@ -71,7 +71,7 @@ def test_set_operator_add(modeler: Modeler):
     assert len(self_union.items) == 8
 
 
-def test_set_operator_sub(modeler: Modeler):
+def test_face_selection_sub(modeler: Modeler):
     """Verify that __sub__ returns faces in self that are absent from other.
 
     Subtracts the 8 cylindrical Wheel faces from all 24 Wheel faces, expecting
@@ -83,8 +83,10 @@ def test_set_operator_sub(modeler: Modeler):
 
     # All 24 Wheel faces (contain at least one circle edge)
     wheel_faces = all_faces.filter_faces_by_number_curves(CurveType.CURVETYPE_CIRCLE, 1)
+    assert len(wheel_faces.items) == 24
     # 8 cylindrical Wheel faces (2 edges each)
     cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
+    assert len(cyl_faces.items) == 8
 
     # 24 Wheel − 8 cylindrical = 16 flat circular
     diff = wheel_faces - cyl_faces
@@ -98,7 +100,7 @@ def test_set_operator_sub(modeler: Modeler):
     assert len(no_change.items) == 24
 
 
-def test_set_operator_and(modeler: Modeler):
+def test_face_selection_and(modeler: Modeler):
     """Verify that __and__ returns the intersection of two face selections.
 
     Intersects all 24 Wheel faces with the 8 two-edge faces, expecting exactly
@@ -149,12 +151,7 @@ def test_get_all_faces(modeler: Modeler):
 
 
 def test_get_faces_from_named_selection(modeler: Modeler):
-    """Verify that get_faces_from_named_selection returns faces in a named selection.
-
-    NOTE: The server's GetFacesFromNamedSelection only matches face-type named
-    selections.  A body-based named selection returns 0 faces.  We use the two
-    named selections that are already embedded in the cars-windshield file.
-    """
+    """Verify that get_faces_from_named_selection returns faces in a named selection."""
     design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     # Use the named selections already present in the file
@@ -162,11 +159,10 @@ def test_get_faces_from_named_selection(modeler: Modeler):
     assert len(existing_ns) == 2
 
     sel_builder = modeler.create_selection_builder()
-    ns_name = existing_ns[0].name
-    result = sel_builder.faces.get_faces_from_named_selection(ns_name)
-    # The named selection may be body-based (returns 0) or face-based (returns > 0);
-    # either way the call must succeed without error.
-    assert len(result.items) >= 0
+
+    # Get faces from NS "to_pull" (1 face)
+    result = sel_builder.faces.get_faces_from_named_selection(existing_ns[1].name)
+    assert len(result.items) == 1
 
 
 def test_get_faces_with_area(modeler: Modeler):
@@ -265,7 +261,7 @@ def test_filter_faces_by_area(modeler: Modeler):
 
     # Now verify area filtering on those cylinder faces: max-area should be 1 (the biggest).
     biggest = cyl_faces.filter_faces_max_area()
-    assert len(biggest.items) >= 1
+    assert len(biggest.items) == 8
 
 
 def test_filter_faces_max_area(modeler: Modeler):
@@ -274,8 +270,8 @@ def test_filter_faces_max_area(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     result = all_faces.filter_faces_max_area()
-    # Exactly the faces sharing the global maximum area
-    assert len(result.items) >= 1
+    assert len(result.items) == 4
+
     # All returned faces must share the same (maximum) area
     areas = [f.area.m for f in result.items]
     assert len(set(round(a, 6) for a in areas)) == 1
@@ -287,7 +283,8 @@ def test_filter_faces_min_area(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     result = all_faces.filter_faces_min_area()
-    assert len(result.items) >= 1
+    assert len(result.items) == 4
+
     areas = [f.area.m for f in result.items]
     assert len(set(round(a, 6) for a in areas)) == 1
 
@@ -309,7 +306,7 @@ def test_filter_faces_max_perimeter(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     result = all_faces.filter_faces_max_perimeter()
-    assert len(result.items) >= 1
+    assert len(result.items) == 8
 
 
 def test_filter_faces_min_perimeter(modeler: Modeler):
@@ -318,7 +315,7 @@ def test_filter_faces_min_perimeter(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     result = all_faces.filter_faces_min_perimeter()
-    assert len(result.items) >= 1
+    assert len(result.items) == 4
 
 
 def test_filter_faces_by_edge_count(modeler: Modeler):
@@ -575,7 +572,7 @@ def test_extend_to_coincident(modeler: Modeler):
 
     flat_faces = all_faces.filter_faces_by_edge_count(1, 1)
     result = flat_faces.extend_to_coincident()
-    assert len(result.items) >= 1
+    assert len(result.items) == 28
 
 
 @pytest.mark.xfail(
@@ -589,8 +586,14 @@ def test_extend_to_coaxial_faces(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
-    result = cyl_faces.extend_to_coaxial_faces()
-    assert len(result.items) >= 1
+    assert len(cyl_faces.items) == 8
+
+    # Seed with a single cylindrical face
+    one_cyl = FaceSelection(cyl_faces._design, cyl_faces._grpc_client, [cyl_faces.items[0]])
+    assert len(one_cyl.items) == 1
+
+    result = one_cyl.extend_to_coaxial_faces()
+    assert len(result.items) == 4
 
 
 def test_order_faces_by_area(modeler: Modeler):
@@ -651,9 +654,8 @@ def test_group_faces_by_area(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     groups = all_faces.group_faces_by_area()
-    # There are multiple distinct area values — at least the Wheel flat, Wheel cylinder,
-    # and box face areas are distinct
-    assert len(groups) >= 3
+    assert len(groups) == 10
+
     total = sum(len(g.items) for g in groups)
     assert total == 60
 
@@ -664,7 +666,8 @@ def test_group_faces_by_perimeter(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     groups = all_faces.group_faces_by_perimeter()
-    assert len(groups) >= 2
+    assert len(groups) == 10
+
     total = sum(len(g.items) for g in groups)
     assert total == 60
 
@@ -739,6 +742,7 @@ def test_group_faces_by_coincident(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     groups = all_faces.group_faces_by_coincident()
-    assert len(groups) >= 1
+    assert len(groups) == 23
+
     total = sum(len(g.items) for g in groups)
     assert total == 60
