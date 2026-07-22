@@ -2,6 +2,7 @@
 
 ## Project Lead
 
+* [Jacob Kerstetter](https://github.com/jacobrkerstetter)
 * [Roberto Pastor](https://github.com/RobPasMue)
 
 ## Individual Contributors
@@ -20,7 +21,6 @@
 * [dmitriy-bty](https://github.com/dmitriy-bty)
 * [Dominik Gresch](https://github.com/greschd)
 * [German](https://github.com/germa89)
-* [Jacob Kerstetter](https://github.com/jacobrkerstetter)
 * [James Derrick](https://github.com/jgd10)
 * [JasonWelling](https://github.com/JasonWelling)
 * [Jonah Boling](https://github.com/jonahrb)
