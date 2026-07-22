@@ -24,11 +24,11 @@ No intermediate USD file is written to disk.
 
 ## Prerequisites
 
-This example requires two optional extras:
+This example requires the ``html`` optional extra, which bundles both
+``usd-core`` and ``ansys-tools-visualization-interface[usd]``:
 
 ```text
-pip install ansys-geometry-core[usd]
-pip install ansys-tools-visualization-interface[usd]
+pip install ansys-geometry-core[html]
 ```
 
 ## Create a design

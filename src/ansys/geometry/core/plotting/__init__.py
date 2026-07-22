@@ -24,5 +24,5 @@
 
 try:
     from ansys.geometry.core.plotting.plotter import GeometryPlotter
-except ImportError:
+except ModuleNotFoundError:
     pass
