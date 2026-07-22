@@ -77,3 +77,6 @@ Once the implementation is complete, pass the task to the writing-tests agent us
 Do not search for a `.venv` directory. Instead, read the `PYANSYS_VENV` environment variable to obtain the path to the virtual environment, then activate it:
 - Windows: `& "$env:PYANSYS_VENV\Scripts\Activate.ps1"`
 - Linux/macOS: `source "$PYANSYS_VENV/bin/activate"`
+
+## Code style
+- After writing any file, run all pre-commit hooks to validate style: `pre-commit run --all-files`. Fix any violations before completing the step.
