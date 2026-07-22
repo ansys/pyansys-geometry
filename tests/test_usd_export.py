@@ -21,7 +21,7 @@
 
 """Tests for the USD export module."""
 
-from unittest.mock import MagicMock, PropertyMock
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -427,3 +427,194 @@ def test_export_empty_body_does_not_consume_name_slot(tmp_path):
     # real_body should be at /D/C/Body (not /D/C/Body_1) since empty_body was skipped
     assert stage.GetPrimAtPath("/D/C/Body").IsValid()
     assert not stage.GetPrimAtPath("/D/C/Body_1").IsValid()
+
+
+# ============================================================
+# USDZ export tests
+# ============================================================
+
+
+def test_export_creates_usdz(tmp_path):
+    """export_design_to_usd with a .usdz path creates a valid usdz archive."""
+    design = _make_design("D", bodies=[_make_body("Box")])
+    out = tmp_path / "out.usdz"
+    export_design_to_usd(design, out)
+    assert out.exists()
+    assert out.stat().st_size > 0
+
+
+def test_export_usdz_cleans_up_temp_file(tmp_path):
+    """Temporary .usdc staging file is removed after successful .usdz packaging."""
+    known_tmp = tmp_path / "staging.usdc"
+    known_tmp.touch()
+    mock_ntf = MagicMock()
+    mock_ntf.name = str(known_tmp)
+
+    with patch("tempfile.NamedTemporaryFile", return_value=mock_ntf), patch(
+        "ansys.geometry.core.plotting.usd_export._write_stage"
+    ), patch("pxr.UsdUtils.CreateNewUsdzPackage"):
+        export_design_to_usd(_make_design("D"), tmp_path / "out.usdz")
+
+    assert not known_tmp.exists()
+
+
+def test_export_usdz_cleans_up_on_write_failure(tmp_path):
+    """Temporary .usdc staging file is removed even when _write_stage raises."""
+    known_tmp = tmp_path / "staging.usdc"
+    known_tmp.touch()
+    mock_ntf = MagicMock()
+    mock_ntf.name = str(known_tmp)
+
+    with patch("tempfile.NamedTemporaryFile", return_value=mock_ntf), patch(
+        "ansys.geometry.core.plotting.usd_export._write_stage",
+        side_effect=RuntimeError("write failed"),
+    ):
+        with pytest.raises(RuntimeError, match="write failed"):
+            export_design_to_usd(_make_design("D"), tmp_path / "out.usdz")
+
+    assert not known_tmp.exists()
+
+
+# ============================================================
+# Design.export_to_usd() method tests (via __wrapped__ to bypass decorator)
+# ============================================================
+
+
+def test_export_to_usd_method_returns_path(tmp_path):
+    """Design.export_to_usd returns the path produced by __build_export_file_location."""
+    from ansys.geometry.core.designer.design import Design
+
+    expected = tmp_path / "MyDesign.usda"
+    design = _make_design("MyDesign")
+    design._Design__build_export_file_location = MagicMock(return_value=expected)
+
+    with patch("ansys.geometry.core.plotting.usd_export.export_design_to_usd"):
+        result = Design.export_to_usd.__wrapped__(design, location=tmp_path)
+
+    assert result == expected
+
+
+def test_export_to_usd_method_delegates_to_impl(tmp_path):
+    """Design.export_to_usd calls export_design_to_usd with the correct arguments."""
+    from ansys.geometry.core.designer.design import Design
+
+    expected = tmp_path / "D.usda"
+    design = _make_design("D")
+    design._Design__build_export_file_location = MagicMock(return_value=expected)
+    mock_opts = MagicMock()
+
+    with patch("ansys.geometry.core.plotting.usd_export.export_design_to_usd") as mock_impl:
+        Design.export_to_usd.__wrapped__(design, location=tmp_path, tess_options=mock_opts)
+
+    mock_impl.assert_called_once_with(design, expected, mock_opts)
+
+
+def test_export_to_usd_method_invalid_format_raises():
+    """Design.export_to_usd raises GeometryRuntimeError for an unsupported format."""
+    from ansys.geometry.core.designer.design import Design
+
+    with pytest.raises(GeometryRuntimeError, match="Invalid USD file format"):
+        Design.export_to_usd.__wrapped__(_make_design("D"), file_format="obj")
+
+
+def test_export_to_usd_method_missing_usd_core():
+    """Design.export_to_usd raises ImportError when usd-core is not installed."""
+    import ansys.geometry.core.plotting.usd_export as usd_mod
+    from ansys.geometry.core.designer.design import Design
+
+    original = usd_mod._USD_AVAILABLE
+    usd_mod._USD_AVAILABLE = False
+    try:
+        with pytest.raises(ImportError, match="usd-core"):
+            Design.export_to_usd.__wrapped__(_make_design("D"))
+    finally:
+        usd_mod._USD_AVAILABLE = original
+
+
+# ============================================================
+# Design.export_to_html() method tests (via __wrapped__ to bypass decorator)
+# ============================================================
+
+
+def test_export_to_html_method_calls_export_usd_to_html(tmp_path):
+    """Design.export_to_html calls export_usd_to_html with the default wireframe settings."""
+    from ansys.geometry.core.designer.design import Design
+
+    expected = tmp_path / "D.html"
+    design = _make_design("D")
+    design._Design__build_export_file_location = MagicMock(return_value=expected)
+    mock_stage = MagicMock()
+    mock_viz = MagicMock()
+    mock_viz.export_usd_to_html.return_value = expected
+
+    with patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"), patch(
+        "ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage
+    ), patch.dict("sys.modules", {"ansys.tools.visualization_interface": mock_viz}):
+        result = Design.export_to_html.__wrapped__(design, location=tmp_path)
+
+    mock_viz.export_usd_to_html.assert_called_once_with(
+        mock_stage,
+        expected,
+        show_mesh_lines=True,
+        line_color="#ffffff",
+        line_opacity=0.9,
+    )
+    assert result == expected
+
+
+def test_export_to_html_method_custom_kwargs(tmp_path):
+    """Design.export_to_html forwards custom wireframe settings to export_usd_to_html."""
+    from ansys.geometry.core.designer.design import Design
+
+    expected = tmp_path / "D.html"
+    design = _make_design("D")
+    design._Design__build_export_file_location = MagicMock(return_value=expected)
+    mock_stage = MagicMock()
+    mock_viz = MagicMock()
+
+    with patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"), patch(
+        "ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage
+    ), patch.dict("sys.modules", {"ansys.tools.visualization_interface": mock_viz}):
+        Design.export_to_html.__wrapped__(
+            design,
+            location=tmp_path,
+            show_mesh_lines=False,
+            line_color="#000000",
+            line_opacity=0.5,
+        )
+
+    mock_viz.export_usd_to_html.assert_called_once_with(
+        mock_stage,
+        expected,
+        show_mesh_lines=False,
+        line_color="#000000",
+        line_opacity=0.5,
+    )
+
+
+def test_export_to_html_method_missing_viz_interface():
+    """Design.export_to_html raises ImportError with the [html] install hint when viz-interface is absent."""
+    from ansys.geometry.core.designer.design import Design
+
+    design = _make_design("D")
+    mock_stage = MagicMock()
+
+    with patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"), patch(
+        "ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage
+    ), patch.dict("sys.modules", {"ansys.tools.visualization_interface": None}):
+        with pytest.raises(ImportError, match=r"ansys-geometry-core\[html\]"):
+            Design.export_to_html.__wrapped__(design)
+
+
+def test_export_to_html_method_missing_usd_core():
+    """Design.export_to_html raises ImportError when usd-core is not installed."""
+    import ansys.geometry.core.plotting.usd_export as usd_mod
+    from ansys.geometry.core.designer.design import Design
+
+    original = usd_mod._USD_AVAILABLE
+    usd_mod._USD_AVAILABLE = False
+    try:
+        with pytest.raises(ImportError, match="usd-core"):
+            Design.export_to_html.__wrapped__(_make_design("D"))
+    finally:
+        usd_mod._USD_AVAILABLE = original
