@@ -31,6 +31,9 @@ if TYPE_CHECKING:
     from ansys.geometry.core.selection_builder.body_selection import (
         BodySelection,
     )
+    from ansys.geometry.core.selection_builder.face_selection import (
+        FaceSelection,
+    )
 
 
 @unique

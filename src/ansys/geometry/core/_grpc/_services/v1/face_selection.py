@@ -53,8 +53,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
 
         self.stub = FaceSelectionStub(channel)
 
-    # ── helpers ───────────────────────────────────────────────────────────────
-
     def _input_request(self, kwargs):
         """Build a ``FaceSelectionInputRequest`` from ``face_ids``."""
         from ansys.api.discovery.v1.design.selections.faceselection_pb2 import (
@@ -85,8 +83,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
                 )
             ]
         )
-
-    # ── Static factory ────────────────────────────────────────────────────────
 
     @protect_grpc
     def get_all_visible_faces(self, **kwargs) -> dict:  # noqa: D102
@@ -193,8 +189,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
         )
         return serialize_face_selection_response(self.stub.GetFacesWithColor(request))
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @protect_grpc
     def invert_face_selection(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.selections.faceselection_pb2 import (
@@ -211,8 +205,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
             ]
         )
         return serialize_face_selection_response(self.stub.InvertFaceSelection(request))
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @protect_grpc
     def filter_faces_by_area(self, **kwargs) -> dict:  # noqa: D102
@@ -342,9 +334,7 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
             max=kwargs["max"] if kwargs["max"] is not None else None,
         )
         return serialize_face_selection_response(
-            self.stub.FilterFacesByNumberCurves(
-                FilterFacesByCurveCountRequest(request_data=[data])
-            )
+            self.stub.FilterFacesByNumberCurves(FilterFacesByCurveCountRequest(request_data=[data]))
         )
 
     @protect_grpc
@@ -397,9 +387,7 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
                 )
             ]
         )
-        return serialize_face_selection_response(
-            self.stub.FilterFacesContainingCurveTypes(request)
-        )
+        return serialize_face_selection_response(self.stub.FilterFacesContainingCurveTypes(request))
 
     @protect_grpc
     def filter_faces_by_color(self, **kwargs) -> dict:  # noqa: D102
@@ -511,8 +499,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
             self.stub.FilterFacesByNumberCurvesPercentile(request)
         )
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     @protect_grpc
     def extend_to_same_area(self, **kwargs) -> dict:  # noqa: D102
         return serialize_face_selection_response(
@@ -548,8 +534,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
         return serialize_face_selection_response(
             self.stub.ExtendToCoaxialFaces(self._extend_request(kwargs))
         )
-
-    # ── OrderBy ───────────────────────────────────────────────────────────────
 
     @protect_grpc
     def order_faces_by_area(self, **kwargs) -> dict:  # noqa: D102
@@ -591,8 +575,6 @@ class GRPCFaceSelectionServiceV1(GRPCFaceSelectionService):
             ]
         )
         return serialize_face_selection_response(self.stub.OrderFacesByNumberCurves(request))
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     @protect_grpc
     def group_faces_by_area(self, **kwargs) -> dict:  # noqa: D102

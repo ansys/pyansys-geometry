@@ -55,8 +55,6 @@ class GRPCFaceSelectionServiceV0(GRPCFaceSelectionService):
             "implemented in this protofile version."
         )
 
-    # ── Static factory ────────────────────────────────────────────────────────
-
     def get_all_visible_faces(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("get_all_visible_faces")
 
@@ -81,12 +79,8 @@ class GRPCFaceSelectionServiceV0(GRPCFaceSelectionService):
     def get_faces_with_color(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("get_faces_with_color")
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     def invert_face_selection(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("invert_face_selection")
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     def filter_faces_by_area(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("filter_faces_by_area")
@@ -154,8 +148,6 @@ class GRPCFaceSelectionServiceV0(GRPCFaceSelectionService):
     def filter_faces_by_number_curves_percentile(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("filter_faces_by_number_curves_percentile")
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     def extend_to_same_area(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("extend_to_same_area")
 
@@ -174,8 +166,6 @@ class GRPCFaceSelectionServiceV0(GRPCFaceSelectionService):
     def extend_to_coaxial_faces(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("extend_to_coaxial_faces")
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     def order_faces_by_area(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("order_faces_by_area")
 
@@ -190,8 +180,6 @@ class GRPCFaceSelectionServiceV0(GRPCFaceSelectionService):
 
     def order_faces_by_number_curves(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("order_faces_by_number_curves")
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     def group_faces_by_area(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("group_faces_by_area")

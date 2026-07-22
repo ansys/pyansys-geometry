@@ -61,8 +61,6 @@ class FaceSelection(TypedSelection):
         self._grpc_client = grpc_client
         self._items = items or []
 
-    # ── Set-like operators ───────────────────────────────────────────────────
-
     def __add__(self, other: "FaceSelection") -> "FaceSelection":
         """Return a new selection that is the union of this selection and another."""
         return FaceSelection(
@@ -88,8 +86,6 @@ class FaceSelection(TypedSelection):
             self._grpc_client,
             list(dict.fromkeys(x for x in self.items if x in other_set)),
         )
-
-    # ── Static factory (get) ─────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def get_all_visible_faces(self) -> "FaceSelection":
@@ -288,8 +284,6 @@ class FaceSelection(TypedSelection):
         faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
         return FaceSelection(self._design, self._grpc_client, faces)
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def invert_face_selection(
         self,
@@ -313,8 +307,6 @@ class FaceSelection(TypedSelection):
         )
         faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
         return FaceSelection(self._design, self._grpc_client, faces)
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @min_backend_version(27, 1, 0)
     def filter_faces_by_area(
@@ -823,8 +815,6 @@ class FaceSelection(TypedSelection):
         faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
         return FaceSelection(self._design, self._grpc_client, faces)
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def extend_to_same_area(
         self,
@@ -969,8 +959,6 @@ class FaceSelection(TypedSelection):
         faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
         return FaceSelection(self._design, self._grpc_client, faces)
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def order_faces_by_area(self) -> "FaceSelection":
         """Return faces sorted by area in ascending order.
@@ -1052,8 +1040,6 @@ class FaceSelection(TypedSelection):
         faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
         return FaceSelection(self._design, self._grpc_client, faces)
 
-    # ── GroupBy ───────────────────────────────────────────────────────────────
-
     @min_backend_version(27, 1, 0)
     def group_faces_by_area(self) -> "list[FaceSelection]":
         """Group faces by area.
@@ -1067,9 +1053,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1086,9 +1070,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1105,9 +1087,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1124,9 +1104,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1143,9 +1121,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1162,9 +1138,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1181,8 +1155,6 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(
-                self._design, self._grpc_client, get_faces_from_ids(self._design, group)
-            )
+            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]

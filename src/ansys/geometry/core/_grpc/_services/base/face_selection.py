@@ -40,8 +40,6 @@ class GRPCFaceSelectionService(ABC):  # pragma: no cover
         """Initialize the GRPCFaceSelectionService class."""
         pass
 
-    # ── Static factory ────────────────────────────────────────────────────────
-
     @abstractmethod
     def get_all_visible_faces(self, **kwargs) -> dict:
         """Return all visible faces in the active document."""
@@ -82,14 +80,10 @@ class GRPCFaceSelectionService(ABC):  # pragma: no cover
         """Return faces matching a given color."""
         pass
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     @abstractmethod
     def invert_face_selection(self, **kwargs) -> dict:
         """Return the complement of the provided face selection."""
         pass
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     @abstractmethod
     def filter_faces_by_area(self, **kwargs) -> dict:
@@ -201,8 +195,6 @@ class GRPCFaceSelectionService(ABC):  # pragma: no cover
         """Filter faces by curve-type count percentile range."""
         pass
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     @abstractmethod
     def extend_to_same_area(self, **kwargs) -> dict:
         """Extend selection to faces with the same area."""
@@ -233,8 +225,6 @@ class GRPCFaceSelectionService(ABC):  # pragma: no cover
         """Extend selection to faces that are coaxial."""
         pass
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     @abstractmethod
     def order_faces_by_area(self, **kwargs) -> dict:
         """Order faces by area."""
@@ -259,8 +249,6 @@ class GRPCFaceSelectionService(ABC):  # pragma: no cover
     def order_faces_by_number_curves(self, **kwargs) -> dict:
         """Order faces by number of a specific curve type."""
         pass
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     @abstractmethod
     def group_faces_by_area(self, **kwargs) -> dict:

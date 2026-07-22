@@ -41,14 +41,88 @@ from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.errors import GeometryExitedError
 from ansys.geometry.core.selection_builder.face_selection import FaceSelection
 from ansys.geometry.core.selection_builder.selection_builder import (
-    ExtendScope,
     InvertScope,
     RangeType,
 )
 
 from .conftest import FILES_DIR
 
-# ── Static factory (get) ──────────────────────────────────────────────────────
+
+def test_set_operator_add(modeler: Modeler):
+    """Verify that __add__ returns a deduplicated union of two face selections.
+
+    Uses two disjoint wheel-face subsets (cylindrical vs. flat circular) to confirm
+    the union count is exactly 24.  Adds a selection to itself to confirm deduplication.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_faces = modeler.create_selection_builder().faces.get_all_faces()
+
+    cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)  # 8 cylindrical Wheel faces
+    flat_faces = all_faces.filter_faces_by_edge_count(1, 1)  # 16 flat circular Wheel faces
+
+    # Disjoint union: 8 + 16 = 24
+    union = cyl_faces + flat_faces
+    assert isinstance(union, FaceSelection)
+    assert len(union.items) == 24
+
+    # Union with self must not duplicate: still 8
+    self_union = cyl_faces + cyl_faces
+    assert isinstance(self_union, FaceSelection)
+    assert len(self_union.items) == 8
+
+
+def test_set_operator_sub(modeler: Modeler):
+    """Verify that __sub__ returns faces in self that are absent from other.
+
+    Subtracts the 8 cylindrical Wheel faces from all 24 Wheel faces, expecting
+    the 16 flat circular faces.  Also verifies that subtracting a disjoint set
+    leaves the selection unchanged.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_faces = modeler.create_selection_builder().faces.get_all_faces()
+
+    # All 24 Wheel faces (contain at least one circle edge)
+    wheel_faces = all_faces.filter_faces_by_number_curves(CurveType.CURVETYPE_CIRCLE, 1)
+    # 8 cylindrical Wheel faces (2 edges each)
+    cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
+
+    # 24 Wheel − 8 cylindrical = 16 flat circular
+    diff = wheel_faces - cyl_faces
+    assert isinstance(diff, FaceSelection)
+    assert len(diff.items) == 16
+
+    # Subtracting a disjoint set (box faces, 4 edges) must not change the selection
+    box_faces = all_faces.filter_faces_by_edge_count(4, 4)
+    no_change = wheel_faces - box_faces
+    assert isinstance(no_change, FaceSelection)
+    assert len(no_change.items) == 24
+
+
+def test_set_operator_and(modeler: Modeler):
+    """Verify that __and__ returns the intersection of two face selections.
+
+    Intersects all 24 Wheel faces with the 8 two-edge faces, expecting exactly
+    the 8 cylindrical Wheel faces.  Also confirms that intersecting with a
+    disjoint set (box faces) yields an empty selection.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    all_faces = modeler.create_selection_builder().faces.get_all_faces()
+
+    # All 24 Wheel faces
+    wheel_faces = all_faces.filter_faces_by_number_curves(CurveType.CURVETYPE_CIRCLE, 1)
+    # 8 cylindrical Wheel faces (the only faces with exactly 2 edges)
+    two_edge_faces = all_faces.filter_faces_by_edge_count(2, 2)
+
+    # 24 Wheel ∩ 8 cylindrical = 8
+    intersection = wheel_faces & two_edge_faces
+    assert isinstance(intersection, FaceSelection)
+    assert len(intersection.items) == 8
+
+    # Box faces (4 edges) have no circle edges → intersection with wheel_faces is empty
+    box_faces = all_faces.filter_faces_by_edge_count(4, 4)
+    empty = wheel_faces & box_faces
+    assert isinstance(empty, FaceSelection)
+    assert len(empty.items) == 0
 
 
 def test_get_all_visible_faces(modeler: Modeler):
@@ -163,9 +237,6 @@ def test_get_faces_with_color(modeler: Modeler):
     assert len(result.items) == 6
 
 
-# ── Instance operations ───────────────────────────────────────────────────────
-
-
 def test_invert_face_selection(modeler: Modeler):
     """Verify that invert_face_selection returns all visible faces not in the input set."""
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
@@ -179,9 +250,6 @@ def test_invert_face_selection(modeler: Modeler):
     # Solid (red) is the hidden body; its faces are not in the visible set.
     # Inverting 6 hidden red faces within visible scope returns all 54 visible faces.
     assert len(result.items) == 54
-
-
-# ── Filter ────────────────────────────────────────────────────────────────────
 
 
 def test_filter_faces_by_area(modeler: Modeler):
@@ -434,102 +502,95 @@ def test_filter_faces_by_number_curves_percentile(modeler: Modeler):
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     # Top 50th percentile by circle edge count: all 24 Wheel faces (they all have >= 1 circle)
-    result = all_faces.filter_faces_by_number_curves_percentile(
-        CurveType.CURVETYPE_CIRCLE, 50, 100
-    )
+    result = all_faces.filter_faces_by_number_curves_percentile(CurveType.CURVETYPE_CIRCLE, 50, 100)
     assert len(result.items) == 24
 
 
-# ── Extend ────────────────────────────────────────────────────────────────────
-
-
 def test_extend_to_same_area(modeler: Modeler):
-    """Verify that extend_to_same_area expands the selection to all faces with the same area."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    """Verify that extend_to_same_area expands the selection to all faces with the same area.
+
+    Starts from the 16 flat circular Wheel faces (all share the same area); the result
+    must be exactly 16.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    # Seed: 1 flat circular Wheel face; all 16 flat circular faces share the same area
-    flat_wheel_faces = all_faces.filter_faces_by_edge_count(1, 1)
-    seed = FaceSelection(design, modeler._grpc_client, flat_wheel_faces.items[:1])
-
-    result = seed.extend_to_same_area()
+    # All 16 flat circular Wheel faces share the same area
+    flat_faces = all_faces.filter_faces_by_edge_count(1, 1)
+    result = flat_faces.extend_to_same_area()
     assert len(result.items) == 16
 
 
 def test_extend_to_same_number_of_edges(modeler: Modeler):
-    """Verify extend_to_same_number_of_edges expands to faces with the same edge count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    """Verify extend_to_same_number_of_edges expands to faces with the same edge count.
+
+    Starts from the 8 cylindrical Wheel faces (2 edges each); the result must be exactly 8.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    # Seed: 1 cylindrical Wheel face (2 edges). All 8 cylinder faces share 2 edges.
+    # All 8 cylindrical Wheel faces have exactly 2 edges
     cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
-    seed = FaceSelection(design, modeler._grpc_client, cyl_faces.items[:1])
-
-    result = seed.extend_to_same_number_of_edges()
+    result = cyl_faces.extend_to_same_number_of_edges()
     assert len(result.items) == 8
 
 
 def test_extend_to_same_number_of_loops(modeler: Modeler):
-    """Verify extend_to_same_number_of_loops expands to faces with the same loop count."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    """Verify extend_to_same_number_of_loops expands to faces with the same loop count.
+
+    Starts from the 8 cylindrical Wheel faces (2 loops each); the result must be exactly 8.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    # All faces with 1 loop: 52 faces (the 8 cylindrical Wheel faces have 2 loops)
-    seed = FaceSelection(design, modeler._grpc_client, all_faces.items[:1])
-    result = seed.extend_to_same_number_of_loops()
-    assert len(result.items) == 52
+    # 8 cylindrical Wheel faces each have 2 loops — the only faces with more than 1 loop
+    cyl_faces = all_faces.filter_faces_by_loop_count(2, 2)
+    result = cyl_faces.extend_to_same_number_of_loops()
+    assert len(result.items) == 8
 
 
 def test_extend_to_same_color(modeler: Modeler):
-    """Verify extend_to_same_color expands to all faces sharing the same color."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    """Verify extend_to_same_color expands to all faces sharing the same color.
+
+    Starts from the 6 red Solid faces; the result must be exactly 6.
+    """
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    # Seed: 1 red Solid face; all 6 Solid faces are red
+    # All 6 Solid faces are red; extending to same color returns all 6
     red_faces = all_faces.filter_faces_by_color((255, 0, 0))
-    seed = FaceSelection(design, modeler._grpc_client, red_faces.items[:1])
-
-    result = seed.extend_to_same_color()
+    result = red_faces.extend_to_same_color()
     assert len(result.items) == 6
 
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason=(
-        "scFaceSelection.ExtendToCoincident throws NotImplementedException in this SC build"
-    ),
+    reason=("scFaceSelection.ExtendToCoincident throws NotImplementedException in this SC build"),
     strict=True,
 )
 def test_extend_to_coincident(modeler: Modeler):
-    """Verify extend_to_coincident expands to faces coincident with the seed."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    """Verify extend_to_coincident expands to faces coincident with the selection."""
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    flat_wheel_faces = all_faces.filter_faces_by_edge_count(1, 1)
-    seed = FaceSelection(design, modeler._grpc_client, flat_wheel_faces.items[:1])
-    result = seed.extend_to_coincident()
+    flat_faces = all_faces.filter_faces_by_edge_count(1, 1)
+    result = flat_faces.extend_to_coincident()
     assert len(result.items) >= 1
 
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason=(
-        "scFaceSelection.ExtendToCoaxialFaces throws NotImplementedException in this SC build"
-    ),
+    reason=("scFaceSelection.ExtendToCoaxialFaces throws NotImplementedException in this SC build"),
     strict=True,
 )
 def test_extend_to_coaxial_faces(modeler: Modeler):
     """Verify extend_to_coaxial_faces expands to faces sharing the same axis."""
-    design = modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
+    modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
     all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
     cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
-    seed = FaceSelection(design, modeler._grpc_client, cyl_faces.items[:1])
-    result = seed.extend_to_coaxial_faces()
+    result = cyl_faces.extend_to_coaxial_faces()
     assert len(result.items) >= 1
-
-
-# ── OrderBy ───────────────────────────────────────────────────────────────────
 
 
 def test_order_faces_by_area(modeler: Modeler):
@@ -582,9 +643,6 @@ def test_order_faces_by_number_curves(modeler: Modeler):
     assert len(result.items) == 60
     # Non-circle faces come first (36), then circle faces (24)
     assert len(result.items) == 60
-
-
-# ── GroupBy ───────────────────────────────────────────────────────────────────
 
 
 def test_group_faces_by_area(modeler: Modeler):
@@ -672,9 +730,7 @@ def test_group_faces_by_color(modeler: Modeler):
 
 @pytest.mark.xfail(
     raises=GeometryExitedError,
-    reason=(
-        "scFaceSelection.GroupByCoincident throws NotImplementedException in this SC build"
-    ),
+    reason=("scFaceSelection.GroupByCoincident throws NotImplementedException in this SC build"),
     strict=True,
 )
 def test_group_faces_by_coincident(modeler: Modeler):
