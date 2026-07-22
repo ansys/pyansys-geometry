@@ -74,6 +74,7 @@ backends:
       - tests/integration/test_body.py::test_get_body_tight_bounding_box
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_body_selection.py::*
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -154,6 +155,8 @@ backends:
       - tests/integration/test_unsupported.py::test_import_lightweight_and_convert
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "24.2"
     incompatible_tests:
@@ -225,6 +228,7 @@ backends:
       - tests/integration/test_body.py::test_get_body_tight_bounding_box
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_body_selection.py::*
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -303,6 +307,8 @@ backends:
       - tests/integration/test_design.py::test_design_download_v1_api
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "25.1"
     incompatible_tests:
@@ -323,6 +329,7 @@ backends:
       - tests/integration/test_body.py::test_get_body_tight_bounding_box
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
+      - tests/integration/test_body_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
@@ -420,11 +427,14 @@ backends:
       - tests/integration/test_design.py::test_design_download_v1_api
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
       - tests/integration/test_design.py::test_import_component_named_selections
+      - tests/integration/test_body_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
       # Components and vertex only available on 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
@@ -488,6 +498,8 @@ backends:
       - tests/integration/test_design.py::test_set_component_name
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
 
   - version: "26.1"
     incompatible_tests:
@@ -511,3 +523,5 @@ backends:
       - tests/integration/test_design.py::test_set_component_name
       # SC color tones import added in 27.1
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
+      # Root part CS not loaded until 27.1
+      - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh

@@ -48,7 +48,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     BodyEntity as GRPCBodyEntity,
     ComponentEntity as GRPCComponentEntity,
     CurveGeometry as GRPCCurveGeometry,
-    DatumPointEntity as GRPCDesignPoint,
+    DatumPointEntity as GRPCDatumPoint,
     DrivingDimensionEntity as GRPCDrivingDimension,
     EdgeTessellation as GRPCEdgeTessellation,
     FMDExportOptions as GRPCFMDExportOptions,
@@ -72,6 +72,10 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
 )
 from ansys.api.discovery.v1.design.parameters.drivingdimension_pb2 import (
     UpdateStatus as GRPCUpdateStatus,
+)
+from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
+    BodyGroupResponse as GRPCBodyGroupResponse,
+    BodySelectionQueryResponse as GRPCBodySelectionResponse,
 )
 from ansys.api.discovery.v1.geometryenums_pb2 import (
     SurfaceType as GRPCSurfaceType,
@@ -257,8 +261,8 @@ def from_point2d_to_grpc_point(plane: "Plane", point2d: "Point2D") -> GRPCPoint:
     )
 
 
-def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
-    """Convert a v1 ``Point3D`` class to a design point gRPC message.
+def from_point3d_to_grpc_datum_point(point: "Point3D") -> GRPCDatumPoint:
+    """Convert a v1 ``Point3D`` class to a datum point gRPC message.
 
     Parameters
     ----------
@@ -267,10 +271,10 @@ def from_point3d_to_grpc_design_point(point: "Point3D") -> GRPCDesignPoint:
 
     Returns
     -------
-    GRPCDesignPoint
-        Geometry service gRPC design point message. The unit is meters.
+    GRPCDatumPoint
+        Geometry service gRPC datum point message. The unit is meters.
     """
-    return GRPCDesignPoint(
+    return GRPCDatumPoint(
         position=from_point3d_to_grpc_point(point),
     )
 
@@ -2208,6 +2212,56 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
                 response.tracked_command_response.tracked_changes, "deleted_bodies", []
             )
         ],
+    }
+
+
+def serialize_body_selection_response(response: GRPCBodySelectionResponse) -> dict:
+    """Serialize a BodySelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCBodySelectionResponse
+        The gRPC BodySelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodySelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "bodies": [body.id.id for body in rd.bodies],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_body_group_response(response: GRPCBodyGroupResponse) -> dict:
+    """Serialize a BodyGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCBodyGroupResponse
+        The gRPC BodyGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the BodyGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [[body.id.id for body in group.bodies] for group in rd.groups],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
     }
 
 

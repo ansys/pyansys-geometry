@@ -831,6 +831,7 @@ def test_read_existing_design_plane_retrieval_paths(
         "component_shared_topologies": [
             {"component_id": "p_main", "shared_topology_type": shared_type.value}
         ],
+        "datum_points": [],
     }
 
     with (
@@ -843,12 +844,17 @@ def test_read_existing_design_plane_retrieval_paths(
             return_value=assembly_response,
         ),
         patch.object(modeler.client, "_backend_version", backend_version),
-        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(
             design._grpc_client.services.planes,
             "get_all",
             return_value={"planes": []},
         ) as planes_get_all_spy,
+        patch.object(
+            design._grpc_client.services.curves,
+            "get_all",
+            return_value={"curves": []},
+        ),
+        patch.object(design._grpc_client.services, "version", service_version),
         patch.object(design._grpc_client.log, "debug") as debug_spy,
     ):
         design._Design__read_existing_design()
@@ -1427,6 +1433,10 @@ def test_named_selection_contents(modeler: Modeler):
     )
     assert len(design_curves) == 1 and isinstance(design_curves[0], DesignCurve)
 
+    # Create two DatumPoints
+    dp1 = design.create_datum_point("DP1", Point3D([1, 0, 0], UNITS.m))
+    dp2 = design.create_datum_point("DP2", Point3D([2, 0, 0], UNITS.m))
+
     # Create the NamedSelection
     ns = design.create_named_selection(
         "MyNamedSelection",
@@ -1436,6 +1446,7 @@ def test_named_selection_contents(modeler: Modeler):
         beams=[beam],
         vertices=vertices,
         design_curves=design_curves,
+        datum_points=[dp1, dp2],
     )
 
     # Check that the named selection has everything
@@ -1465,6 +1476,9 @@ def test_named_selection_contents(modeler: Modeler):
 
     assert len(ns.design_curves) == 1
     assert ns.design_curves[0].id == design_curves[0].id
+
+    assert len(ns.datum_points) == 2
+    assert np.isin([dp1.id, dp2.id], [dp.id for dp in ns.datum_points]).all()
 
 
 def test_add_component_with_instance_name(modeler: Modeler):
@@ -1587,7 +1601,7 @@ def test_coordinate_system_creation(modeler: Modeler):
     nested_comp.create_coordinate_system("CompCS1", frame1)
     nested_comp.create_coordinate_system("CompCS2", frame2)
 
-    # Check that the named selections are available
+    # Check that the coordinate systems are available
     assert len(design.coordinate_systems) == 1
     assert all(entry.id is not None for entry in design.coordinate_systems)
     design_cs = design.coordinate_systems[0]
@@ -1644,6 +1658,23 @@ def test_coordinate_system_creation(modeler: Modeler):
     assert "  Frame X-direction    : " in nested_comp_cs1_str
     assert "  Frame Y-direction    : " in nested_comp_cs1_str
     assert "  Frame Z-direction    : " in nested_comp_cs1_str
+
+
+def test_coordinate_systems_on_design_refresh(modeler: Modeler):
+    """Test for verifying the correct behavior of ``CoordinateSystem`` after a design refresh."""
+    # Create your design on the server side
+    design = modeler.create_design("CoordinateSystem_Test")
+    frame1 = Frame(
+        Point3D([10, 200, 3000], UNITS.mm), UnitVector3D([1, 1, 0]), UnitVector3D([1, -1, 0])
+    )
+
+    # Create the CoordinateSystem
+    design.create_coordinate_system("DesignCS1", frame1)
+    assert len(design.coordinate_systems) == 1
+
+    # Call the refresh method on the design and check that the coordinate system is still there
+    design._update_design_inplace()
+    assert len(design.coordinate_systems) == 1
 
 
 def test_search_component_by_name(modeler: Modeler):
@@ -1904,8 +1935,12 @@ def test_delete_body_component(modeler: Modeler):
     assert "N Coordinate Systems : 0" in design_str
     assert "N Named Selections   : 0" in design_str
     assert "N Materials          : 0" in design_str
+    assert "N Beams              : 0" in design_str
     assert "N Beam Profiles      : 0" in design_str
+    assert "N Datum Points       : 0" in design_str
+    assert "N Datum Planes       : 0" in design_str
     assert "N Design Points      : 0" in design_str
+    assert "N Design Curves      : 0" in design_str
 
     comp_1_str = str(comp_1)
     assert "ansys.geometry.core.designer.Component" in comp_1_str
@@ -2506,6 +2541,42 @@ def test_named_selections_components(modeler: Modeler):
     # Try deleting this named selection
     design.delete_named_selection(ns_components)
     assert len(design.named_selections) == 0
+
+
+def test_named_selection_datum_and_coordinate_systems_supported_access(modeler: Modeler):
+    """27R1+ backends should resolve NS datum planes and coordinate systems from IDs."""
+    if modeler._grpc_client.backend_version < (27, 1, 0):
+        pytest.skip("This test requires backend 27R1 or newer.")
+    if modeler._grpc_client.services.version == GeometryApiProtos.V0:
+        pytest.skip("This test requires proto v1 support.")
+
+    design = modeler.create_design("NamedSelectionDatumCs_Test")
+
+    plane = Plane(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        direction_x=UnitVector3D([1, 0, 0]),
+        direction_y=UnitVector3D([0, 1, 0]),
+    )
+    frame = Frame(
+        origin=Point3D([0, 0, 0], UNITS.m),
+        direction_x=UnitVector3D([1, 0, 0]),
+        direction_y=UnitVector3D([0, 1, 0]),
+    )
+
+    datum_plane = design.create_datum_plane("smoke_dp", plane)
+    coordinate_system = design.create_coordinate_system("smoke_cs", frame)
+    design.create_named_selection(
+        "DatumAndCsSelection",
+        datum_planes=[datum_plane],
+        coordinate_systems=[coordinate_system],
+    )
+
+    ns = design.named_selections[0]
+
+    assert len(ns.datum_planes) == 1
+    assert ns.datum_planes[0].id == datum_plane.id
+    assert len(ns.coordinate_systems) == 1
+    assert ns.coordinate_systems[0].id == coordinate_system.id
 
 
 def test_component_instances(modeler: Modeler):
@@ -5110,3 +5181,83 @@ def test_move_bodies_to_component(modeler: Modeler):
     moved_names = {b.name for b in target2.bodies}
     assert moved_names == {"BodyA", "BodyB"}
     assert len(source2.bodies) == 0
+
+
+def test_delete_coordinate_system(modeler: Modeler):
+    """Test deletion of coordinate systems from a component."""
+    design = modeler.create_design("DeleteCoordinateSystem_Test")
+
+    # Create a component with coordinate systems
+    comp = design.add_component("CompWithCS")
+    frame1 = Frame(
+        Point3D([10, 20, 30], UNITS.mm),
+        UnitVector3D([1, 0, 0]),
+        UnitVector3D([0, 1, 0]),
+    )
+    frame2 = Frame(
+        Point3D([40, 50, 60], UNITS.mm),
+        UnitVector3D([0, 1, 0]),
+        UnitVector3D([0, 0, 1]),
+    )
+    cs1 = comp.create_coordinate_system("CS1", frame1)
+    cs2 = comp.create_coordinate_system("CS2", frame2)
+
+    # Verify both coordinate systems exist
+    assert len(comp.coordinate_systems) == 2
+    assert cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the first coordinate system by object
+    comp.delete_coordinate_system(cs1)
+    assert not cs1.is_alive
+    assert cs2.is_alive
+
+    # Delete the second coordinate system by ID
+    comp.delete_coordinate_system(cs2.id)
+    assert not cs2.is_alive
+
+    # Attempt to delete a coordinate system that does not belong to the component
+    comp2 = design.add_component("CompWithCS2")
+    cs3 = comp2.create_coordinate_system("CS3", frame1)
+    assert cs3.is_alive
+
+    # Trying to delete cs3 from comp (wrong component) should not delete it
+    comp.delete_coordinate_system(cs3)
+    assert cs3.is_alive
+
+    # Delete cs3 from the correct component
+    comp2.delete_coordinate_system(cs3)
+    assert not cs3.is_alive
+
+    # Delete a coordinate system from the root design (top-level component)
+    cs_root = design.create_coordinate_system("RootCS", frame1)
+    assert cs_root.is_alive
+    assert len(design.coordinate_systems) == 1
+
+    design.delete_coordinate_system(cs_root)
+    assert not cs_root.is_alive
+
+
+def test_search_coordinate_system(modeler: Modeler):
+    """Test recursive search for coordinate systems across nested components."""
+    design = modeler.create_design("SearchCS_Test")
+    frame = Frame(Point3D([10, 20, 30], UNITS.mm), UnitVector3D([1, 0, 0]), UnitVector3D([0, 1, 0]))
+
+    cs1 = design.create_coordinate_system("CS1", frame)
+    nested = design.add_component("Nested")
+    cs2 = nested.create_coordinate_system("CS2", frame)
+    deep = nested.add_component("Deep")
+    cs3 = deep.create_coordinate_system("CS3", frame)
+
+    # Root search finds coordinate systems at all depths
+    assert design.search_coordinate_system(cs1.id) is cs1
+    assert design.search_coordinate_system(cs2.id) is cs2
+    assert design.search_coordinate_system(cs3.id) is cs3
+
+    # Nested search finds its own and deeper coordinate systems but not the root one
+    assert nested.search_coordinate_system(cs2.id) is cs2
+    assert nested.search_coordinate_system(cs3.id) is cs3
+    assert nested.search_coordinate_system(cs1.id) is None
+
+    # Unknown id returns None
+    assert design.search_coordinate_system("non_existent_id") is None

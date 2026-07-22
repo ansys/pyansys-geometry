@@ -23,7 +23,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.2.6",
+  "ansys-api-discovery==1.2.8",
   "ansys-tools-common>=0.3,<1",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -53,11 +53,11 @@ optional-dependencies.graphics = [
   "pyvista[jupyter]>=0.38.1,<1",
   "vtk>=9,<10",
 ]
-optional-dependencies.usd = [
-  "usd-core>=24.0",
-]
 optional-dependencies.html = [
   "ansys-tools-visualization-interface[usd]>=0.14.0",
+  "usd-core>=24.0",
+]
+optional-dependencies.usd = [
   "usd-core>=24.0",
 ]
 urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
@@ -73,7 +73,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.0",
-  "ty==0.0.58",
+  "ty==0.0.61",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -100,11 +100,11 @@ general-all = [
   "ansys-tools-common==0.5.1",
   "ansys-tools-visualization-interface[usd]==0.14.0",
   "beartype==0.22.9",
-  "docker==7.1.0",
+  "docker==7.2.0",
   "geomdl==5.4.0",
   "grpcio==1.82.1",
   "grpcio-health-checking==1.82.1",
-  "matplotlib==3.11.0",
+  "matplotlib==3.11.1",
   "numpy==2.5.1",
   "pint==0.25.3",
   "protobuf==7.35.1",
