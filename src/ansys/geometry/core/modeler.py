@@ -420,6 +420,10 @@ class Modeler:
             * SOLIDWORKS 2025
             * STEP AP242
         """
+        # Check if file exists
+        if not Path(file_path).exists():
+            raise GeometryRuntimeError(f"File {file_path} does not exist.")
+
         # Use str format of Path object here
         file_path = str(file_path) if isinstance(file_path, Path) else file_path
 
@@ -435,6 +439,13 @@ class Modeler:
             raise GeometryRuntimeError(
                 "PMDB import requires a minimum Ansys release version of 27.1 "
                 "and is not implemented in this protofile version."
+            )
+
+        # Warn the user if importing as lightweight
+        if import_options.import_as_lightweight:
+            self.client.log.warning(
+                "Importing as lightweight bodies. "
+                "Some geometry operations are not supported with lightweight bodies."
             )
 
         # Format-specific logic - upload the whole containing folder for assemblies. If backend's
@@ -724,6 +735,7 @@ class Modeler:
             all_logs=all_logs, dump_to_file=dump_to_file, logs_folder=logs_folder
         )
 
+    @min_backend_version(27, 1, 0)
     def create_selection_builder(self) -> SelectionBuilder:
         """Create a selection builder.
 

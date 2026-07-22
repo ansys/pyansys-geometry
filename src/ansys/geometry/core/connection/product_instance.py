@@ -139,6 +139,12 @@ BACKEND_DISCOVERY_HIDDEN = "--hidden"
 To be used only with Ansys Discovery.
 """
 
+BACKEND_DISCOVERY_REMOVE_HOMEPAGE = ["-f", "DisableHomePage"]
+"""The argument to remove Discovery's home page on the backend.
+
+To be used only with Ansys Discovery.
+"""
+
 BACKEND_SPLASH_OFF = "/Splash=False"
 """The argument to specify the backend's add-in manifest file's path.
 
@@ -375,6 +381,8 @@ def prepare_and_start_backend(
         args.append(Path(installations[version], DISCOVERY_FOLDER, DISCOVERY_EXE))
         if hidden is True:
             args.append(BACKEND_DISCOVERY_HIDDEN)
+        else:
+            args.extend(BACKEND_DISCOVERY_REMOVE_HOMEPAGE)
 
         # Here begins the spaceclaim arguments.
         args.append(BACKEND_SPACECLAIM_OPTIONS)

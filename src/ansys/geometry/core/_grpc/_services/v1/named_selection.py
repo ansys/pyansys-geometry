@@ -82,6 +82,9 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
             "design_curves": [curve.id.id for curve in response.curves],
+            "datum_planes": [plane.id.id for plane in response.datum_planes],
+            "coordinate_systems": [cs.id.id for cs in response.coordinate_systems],
+            "datum_points": [dp.id.id for dp in response.datum_points],
         }
 
     @protect_grpc
@@ -116,6 +119,9 @@ class GRPCNamedSelectionServiceV1(GRPCNamedSelectionService):
             "components": [comp.id.id for comp in response.components],
             "vertices": [vertex.id.id for vertex in response.vertices],
             "design_curves": [curve.id.id for curve in response.curves],
+            "datum_planes": [plane.id.id for plane in response.datum_planes],
+            "coordinate_systems": [cs.id.id for cs in response.coordinate_systems],
+            "datum_points": [dp.id.id for dp in response.datum_points],
         }
 
     @protect_grpc

@@ -55,8 +55,15 @@ class ImportOptions:
         Import points.
     import_named_selections : bool = True
         Import the named selections associated with the root component being inserted.
+    import_as_lightweight : bool = False
+        Import bodies as lightweight.
     import_using_spaceclaim_colors : bool = False
         Import geometry using SpaceClaim colors.
+
+    Notes
+    -----
+    import_as_lightweight and import_using_spaceclaim_colors are only available
+    starting in version 2027 R1.
     """
 
     cleanup_bodies: bool = False
@@ -67,6 +74,7 @@ class ImportOptions:
     import_planes: bool = False
     import_points: bool = False
     import_named_selections: bool = True
+    import_as_lightweight: bool = False
     import_using_spaceclaim_colors: bool = False
 
     def to_dict(self):

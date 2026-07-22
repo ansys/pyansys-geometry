@@ -55,8 +55,6 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
             "implemented in this protofile version."
         )
 
-    # ── Static factory ────────────────────────────────────────────────────────
-
     def get_all_visible_bodies(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("get_all_visible_bodies")
 
@@ -93,12 +91,8 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
     def get_bodies_with_color(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("get_bodies_with_color")
 
-    # ── Instance operations ───────────────────────────────────────────────────
-
     def invert_body_selection(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("invert_body_selection")
-
-    # ── Filter ────────────────────────────────────────────────────────────────
 
     def filter_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("filter_bodies_by_volume")
@@ -202,8 +196,6 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
     def filter_solid_bodies(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("filter_solid_bodies")
 
-    # ── Extend ────────────────────────────────────────────────────────────────
-
     def extend_to_same_volume(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("extend_to_same_volume")
 
@@ -225,8 +217,6 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
     def extend_nearby_bodies(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("extend_nearby_bodies")
 
-    # ── OrderBy ───────────────────────────────────────────────────────────────
-
     def order_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("order_bodies_by_volume")
 
@@ -247,8 +237,6 @@ class GRPCBodySelectionServiceV0(GRPCBodySelectionService):
 
     def order_bodies_by_number_of_curves(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("order_bodies_by_number_of_curves")
-
-    # ── GroupBy ───────────────────────────────────────────────────────────────
 
     def group_bodies_by_volume(self, **kwargs) -> dict:  # noqa: D102
         self._not_implemented("group_bodies_by_volume")

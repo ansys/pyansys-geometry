@@ -2,7 +2,7 @@
 name: code-review-agent
 description: Reviews and addresses GitHub PR review comments (including Copilot review comments) on the active pull request. Use when a user asks to view, summarize, or fix PR review comments, respond to reviewer feedback, or resolve open review threads.
 argument-hint: Optionally specify a reviewer name or file to focus on, e.g. "only address Copilot comments" or "focus on src/ansys/geometry/core/designer.py".
-tools: [read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/searchResults, search/textSearch, search/searchSubagent, search/usages, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/labels_fetch, github.vscode-pull-request-github/notification_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/pullRequestStatusChecks, github.vscode-pull-request-github/openPullRequest, todo]
+tools: [read/getNotebookSummary, read/problems, read/readFile, read/viewImage, read/readNotebookCellOutput, read/terminalSelection, read/terminalLastCommand, agent/runSubagent, edit/createDirectory, edit/createFile, edit/createJupyterNotebook, edit/editFiles, edit/editNotebook, edit/rename, search/changes, search/codebase, search/fileSearch, search/listDirectory, search/textSearch, search/usages, GitHub.vscode-pull-request-github/issue_fetch, GitHub.vscode-pull-request-github/labels_fetch, GitHub.vscode-pull-request-github/notification_fetch, GitHub.vscode-pull-request-github/doSearch, GitHub.vscode-pull-request-github/activePullRequest, GitHub.vscode-pull-request-github/pullRequestStatusChecks, GitHub.vscode-pull-request-github/resolveReviewThread, todo]
 ---
 
 # Code Review Agent
@@ -11,7 +11,7 @@ This agent reads the active GitHub pull request, identifies unresolved review co
 
 ## Behavior
 
-1. **Fetch the PR** using `github-pull-request_activePullRequest` (refresh if `lastUpdatedAt` is less than 3 minutes ago).
+1. **Fetch the PR** using `github-pull-request_currentActivePullRequest` (refresh if `lastUpdatedAt` is less than 3 minutes ago).
 2. **Identify unresolved comments**:
    - Inline thread comments where `commentState` is `"unresolved"` (from `comments` array)
    - Timeline comments where `commentType` is `"CHANGES_REQUESTED"` or `"COMMENTED"` (from `timelineComments` array)
