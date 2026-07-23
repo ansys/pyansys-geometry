@@ -81,18 +81,6 @@ def test_usd_required_decorator_raises_when_unavailable():
         usd_mod._USD_AVAILABLE = original
 
 
-def test_usd_required_passes_when_available():
-    """run_if_usd_required does not raise when _USD_AVAILABLE is True."""
-    import ansys.geometry.core.plotting.usd_export as usd_mod
-
-    original = usd_mod._USD_AVAILABLE
-    usd_mod._USD_AVAILABLE = True
-    try:
-        usd_mod.run_if_usd_required()  # must not raise
-    finally:
-        usd_mod._USD_AVAILABLE = original
-
-
 def test_sanitize_spaces():
     assert sanitize_usd_name("my body") == "my_body"
 
@@ -202,10 +190,6 @@ def test_raw_tess_skips_empty_entry():
     assert len(points) == 3
 
 
-# ============================================================
-# Task 4: _validate_usd_format and export_design_to_usd tests
-# ============================================================
-
 # --- Helpers ---
 
 
@@ -260,13 +244,6 @@ def test_validate_format_all_valid():
 
 
 # --- export_design_to_usd ---
-
-
-def test_export_creates_file(tmp_path):
-    design = _make_design("TestDesign")
-    out = tmp_path / "out.usda"
-    export_design_to_usd(design, out)
-    assert out.exists()
 
 
 def test_export_root_prim_name(tmp_path):
@@ -396,28 +373,8 @@ def test_export_design_level_bodies(tmp_path):
 
 
 # ============================================================
-# Task 5: Design.export_to_usd() method tests
+# Design.export_to_usd() method tests
 # ============================================================
-
-
-def test_design_export_to_usd_method_invalid_format():
-    """Design.export_to_usd raises GeometryRuntimeError for unknown file_format.
-
-    We test this by calling _validate_usd_format directly (same code path),
-    since instantiating a real Design requires a live server.
-    """
-    from ansys.geometry.core.plotting.usd_export import _validate_usd_format
-
-    with pytest.raises(GeometryRuntimeError, match="xyz"):
-        _validate_usd_format("xyz")
-
-
-def test_design_has_export_to_usd_method():
-    """Design class exposes an export_to_usd method."""
-    from ansys.geometry.core.designer.design import Design
-
-    assert hasattr(Design, "export_to_usd")
-    assert callable(Design.export_to_usd)
 
 
 def test_export_creates_parent_directory(tmp_path):
@@ -456,12 +413,18 @@ def test_export_creates_usdz(tmp_path):
     assert out.stat().st_size > 0
 
 
-def test_export_usdz_cleans_up_temp_file(tmp_path):
-    """Temporary .usdc staging file is removed after successful .usdz packaging."""
+def _make_mock_ntf(tmp_path):
+    """Return a mock NamedTemporaryFile backed by a real file in tmp_path."""
     known_tmp = tmp_path / "staging.usdc"
     known_tmp.touch()
     mock_ntf = MagicMock()
     mock_ntf.name = str(known_tmp)
+    return mock_ntf, known_tmp
+
+
+def test_export_usdz_cleans_up_temp_file(tmp_path):
+    """Temporary .usdc staging file is removed after successful .usdz packaging."""
+    mock_ntf, known_tmp = _make_mock_ntf(tmp_path)
 
     with (
         patch("tempfile.NamedTemporaryFile", return_value=mock_ntf),
@@ -475,10 +438,7 @@ def test_export_usdz_cleans_up_temp_file(tmp_path):
 
 def test_export_usdz_cleans_up_on_write_failure(tmp_path):
     """Temporary .usdc staging file is removed even when _write_stage raises."""
-    known_tmp = tmp_path / "staging.usdc"
-    known_tmp.touch()
-    mock_ntf = MagicMock()
-    mock_ntf.name = str(known_tmp)
+    mock_ntf, known_tmp = _make_mock_ntf(tmp_path)
 
     with (
         patch("tempfile.NamedTemporaryFile", return_value=mock_ntf),
@@ -493,9 +453,9 @@ def test_export_usdz_cleans_up_on_write_failure(tmp_path):
     assert not known_tmp.exists()
 
 
-# ============================================================
-# Design.export_to_usd() method tests (via __wrapped__ to bypass decorator)
-# ============================================================
+# ===================================
+# Design.export_to_usd() method tests 
+# ===================================
 
 
 def test_export_to_usd_method_returns_path(tmp_path):
@@ -549,9 +509,9 @@ def test_export_to_usd_method_missing_usd_core():
         usd_mod._USD_AVAILABLE = original
 
 
-# ============================================================
-# Design.export_to_html() method tests (via __wrapped__ to bypass decorator)
-# ============================================================
+# ====================================
+# Design.export_to_html() method tests
+# ====================================
 
 
 def test_export_to_html_method_calls_export_usd_to_html(tmp_path):

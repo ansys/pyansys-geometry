@@ -247,8 +247,8 @@ The resulting HTML page embeds all geometry as a GLB file and renders it with
 [Three.js](https://threejs.org) — only a CDN connection is required to view it
 in any modern browser. No intermediate USD file is written to disk.
 
-This feature requires the ``html`` optional extra, which bundles both
-``usd-core`` and ``ansys-tools-visualization-interface[usd]``:
+This feature requires the ``usd`` optional extra, which bundles
+``ansys-tools-visualization-interface[usd]``:
 
 ```text
 pip install ansys-geometry-core[html]

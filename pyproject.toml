@@ -53,13 +53,11 @@ optional-dependencies.graphics = [
   "pyvista[jupyter]>=0.38.1,<1",
   "vtk>=9,<10",
 ]
-optional-dependencies.html = [
+optional-dependencies.usd = [
   "ansys-tools-visualization-interface[usd]>=0.14.0",
   "usd-core>=24.0",
 ]
-optional-dependencies.usd = [
-  "usd-core>=24.0",
-]
+
 urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 urls.Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
 urls.Documentation = "https://geometry.docs.pyansys.com"

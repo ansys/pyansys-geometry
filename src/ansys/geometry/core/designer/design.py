@@ -831,10 +831,6 @@ class Design(Component):
 
         Examples
         --------
-        Export to USD ASCII in the current directory:
-
-        >>> path = design.export_to_usd()
-
         Export to binary USD in a specific directory:
 
         >>> path = design.export_to_usd("output/", file_format="usdc")
@@ -893,10 +889,6 @@ class Design(Component):
 
         Examples
         --------
-        Export to HTML in the current directory:
-
-        >>> html_path = design.export_to_html()
-
         Export to a specific directory without the wireframe overlay:
 
         >>> html_path = design.export_to_html("output/", show_mesh_lines=False)
