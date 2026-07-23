@@ -23,16 +23,29 @@
 
 from unittest.mock import MagicMock, PropertyMock, patch
 
-import pytest
+try:
+    from ansys.geometry.core.misc.checks import run_if_graphics_required
 
-from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.plotting.usd_export import (
-    _validate_usd_format,
-    export_design_to_usd,
-    raw_tess_to_usd_mesh_data,
-    sanitize_usd_name,
-    unique_name,
-)
+    run_if_graphics_required()
+
+    from ansys.geometry.core.errors import GeometryRuntimeError
+    from ansys.geometry.core.plotting.usd_export import (
+        _validate_usd_format,
+        export_design_to_usd,
+        raw_tess_to_usd_mesh_data,
+        sanitize_usd_name,
+        unique_name,
+    )
+
+except ImportError:
+    import pytest
+
+    pytest.skip(
+        "Skipping test_usd_export module due to graphics requirements missing.",
+        allow_module_level=True,
+    )
+
+import pytest
 
 pxr = pytest.importorskip("pxr", reason="usd-core not installed")
 from pxr import Usd, UsdGeom, UsdShade  # noqa: E402
@@ -602,7 +615,8 @@ def test_export_to_html_method_custom_kwargs(tmp_path):
 
 
 def test_export_to_html_method_missing_viz_interface():
-    """Design.export_to_html raises ImportError with the [html] install hint when viz-interface is absent."""
+    """Design.export_to_html raises ImportError with the [html] install hint
+    when viz-interface is absent."""
     from ansys.geometry.core.designer.design import Design
 
     design = _make_design("D")
