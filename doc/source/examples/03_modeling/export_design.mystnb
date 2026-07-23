@@ -239,6 +239,41 @@ named ``MyDesign`` with one component and two bodies it looks like:
       /Body2_mat                  # UsdPreviewSurface material (body color)
 ```
 
+### Export to HTML format
+
+The design can be exported directly to a self-contained HTML viewer using
+[ansys-tools-visualization-interface](https://visualization-interface.tools.docs.pyansys.com).
+The resulting HTML page embeds all geometry as a GLB file and renders it with
+[Three.js](https://threejs.org) — only a CDN connection is required to view it
+in any modern browser. No intermediate USD file is written to disk.
+
+This feature requires the ``html`` optional extra, which bundles both
+``usd-core`` and ``ansys-tools-visualization-interface[usd]``:
+
+```text
+pip install ansys-geometry-core[html]
+```
+
+Once installed, call ``export_to_html()`` on any active design:
+
+```python
+from pathlib import Path
+
+download_dir = Path.cwd() / "downloads"
+
+html_path = design.export_to_html(download_dir)
+print(f"HTML viewer written to: {html_path}")
+```
+
+The generated HTML file is fully self-contained — copy it anywhere and open
+it without a server:
+
+```python
+import webbrowser
+
+webbrowser.open(html_path.as_uri())
+```
+
 ### Close the modeler
 
 Close the modeler after exporting the design.
