@@ -23,11 +23,12 @@
 """Provides for creating and managing a NURBS surface."""
 
 from functools import cached_property
-import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, ClassVar, Literal, Optional, Union
 
 import numpy as np
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
+from pydantic_core import from_json as _pydantic_from_json
 
 from ansys.geometry.core.math import ZERO_POINT3D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
@@ -48,6 +49,101 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
     import pyvista as pv
+
+
+class NURBSurfaceModel(BaseModel):
+    """Pydantic model for NURBS surface curve data.
+
+    Notes
+    -----
+    This model is used to validate the input data for creating a NURBS surface curve.
+    It ensures that the required fields are present and have the correct types.
+
+    """
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    type: Literal["nurbs_surface"] = "nurbs_surface"
+    degree_u: int = Field(..., ge=0)
+    degree_v: int = Field(..., ge=0)
+    knots_u: list[float]
+    knots_v: list[float]
+    control_points: Optional[list[tuple[float, float, float]]]
+    weights: Optional[list[float]] | None = None
+    origin: Optional[tuple[float, float, float]] = None
+    reference: Optional[tuple[float, float, float]] = None
+    axis: Optional[tuple[float, float, float]] = None
+
+    _REQUIRED_KEY_FIELDS: ClassVar[set[str]] = set(
+        [
+            "degree_u",
+            "degree_v",
+            "knots_u",
+            "knots_v",
+            "control_points",
+        ]
+    )
+
+    @model_validator(mode="after")
+    def _check_consistency(self) -> "NURBSurfaceModel":
+        """Validate the consistency of the NURBS surface curve data."""
+        n_u = len(self.knots_u) - self.degree_u - 1
+        n_v = len(self.knots_v) - self.degree_v - 1
+
+        if n_u <= 0 or n_v <= 0:
+            raise ValueError(
+                f"Invalid knot vector lengths for degrees {self.degree_u} and {self.degree_v}. "
+                f"Number of control points in U: {n_u}, in V: {n_v}."
+            )
+
+        expected = n_u * n_v
+        if len(self.control_points) != expected:
+            raise ValueError(
+                f"Number of control points ({len(self.control_points)}) does not match "
+                f"the expected number ({expected}) based on knot vectors and degrees."
+            )
+
+        if any(a > b for a, b in zip(self.knots_u, self.knots_u[1:])):
+            raise ValueError("Knot vector for U direction must be non-decreasing.")
+
+        if any(a > b for a, b in zip(self.knots_v, self.knots_v[1:])):
+            raise ValueError("Knot vector for V direction must be non-decreasing.")
+
+        if self.weights is not None and len(self.weights) != expected:
+            raise ValueError(
+                f"Number of weights ({len(self.weights)}) does not match "
+                f"the expected number ({expected}) based on knot vectors and degrees."
+            )
+
+        return self
+
+    @classmethod
+    def _validate_or_explain(cls, name: str, data: dict) -> "NURBSurfaceModel":
+        """Validate a single element's data or raise a ValueError."""
+        try:
+            return cls.model_validate(data)
+        except ValidationError as e:
+            if isinstance(data, dict) and "degree" in data and "knots" in data:
+                if (
+                    "control_points" in data
+                    and data["control_points"]
+                    and len(data["control_points"][0]) == 2
+                ):
+                    raise ValueError(
+                        f"Element '{name}' looks like a 2D NURBS sketch curve "
+                        f"(it has 'degree'/'knots' and 2D points, not "
+                        f"'degree_u'/'degree_v'/'knots_u'/'knots_v'). "
+                        f"Use SketchNurbs.from_json() instead of "
+                        f"NURBSSurface.from_json() for this file."
+                    ) from e
+                raise ValueError(
+                    f"Element '{name}' looks like a 3D NURBS curve "
+                    f"(it has 'degree'/'knots', not "
+                    f"'degree_u'/'degree_v'/'knots_u'/'knots_v'). "
+                    f"Use NURBSCurve.from_json() instead of "
+                    f"NURBSSurface.from_json() for this file."
+                ) from e
+            raise
 
 
 class NURBSSurface(Surface):
@@ -278,61 +374,100 @@ class NURBSSurface(Surface):
         return nurbs_surface
 
     @classmethod
+    def _surface_from_model(cls, model: NURBSurfaceModel) -> "NURBSSurface":
+        """Create a NURBS surface from a validated Pydantic model.
+
+        Parameters
+        ----------
+        model : NURBSurfaceModel
+            Validated Pydantic model containing the NURBS surface data.
+
+        Returns
+        -------
+        NURBSSurface
+            NURBS surface created exactly from the given model data.
+        """
+        return cls.from_control_points(
+            degree_u=model.degree_u,
+            degree_v=model.degree_v,
+            knots_u=model.knots_u,
+            knots_v=model.knots_v,
+            control_points=[Point3D(pt) for pt in model.control_points],
+            weights=model.weights,
+            origin=Point3D(model.origin) if model.origin is not None else ZERO_POINT3D,
+            reference=(
+                UnitVector3D(model.reference) if model.reference is not None else UNITVECTOR3D_X
+            ),
+            axis=UnitVector3D(model.axis) if model.axis is not None else UNITVECTOR3D_Z,
+        )
+
+    @classmethod
     @check_input_types
     def from_json(
-        cls, source: Union[dict, str, Path], element_name: Optional[str] = None
-    ) -> "NURBSSurface":
+        cls, source: Union[dict, str, Path], elements: Optional[list[str]] = None
+    ) -> Union["NURBSSurface", dict[str, "NURBSSurface"]]:
         """Create a NURBS surface from a JSON file.
 
         Parameters
         ----------
         source : Union[dict, str, Path]
-            JSON file path or dictionary containing the NURBS surface data.
-        element_name : str, optional
-            Name of the element to load when the JSON payload contains
-            multiple top-level named elements.
+            JSON data as a dictionary, a JSON string, or a path to a JSON file.
+        elements : Optional[list[str]], optional
+            List of element names to extract from the JSON data.
+            If not provided, all elements are extracted.
 
         Returns
         -------
-        NURBSSurface
-            NURBS surface created exactly from the given data.
+        Union[NURBSSurface, dict[str, NURBSSurface]]
+            A single NURBSSurface if one element is requested, or a dictionary of
+            NURBSSurfaces keyed by element name if multiple elements are requested.
         """
-        if not isinstance(source, dict):
-            source = json.loads(Path(source).read_text(encoding="utf-8"))
+        path = Path(source)
 
-        required_keys = {"degree_u", "degree_v", "knots_u", "knots_v", "control_points"}
-        if not required_keys.issubset(source):
-            if element_name is not None:
-                if element_name not in source:
-                    raise ValueError(f"Element '{element_name}' was not found in JSON payload.")
-                source = source[element_name]
-                if not isinstance(source, dict) or not required_keys.issubset(source):
-                    raise ValueError(
-                        f"Element '{element_name}' is not a valid NURBS surface payload."
-                    )
-            else:
-                selected = None
-                for _, element in source.items():
-                    if isinstance(element, dict) and required_keys.issubset(element):
-                        selected = element
-                        break
-                if selected is None:
-                    raise ValueError("No valid NURBS surface element was found in JSON payload.")
-                source = selected
+        json_str = path.read_text(encoding="utf-8") if path.is_file() else str(source)
 
-        return cls.from_control_points(
-            degree_u=source["degree_u"],
-            degree_v=source["degree_v"],
-            knots_u=source["knots_u"],
-            knots_v=source["knots_v"],
-            control_points=[Point3D(pt) for pt in source["control_points"]],
-            weights=source.get("weights"),
-            origin=Point3D(source["origin"]) if "origin" in source else ZERO_POINT3D,
-            reference=(
-                UnitVector3D(source["reference"]) if "reference" in source else UNITVECTOR3D_X
-            ),
-            axis=UnitVector3D(source["axis"]) if "axis" in source else UNITVECTOR3D_Z,
+        raw = _pydantic_from_json(json_str)
+
+        # iterate over the requested elements
+        names_to_build = elements if elements is not None else list(raw.keys())
+
+        missing = [name for name in names_to_build if name not in raw]
+
+        if missing:
+            raise ValueError(f"Missing elements in JSON data: {missing}")
+
+        build = {
+            name: cls._surface_from_model(NURBSurfaceModel._validate_or_explain(name, raw[name]))
+            for name in names_to_build
+        }
+
+        # We return a NURBSSurface if only one element was requested,
+        #  otherwise we return a dictionary of NURBSSurfaces.
+        if len(build) == 1:
+            return next(iter(build.values()))
+        return build
+
+    def to_json(self, destination: Optional[Union[str, Path]] = None) -> str:
+        """Export the NURBS surface to a JSON file."""
+        model = NURBSurfaceModel(
+            degree_u=self.degree_u,
+            degree_v=self.degree_v,
+            knots_u=self.knotvector_u,
+            knots_v=self.knotvector_v,
+            control_points=[Point3D(pt) for pt in self.control_points],
+            weights=self.weights,
+            origin=self.origin,
+            reference=self.dir_x,
+            axis=self.dir_z,
         )
+
+        json_str = model.model_dump_json(indent=2)
+        path = Path(destination)
+
+        if path:
+            path.write_text(json_str, encoding="utf-8")
+
+        return json_str
 
     def __eq__(self, other: Surface) -> bool:
         """Determine if two surfaces are equal."""
