@@ -1,0 +1,217 @@
+
+
+
+
+
+
+:class:`Trapezoid`
+==================
+
+
+.. py:class:: ansys.geometry.core.sketch.trapezoid.Trapezoid(base_width: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, height: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, base_angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real, base_asymmetric_angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real | None = None, center: ansys.geometry.core.math.point.Point2D = ZERO_POINT2D, angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real = 0)
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+
+   
+   Provides for modeling a 2D trapezoid.
+
+
+   :Parameters:
+
+       **base_width** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Width of the lower base of the trapezoid.
+
+       **height** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Height of the slot.
+
+       **base_angle** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Angle for trapezoid generation. Represents the angle
+           on the base of the trapezoid.
+
+       **base_asymmetric_angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real` | :data:`python:None`, default: :data:`python:None`
+           Asymmetrical angles on each side of the trapezoid.
+           The default is ``None``, in which case the trapezoid is symmetrical. If
+           provided, the trapezoid is asymmetrical and the right corner angle
+           at the base of the trapezoid is set to the provided value.
+
+       **center: Point2D, default: ZERO_POINT2D**
+           Center point of the trapezoid.
+
+       **angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real`, default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If an asymmetric base angle is defined, the base angle is
+   applied to the left-most angle, and the asymmetric base angle
+   is applied to the right-most angle.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Trapezoid
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center of the trapezoid.
+          * - :py:attr:`~base_width`
+            - Width of the trapezoid.
+          * - :py:attr:`~height`
+            - Height of the trapezoid.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.trapezoid import Trapezoid
+
+Property detail
+---------------
+
+.. py:property:: center
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Center of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: base_width
+   :type: pint.Quantity
+
+
+   
+   Width of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :type: pint.Quantity
+
+
+   
+   Height of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``driving_dimensions.py`` module
+====================================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.driving_dimensions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: driving_dimensions
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.driving_dimensions.GRPCDrivingDimensionsService`
+            - Driving Dimension service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCDrivingDimensionsService</api/ansys/geometry/core/_grpc/_services/base/driving_dimensions/GRPCDrivingDimensionsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Driving Dimension service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

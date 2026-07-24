@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`SelectionBuilder`
+=========================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.SelectionBuilder(design: ansys.geometry.core.designer.design.Design, grpc_client: ansys.geometry.core.connection.client.GrpcClient)
+
+   
+   A builder for creating a custom selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SelectionBuilder
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~bodies`
+            - Get the body selection.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
+
+Property detail
+---------------
+
+.. py:property:: bodies
+   :type: ansys.geometry.core.selection_builder.body_selection.BodySelection
+
+
+   
+   Get the body selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

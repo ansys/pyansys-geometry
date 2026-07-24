@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``body_selection.py`` module
+================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.body_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v1.body_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.body_selection.GRPCBodySelectionServiceV1`
+            - Body Selection service for gRPC communication with the Geometry server (v1).
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCBodySelectionServiceV1</api/ansys/geometry/core/_grpc/_services/v1/body_selection/GRPCBodySelectionServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Body Selection service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+
+
+
+
+
+
+:class:`GeometryRuntimeError`
+=============================
+
+
+.. py:exception:: ansys.geometry.core.errors.GeometryRuntimeError
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   
+   Provides error message when Geometry service passes a runtime error.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.errors import GeometryRuntimeError
+
+
+
+
+

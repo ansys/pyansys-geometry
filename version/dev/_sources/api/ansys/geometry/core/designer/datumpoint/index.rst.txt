@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``datumpoint.py`` module
+============================
+
+.. py:module:: ansys.geometry.core.designer.datumpoint
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.designer.datumpoint
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.datumpoint.DatumPoint`
+            - Provides for creating datum points in components.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> DatumPoint</api/ansys/geometry/core/designer/datumpoint/DatumPoint>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating and managing datum points.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

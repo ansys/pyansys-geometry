@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``line.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.primitives.line
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: line
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Line`
+            - Provides 3D line representation.
+
+
+          * - :py:attr:`~LineEvaluation`
+            - Evaluate a line.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Line<Line>
+    🝆 LineEvaluation<LineEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a line.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,159 @@
+
+
+
+
+Plane
+=====
+
+.. py:class:: Plane(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D] = ZERO_POINT3D, direction_x: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, direction_y: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Y)
+   :canonical: ansys.geometry.core.math.plane.Plane
+
+
+
+Bases: :py:obj:`ansys.geometry.core.math.frame.Frame`
+
+Provides primitive representation of a 2D plane in 3D space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Plane
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_point_contained`
+            - Check if a 3D point is contained in the plane.
+
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Plane`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Plane`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.plane import Plane
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: is_point_contained(point: ansys.geometry.core.math.point.Point3D) -> bool
+
+   
+   Check if a 3D point is contained in the plane.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           :class:`Point3D <ansys.geometry.core.math.point.Point3D>` class to check.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the 3D point is contained in the plane, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __eq__(other: Plane) -> bool
+
+   
+   Equals operator for the ``Plane`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __ne__(other: Plane) -> bool
+
+   
+   Not equals operator for the ``Plane`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

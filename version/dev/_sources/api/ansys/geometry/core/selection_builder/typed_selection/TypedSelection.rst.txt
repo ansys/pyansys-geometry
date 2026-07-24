@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`TypedSelection`
+=======================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.typed_selection.TypedSelection(items: list[Any] | None = None)
+
+   
+   Base class for typed selections.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: TypedSelection
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~items`
+            - Get the current selection items.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
+
+Property detail
+---------------
+
+.. py:property:: items
+   :type: list[Any]
+
+
+   
+   Get the current selection items.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

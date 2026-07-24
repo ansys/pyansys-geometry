@@ -1,0 +1,179 @@
+
+
+
+
+Trapezoid
+=========
+
+.. py:class:: Trapezoid(width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], slant_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real], nonsymmetrical_slant_angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = None, center: beartype.typing.Optional[ansys.geometry.core.math.point.Point2D] = ZERO_POINT2D, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = 0)
+   :canonical: ansys.geometry.core.sketch.trapezoid.Trapezoid
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+Provides for modeling a 2D trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Trapezoid
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center of the trapezoid.
+          * - :py:attr:`~width`
+            - Width of the trapezoid.
+          * - :py:attr:`~height`
+            - Height of the trapezoid.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.trapezoid import Trapezoid
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.trapezoid.Trapezoid.center
+   :type: Point2D
+
+
+   
+   Center of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: width
+   :canonical: ansys.geometry.core.sketch.trapezoid.Trapezoid.width
+   :type: pint.Quantity
+
+
+   
+   Width of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :canonical: ansys.geometry.core.sketch.trapezoid.Trapezoid.height
+   :type: pint.Quantity
+
+
+   
+   Height of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.trapezoid.Trapezoid.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

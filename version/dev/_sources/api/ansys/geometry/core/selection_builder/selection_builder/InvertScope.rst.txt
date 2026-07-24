@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`InvertScope`
+====================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.InvertScope
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the scope of selection inversion.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InvertScope
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~INVERTSCOPE_VISIBLE`
+            - 
+          * - :py:attr:`~INVERTSCOPE_ALL`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import InvertScope
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: INVERTSCOPE_VISIBLE
+   :value: 0
+
+
+.. py:attribute:: INVERTSCOPE_ALL
+   :value: 1
+
+
+
+
+
+
