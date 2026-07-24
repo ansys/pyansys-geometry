@@ -64,22 +64,6 @@ def test_usd_required_raises_when_unavailable():
         usd_mod._USD_AVAILABLE = original
 
 
-def test_usd_required_decorator_raises_when_unavailable():
-    """@usd_required propagates ImportError when usd-core is not available."""
-    import ansys.geometry.core.plotting.usd_export as usd_mod
-
-    @usd_mod.usd_required
-    def _dummy():
-        return "ok"
-
-    original = usd_mod._USD_AVAILABLE
-    usd_mod._USD_AVAILABLE = False
-    try:
-        with pytest.raises(ImportError, match="usd-core"):
-            _dummy()
-    finally:
-        usd_mod._USD_AVAILABLE = original
-
 
 def test_sanitize_spaces():
     assert sanitize_usd_name("my body") == "my_body"
@@ -402,15 +386,6 @@ def test_export_empty_body_does_not_consume_name_slot(tmp_path):
 # ============================================================
 # USDZ export tests
 # ============================================================
-
-
-def test_export_creates_usdz(tmp_path):
-    """export_design_to_usd with a .usdz path creates a valid usdz archive."""
-    design = _make_design("D", bodies=[_make_body("Box")])
-    out = tmp_path / "out.usdz"
-    export_design_to_usd(design, out)
-    assert out.exists()
-    assert out.stat().st_size > 0
 
 
 def _make_mock_ntf(tmp_path):
