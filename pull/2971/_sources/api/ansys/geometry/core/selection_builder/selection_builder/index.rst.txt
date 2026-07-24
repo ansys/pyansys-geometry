@@ -1,0 +1,121 @@
+
+
+
+
+
+
+The ``selection_builder.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.selection_builder.selection_builder
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.selection_builder.selection_builder
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.selection_builder.SelectionBuilder`
+            - A builder for creating a custom selection.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.selection_builder.StringFilterType`
+            - Provides values for the string filter types supported.
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.selection_builder.InvertScope`
+            - Provides values for the scope of selection inversion.
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.selection_builder.ExtendScope`
+            - Provides values for the scope of selection extension.
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.selection_builder.RangeType`
+            - Provides values for the range of location-based selection.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> SelectionBuilder</api/ansys/geometry/core/selection_builder/selection_builder/SelectionBuilder>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> StringFilterType</api/ansys/geometry/core/selection_builder/selection_builder/StringFilterType>
+    <span class="nf nf-cod-symbol_enum"></span> InvertScope</api/ansys/geometry/core/selection_builder/selection_builder/InvertScope>
+    <span class="nf nf-cod-symbol_enum"></span> ExtendScope</api/ansys/geometry/core/selection_builder/selection_builder/ExtendScope>
+    <span class="nf nf-cod-symbol_enum"></span> RangeType</api/ansys/geometry/core/selection_builder/selection_builder/RangeType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating a custom selection.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
