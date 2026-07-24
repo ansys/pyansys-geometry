@@ -22,10 +22,14 @@
 
 """Provides for creating and managing a nurbs sketch curve."""
 
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import numpy as np
 from pint import Quantity
+from pydantic import BaseModel, Field, ValidationError, model_validator
+import pydantic_core
+from pydantic_core import from_json as _pydantic_from_json
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
@@ -36,6 +40,73 @@ from ansys.geometry.core.typing import Real
 if TYPE_CHECKING:  # pragma: no cover
     import geomdl.NURBS as geomdl_nurbs  # noqa: N811
     import pyvista as pv
+
+
+class SketchNurbsModel(BaseModel):
+    """Pydantic model for NURBS sketch curve data.
+
+    Notes
+    -----
+    Pure data model — no file I/O. All orchestration (reading the JSON,
+    building the geometry) lives in ``SketchNurbs.from_json`` /
+    ``SketchNurbs.to_json``.
+    """
+
+    type: Literal["sketch_nurbs"] = "sketch_nurbs"
+    degree: int = Field(..., ge=1)
+    knots: list[float]
+    control_points: list[tuple[float, float]]
+    weights: Optional[list[float]] = None
+
+    @model_validator(mode="after")
+    def _check_consistency(self) -> "SketchNurbsModel":
+        n = len(self.control_points)
+        expected_knots = n + self.degree + 1
+        if len(self.knots) != expected_knots:
+            raise ValueError(
+                f"Knot vector length mismatch: expected {expected_knots} "
+                f"(n_control_points + degree + 1 = {n} + {self.degree} + 1), "
+                f"got {len(self.knots)}."
+            )
+        if any(a > b for a, b in zip(self.knots, self.knots[1:])):
+            raise ValueError("knots must be a non-decreasing sequence.")
+        if self.weights is not None and len(self.weights) not in (0, n):
+            raise ValueError(
+                f"weights length ({len(self.weights)}) must match "
+                f"control_points length ({n}), or be omitted."
+            )
+        return self
+
+    def effective_weights(self) -> list[float]:
+        """Weights to use, defaulting to all-1.0 if not provided."""
+        return list(self.weights) if self.weights else [1.0] * len(self.control_points)
+
+    @classmethod
+    def _validate_or_explain(cls, name: str, data: dict) -> "SketchNurbsModel":
+        """Validate a single element's data or raise a ValueError."""
+        try:
+            return cls.model_validate(data)
+        except ValidationError as e:
+            if isinstance(data, dict) and ("degree_u" in data or "degree_v" in data):
+                raise ValueError(
+                    f"Element '{name}' looks like a 3D NURBS surface "
+                    f"(it has 'degree_u'/'degree_v', not 'degree'/'knots'). "
+                    f"Use NURBSSurface.from_json() instead of "
+                    f"SketchNurbs.from_json() for this file."
+                ) from e
+            if (
+                isinstance(data, dict)
+                and "control_points" in data
+                and data["control_points"]
+                and len(data["control_points"][0]) == 3
+            ):
+                raise ValueError(
+                    f"Element '{name}' looks like a 3D NURBS curve "
+                    f"(its control points have 3 coordinates, not 2). "
+                    f"Use NURBSCurve.from_json() instead of "
+                    f"SketchNurbs.from_json() for this file."
+                ) from e
+            raise
 
 
 class SketchNurbs(SketchEdge):
@@ -214,6 +285,131 @@ class SketchNurbs(SketchEdge):
             raise ValueError(f"Invalid NURBS curve: {e}")
 
         return nurbs_curve
+
+    @classmethod
+    @check_input_types
+    def from_control_points(
+        cls,
+        control_points: list[Point2D],
+        degree: int,
+        knots: list[Real],
+        weights: list[Real] = None,
+    ) -> "SketchNurbs":
+        """Create a NURBS curve from control points.
+
+        Parameters
+        ----------
+        control_points : list[Point2D]
+            Control points of the curve.
+        degree : int
+            Degree of the curve.
+        knots : list[Real]
+            Knot vector of the curve.
+        weights : list[Real], optional
+            Weights of the control points.
+
+        Returns
+        -------
+        SketchNurbs
+            NURBS curve.
+        """
+        curve = cls()
+        curve._nurbs_curve.degree = degree
+        curve._nurbs_curve.ctrlpts = control_points
+        curve._nurbs_curve.knotvector = knots
+        if weights:
+            curve._nurbs_curve.weights = weights
+
+        # Verify the curve is valid
+        try:
+            curve._nurbs_curve._check_variables()
+        except ValueError as e:
+            raise ValueError(f"Invalid NURBS curve: {e}")
+
+        return curve
+
+    @classmethod
+    def _curve_from_model(cls, model: SketchNurbsModel) -> "SketchNurbs":
+        """Build a SketchNurbs from an already-validated SketchNurbsModel."""
+        return cls.from_control_points(
+            control_points=[Point2D(pt) for pt in model.control_points],
+            degree=model.degree,
+            knots=model.knots,
+            weights=model.effective_weights(),
+        )
+
+    @classmethod
+    @check_input_types
+    def from_json(
+        cls, source: Union[str, Path], elements: Optional[list[str]] = None
+    ) -> Union["SketchNurbs", dict[str, "SketchNurbs"]]:
+        """Create NURBS sketch curve(s) from a JSON file or JSON string.
+
+        Parameters
+        ----------
+        source : Union[str, Path]
+            JSON file path, or a raw JSON string.
+        elements : list[str], optional
+            Names of the elements to build. If omitted, every element
+            found in the JSON is built.
+
+        Returns
+        -------
+        Union[SketchNurbs, dict[str, SketchNurbs]]
+            A single SketchNurbs if one element is requested, or a dictionary of
+            SketchNurbs keyed by element name if multiple elements are requested.
+
+        Raises
+        ------
+        ValueError
+            If any requested element is missing from the JSON data.
+        """
+        path = Path(source)
+        json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+
+        raw = _pydantic_from_json(json_str)
+
+        names_to_build = elements if elements is not None else list(raw.keys())
+
+        missing = [name for name in names_to_build if name not in raw]
+        if missing:
+            raise ValueError(f"Element(s) {missing} were not found in JSON payload.")
+
+        built = {
+            name: cls._curve_from_model(SketchNurbsModel._validate_or_explain(name, raw[name]))
+            for name in names_to_build
+        }
+
+        if len(built) == 1:
+            return next(iter(built.values()))
+        return built
+
+    def to_json(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
+        """Serialize this NURBS sketch curve to a JSON string, wrapped under a named element.
+
+        Parameters
+        ----------
+        path : Union[str, Path], optional
+            If provided, also writes the JSON string to this file path.
+        element_name : str, default: "curve"
+            Name of the element to wrap the curve data under.
+
+        Returns
+        -------
+        str
+            The JSON string representation of this NURBS sketch curve.
+
+        """
+        model = SketchNurbsModel(
+            degree=self.degree,
+            knots=[float(k) for k in self.knots],
+            control_points=[tuple(float(c) for c in pt) for pt in self.control_points],
+            weights=[float(w) for w in self.weights],
+        )
+        json_str = pydantic_core.to_json({element_name: model.model_dump()}).decode("utf-8")
+        if path:
+            Path(path).write_text(json_str, encoding="utf-8")
+        return json_str
 
     @classmethod
     @check_input_types
