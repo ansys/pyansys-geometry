@@ -170,6 +170,110 @@ print(f"Design exported to {file_location}")
 print(f"Does the file exist? {Path(file_location).exists()}")
 ```
 
+### Export to USD format
+
+The design tessellation can be exported to a
+[Universal Scene Description (USD)](https://openusd.org/release/index.html) file.
+USD is a widely adopted open format for 3D scenes used in visual effects, gaming,
+and engineering workflows (e.g. NVIDIA Omniverse, Apple RealityKit).
+
+The export tessellates all bodies in the design, preserves the full component/body
+hierarchy as USD prims, and writes per-body color as a ``UsdPreviewSurface`` material.
+
+This feature requires the optional ``usd-core`` package:
+
+```text
+pip install ansys-geometry-core[usd]
+```
+
+Once installed, call ``export_to_usd()`` on any active design. The default format is
+USD ASCII (``usda``), which is human-readable and useful for debugging:
+
+```python
+from pathlib import Path
+
+download_dir = Path.cwd() / "downloads"
+
+# Export to USD ASCII format (default)
+file_location = design.export_to_usd(download_dir)
+print(f"Design exported to {file_location}")
+```
+
+You can choose the USD format via the ``file_format`` parameter:
+
+```python
+# USD binary crate format (compact, faster to load)
+file_location = design.export_to_usd(download_dir, file_format="usdc")
+
+# USD zip archive (self-contained, ideal for sharing)
+file_location = design.export_to_usd(download_dir, file_format="usdz")
+```
+
+To control tessellation quality, pass a ``TessellationOptions`` object:
+
+```python
+from ansys.geometry.core.misc.options import TessellationOptions
+from ansys.geometry.core.misc.measurements import Distance, Angle
+from pint import Quantity
+
+# Fine tessellation: small surface deviation, tight angle tolerance
+tess_options = TessellationOptions(
+    surface_deviation=Distance(Quantity(0.001, "m")),
+    angle_deviation=Angle(Quantity(0.1, "rad")),
+)
+
+file_location = design.export_to_usd(download_dir, tess_options=tess_options)
+print(f"Design exported to {file_location}")
+```
+
+The resulting USD file preserves the full component/body hierarchy. For a design
+named ``MyDesign`` with one component and two bodies it looks like:
+
+```text
+/MyDesign                         # root Xform (default prim)
+  /MyComponent                    # Xform per component
+    /Body1                        # Mesh prim (triangulated geometry)
+    /Body2                        # Mesh prim (triangulated geometry)
+    /Looks
+      /Body1_mat                  # UsdPreviewSurface material (body color)
+      /Body2_mat                  # UsdPreviewSurface material (body color)
+```
+
+### Export to HTML format
+
+The design can be exported directly to a self-contained HTML viewer using
+[ansys-tools-visualization-interface](https://visualization-interface.tools.docs.pyansys.com).
+The resulting HTML page embeds all geometry as a GLB file and renders it with
+[Three.js](https://threejs.org) — only a CDN connection is required to view it
+in any modern browser. No intermediate USD file is written to disk.
+
+This feature requires the ``usd`` optional extra, which bundles
+``ansys-tools-visualization-interface[usd]``:
+
+```text
+pip install ansys-geometry-core[html]
+```
+
+Once installed, call ``export_to_html()`` on any active design:
+
+```python
+from pathlib import Path
+
+download_dir = Path.cwd() / "downloads"
+
+html_path = design.export_to_html(download_dir)
+print(f"HTML viewer written to: {html_path}")
+```
+
+The generated HTML file is fully self-contained — copy it anywhere and open
+it without a server:
+
+```python
+import webbrowser
+
+webbrowser.open(html_path.as_uri())
+```
+
 ### Close the modeler
 
 Close the modeler after exporting the design.
