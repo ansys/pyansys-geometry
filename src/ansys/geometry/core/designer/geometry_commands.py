@@ -625,12 +625,8 @@ class GeometryCommands:
         """
         from ansys.geometry.core.designer.face import FaceLoop
 
-        design = (
-            get_design_from_edge(loops[0].edges[0])
-            if isinstance(loops, list)
-            else get_design_from_edge(loops.edges[0])
-        )
         loops: list[FaceLoop] = loops if isinstance(loops, list) else [loops]
+        design = get_design_from_edge(loops[0].edges[0])
         check_type_all_elements_in_iterable(loops, FaceLoop)
 
         for loop in loops:
