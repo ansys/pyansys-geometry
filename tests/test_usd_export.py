@@ -64,7 +64,6 @@ def test_usd_required_raises_when_unavailable():
         usd_mod._USD_AVAILABLE = original
 
 
-
 def test_sanitize_spaces():
     assert sanitize_usd_name("my body") == "my_body"
 
