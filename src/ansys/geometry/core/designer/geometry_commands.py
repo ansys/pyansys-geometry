@@ -626,6 +626,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import FaceLoop
 
         loops: list[FaceLoop] = loops if isinstance(loops, list) else [loops]
+        design = get_design_from_edge(loops[0].edges[0])
         check_type_all_elements_in_iterable(loops, FaceLoop)
 
         for loop in loops:
@@ -637,7 +638,6 @@ class GeometryCommands:
         )
 
         if result.get("success"):
-            design = get_design_from_edge(loops[0].edges[0])
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
                 design._update_from_tracker(result.get("tracked_response"))
             else:

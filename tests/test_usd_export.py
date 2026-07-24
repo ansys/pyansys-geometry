@@ -429,7 +429,7 @@ def test_export_usdz_cleans_up_on_write_failure(tmp_path):
 
 
 # ===================================
-# Design.export_to_usd() method tests 
+# Design.export_to_usd() method tests
 # ===================================
 
 
