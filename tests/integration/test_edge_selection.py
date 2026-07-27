@@ -41,7 +41,7 @@ def test_get_all_visible_edges(modeler: Modeler):
 
     sel_builder = modeler.create_selection_builder()
     result = sel_builder.edges.get_all_visible_edges()
-    assert len(result.items) > 0
+    assert len(result.items) == 84
 
 
 def test_get_all_edges(modeler: Modeler):
@@ -52,9 +52,8 @@ def test_get_all_edges(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
     visible_edges = sel_builder.edges.get_all_visible_edges()
 
-    # All includes hidden edges so count must be >= visible
-    assert len(all_edges.items) >= len(visible_edges.items)
-    assert len(all_edges.items) > 0
+    assert len(all_edges.items) == 96
+    assert len(visible_edges.items) == 84
 
 
 def test_get_edges_from_named_selection(modeler: Modeler):
@@ -77,10 +76,8 @@ def test_get_edges_with_length(modeler: Modeler):
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    # Get all edges with length between 1 mm and 5 mm
     result = sel_builder.edges.get_edges_with_length(1.0, 5.0)
-    # All returned edges should be within the range
-    assert len(result.items) > 0
+    assert len(result.items) == 32
 
 
 def test_get_edges_with_length_no_max(modeler: Modeler):
@@ -88,11 +85,9 @@ def test_get_edges_with_length_no_max(modeler: Modeler):
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    all_edges = sel_builder.edges.get_all_edges()
     result = sel_builder.edges.get_edges_with_length(0.001)
-    # With a very small min, almost all edges should be returned
-    assert len(result.items) <= len(all_edges.items)
-    assert len(result.items) > 0
+    # A very small minimum captures all 96 edges in the fixture
+    assert len(result.items) == 96
 
 
 def test_get_edges_with_x_location(modeler: Modeler):
@@ -103,7 +98,7 @@ def test_get_edges_with_x_location(modeler: Modeler):
     result = sel_builder.edges.get_edges_with_x_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=0.001, max=30.0
     )
-    assert len(result.items) > 0
+    assert len(result.items) == 64
 
 
 def test_get_edges_with_y_location(modeler: Modeler):
@@ -114,7 +109,7 @@ def test_get_edges_with_y_location(modeler: Modeler):
     result = sel_builder.edges.get_edges_with_y_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=5.0, max=10.0
     )
-    assert len(result.items) > 0
+    assert len(result.items) == 56
 
 
 def test_get_edges_with_z_location(modeler: Modeler):
@@ -125,7 +120,7 @@ def test_get_edges_with_z_location(modeler: Modeler):
     result = sel_builder.edges.get_edges_with_z_location(
         range_type=RangeType.RANGETYPE_INTERSECT, min=6.0, max=10.0
     )
-    assert len(result.items) > 0
+    assert len(result.items) == 38
 
 
 def test_invert_edge_selection(modeler: Modeler):
@@ -138,7 +133,7 @@ def test_invert_edge_selection(modeler: Modeler):
 
     # Take a small subset and invert it
     subset = sel_builder.edges.get_edges_with_length(1.0, 5.0)
-    inverted = subset.invert_edge_selection(scope=InvertScope.INVERTSCOPE_ALL)
+    inverted = subset.invert_edge_selection()
 
     # |subset| + |inverted| == total
     assert len(subset.items) + len(inverted.items) == total
@@ -152,8 +147,7 @@ def test_filter_edges_by_length(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
 
     result = all_edges.filter_edges_by_length(1.0, 5.0)
-    assert len(result.items) > 0
-    assert len(result.items) <= len(all_edges.items)
+    assert len(result.items) == 32
 
 
 def test_filter_edges_max_length(modeler: Modeler):
@@ -164,8 +158,7 @@ def test_filter_edges_max_length(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
 
     result = all_edges.filter_edges_max_length()
-    assert len(result.items) >= 1
-    assert len(result.items) < len(all_edges.items)
+    assert len(result.items) == 16
 
 
 def test_filter_edges_min_length(modeler: Modeler):
@@ -176,8 +169,7 @@ def test_filter_edges_min_length(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
 
     result = all_edges.filter_edges_min_length()
-    assert len(result.items) >= 1
-    assert len(result.items) < len(all_edges.items)
+    assert len(result.items) == 32
 
 
 def test_filter_edges_by_curve_type(modeler: Modeler):
@@ -187,10 +179,12 @@ def test_filter_edges_by_curve_type(modeler: Modeler):
     sel_builder = modeler.create_selection_builder()
     all_edges = sel_builder.edges.get_all_edges()
 
-    # The cars-windshield model has circular/arc edges (wheels)
+    # cars-windshield has 16 circular edges (wheel rims) and 80 linear edges
     circular_edges = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_CIRCLE)
-    assert len(circular_edges.items) > 0
-    assert len(circular_edges.items) < len(all_edges.items)
+    assert len(circular_edges.items) == 16
+
+    linear_edges = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_LINE)
+    assert len(linear_edges.items) == 80
 
 
 def test_filter_edges_length_percentile(modeler: Modeler):
@@ -201,8 +195,7 @@ def test_filter_edges_length_percentile(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
 
     result = all_edges.filter_edges_length_percentile(50.0, 100.0)
-    assert len(result.items) > 0
-    assert len(result.items) <= len(all_edges.items)
+    assert len(result.items) == 48
 
 
 @pytest.mark.xfail(
@@ -214,24 +207,28 @@ def test_extend_nearby_edges(modeler: Modeler):
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    # Start with a small subset
     subset = sel_builder.edges.get_edges_with_length(10.0, 20.0)
-    if len(subset.items) == 0:
-        pytest.skip("No edges in the 10–20 mm length range in this fixture.")
+    assert len(subset.items) == 32
 
     extended = subset.extend_nearby_edges(distance=5.0, scope=ExtendScope.EXTENDSCOPE_ALL)
-    assert len(extended.items) >= len(subset.items)
+    assert len(extended.items) == 32
 
 
+@pytest.mark.xfail(
+    reason="ExtendToConnected is not yet implemented in the backend.",
+    strict=True,
+)
 def test_extend_to_connected(modeler: Modeler):
     """Verify that extend_to_connected expands to topologically connected edges."""
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    subset = sel_builder.edges.filter_edges_min_length()
+    all_edges = sel_builder.edges.get_all_edges()
+    subset = all_edges.filter_edges_min_length()
+    assert len(subset.items) == 32
 
     extended = subset.extend_to_connected(scope=ExtendScope.EXTENDSCOPE_ALL)
-    assert len(extended.items) >= len(subset.items)
+    assert len(extended.items) == 96
 
 
 def test_extend_to_tangent_chain(modeler: Modeler):
@@ -240,13 +237,11 @@ def test_extend_to_tangent_chain(modeler: Modeler):
 
     sel_builder = modeler.create_selection_builder()
     all_edges = sel_builder.edges.get_all_edges()
-    # Start from circular edges — likely part of tangent chains
     circular_edges = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_CIRCLE)
-    if len(circular_edges.items) == 0:
-        pytest.skip("No circular edges in this fixture.")
+    assert len(circular_edges.items) == 16
 
     extended = circular_edges.extend_to_tangent_chain(scope=ExtendScope.EXTENDSCOPE_ALL)
-    assert len(extended.items) >= len(circular_edges.items)
+    assert len(extended.items) == 16
 
 
 def test_extend_to_coaxial_edges(modeler: Modeler):
@@ -256,11 +251,10 @@ def test_extend_to_coaxial_edges(modeler: Modeler):
     sel_builder = modeler.create_selection_builder()
     all_edges = sel_builder.edges.get_all_edges()
     circular_edges = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_CIRCLE)
-    if len(circular_edges.items) == 0:
-        pytest.skip("No circular edges in this fixture.")
+    assert len(circular_edges.items) == 16
 
     extended = circular_edges.extend_to_coaxial_edges(scope=ExtendScope.EXTENDSCOPE_ALL)
-    assert len(extended.items) >= len(circular_edges.items)
+    assert len(extended.items) == 16
 
 
 def test_order_edges_by_length(modeler: Modeler):
@@ -285,11 +279,9 @@ def test_group_edges_by_curve_type(modeler: Modeler):
     all_edges = sel_builder.edges.get_all_edges()
 
     groups = all_edges.group_edges_by_curve_type()
-    assert len(groups) > 0
-
-    # All groups combined should equal the total edge count
-    total_in_groups = sum(len(g.items) for g in groups)
-    assert total_in_groups == len(all_edges.items)
+    # cars-windshield has 2 curve types: 16 circles + 80 lines
+    assert len(groups) == 2
+    assert sorted(len(g.items) for g in groups) == [16, 80]
 
 
 def test_set_operations(modeler: Modeler):
@@ -299,20 +291,17 @@ def test_set_operations(modeler: Modeler):
     sel_builder = modeler.create_selection_builder()
     all_edges = sel_builder.edges.get_all_edges()
 
-    circular = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_CIRCLE)
-    non_circular = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_LINE)
+    circular = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_CIRCLE)  # 16
+    non_circular = all_edges.filter_edges_by_curve_type(CurveType.CURVETYPE_LINE)  # 80
 
-    if len(circular.items) == 0 or len(non_circular.items) == 0:
-        pytest.skip("Model lacks both circular and linear edges.")
-
-    # Union
+    # Union of disjoint sets
     union = circular + non_circular
-    assert len(union.items) == len(circular.items) + len(non_circular.items)
+    assert len(union.items) == 96
 
-    # Intersection (disjoint sets should be empty)
+    # Intersection of disjoint sets is empty
     intersection = circular & non_circular
     assert len(intersection.items) == 0
 
-    # Difference
+    # Difference: remove lines from the union, leaving only circles
     diff = (circular + non_circular) - non_circular
-    assert len(diff.items) == len(circular.items)
+    assert len(diff.items) == 16
