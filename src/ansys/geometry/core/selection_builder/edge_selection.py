@@ -31,7 +31,7 @@ from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.selection_builder.selection_builder import (
     ExtendScope,
-    InvertScope,
+    InvertTopologyScope,
     RangeType,
 )
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
@@ -264,13 +264,13 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def invert_edge_selection(
         self,
-        scope: InvertScope = InvertScope.INVERTSCOPE_ALL,
+        scope: InvertTopologyScope = InvertTopologyScope.INVERTSCOPE_ALL,
     ) -> "EdgeSelection":
         """Return the complement of this edge selection.
 
         Parameters
         ----------
-        scope : InvertScope, default: InvertScope.INVERTSCOPE_ALL
+        scope : InvertTopologyScope, default: InvertTopologyScope.INVERTSCOPE_ALL
             Whether to invert relative to all edges or only visible edges.
 
         Returns
