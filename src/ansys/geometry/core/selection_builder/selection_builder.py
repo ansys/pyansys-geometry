@@ -54,6 +54,15 @@ class InvertScope(Enum):
 
 
 @unique
+class InvertTopologyScope(Enum):
+    """Provides values for the scope of selection topology inversion."""
+
+    INVERTTOPOLOGYSCOPE_ALL = 0
+    INVERTTOPOLOGYSCOPE_BODY = 1
+    INVERTTOPOLOGYSCOPE_VISIBLE = 2
+
+
+@unique
 class ExtendScope(Enum):
     """Provides values for the scope of selection extension."""
 

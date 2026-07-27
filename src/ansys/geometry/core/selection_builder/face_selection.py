@@ -31,7 +31,7 @@ from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import Area, Distance
 from ansys.geometry.core.selection_builder.selection_builder import (
     ExtendScope,
-    InvertScope,
+    InvertTopologyScope,
     RangeType,
 )
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
@@ -287,13 +287,13 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def invert_face_selection(
         self,
-        scope: InvertScope = InvertScope.INVERTSCOPE_VISIBLE,
+        scope: InvertTopologyScope = InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL,
     ) -> "FaceSelection":
         """Return all faces not in the given selection.
 
         Parameters
         ----------
-        scope : InvertScope, default: InvertScope.INVERTSCOPE_VISIBLE
+        scope : InvertTopologyScope, default: InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL
             Whether to invert within visible faces or all faces.
 
         Returns
