@@ -77,6 +77,10 @@ from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
     BodyGroupResponse as GRPCBodyGroupResponse,
     BodySelectionQueryResponse as GRPCBodySelectionResponse,
 )
+from ansys.api.discovery.v1.design.selections.edgeselection_pb2 import (
+    EdgeGroupResponse as GRPCEdgeGroupResponse,
+    EdgeSelectionQueryResponse as GRPCEdgeSelectionResponse,
+)
 from ansys.api.discovery.v1.geometryenums_pb2 import (
     SurfaceType as GRPCSurfaceType,
 )
@@ -2257,6 +2261,56 @@ def serialize_body_group_response(response: GRPCBodyGroupResponse) -> dict:
         "response_data": [
             {
                 "groups": [[body.id.id for body in group.bodies] for group in rd.groups],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_edge_selection_response(response: GRPCEdgeSelectionResponse) -> dict:
+    """Serialize an EdgeSelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEdgeSelectionResponse
+        The gRPC EdgeSelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EdgeSelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "edges": [edge.id.id for edge in rd.edges],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_edge_group_response(response: GRPCEdgeGroupResponse) -> dict:
+    """Serialize an EdgeGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEdgeGroupResponse
+        The gRPC EdgeGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EdgeGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [[edge.id.id for edge in group.edges] for group in rd.groups],
                 "success": rd.command_response.success,
                 "message": rd.command_response.message,
             }
