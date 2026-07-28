@@ -37,7 +37,7 @@ Note that your local port number might differ from the one shown in the precedin
     to lower values. You should change the value of ``ANSRV_GEO_PORT``
     to use a port such as ``700``, instead of ``50051``.
 
-    You can check the restricted port ranges with ``netsh int ipv4 show excludedportrange protocol=tcp`` 
+    You can check the restricted port ranges with ``netsh int ipv4 show excludedportrange protocol=tcp``
     in a Windows command prompt.
 
 .. note::
