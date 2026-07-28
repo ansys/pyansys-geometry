@@ -253,7 +253,9 @@ def test_filter_faces_by_area(modeler: Modeler):
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     # Get all faces and filter to a strict subset (150 < area < 175)
-    cyl_faces = modeler.create_selection_builder().faces.get_all_faces().filter_faces_by_area(150, 175)
+    cyl_faces = (
+        modeler.create_selection_builder().faces.get_all_faces().filter_faces_by_area(150, 175)
+    )
 
     assert len(cyl_faces.items) == 8
 
