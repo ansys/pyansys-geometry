@@ -188,6 +188,8 @@ class Face:
 
     def __eq__(self, other: "Face") -> bool:
         """Return ``True`` when both faces share the same ID."""
+        if not isinstance(other, Face):
+            return NotImplementedError(f"Cannot compare Face with {type(other)}")
         return self._id == other._id
 
     def __hash__(self) -> int:

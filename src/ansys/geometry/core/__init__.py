@@ -49,7 +49,6 @@ from ansys.geometry.core.connection.launcher import (
 )
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.modeler import Modeler
-from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
 
 # Global config constants
 # ------------------------------------------------------------------------------

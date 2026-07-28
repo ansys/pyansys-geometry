@@ -238,7 +238,7 @@ def test_invert_face_selection(modeler: Modeler):
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
 
     sel_builder = modeler.create_selection_builder()
-    # Start with the 6 red Solid faces; invert to get the remaining 53 visible faces
+    # Start with the 6 red Solid faces; invert to get the remaining 54 visible faces
     red_faces = sel_builder.faces.get_faces_with_color((255, 0, 0))
     assert len(red_faces.items) == 6
 
@@ -251,17 +251,11 @@ def test_invert_face_selection(modeler: Modeler):
 def test_filter_faces_by_area(modeler: Modeler):
     """Verify that filter_faces_by_area keeps only faces within the area range."""
     modeler.open_file(FILES_DIR / "cars-windshield.scdocx")
-    all_faces = modeler.create_selection_builder().faces.get_all_faces()
 
-    # Only cylindrical faces of the 8 Wheels have the same curved-surface area;
-    # use a tighter range that captures them (area depends on wheel dimensions).
-    # Filter down to faces with edge count == 2, which are the 8 cylinder faces.
-    cyl_faces = all_faces.filter_faces_by_edge_count(2, 2)
+    # Get all faces and filter to a strict subset (150 < area < 175)
+    cyl_faces = modeler.create_selection_builder().faces.get_all_faces().filter_faces_by_area(150, 175)
+
     assert len(cyl_faces.items) == 8
-
-    # Now verify area filtering on those cylinder faces: max-area should be 1 (the biggest).
-    biggest = cyl_faces.filter_faces_max_area()
-    assert len(biggest.items) == 8
 
 
 def test_filter_faces_max_area(modeler: Modeler):
@@ -615,6 +609,7 @@ def test_order_faces_by_perimeter(modeler: Modeler):
     result = all_faces.order_faces_by_perimeter()
     assert len(result.items) == 60
     # First face must have the smallest area relative to the last
+    # This can be updated to perimeter once the perimeter property is available on Face
     assert result.items[0].area.m <= result.items[-1].area.m
 
 
