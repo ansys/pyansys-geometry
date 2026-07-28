@@ -481,10 +481,105 @@ def test_from_json_invalid_nurbs():
         )
 
 
-def test_nurbs_check_consistency():
-    """Test that NURBS consistency checks work as expected."""
+def test_incorrect_nurbs_objects():
+    """Test that incorrect NURBS objects raise ValueError."""
+
+    # Test that passing a NURBS sketch JSON to NURBSSurface raises ValueError
+    with pytest.raises(ValueError):
+        NURBSSurface.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_sketch_curve_2d.json"),
+            elements=["sketch_arc"],
+        )
+
+    # Test that passing a NURBS curve JSON to NURBSSurface raises ValueError
+    with pytest.raises(ValueError):
+        NURBSSurface.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_sketch_curve_3d.json"),
+            elements=["sketch_arc"],
+        )
+
+    # Test that passing a NURBS surface JSON to NURBSCurve raises ValueError
+    with pytest.raises(ValueError):
+        NURBSCurve.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_surface.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+    # Test that passing a NURBS surface JSON to SketchNurbs raises ValueError
+    with pytest.raises(ValueError):
+        NURBSCurve.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_surface.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+    # Test that passing a NURBS surface JSON to SketchNurbs raises ValueError
+    with pytest.raises(ValueError):
+        SketchNurbs.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_surface.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+    # Test that passing a NURBS curve JSON to SketchNurbs raises ValueError
+    with pytest.raises(ValueError):
+        SketchNurbs.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "valid_curve_3d.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+
+def test_nurbs_non_decreasing_knot_vector():
+    """Test that NURBS objects with decreasing order knot vectors raise ValueError."""
+
+    with pytest.raises(ValueError, match="knots must be a non-decreasing sequence"):
+        SketchNurbs.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
+            elements=["decreasing-order"],
+        )
+
+    with pytest.raises(ValueError, match="knots must be a non-decreasing sequence"):
+        NURBSCurve.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_curve_nurbs_cases.json"),
+            elements=["decreasing-order"],
+        )
+
+    with pytest.raises(ValueError, match="Knot vector for U direction must be non-decreasing"):
+        NURBSSurface.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
+            elements=["decreasing-order-u"],
+        )
+
+    with pytest.raises(ValueError, match="Knot vector for V direction must be non-decreasing"):
+        NURBSSurface.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
+            elements=["decreasing-order-v"],
+        )
+
+
+def test_nurbs_knots_length_mismatch():
+    """Test that NURBS objects with mismatched knots length raise ValueError."""
 
     # Test that missing knot vectors raise ValueError
+    with pytest.raises(ValueError):
+        SketchNurbs.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+    # Test that extra knot vectors raise ValueError
+    with pytest.raises(ValueError):
+        NURBSCurve.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_curve_nurbs_cases.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+    # Test that invalid knot vector lengths raise ValueError
+    with pytest.raises(ValueError):
+        NURBSSurface.from_json(
+            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
+            elements=["invalid-knot-vector"],
+        )
+
+        # Test that missing knot vectors raise ValueError
     with pytest.raises(ValueError, match="Knot vector length mismatch: expected"):
         SketchNurbs.from_json(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
@@ -529,56 +624,6 @@ def test_nurbs_check_consistency():
         NURBSSurface.from_json(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
             elements=["extra_knot"],
-        )
-
-
-def test_nurbs_non_decreasing_knot_vector():
-    """Test that NURBS objects with decreasing order knot vectors raise ValueError."""
-
-    with pytest.raises(ValueError, match="knots must be a non-decreasing sequence"):
-        SketchNurbs.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
-            elements=["decreasing-order"],
-        )
-
-    with pytest.raises(ValueError, match="knots must be a non-decreasing sequence"):
-        NURBSCurve.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_curve_nurbs_cases.json"),
-            elements=["decreasing-order"],
-        )
-
-    with pytest.raises(ValueError, match="Knot vector for U direction must be non-decreasing"):
-        NURBSSurface.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
-            elements=["decreasing-order-u"],
-        )
-
-    with pytest.raises(ValueError, match="Knot vector for V direction must be non-decreasing"):
-        NURBSSurface.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
-            elements=["decreasing-order-v"],
-        )
-
-
-def test_nurbs_knots_length_mismatch():
-    """Test that NURBS objects with mismatched knots length raise ValueError."""
-
-    with pytest.raises(ValueError):
-        SketchNurbs.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
-            elements=["invalid-knot-vector"],
-        )
-
-    with pytest.raises(ValueError):
-        NURBSCurve.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_curve_nurbs_cases.json"),
-            elements=["invalid-knot-vector"],
-        )
-
-    with pytest.raises(ValueError):
-        NURBSSurface.from_json(
-            str(JSON_NURBS_SAMPLES_DIR / "invalid_surface_nurbs_cases.json"),
-            elements=["invalid-knot-vector"],
         )
 
 
