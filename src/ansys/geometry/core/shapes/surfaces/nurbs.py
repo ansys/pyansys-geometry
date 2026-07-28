@@ -51,7 +51,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
 
-class NURBSurfaceModel(BaseModel):
+class _NURBSurfaceModel(BaseModel):
     """Pydantic model for NURBS surface curve data.
 
     Notes
@@ -85,7 +85,7 @@ class NURBSurfaceModel(BaseModel):
     )
 
     @model_validator(mode="after")
-    def _check_consistency(self) -> "NURBSurfaceModel":
+    def _check_consistency(self) -> "_NURBSurfaceModel":
         """Validate the consistency of the NURBS surface curve data."""
         n_u = len(self.knots_u) - self.degree_u - 1
         n_v = len(self.knots_v) - self.degree_v - 1
@@ -118,7 +118,7 @@ class NURBSurfaceModel(BaseModel):
         return self
 
     @classmethod
-    def _validate_or_explain(cls, name: str, data: dict) -> "NURBSurfaceModel":
+    def _validate_or_explain(cls, name: str, data: dict) -> "_NURBSurfaceModel":
         """Validate a single element's data or raise a ValueError."""
         try:
             return cls.model_validate(data)
@@ -374,7 +374,7 @@ class NURBSSurface(Surface):
         return nurbs_surface
 
     @classmethod
-    def _surface_from_model(cls, model: NURBSurfaceModel) -> "NURBSSurface":
+    def _surface_from_model(cls, model: _NURBSurfaceModel) -> "NURBSSurface":
         """Create a NURBS surface from a validated Pydantic model.
 
         Parameters
@@ -437,7 +437,7 @@ class NURBSSurface(Surface):
             raise ValueError(f"Missing elements in JSON data: {missing}")
 
         build = {
-            name: cls._surface_from_model(NURBSurfaceModel._validate_or_explain(name, raw[name]))
+            name: cls._surface_from_model(_NURBSurfaceModel._validate_or_explain(name, raw[name]))
             for name in names_to_build
         }
 
@@ -449,7 +449,7 @@ class NURBSSurface(Surface):
 
     def to_json(self, destination: Optional[Union[str, Path]] = None) -> str:
         """Export the NURBS surface to a JSON file."""
-        model = NURBSurfaceModel(
+        model = _NURBSurfaceModel(
             degree_u=self.degree_u,
             degree_v=self.degree_v,
             knots_u=self.knotvector_u,
