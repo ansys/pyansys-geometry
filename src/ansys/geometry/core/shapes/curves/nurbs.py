@@ -50,7 +50,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import pyvista as pv
 
 
-class _NURBSCurveModel(BaseModel):
+class NURBSCurveModel(BaseModel):
     """Pydantic model for NURBS curve data.
 
     Notes
@@ -67,7 +67,7 @@ class _NURBSCurveModel(BaseModel):
     weights: Optional[list[float]] = None
 
     @model_validator(mode="after")
-    def _check_consistency(self) -> "_NURBSCurveModel":
+    def _check_consistency(self) -> "NURBSCurveModel":
         n = len(self.control_points)
         expected_knots = n + self.degree + 1
         if len(self.knots) != expected_knots:
@@ -90,7 +90,7 @@ class _NURBSCurveModel(BaseModel):
         return list(self.weights) if self.weights else [1.0] * len(self.control_points)
 
     @classmethod
-    def _validate_or_explain(cls, name: str, data: dict) -> "_NURBSCurveModel":
+    def _validate_or_explain(cls, name: str, data: dict) -> "NURBSCurveModel":
         """Validate a single element's data or raise a ValueError."""
         try:
             return cls.model_validate(data)
@@ -294,7 +294,7 @@ class NURBSCurve(Curve):
         return nurbs_curve
 
     @classmethod
-    def _curve_from_model(cls, model: _NURBSCurveModel) -> "NURBSCurve":
+    def _curve_from_model(cls, model: NURBSCurveModel) -> "NURBSCurve":
         """Build a NURBSCurve from an already-validated NURBSCurveModel."""
         return cls.from_control_points(
             control_points=[Point3D(pt) for pt in model.control_points],
@@ -345,7 +345,7 @@ class NURBSCurve(Curve):
             raise ValueError(f"Element(s) {missing} were not found in JSON payload.")
 
         built = {
-            name: cls._curve_from_model(_NURBSCurveModel._validate_or_explain(name, raw[name]))
+            name: cls._curve_from_model(NURBSCurveModel._validate_or_explain(name, raw[name]))
             for name in names_to_build
         }
 
@@ -369,7 +369,7 @@ class NURBSCurve(Curve):
             The JSON string representation of this NURBS curve.
 
         """
-        model = _NURBSCurveModel(
+        model = NURBSCurveModel(
             degree=self.degree,
             knots=[float(k) for k in self.knots],
             control_points=[tuple(float(c) for c in pt) for pt in self.control_points],
