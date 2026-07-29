@@ -82,5 +82,5 @@ class DatumLine:
         """Represent the datum line as a string."""
         lines = [f"ansys.geometry.core.designer.DatumLine {hex(id(self))}"]
         lines.append(f"  Name                 : {self.name}")
-        lines.append(f"  Datum Line           : {self.line}")
+        lines.append(f"  Line           : {self.line}")
         return "\n".join(lines)

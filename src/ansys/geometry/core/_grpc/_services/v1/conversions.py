@@ -317,6 +317,26 @@ def from_line_to_grpc_line(line: "Line") -> GRPCLine:
     return GRPCLine(start=from_point3d_to_grpc_point(start), end=from_point3d_to_grpc_point(end))
 
 
+def from_grpc_line_to_line(line: GRPCLine) -> "Line":
+    """Convert a v1 line gRPC message to a ``Line`` class.
+
+    Parameters
+    ----------
+    line : GRPCLine
+        Line gRPC message.
+
+    Returns
+    -------
+    Line
+        Converted line.
+    """
+    from ansys.geometry.core.shapes.curves.line import Line
+
+    start = from_grpc_point_to_point3d(line.origin)
+    direction = from_grpc_direction_to_unit_vector(line.direction)
+    return Line(start, direction)
+
+
 def from_grpc_material_to_material(material: GRPCMaterial) -> "Material":
     """Convert a v1 material gRPC message to a ``Material`` class.
 

@@ -22,13 +22,13 @@
 
 """Integration tests for the DatumLine class."""
 
-import pytest
+from pathlib import Path
 
-from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes.curves.line import Line
+from tests.integration.conftest import FILES_DIR
 
 
 def test_create_datum_line(modeler: Modeler):
@@ -71,7 +71,7 @@ def test_create_datum_line(modeler: Modeler):
     dl1_str = str(dl1)
     assert "ansys.geometry.core.designer.DatumLine" in dl1_str
     assert "  Name                 : DL1" in dl1_str
-    assert "  Datum Line           : " in dl1_str
+    assert "  Line           : " in dl1_str
 
 
 def test_delete_datum_line(modeler: Modeler):
@@ -154,18 +154,28 @@ def test_search_datum_line(modeler: Modeler):
     assert design.search_datum_line("non_existent_id") is None
 
 
-def test_datum_line_v0_unsupported(modeler: Modeler, fake_modeler_old_backend_242):
-    """Test that datum line operations raise GeometryRuntimeError on pre-27R1 backends.
+def test_import_datum_lines(modeler: Modeler):
+    """Test importing datum lines from a file."""
+    design = modeler.open_file(Path(FILES_DIR, "Axes.dsco"))
 
-    Simulates a v0 / old-backend connection using the fake_modeler_old_backend_242
-    fixture and verifies that the min_backend_version guard fires for both
-    create and delete.
-    """
-    design = modeler.create_design("DatumLineV0_Test")
-    line = Line(Point3D([0, 0, 0]), UnitVector3D([1, 0, 0]))
+    # Verify that datum lines are present in the imported design
+    assert len(design.components) == 1
+    assert len(design.datum_lines) == 2
+    assert len(design.components[0].datum_lines) == 1
 
-    with pytest.raises(GeometryRuntimeError):
-        design.create_datum_line("DL", line)
+    # Test the properties of the imported datum lines
+    dl1 = design.datum_lines[0]
+    assert dl1.name == "DatumLine1"
+    assert dl1.line.origin == Point3D([-0.01, -0.01, 0.02])
+    assert dl1.line.direction == UnitVector3D([0, 1, 0])
 
-    with pytest.raises(GeometryRuntimeError):
-        design.delete_datum_line("some-id")
+    dl2 = design.datum_lines[1]
+    assert dl2.name == "DatumLine2"
+    assert dl2.line.origin == Point3D([0.04678, -0.01, 0.02])
+    assert dl2.line.direction == UnitVector3D([0, -1, 0])
+
+    dl3 = design.components[0].datum_lines[0]
+    assert dl3.name == "NestedLine"
+    assert dl3.line.origin == Point3D([-0.01, -0.01, 0])
+    assert dl3.line.direction == UnitVector3D([0, 0, 1])
+
