@@ -81,6 +81,10 @@ from ansys.api.discovery.v1.design.selections.edgeselection_pb2 import (
     EdgeGroupResponse as GRPCEdgeGroupResponse,
     EdgeSelectionQueryResponse as GRPCEdgeSelectionResponse,
 )
+from ansys.api.discovery.v1.design.selections.faceselection_pb2 import (
+    FaceGroupResponse as GRPCFaceGroupResponse,
+    FaceSelectionQueryResponse as GRPCFaceSelectionResponse,
+)
 from ansys.api.discovery.v1.geometryenums_pb2 import (
     SurfaceType as GRPCSurfaceType,
 )
@@ -2216,6 +2220,56 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
                 response.tracked_command_response.tracked_changes, "deleted_bodies", []
             )
         ],
+    }
+
+
+def serialize_face_selection_response(response: GRPCFaceSelectionResponse) -> dict:
+    """Serialize a FaceSelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCFaceSelectionResponse
+        The gRPC FaceSelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the FaceSelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "faces": [face.id.id for face in rd.faces],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_face_group_response(response: GRPCFaceGroupResponse) -> dict:
+    """Serialize a FaceGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCFaceGroupResponse
+        The gRPC FaceGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the FaceGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [[face.id.id for face in group.faces] for group in rd.groups],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
     }
 
 
