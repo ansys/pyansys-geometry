@@ -31,6 +31,9 @@ if TYPE_CHECKING:
     from ansys.geometry.core.selection_builder.body_selection import (
         BodySelection,
     )
+    from ansys.geometry.core.selection_builder.face_selection import (
+        FaceSelection,
+    )
 
 
 @unique
@@ -48,6 +51,15 @@ class InvertScope(Enum):
 
     INVERTSCOPE_VISIBLE = 0
     INVERTSCOPE_ALL = 1
+
+
+@unique
+class InvertTopologyScope(Enum):
+    """Provides values for the scope of selection topology inversion."""
+
+    INVERTTOPOLOGYSCOPE_ALL = 0
+    INVERTTOPOLOGYSCOPE_BODY = 1
+    INVERTTOPOLOGYSCOPE_VISIBLE = 2
 
 
 @unique
@@ -81,13 +93,22 @@ class SelectionBuilder:
         from ansys.geometry.core.selection_builder.body_selection import (
             BodySelection,
         )
+        from ansys.geometry.core.selection_builder.face_selection import (
+            FaceSelection,
+        )
 
         self._grpc_client = grpc_client
         self._design = design
 
         self._bodies = BodySelection(design, self._grpc_client)
+        self._faces = FaceSelection(design, self._grpc_client)
 
     @property
     def bodies(self) -> "BodySelection":
         """Get the body selection."""
         return self._bodies
+
+    @property
+    def faces(self) -> "FaceSelection":
+        """Get the face selection."""
+        return self._faces
