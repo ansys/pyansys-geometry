@@ -71,16 +71,7 @@ class GRPCDatumLinesServiceV1(GRPCDatumLinesService):
         response = self.stub.Create(request)
 
         # Return the response - formatted as a dictionary
-        return {
-            "lines": [
-                {
-                    "id": line.id.id,
-                    "name": line.name,
-                    "parent_id": line.parent_id.id,
-                }
-                for line in response.lines
-            ]
-        }
+        return {"id": response.lines[0].id.id}
 
     @protect_grpc
     def delete(self, **kwargs) -> dict:  # noqa: D102

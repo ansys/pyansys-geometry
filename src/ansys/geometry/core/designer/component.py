@@ -1744,6 +1744,8 @@ class Component:
             pass
 
     @min_backend_version(27, 1, 0)
+    @check_input_types
+    @ensure_design_is_active
     def create_datum_line(self, name: str, line: Line) -> DatumLine:
         """Create a datum line on this component.
 
@@ -1764,7 +1766,7 @@ class Component:
         This method is only available starting on Ansys release 27R1.
         """
         self._grpc_client.log.debug(f"Creating datum line on {self.id}...")
-        response = self._grpc_client.services.lines.create(
+        response = self._grpc_client.services.datum_lines.create(
             name=name,
             parent_id=self.id,
             line=line,
@@ -1773,6 +1775,40 @@ class Component:
         datum_line = DatumLine(response.get("id"), name, line, self)
         self._datum_lines.append(datum_line)
         return datum_line
+
+    @min_backend_version(27, 1, 0)
+    @check_input_types
+    def delete_datum_line(self, datum_line: DatumLine | str) -> None:
+        """Delete a datum line from this component.
+
+        Parameters
+        ----------
+        datum_line : DatumLine | str
+            ID of the datum line or instance to delete.
+
+        Notes
+        -----
+        If the datum line belongs to this component's children, it is deleted.
+        If the datum line does not belong to this component, it is not deleted.
+        """
+        id = datum_line if isinstance(datum_line, str) else datum_line.id
+        dl_requested = self.search_datum_line(id)
+
+        if dl_requested:
+            # If the datum line belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.datum_lines.delete(ids=[dl_requested.id])
+
+            # If the datum line was deleted from the server side... "kill" it
+            # on the client side
+            dl_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumLine {dl_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumLine {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
 
     @check_input_types
     @ensure_design_is_active
@@ -2112,6 +2148,40 @@ class Component:
                 return result
 
         # If you reached this point... this means that no datum point was found!
+        return None
+
+    @check_input_types
+    def search_datum_line(self, id: str) -> DatumLine | None:
+        """Search datum lines in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum line to search for.
+
+        Returns
+        -------
+        DatumLine | None
+            DatumLine with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum lines in the component and nested components
+        recursively.
+        """
+        # Search in component's datum lines
+        for dl in self.datum_lines:
+            if dl.id == id and dl.is_alive:
+                return dl
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_line(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum line was found!
         return None
 
     @check_input_types
