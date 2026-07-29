@@ -41,6 +41,7 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
@@ -64,6 +65,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
@@ -185,9 +187,10 @@ class Component:
     _beams: list[Beam]
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
-    _datum_planes: list[DatumPlane]
     _design_curves: list[DesignCurve]
+    _datum_planes: list[DatumPlane]
     _datum_points: list[DatumPoint]
+    _datum_lines: list[DatumLine]
 
     @check_input_types
     def __init__(
@@ -245,9 +248,10 @@ class Component:
         self._beams = []
         self._coordinate_systems = []
         self._design_points = []
-        self._datum_planes = []
         self._design_curves = []
+        self._datum_planes = []
         self._datum_points = []
+        self._datum_lines = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -361,19 +365,24 @@ class Component:
         return self._design_points
 
     @property
-    def datum_planes(self) -> list[DatumPlane]:
-        """List of ``DatumPlane`` objects inside of the component."""
-        return self._datum_planes
-
-    @property
     def design_curves(self) -> list[DesignCurve]:
         """List of ``DesignCurve`` objects inside of the component."""
         return self._design_curves
 
     @property
+    def datum_planes(self) -> list[DatumPlane]:
+        """List of ``DatumPlane`` objects inside of the component."""
+        return self._datum_planes
+
+    @property
     def datum_points(self) -> list[DatumPoint]:
         """List of ``DatumPoint`` objects inside of the component."""
         return self._datum_points
+
+    @property
+    def datum_lines(self) -> list[DatumLine]:
+        """List of ``DatumLine`` objects inside of the component."""
+        return self._datum_lines
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -1733,6 +1742,37 @@ class Component:
                 + " Ignoring deletion request."
             )
             pass
+
+    @min_backend_version(27, 1, 0)
+    def create_datum_line(self, name: str, line: Line) -> DatumLine:
+        """Create a datum line on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum line.
+        line : Line
+            Line object defining the datum line's geometry.
+
+        Returns
+        -------
+        DatumLine
+            Created datum line object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating datum line on {self.id}...")
+        response = self._grpc_client.services.lines.create(
+            name=name,
+            parent_id=self.id,
+            line=line,
+        )
+        self._grpc_client.log.debug("Datum line successfully created.")
+        datum_line = DatumLine(response.get("id"), name, line, self)
+        self._datum_lines.append(datum_line)
+        return datum_line
 
     @check_input_types
     @ensure_design_is_active
