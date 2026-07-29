@@ -28,7 +28,6 @@ from .base.assembly_condition import GRPCAssemblyConditionService
 from .base.beams import GRPCBeamsService
 from .base.bodies import GRPCBodyService
 from .base.body_selection import GRPCBodySelectionService
-from .base.edge_selection import GRPCEdgeSelectionService
 from .base.commands import GRPCCommandsService
 from .base.commands_script import GRPCCommandsScriptService
 from .base.components import GRPCComponentsService
@@ -36,6 +35,7 @@ from .base.coordinate_systems import GRPCCoordinateSystemService
 from .base.curves import GRPCCurvesService
 from .base.designs import GRPCDesignsService
 from .base.driving_dimensions import GRPCDrivingDimensionsService
+from .base.edge_selection import GRPCEdgeSelectionService
 from .base.edges import GRPCEdgesService
 from .base.face_selection import GRPCFaceSelectionService
 from .base.faces import GRPCFacesService
