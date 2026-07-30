@@ -136,8 +136,8 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_edges_with_length(
         self,
-        min: Union[Real, "Quantity"],
-        max: Union[Real, "Quantity", None] = None,
+        min: Union[Real, "Quantity", Distance],
+        max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Return edges whose length falls within a range.
 
@@ -154,7 +154,9 @@ class EdgeSelection(TypedSelection):
             Edges whose length is within the specified range.
         """
         min_dist = min if isinstance(min, Distance) else Distance(min)
-        max_dist = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        max_dist = (
+            (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        )
         response = self._grpc_client.services.edge_selection.get_edges_with_length(
             min=min_dist,
             max=max_dist,
@@ -166,8 +168,8 @@ class EdgeSelection(TypedSelection):
     def get_edges_with_x_location(
         self,
         range_type: RangeType,
-        min: Union[Real, "Quantity", None] = None,
-        max: Union[Real, "Quantity", None] = None,
+        min: Union[Real, "Quantity", Distance, None] = None,
+        max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Return edges whose X-location falls within a range.
 
@@ -185,8 +187,12 @@ class EdgeSelection(TypedSelection):
         EdgeSelection
             Edges within the specified X-location range.
         """
-        min_dist = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
-        max_dist = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        min_dist = (
+            (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        )
+        max_dist = (
+            (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        )
         response = self._grpc_client.services.edge_selection.get_edges_with_x_location(
             min=min_dist,
             max=max_dist,
@@ -199,8 +205,8 @@ class EdgeSelection(TypedSelection):
     def get_edges_with_y_location(
         self,
         range_type: RangeType,
-        min: Union[Real, "Quantity", None] = None,
-        max: Union[Real, "Quantity", None] = None,
+        min: Union[Real, "Quantity", Distance, None] = None,
+        max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Return edges whose Y-location falls within a range.
 
@@ -218,8 +224,12 @@ class EdgeSelection(TypedSelection):
         EdgeSelection
             Edges within the specified Y-location range.
         """
-        min_dist = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
-        max_dist = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        min_dist = (
+            (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        )
+        max_dist = (
+            (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        )
         response = self._grpc_client.services.edge_selection.get_edges_with_y_location(
             min=min_dist,
             max=max_dist,
@@ -232,8 +242,8 @@ class EdgeSelection(TypedSelection):
     def get_edges_with_z_location(
         self,
         range_type: RangeType,
-        min: Union[Real, "Quantity", None] = None,
-        max: Union[Real, "Quantity", None] = None,
+        min: Union[Real, "Quantity", Distance, None] = None,
+        max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Return edges whose Z-location falls within a range.
 
@@ -251,8 +261,12 @@ class EdgeSelection(TypedSelection):
         EdgeSelection
             Edges within the specified Z-location range.
         """
-        min_dist = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
-        max_dist = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        min_dist = (
+            (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
+        )
+        max_dist = (
+            (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        )
         response = self._grpc_client.services.edge_selection.get_edges_with_z_location(
             min=min_dist,
             max=max_dist,
@@ -288,8 +302,8 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_edges_by_length(
         self,
-        min: Union[Real, "Quantity"],
-        max: Union[Real, "Quantity", None] = None,
+        min: Union[Real, "Quantity", Distance],
+        max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Filter edges by length range.
 
@@ -306,7 +320,9 @@ class EdgeSelection(TypedSelection):
             Edges within the specified length range.
         """
         min_dist = min if isinstance(min, Distance) else Distance(min)
-        max_dist = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        max_dist = (
+            (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
+        )
         response = self._grpc_client.services.edge_selection.filter_edges_by_length(
             edge_ids=[e.id for e in self.items],
             min=min_dist,
@@ -377,9 +393,9 @@ class EdgeSelection(TypedSelection):
         Parameters
         ----------
         min_percentile : float
-            Minimum percentile (0.0–100.0).
+            Minimum percentile (0.0-100.0).
         max_percentile : float
-            Maximum percentile (0.0–100.0).
+            Maximum percentile (0.0-100.0).
 
         Returns
         -------
@@ -520,8 +536,6 @@ class EdgeSelection(TypedSelection):
             edge_ids=[e.id for e in self.items],
         )
         return [
-            EdgeSelection(
-                self._design, self._grpc_client, get_edges_from_ids(self._design, group)
-            )
+            EdgeSelection(self._design, self._grpc_client, get_edges_from_ids(self._design, group))
             for group in response["response_data"][0]["groups"]
         ]

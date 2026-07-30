@@ -198,8 +198,7 @@ def test_filter_edges_length_percentile(modeler: Modeler):
 
 
 @pytest.mark.xfail(
-    reason="Spatial partitioning is not yet implemented in the backend.",
-    strict=True
+    reason="Spatial partitioning is not yet implemented in the backend.", strict=True
 )
 def test_extend_nearby_edges(modeler: Modeler):
     """Verify that extend_nearby_edges increases the selection within a given distance."""

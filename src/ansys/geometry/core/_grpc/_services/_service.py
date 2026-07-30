@@ -102,10 +102,10 @@ class _GRPCServices:
         self._commands_script = None
         self._designs = None
         self._driving_dimensions = None
-        self._edge_selection = None
-        self._face_selection = None
         self._edges = None
+        self._edge_selection = None
         self._faces = None
+        self._face_selection = None
         self._materials = None
         self._measurement_tools = None
         self._model_tools = None
@@ -492,7 +492,6 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._faces
-
 
     @property
     def face_selection(self) -> GRPCFaceSelectionService:
