@@ -68,8 +68,7 @@ class GRPCDatumLinesServiceV0(GRPCDatumLinesService):
     @protect_grpc
     def get(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
-            f"Method '{self.__class__.__name__}.get' is not "
-            "implemented in this protofile version."
+            f"Method '{self.__class__.__name__}.get' is not implemented in this protofile version."
         )
 
     @protect_grpc

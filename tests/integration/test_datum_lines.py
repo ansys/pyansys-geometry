@@ -178,4 +178,3 @@ def test_import_datum_lines(modeler: Modeler):
     assert dl3.name == "NestedLine"
     assert dl3.line.origin == Point3D([-0.01, -0.01, 0])
     assert dl3.line.direction == UnitVector3D([0, 0, 1])
-
