@@ -95,7 +95,6 @@ class _GRPCServices:
         self._beams = None
         self._bodies = None
         self._body_selection = None
-        self._face_selection = None
         self._commands = None
         self._components = None
         self._coordinate_systems = None
@@ -104,6 +103,7 @@ class _GRPCServices:
         self._designs = None
         self._driving_dimensions = None
         self._edge_selection = None
+        self._face_selection = None
         self._edges = None
         self._faces = None
         self._materials = None
@@ -242,56 +242,6 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._body_selection
-
-    @property
-    def edge_selection(self) -> GRPCEdgeSelectionService:
-        """
-        Get the edge selection service for the specified version.
-
-        Returns
-        -------
-        GRPCEdgeSelectionService
-            The edge selection service for the specified version.
-        """
-        if not self._edge_selection:
-            # Import the appropriate edge selection service based on the version
-            from .v0.edge_selection import GRPCEdgeSelectionServiceV0
-            from .v1.edge_selection import GRPCEdgeSelectionServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._edge_selection = GRPCEdgeSelectionServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:
-                self._edge_selection = GRPCEdgeSelectionServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-            return self._edge_selection
-
-    @property
-    def face_selection(self) -> GRPCFaceSelectionService:
-        """
-        Get the face selection service for the specified version.
-
-        Returns
-        -------
-        GRPCFaceSelectionService
-            The face selection service for the specified version.
-        """
-        if not self._face_selection:
-            # Import the appropriate face selection service based on the version
-            from .v0.face_selection import GRPCFaceSelectionServiceV0
-            from .v1.face_selection import GRPCFaceSelectionServiceV1
-
-            if self.version == GeometryApiProtos.V0:
-                self._face_selection = GRPCFaceSelectionServiceV0(self.channel)
-            elif self.version == GeometryApiProtos.V1:
-                self._face_selection = GRPCFaceSelectionServiceV1(self.channel)
-            else:  # pragma: no cover
-                # This should never happen as the version is set in the constructor
-                raise ValueError(f"Unsupported version: {self.version}")
-
-        return self._face_selection
 
     @property
     def commands(self) -> GRPCCommandsService:
@@ -494,6 +444,31 @@ class _GRPCServices:
         return self._edges
 
     @property
+    def edge_selection(self) -> GRPCEdgeSelectionService:
+        """
+        Get the edge selection service for the specified version.
+
+        Returns
+        -------
+        GRPCEdgeSelectionService
+            The edge selection service for the specified version.
+        """
+        if not self._edge_selection:
+            # Import the appropriate edge selection service based on the version
+            from .v0.edge_selection import GRPCEdgeSelectionServiceV0
+            from .v1.edge_selection import GRPCEdgeSelectionServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._edge_selection = GRPCEdgeSelectionServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._edge_selection = GRPCEdgeSelectionServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._edge_selection
+
+    @property
     def faces(self) -> GRPCFacesService:
         """
         Get the faces service for the specified version.
@@ -517,6 +492,32 @@ class _GRPCServices:
                 raise ValueError(f"Unsupported version: {self.version}")
 
         return self._faces
+
+
+    @property
+    def face_selection(self) -> GRPCFaceSelectionService:
+        """
+        Get the face selection service for the specified version.
+
+        Returns
+        -------
+        GRPCFaceSelectionService
+            The face selection service for the specified version.
+        """
+        if not self._face_selection:
+            # Import the appropriate face selection service based on the version
+            from .v0.face_selection import GRPCFaceSelectionServiceV0
+            from .v1.face_selection import GRPCFaceSelectionServiceV1
+
+            if self.version == GeometryApiProtos.V0:
+                self._face_selection = GRPCFaceSelectionServiceV0(self.channel)
+            elif self.version == GeometryApiProtos.V1:
+                self._face_selection = GRPCFaceSelectionServiceV1(self.channel)
+            else:  # pragma: no cover
+                # This should never happen as the version is set in the constructor
+                raise ValueError(f"Unsupported version: {self.version}")
+
+        return self._face_selection
 
     @property
     def materials(self) -> GRPCMaterialsService:

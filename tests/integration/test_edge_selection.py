@@ -28,7 +28,6 @@ from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer.edge import CurveType
 from ansys.geometry.core.selection_builder.selection_builder import (
     ExtendScope,
-    InvertScope,
     RangeType,
 )
 

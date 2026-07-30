@@ -264,13 +264,13 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def invert_edge_selection(
         self,
-        scope: InvertTopologyScope = InvertTopologyScope.INVERTSCOPE_ALL,
+        scope: InvertTopologyScope = InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL,
     ) -> "EdgeSelection":
         """Return the complement of this edge selection.
 
         Parameters
         ----------
-        scope : InvertTopologyScope, default: InvertTopologyScope.INVERTSCOPE_ALL
+        scope : InvertTopologyScope, default: InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL
             Whether to invert relative to all edges or only visible edges.
 
         Returns
