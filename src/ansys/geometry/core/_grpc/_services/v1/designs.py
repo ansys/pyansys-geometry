@@ -33,7 +33,6 @@ from .conversions import (
     build_grpc_id,
     from_grpc_curve_to_curve,
     from_grpc_frame_to_frame,
-    from_grpc_line_to_line,
     from_grpc_material_to_material,
     from_grpc_matrix_to_matrix,
     from_grpc_plane_to_plane,
@@ -509,7 +508,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             return {
                 "id": datum_line.id.id,
                 "name": datum_line.name,
-                "line": from_grpc_line_to_line(datum_line.line),
+                "line": from_grpc_curve_to_curve(datum_line.line),
                 "parent_id": datum_line.parent_id.id,
             }
 

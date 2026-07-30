@@ -1776,8 +1776,9 @@ class Component:
         self._datum_lines.append(datum_line)
         return datum_line
 
-    @min_backend_version(27, 1, 0)
     @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def delete_datum_line(self, datum_line: DatumLine | str) -> None:
         """Delete a datum line from this component.
 
