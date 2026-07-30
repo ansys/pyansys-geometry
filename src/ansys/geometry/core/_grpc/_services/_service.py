@@ -493,7 +493,6 @@ class _GRPCServices:
 
         return self._faces
 
-
     @property
     def face_selection(self) -> GRPCFaceSelectionService:
         """
