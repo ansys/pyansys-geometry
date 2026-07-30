@@ -23,12 +23,12 @@
 """Provides for creating and managing a NURBS surface."""
 
 from functools import cached_property
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Literal, Optional, Union
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
-from pydantic_core import from_json as _pydantic_from_json
 
 from ansys.geometry.core.math import ZERO_POINT3D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
@@ -133,15 +133,15 @@ class NURBSurfaceModel(BaseModel):
                         f"Element '{name}' looks like a 2D NURBS sketch curve "
                         f"(it has 'degree'/'knots' and 2D points, not "
                         f"'degree_u'/'degree_v'/'knots_u'/'knots_v'). "
-                        f"Use SketchNurbs.from_json() instead of "
-                        f"NURBSSurface.from_json() for this file."
+                        f"Use SketchNurbs.from_json_file() instead of "
+                        f"NURBSSurface.from_json_file() for this file."
                     ) from e
                 raise ValueError(
                     f"Element '{name}' looks like a 3D NURBS curve "
                     f"(it has 'degree'/'knots', not "
                     f"'degree_u'/'degree_v'/'knots_u'/'knots_v'). "
-                    f"Use NURBSCurve.from_json() instead of "
-                    f"NURBSSurface.from_json() for this file."
+                    f"Use NURBSCurve.from_json_file() instead of "
+                    f"NURBSSurface.from_json_file() for this file."
                 ) from e
             raise
 
@@ -403,7 +403,7 @@ class NURBSSurface(Surface):
 
     @classmethod
     @check_input_types
-    def from_json(
+    def from_json_file(
         cls, source: Union[dict, str, Path], elements: Optional[list[str]] = None
     ) -> Union["NURBSSurface", dict[str, "NURBSSurface"]]:
         """Create a NURBS surface from a JSON file.
@@ -426,7 +426,7 @@ class NURBSSurface(Surface):
 
         json_str = path.read_text(encoding="utf-8") if path.is_file() else str(source)
 
-        raw = _pydantic_from_json(json_str)
+        raw = json.loads(json_str)
 
         # iterate over the requested elements
         names_to_build = elements if elements is not None else list(raw.keys())
@@ -441,13 +441,9 @@ class NURBSSurface(Surface):
             for name in names_to_build
         }
 
-        # We return a NURBSSurface if only one element was requested,
-        #  otherwise we return a dictionary of NURBSSurfaces.
-        if len(build) == 1:
-            return next(iter(build.values()))
         return build
 
-    def to_json(self, destination: Optional[Union[str, Path]] = None) -> str:
+    def to_json_file(self, destination: Optional[Union[str, Path]] = None) -> str:
         """Export the NURBS surface to a JSON file."""
         model = NURBSurfaceModel(
             degree_u=self.degree_u,

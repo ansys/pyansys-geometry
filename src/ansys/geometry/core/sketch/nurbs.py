@@ -22,6 +22,7 @@
 
 """Provides for creating and managing a nurbs sketch curve."""
 
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
@@ -29,7 +30,6 @@ import numpy as np
 from pint import Quantity
 from pydantic import BaseModel, Field, ValidationError, model_validator
 import pydantic_core
-from pydantic_core import from_json as _pydantic_from_json
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
@@ -340,7 +340,7 @@ class SketchNurbs(SketchEdge):
 
     @classmethod
     @check_input_types
-    def from_json(
+    def from_json_file(
         cls, source: Union[str, Path], elements: Optional[list[str]] = None
     ) -> Union["SketchNurbs", dict[str, "SketchNurbs"]]:
         """Create NURBS sketch curve(s) from a JSON file or JSON string.
@@ -367,7 +367,7 @@ class SketchNurbs(SketchEdge):
         path = Path(source)
         json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
 
-        raw = _pydantic_from_json(json_str)
+        raw = json.loads(json_str)
 
         names_to_build = elements if elements is not None else list(raw.keys())
 
@@ -380,11 +380,9 @@ class SketchNurbs(SketchEdge):
             for name in names_to_build
         }
 
-        if len(built) == 1:
-            return next(iter(built.values()))
         return built
 
-    def to_json(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
+    def to_json_file(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
         """Serialize this NURBS sketch curve to a JSON string, wrapped under a named element.
 
         Parameters

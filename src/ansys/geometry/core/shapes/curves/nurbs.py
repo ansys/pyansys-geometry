@@ -23,13 +23,13 @@
 """Provides for creating and managing a NURBS curve."""
 
 from functools import cached_property
+import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, Optional, Union
 
 import numpy as np
 from pydantic import BaseModel, Field, ValidationError, model_validator
 import pydantic_core
-from pydantic_core import from_json as _pydantic_from_json
 from scipy.integrate import quad
 
 from ansys.geometry.core.math import Matrix44, Point3D
@@ -56,8 +56,8 @@ class NURBSCurveModel(BaseModel):
     Notes
     -----
     Pure data model — no file I/O. All orchestration (reading the JSON,
-    building the geometry) lives in ``NURBSCurve.from_json`` /
-    ``NURBSCurve.to_json``.
+    building the geometry) lives in ``NURBSCurve.from_json_file`` /
+    ``NURBSCurve.to_json_file``.
     """
 
     type: Literal["nurbs_curve"] = "nurbs_curve"
@@ -99,8 +99,8 @@ class NURBSCurveModel(BaseModel):
                 raise ValueError(
                     f"Element '{name}' looks like a 3D NURBS surface "
                     f"(it has 'degree_u'/'degree_v', not a plain 'degree'). "
-                    f"Use NURBSSurface.from_json() instead of "
-                    f"NURBSCurve.from_json() for this file."
+                    f"Use NURBSSurface.from_json_file() instead of "
+                    f"NURBSCurve.from_json_file() for this file."
                 ) from e
             if (
                 isinstance(data, dict)
@@ -111,8 +111,8 @@ class NURBSCurveModel(BaseModel):
                 raise ValueError(
                     f"Element '{name}' looks like a 2D NURBS sketch curve "
                     f"(its control points have 2 coordinates, not 3). "
-                    f"Use SketchNurbs.from_json() instead of "
-                    f"NURBSCurve.from_json() for this file."
+                    f"Use SketchNurbs.from_json_file() instead of "
+                    f"NURBSCurve.from_json_file() for this file."
                 ) from e
             raise
 
@@ -305,7 +305,7 @@ class NURBSCurve(Curve):
 
     @classmethod
     @check_input_types
-    def from_json(
+    def from_json_file(
         cls, source: Union[str, Path], elements: Optional[list[str]] = None
     ) -> Union["NURBSCurve", dict[str, "NURBSCurve"]]:
         """Create NURBS curve(s) from a JSON file or JSON string.
@@ -336,8 +336,7 @@ class NURBSCurve(Curve):
         path = Path(source)
         json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
 
-        raw = _pydantic_from_json(json_str)
-
+        raw = json.loads(json_str)
         names_to_build = elements if elements is not None else list(raw.keys())
 
         missing = [name for name in names_to_build if name not in raw]
@@ -349,11 +348,9 @@ class NURBSCurve(Curve):
             for name in names_to_build
         }
 
-        if len(built) == 1:
-            return next(iter(built.values()))
         return built
 
-    def to_json(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
+    def to_json_file(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
         """Serialize this NURBS curve to a JSON string, wrapped under a named element.
 
         Parameters
