@@ -879,11 +879,14 @@ def test_design_selection(modeler: Modeler):
     design = modeler.create_design("Box")
     body = design.extrude_sketch("Box", sketch, Quantity(2, UNITS.m))
     ns_edge = design.create_named_selection("The Edges", edges=body.edges[0:2])
-    
+
     # Edge ordering is platform-dependent; check presence rather than index.
-    endpoints = {(e.start, e.end) for e in ns_edge.edges}
-    assert (Point3D([-5, -5, 2]), Point3D([5, -5, 2])) in endpoints
-    assert (Point3D([-5, -5, 0]), Point3D([-5, -5, 2])) in endpoints
+    assert any(
+        e.start == Point3D([-5, -5, 2]) and e.end == Point3D([5, -5, 2]) for e in ns_edge.edges
+    )
+    assert any(
+        e.start == Point3D([-5, -5, 0]) and e.end == Point3D([-5, -5, 2]) for e in ns_edge.edges
+    )
     assert ns_edge.__repr__()[0:54] == "ansys.geometry.core.designer.selection.NamedSelection "
 
 
