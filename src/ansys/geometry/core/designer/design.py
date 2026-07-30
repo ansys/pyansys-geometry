@@ -1602,7 +1602,7 @@ class Design(Component):
 
         # Create Datum Lines - only available for 27r1 and later
         if self._grpc_client.backend_version >= (27, 1, 0):
-            for dl in response.get("datum_lines"):
+            for dl in response.get("datum_lines", []):
                 created_dl = DatumLine(
                     dl.get("id"),
                     dl.get("name"),
