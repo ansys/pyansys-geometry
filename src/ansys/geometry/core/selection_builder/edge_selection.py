@@ -143,9 +143,9 @@ class EdgeSelection(TypedSelection):
 
         Parameters
         ----------
-        min : Real or Quantity
+        min : Real, Quantity, or Distance
             Minimum edge length (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real, Quantity, or Distance, optional
             Maximum edge length. If ``None``, no upper bound is applied.
 
         Returns
@@ -177,9 +177,9 @@ class EdgeSelection(TypedSelection):
         ----------
         range_type : RangeType
             Whether to intersect or contain the range.
-        min : Real or Quantity, optional
+        min : Real, Quantity, or Distance, optional
             Minimum X coordinate (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real, Quantity, or Distance, optional
             Maximum X coordinate.
 
         Returns
@@ -214,9 +214,9 @@ class EdgeSelection(TypedSelection):
         ----------
         range_type : RangeType
             Whether to intersect or contain the range.
-        min : Real or Quantity, optional
+        min : Real, Quantity, or Distance, optional
             Minimum Y coordinate (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real, Quantity, or Distance, optional
             Maximum Y coordinate.
 
         Returns
@@ -251,9 +251,9 @@ class EdgeSelection(TypedSelection):
         ----------
         range_type : RangeType
             Whether to intersect or contain the range.
-        min : Real or Quantity, optional
+        min : Real, Quantity, or Distance, optional
             Minimum Z coordinate (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real, Quantity, or Distance, optional
             Maximum Z coordinate.
 
         Returns
@@ -413,14 +413,14 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def extend_nearby_edges(
         self,
-        distance: Union[Real, "Quantity"],
+        distance: Union[Real, "Quantity", Distance],
         scope: ExtendScope = ExtendScope.EXTENDSCOPE_ALL,
     ) -> "EdgeSelection":
         """Extend selection to include nearby edges within a distance.
 
         Parameters
         ----------
-        distance : Real or Quantity
+        distance : Real, Quantity, or Distance
             Maximum gap distance (in mm if a plain number).
         scope : ExtendScope, default: ExtendScope.EXTENDSCOPE_ALL
             Scope of edges to consider for extension.
