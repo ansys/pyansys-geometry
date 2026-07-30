@@ -293,7 +293,7 @@ class SketchNurbs(SketchEdge):
         control_points: list[Point2D],
         degree: int,
         knots: list[Real],
-        weights: list[Real] = None,
+        weights: list[Real] | None = None,
     ) -> "SketchNurbs":
         """Create a NURBS curve from control points.
 
