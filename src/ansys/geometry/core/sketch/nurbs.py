@@ -29,7 +29,6 @@ from typing import TYPE_CHECKING, Literal, Optional, Union
 import numpy as np
 from pint import Quantity
 from pydantic import BaseModel, Field, ValidationError, model_validator
-import pydantic_core
 
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
@@ -382,32 +381,46 @@ class SketchNurbs(SketchEdge):
 
         return built
 
-    def to_json_file(self, path: Union[str, Path] = None, element_name: str = "curve") -> str:
-        """Serialize this NURBS sketch curve to a JSON string, wrapped under a named element.
+    @classmethod
+    def to_json_file(
+        cls,
+        curves: dict[str, "SketchNurbs"],
+        path: Union[str, Path],
+    ) -> None:
+        """Serialize one or more NURBS sketch curves to a JSON file.
 
         Parameters
         ----------
-        path : Union[str, Path], optional
-            If provided, also writes the JSON string to this file path.
-        element_name : str, default: "curve"
-            Name of the element to wrap the curve data under.
+        curves : dict[str, SketchNurbs]
+            Mapping of element name to the ``SketchNurbs`` to serialize
+            under that name, e.g. {"hub_0": curve_1, "hub_1": curve_2}.
+        path : Union[str, Path]
+            File path to write the JSON to. Required.
 
-        Returns
-        -------
-        str
-            The JSON string representation of this NURBS sketch curve.
-
+        Raises
+        ------
+        ValueError
+            If ``path`` is not provided, or ``curves`` is empty.
         """
-        model = SketchNurbsModel(
-            degree=self.degree,
-            knots=[float(k) for k in self.knots],
-            control_points=[tuple(float(c) for c in pt) for pt in self.control_points],
-            weights=[float(w) for w in self.weights],
-        )
-        json_str = pydantic_core.to_json({element_name: model.model_dump()}).decode("utf-8")
-        if path:
-            Path(path).write_text(json_str, encoding="utf-8")
-        return json_str
+        if not path:
+            raise ValueError(
+                "A file path must be provided to save the NURBS sketch curve(s) as JSON."
+            )
+        if not curves:
+            raise ValueError("At least one named NURBS sketch curve must be provided.")
+
+        payload = {}
+        for name, curve in curves.items():
+            model = SketchNurbsModel(
+                degree=curve.degree,
+                knots=[float(k) for k in curve.knots],
+                control_points=[tuple(float(c) for c in pt) for pt in curve.control_points],
+                weights=[float(w) for w in curve.weights],
+            )
+            payload[name] = model.model_dump()
+
+        json_str = json.dumps(payload, indent=2)
+        Path(path).write_text(json_str, encoding="utf-8")
 
     @classmethod
     @check_input_types

@@ -443,27 +443,49 @@ class NURBSSurface(Surface):
 
         return build
 
-    def to_json_file(self, destination: Optional[Union[str, Path]] = None) -> str:
-        """Export the NURBS surface to a JSON file."""
-        model = NURBSurfaceModel(
-            degree_u=self.degree_u,
-            degree_v=self.degree_v,
-            knots_u=self.knotvector_u,
-            knots_v=self.knotvector_v,
-            control_points=[Point3D(pt) for pt in self.control_points],
-            weights=self.weights,
-            origin=self.origin,
-            reference=self.dir_x,
-            axis=self.dir_z,
-        )
+    @classmethod
+    def to_json_file(
+        cls,
+        surfaces: dict[str, "NURBSSurface"],
+        path: Union[str, Path],
+    ) -> None:
+        """Serialize one or more NURBS surfaces to a JSON file.
 
-        json_str = model.model_dump_json(indent=2)
-        path = Path(destination)
+        Parameters
+        ----------
+        surfaces : dict[str, NURBSSurface]
+            Mapping of element name to the ``NURBSSurface`` to serialize
+            under that name, e.g. {"wing": surface_1, "hub": surface_2}.
+        path : Union[str, Path]
+            File path to write the JSON to. Required.
 
-        if path:
-            path.write_text(json_str, encoding="utf-8")
+        Raises
+        ------
+        ValueError
+            If ``path`` is not provided, or ``surfaces`` is empty.
+        """
+        if not path:
+            raise ValueError("A file path must be provided to save the NURBS surface(s) as JSON.")
+        if not surfaces:
+            raise ValueError("At least one named NURBS surface must be provided.")
 
-        return json_str
+        payload = {}
+        for name, surface in surfaces.items():
+            model = NURBSurfaceModel(
+                degree_u=surface.degree_u,
+                degree_v=surface.degree_v,
+                knots_u=[float(k) for k in surface.knotvector_u],
+                knots_v=[float(k) for k in surface.knotvector_v],
+                control_points=[tuple(float(c) for c in pt) for pt in surface.control_points],
+                weights=[float(w) for w in surface.weights],
+                origin=tuple(float(c) for c in surface.origin),
+                reference=tuple(float(c) for c in surface.dir_x),
+                axis=tuple(float(c) for c in surface.dir_z),
+            )
+            payload[name] = model.model_dump()
+
+        json_str = json.dumps(payload, indent=2)
+        Path(path).write_text(json_str, encoding="utf-8")
 
     def __eq__(self, other: Surface) -> bool:
         """Determine if two surfaces are equal."""
