@@ -649,30 +649,70 @@ def test_nurbs_mismatch_weights_length():
         )
 
 
-def test_nurbs_to_json():
-    """Test that NURBS objects can be serialized to JSON and deserialized back."""
-    # Create a NURBSCurve
-    curve = NURBSCurve.fit_curve_from_points(
+def _sample_curve(offset: float = 0.0) -> NURBSCurve:
+    return NURBSCurve.fit_curve_from_points(
         points=[
-            Point3D([0, 0, 0]),
-            Point3D([1, 1, 0]),
-            Point3D([2, 0, 0]),
+            Point3D([0 + offset, 0, 0]),
+            Point3D([1 + offset, 1, 0]),
+            Point3D([2 + offset, 0, 0]),
         ],
         degree=2,
     )
 
-    # Serialize to JSON
-    curve_json = curve.to_json_file()
 
-    # Deserialize back to a NURBSCurve
-    new_curves = NURBSCurve.from_json_file(curve_json)
-    new_curve = next(iter(new_curves.values()))
+def _sample_surface(offset: float = 0.0) -> NURBSSurface:
+    return NURBSSurface.from_control_points(
+        degree_u=1,
+        degree_v=1,
+        knots_u=[0.0, 0.0, 1.0, 1.0],
+        knots_v=[0.0, 0.0, 1.0, 1.0],
+        control_points=[
+            Point3D([0.0 + offset, 0.0, 0.0]),
+            Point3D([1.0 + offset, 0.0, 0.0]),
+            Point3D([0.0 + offset, 1.0, 0.0]),
+            Point3D([1.0 + offset, 1.0, 0.0]),
+        ],
+    )
 
-    # Check that the properties match
-    assert new_curve.degree == curve.degree
-    assert len(new_curve.control_points) == len(curve.control_points)
-    assert len(new_curve.knots) == len(curve.knots)
-    assert len(new_curve.weights) == len(curve.weights)
+
+def _sample_sketch(offset: float = 0.0) -> SketchNurbs:
+    return SketchNurbs.fit_curve_from_points(
+        points=[
+            Point2D([0 + offset, 0]),
+            Point2D([1 + offset, 1]),
+            Point2D([2 + offset, 0]),
+        ],
+        degree=2,
+    )
+
+
+NURBS_CASES = [
+    (NURBSCurve, _sample_curve, "rail_1", "rail_2"),
+    (NURBSSurface, _sample_surface, "wing", "hub"),
+    (SketchNurbs, _sample_sketch, "hub_0", "hub_1"),
+]
+
+
+@pytest.mark.parametrize("cls, make_sample, name_a, name_b", NURBS_CASES)
+def test_to_json_file_requires_path(cls, make_sample, name_a, name_b):
+    with pytest.raises(ValueError, match="file path must be provided"):
+        cls.to_json_file({name_a: make_sample()}, path=None)
+
+
+@pytest.mark.parametrize("cls, make_sample, name_a, name_b", NURBS_CASES)
+def test_to_json_file_requires_non_empty_mapping(tmp_path, cls, make_sample, name_a, name_b):
+    with pytest.raises(ValueError, match="At least one"):
+        cls.to_json_file({}, path=tmp_path / "empty.json")
+
+
+@pytest.mark.parametrize("cls, make_sample, name_a, name_b", NURBS_CASES)
+def test_to_json_file_round_trip(tmp_path, cls, make_sample, name_a, name_b):
+    path = tmp_path / "data.json"
+
+    cls.to_json_file({name_a: make_sample(0.0), name_b: make_sample(5.0)}, path=path)
+    loaded = cls.from_json_file(path)
+
+    assert set(loaded.keys()) == {name_a, name_b}
 
 
 def test_successful_nurbs_creation_from_json():
