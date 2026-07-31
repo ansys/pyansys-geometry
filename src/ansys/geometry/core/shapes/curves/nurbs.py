@@ -354,7 +354,7 @@ class NURBSCurve(Curve):
         cls,
         curves: dict[str, "NURBSCurve"],
         path: Union[str, Path],
-    ) -> None:
+    ) -> Path:
         """Serialize one or more NURBS curves to a JSON file.
 
         Parameters
@@ -386,7 +386,9 @@ class NURBSCurve(Curve):
             payload[name] = model.model_dump()
 
         json_str = json.dumps(payload, indent=2)
-        Path(path).write_text(json_str, encoding="utf-8")
+        output_path = Path(path)
+        output_path.write_text(json_str, encoding="utf-8")
+        return output_path
 
     def __eq__(self, other: "NURBSCurve") -> bool:
         """Determine if two curves are equal."""
