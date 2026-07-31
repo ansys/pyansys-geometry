@@ -260,6 +260,10 @@ numpydoc_validation_exclude = {
     "validate",
     "__cause__",
     "__context__",
+    "__pydantic_setattr_handlers__",
+    "model_copy",
+    "model_dump",
+    "model_dump_json",
 }
 
 # static path
