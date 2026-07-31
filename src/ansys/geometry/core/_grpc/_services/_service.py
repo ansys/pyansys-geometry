@@ -492,7 +492,7 @@ class _GRPCServices:
             else:  # pragma: no cover
                 # This should never happen as the version is set in the constructor
                 raise ValueError(f"Unsupported version: {self.version}")
-                
+
         return self._edge_selection
 
     @property
