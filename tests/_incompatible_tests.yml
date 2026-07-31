@@ -76,6 +76,7 @@ backends:
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
       - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
       - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
@@ -232,7 +233,8 @@ backends:
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
       - tests/integration/test_face_selection.py::*
-      - tests/integration/test_datum_lines.py::test_import_datum_lines
+      - tests/integration/test_edge_selection.py::*
+      - tests/integration/test_datum_lines.py::test_import_datum_line
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -335,6 +337,7 @@ backends:
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
       - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
       - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Opening large files through streaming is only available from 25.2 onwards
@@ -442,6 +445,7 @@ backends:
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_body_selection.py::*
       - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
       - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Components and vertex only available on 26.1 onwards

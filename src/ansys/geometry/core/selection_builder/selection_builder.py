@@ -31,6 +31,9 @@ if TYPE_CHECKING:
     from ansys.geometry.core.selection_builder.body_selection import (
         BodySelection,
     )
+    from ansys.geometry.core.selection_builder.edge_selection import (
+        EdgeSelection,
+    )
     from ansys.geometry.core.selection_builder.face_selection import (
         FaceSelection,
     )
@@ -93,6 +96,9 @@ class SelectionBuilder:
         from ansys.geometry.core.selection_builder.body_selection import (
             BodySelection,
         )
+        from ansys.geometry.core.selection_builder.edge_selection import (
+            EdgeSelection,
+        )
         from ansys.geometry.core.selection_builder.face_selection import (
             FaceSelection,
         )
@@ -101,12 +107,18 @@ class SelectionBuilder:
         self._design = design
 
         self._bodies = BodySelection(design, self._grpc_client)
+        self._edges = EdgeSelection(design, self._grpc_client)
         self._faces = FaceSelection(design, self._grpc_client)
 
     @property
     def bodies(self) -> "BodySelection":
         """Get the body selection."""
         return self._bodies
+
+    @property
+    def edges(self) -> "EdgeSelection":
+        """Get the edge selection."""
+        return self._edges
 
     @property
     def faces(self) -> "FaceSelection":
