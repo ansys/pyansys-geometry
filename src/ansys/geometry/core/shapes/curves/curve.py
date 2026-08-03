@@ -37,7 +37,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 
 
-class Curve(ABC):
+class Curve(ABC):  # pragma: no cover
     """Provides the abstract base class representing a 3D curve."""
 
     @abstractmethod
