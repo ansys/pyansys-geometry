@@ -30,6 +30,7 @@ from pint import Quantity
 
 from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real
 
 
@@ -450,3 +451,106 @@ class PMDBExportOptions:
     process_solid_bodies: bool = True
     process_surface_bodies: bool = True
     process_line_bodies: bool = True
+
+
+class VolumeExtractOptions:
+    """Provides options for volume extraction.
+
+    Parameters
+    ----------
+    create_shared_topology : bool | None, default: None
+        Create shared topology between capping surfaces and the seed body.
+    imprint_capping_edges : bool | None, default: None
+        Imprint capping edges onto the seed body.
+    merge_created_volume : bool | None, default: None
+        Merge the created volume into the existing model.
+    seed_point : SurfaceEvaluation | None, default: None
+        Seed point on the surface from which to extract the volume.
+    tolerance : Distance | Quantity | Real | None, default: None
+        Tolerance for volume extraction.
+        If a Real is provided, it is assumed to be in the default length unit.
+    create_capping_surfaces : bool | None, default: None
+        Create capping surfaces to close open regions.
+    detect_leaks : bool | None, default: None
+        Detect leaks in the model before extraction.
+    """
+
+    @check_input_types
+    def __init__(
+        self,
+        create_shared_topology: bool | None = None,
+        imprint_capping_edges: bool | None = None,
+        merge_created_volume: bool | None = None,
+        seed_point: SurfaceEvaluation | None = None,
+        tolerance: Distance | Quantity | Real | None = None,
+        create_capping_surfaces: bool | None = None,
+        detect_leaks: bool | None = None,
+    ):
+        """Initialize ``VolumeExtractOptions`` class."""
+        self._create_shared_topology = create_shared_topology
+        self._imprint_capping_edges = imprint_capping_edges
+        self._merge_created_volume = merge_created_volume
+        self._seed_point = seed_point
+        self._tolerance = (
+            tolerance
+            if tolerance is None or isinstance(tolerance, Distance)
+            else Distance(tolerance)
+        )
+        self._create_capping_surfaces = create_capping_surfaces
+        self._detect_leaks = detect_leaks
+
+    @property
+    def create_shared_topology(self) -> bool | None:
+        """Create shared topology.
+
+        Create shared topology between capping surfaces and the seed body.
+        """
+        return self._create_shared_topology
+
+    @property
+    def imprint_capping_edges(self) -> bool | None:
+        """Imprint capping edges.
+
+        Imprint capping edges onto the seed body.
+        """
+        return self._imprint_capping_edges
+
+    @property
+    def merge_created_volume(self) -> bool | None:
+        """Merge created volume.
+
+        Merge the created volume into the existing model.
+        """
+        return self._merge_created_volume
+
+    @property
+    def seed_point(self) -> SurfaceEvaluation | None:
+        """Seed point.
+
+        Seed point on the surface from which to extract the volume.
+        """
+        return self._seed_point
+
+    @property
+    def tolerance(self) -> Distance | None:
+        """Tolerance.
+
+        Tolerance for volume extraction.
+        """
+        return self._tolerance
+
+    @property
+    def create_capping_surfaces(self) -> bool | None:
+        """Create capping surfaces.
+
+        Create capping surfaces to close open regions.
+        """
+        return self._create_capping_surfaces
+
+    @property
+    def detect_leaks(self) -> bool | None:
+        """Detect leaks.
+
+        Detect leaks in the model before extraction.
+        """
+        return self._detect_leaks

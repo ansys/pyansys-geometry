@@ -90,6 +90,7 @@ from ansys.api.discovery.v1.geometryenums_pb2 import (
 )
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
+    VolumeExtractOptions as GRPCVolumeExtractOptions,
 )
 from ansys.api.discovery.v1.operations.repair_pb2 import (
     RepairToolMessage as GRPCRepairToolResponse,
@@ -122,6 +123,7 @@ if TYPE_CHECKING:  # pragma: no cover
         ImportOptionsDefinitions,
         PMDBExportOptions,
         TessellationOptions,
+        VolumeExtractOptions,
     )
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
@@ -1894,6 +1896,35 @@ def from_enclosure_options_to_grpc_enclosure_options(
         subtract_bodies=enclosure_options.subtract_bodies,
         frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
         cushion_proportion=enclosure_options.cushion_proportion,
+    )
+
+
+def from_volume_extract_options_to_grpc_volume_extract_options(
+    volume_extract_options: "VolumeExtractOptions",
+) -> GRPCVolumeExtractOptions:
+    """Convert volume_extract_options to grpc definition.
+
+    Parameters
+    ----------
+    volume_extract_options : VolumeExtractOptions
+        Definition of the volume extract options.
+
+    Returns
+    -------
+    GRPCVolumeExtractOptions
+        Grpc converted definition.
+    """
+    return GRPCVolumeExtractOptions(
+        create_shared_topology=volume_extract_options.create_shared_topology,
+        imprint_capping_edges=volume_extract_options.imprint_capping_edges,
+        merge_created_volume=volume_extract_options.merge_created_volume,
+        tolerance=(
+            from_length_to_grpc_quantity(volume_extract_options.tolerance)
+            if volume_extract_options.tolerance is not None
+            else None
+        ),
+        create_capping_surfaces=volume_extract_options.create_capping_surfaces,
+        detect_leaks=volume_extract_options.detect_leaks,
     )
 
 

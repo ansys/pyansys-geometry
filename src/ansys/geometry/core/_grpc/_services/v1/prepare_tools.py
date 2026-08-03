@@ -32,6 +32,7 @@ from .conversions import (
     build_grpc_id,
     from_enclosure_options_to_grpc_enclosure_options,
     from_length_to_grpc_quantity,
+    from_volume_extract_options_to_grpc_volume_extract_options,
     serialize_tracked_command_response,
 )
 
@@ -63,6 +64,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
         request = ExtractVolumeFromFacesRequest(
             sealing_face_ids=[build_grpc_id(face) for face in kwargs["sealing_faces"]],
             inside_face_ids=[build_grpc_id(face) for face in kwargs["inside_faces"]],
+            options=from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"]),
         )
 
         # Call the gRPC service

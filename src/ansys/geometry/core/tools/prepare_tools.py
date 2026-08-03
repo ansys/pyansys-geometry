@@ -46,6 +46,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.options import VolumeExtractOptions
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
@@ -116,7 +117,10 @@ class PrepareTools:
 
     @min_backend_version(25, 1, 0)
     def extract_volume_from_faces(
-        self, sealing_faces: list["Face"], inside_faces: list["Face"]
+        self,
+        sealing_faces: list["Face"],
+        inside_faces: list["Face"],
+        options: VolumeExtractOptions | None = None,
     ) -> list["Body"]:
         """Extract a volume from input faces.
 
@@ -129,6 +133,8 @@ class PrepareTools:
             List of faces that seal the volume.
         inside_faces : list[Face]
             List of faces that define the interior of the solid.
+        options : VolumeExtractOptions, optional
+            Options for volume extraction.
 
         Returns
         -------
@@ -138,22 +144,26 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
+        The ``options`` parameter is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.face import Face
 
-        if not sealing_faces or not inside_faces:
-            self._grpc_client.log.info("No sealing faces or inside faces provided...")
+        if not sealing_faces and not inside_faces:
+            self._grpc_client.log.info("No sealing faces and no inside faces provided...")
             return []
 
         # Verify inputs
         check_type_all_elements_in_iterable(sealing_faces, Face)
         check_type_all_elements_in_iterable(inside_faces, Face)
 
-        parent_design = get_design_from_face(sealing_faces[0])
+        parent_design = get_design_from_face(
+            sealing_faces[0] if sealing_faces else inside_faces[0]
+        )
 
         response = self._grpc_client._services.prepare_tools.extract_volume_from_faces(
             sealing_faces=[face.id for face in sealing_faces],
             inside_faces=[face.id for face in inside_faces],
+            options=options,
         )
 
         if response.get("success"):
