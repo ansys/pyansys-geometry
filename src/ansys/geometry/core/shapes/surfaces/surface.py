@@ -40,17 +40,17 @@ if TYPE_CHECKING:  # pragma: no cover
 class Surface(ABC):
     """Provides the abstract base class for a 3D surface."""
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def parameterization(self) -> tuple[Parameterization, Parameterization]:
         """Parameterize the surface as a tuple (U and V respectively)."""
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def contains_param(self, param_uv: ParamUV) -> bool:
         """Check a parameter is within the parametric range of the surface."""
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def contains_point(self, point: Point3D) -> bool:
         """Check a point is contained by the surface.
 
@@ -58,22 +58,22 @@ class Surface(ABC):
         """
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def transformed_copy(self, matrix: Matrix44) -> "Surface":
         """Create a transformed copy of the surface."""
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def __eq__(self, other: "Surface") -> bool:
         """Determine if two surfaces are equal."""
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def evaluate(self, parameter: ParamUV) -> SurfaceEvaluation:
         """Evaluate the surface at the given parameter."""
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def project_point(self, point: Point3D) -> SurfaceEvaluation:
         """Project a point to the surface.
 
@@ -81,7 +81,7 @@ class Surface(ABC):
         """
         return
 
-    @abstractmethod
+    @abstractmethod  # pragma: no cover
     def visualization_polydata(self) -> "pv.PolyData":
         """Get the visualization polydata for the surface."""
         return
