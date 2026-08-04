@@ -550,17 +550,12 @@ def test_rotate_180_degrees(modeler: Modeler):
     trimmed_curve = edge.shape
 
     center = Point3D([0, 0, 1])
-    original_start = trimmed_curve.start.copy()
-    original_end = trimmed_curve.end.copy()
 
     trimmed_curve.rotate(center, UnitVector3D([0, 0, 1]), np.pi)
 
-    assert np.allclose(
-        trimmed_curve.start, Point3D([-original_start.x.m, -original_start.y.m, original_start.z.m])
-    )
-    assert np.allclose(
-        trimmed_curve.end, Point3D([-original_end.x.m, -original_end.y.m, original_end.z.m])
-    )
+    # 180° around z at [0,0,1]: (x,y,z) -> (-x,-y,z)
+    assert np.allclose(trimmed_curve.start, Point3D([1, 1, 2]))
+    assert np.allclose(trimmed_curve.end, Point3D([-1, 1, 2]))
 
 
 def test_rotate_with_angle_quantity(modeler: Modeler):
@@ -573,14 +568,13 @@ def test_rotate_with_angle_quantity(modeler: Modeler):
     trimmed_curve = edge.shape
 
     origin = Point3D([0, 0, 0])
-    original_start = trimmed_curve.start.copy()
-    original_end = trimmed_curve.end.copy()
 
     angle = Angle(np.pi / 4)
     trimmed_curve.rotate(origin, UnitVector3D([0, 0, 1]), angle)
 
-    assert np.allclose(trimmed_curve.start, Point3D([0, -np.sqrt(2), original_start.z.m]))
-    assert np.allclose(trimmed_curve.end, Point3D([np.sqrt(2), 0, original_end.z.m]))
+    # π/4 around z at origin: [-1,-1,2] -> [0,-√2,2], [1,-1,2] -> [√2,0,2]
+    assert np.allclose(trimmed_curve.start, Point3D([0, -np.sqrt(2), 2]))
+    assert np.allclose(trimmed_curve.end, Point3D([np.sqrt(2), 0, 2]))
 
 
 def test_rotate_about_different_axes(modeler: Modeler):
