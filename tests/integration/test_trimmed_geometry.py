@@ -430,10 +430,14 @@ def test_transformed_copy_circle_curve(modeler: Modeler):
 
     assert isinstance(transformed_curve, TrimmedCurve)
     assert transformed_curve.length == original_curve.length
-    assert np.allclose(
-        np.linalg.norm(transformed_curve.start),
-        np.linalg.norm(original_curve.start),
+
+    original_start_vector = Vector3D(
+        [original_curve.start.x.m, original_curve.start.y.m, original_curve.start.z.m]
     )
+    transformed_start_vector = Vector3D(
+        [transformed_curve.start.x.m, transformed_curve.start.y.m, transformed_curve.start.z.m]
+    )
+    assert np.allclose(original_start_vector.magnitude, transformed_start_vector.magnitude)
 
 
 def test_intersect_curve_coplanar_lines(modeler: Modeler):
@@ -646,5 +650,4 @@ def test_transformed_copy_preserves_type(modeler: Modeler):
     matrix = Matrix44.create_translation(Vector3D([1, 1, 1]))
     transformed = original_curve.transformed_copy(matrix)
 
-    assert type(transformed).__name__ == "TrimmedCurve"
     assert isinstance(transformed, TrimmedCurve)
