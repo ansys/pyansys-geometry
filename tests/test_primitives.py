@@ -1197,6 +1197,67 @@ def test_circle_evaluation():
     assert eval2.curvature == 1
 
 
+def test_circle_radius_not_positive():
+    """Test that a ValueError is raised when the circle radius is not positive."""
+    origin = Point3D([0, 0, 0])
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Circle(origin, 0)
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Circle(origin, -1)
+
+
+def test_circle_project_point_on_axis_raises_value_error():
+    """Test project_point behavior for a point on the circle axis."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(ValueError, match="The norm of the 3D vector is not valid."):
+        circle.project_point(Point3D([0, 0, 2]))
+
+
+def test_circle_project_point_zero_direction_with_mocking(monkeypatch):
+    """Test project_point zero-direction branch."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    class _ZeroDirection:
+        is_zero = True
+
+    monkeypatch.setattr(UnitVector3D, "from_points", lambda *args, **kwargs: _ZeroDirection())
+    evaluation = circle.project_point(Point3D([0, 0, 2]))
+
+    assert evaluation.parameter == 0
+    assert np.allclose(evaluation.position, Point3D([1, 0, 0]))
+
+
+def test_circle_parameterization():
+    """Test the parameterization method of the Circle class."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+    parameterization = circle.parameterization()
+
+    assert isinstance(parameterization, Parameterization)
+    assert parameterization.form == ParamForm.PERIODIC
+    assert parameterization.type == ParamType.CIRCULAR
+    assert parameterization.interval.start == 0
+    assert parameterization.interval.end == 2 * np.pi
+
+
+def test_circle_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        circle.contains_param(0.5)
+
+
+def test_circle_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        circle.contains_point(Point3D([1, 0, 0]))
+
+
 def test_line():
     """``Line`` construction and equivalency."""
     origin = Point3D([0, 0, 0])
