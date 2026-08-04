@@ -44,7 +44,7 @@ Import the PyAnsys Geometry modules needed throughout the example.
 
 ```{code-cell} ipython3
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.designer import SurfaceType
+from ansys.geometry.core.designer import FillPatternType, SurfaceType
 from ansys.geometry.core.math import (
     UNITVECTOR3D_X,
     UNITVECTOR3D_Y,
@@ -112,28 +112,21 @@ layer_6_sketch = Sketch(Plane(origin=Point3D([0, 0, 2.14])))
 layer_6_sketch.box(center=Point2D([0, 0]), width=BOARD_SIZE, height=BOARD_SIZE)
 ```
 
-### Sketch the solder features
+### Solder joint geometry constants
 
-Each solder joint consists of three features sharing a 0.25-millimeter radius:
+Each solder joint shares a 0.25-millimeter radius and is placed on a 1-mm pitch grid.
+The three sub-features span exactly the infill body height and share the same
+circular footprint:
 
-- **Bottom copper pad** — at Z = 0.97 mm, thickness 0.0382 mm
-- **Solder cylinder** — at Z = 1.0082 mm, height 0.5835 mm
-- **Top copper pad** — at Z = 1.5918 mm, thickness 0.0482 mm
+| Feature | Z start (mm) | Height (mm) |
+|---------|--------------|-------------|
+| Bottom copper pad | 0.97 | 0.0382 |
+| Solder cylinder | 1.0082 | 0.5835 |
+| Top copper pad | 1.5918 | 0.0482 |
 
 ```{code-cell} ipython3
-SOLDER_RADIUS = 0.25  # mm
-
-# Bottom copper pad
-copper_pad_bottom_sketch = Sketch(Plane(origin=Point3D([0, 0, 0.97])))
-copper_pad_bottom_sketch.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
-
-# Solder cylinder
-solder_cylinder_sketch = Sketch(Plane(origin=Point3D([0, 0, 1.0082])))
-solder_cylinder_sketch.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
-
-# Top copper pad
-copper_pad_top_sketch = Sketch(Plane(origin=Point3D([0, 0, 1.5918])))
-copper_pad_top_sketch.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
+SOLDER_RADIUS = 0.25  # mm — radius of every solder feature
+PITCH = 1.0  # mm — centre-to-centre spacing of the 3 × 3 grid
 ```
 
 ### Build the PCB design
@@ -152,47 +145,87 @@ layer_4 = component.extrude_sketch("layer_4", layer_4_sketch, distance=Distance(
 layer_5 = component.extrude_sketch("layer_5", layer_5_sketch, distance=Distance(0.26))
 layer_6 = component.extrude_sketch("layer_6", layer_6_sketch, distance=Distance(0.47))
 infill = component.extrude_sketch("infill", infill_sketch, distance=Distance(0.67))
-
-# Solder features for the centre position (i=0, j=0)
-copper_pad_bottom = component.extrude_sketch(
-    "copper_pad", copper_pad_bottom_sketch, distance=Distance(0.0382)
-)
-solder_cylinder = component.extrude_sketch(
-    "solder", solder_cylinder_sketch, distance=Distance(0.5835)
-)
-copper_pad_top = component.extrude_sketch(
-    "copper_pad", copper_pad_top_sketch, distance=Distance(0.0482)
-)
 ```
 
-### Replicate solder joints in a 3 × 3 array
+### Replicate solder holes using ``create_fill_pattern``
 
-The solder balls are arranged on a 1-millimeter pitch in a 3 × 3 grid centered at the
-origin (offsets: −1, 0, +1 mm in X and Y).  The infill body is Boolean-subtracted
-so that the solder columns protrude through the PCB as expected.
+Rather than looping over every grid position to copy and subtract individual bodies,
+:func:`create_fill_pattern <ansys.geometry.core.designer.geometry_commands.GeometryCommands.create_fill_pattern>`
+stamps the entire 3 × 3 array of through-holes into the infill in a single call.
+
+The workflow is:
+
+1. Subtract a **seed cylinder** at the corner position (−1 mm, −1 mm) that spans
+   the full infill height.  This creates the circular feature on the infill top
+   face that the fill-pattern engine replicates.
+2. Identify the **infill top face** (the flat face whose outward normal is +Z) and
+   a **straight edge along X** to set the grid orientation.
+3. Call :func:`create_fill_pattern` with a 1-mm pitch and a 0.5-mm margin.  The
+   margin prevents a spurious fourth column at ±2 mm (which would fall only
+   ~0.002 mm from the board edge) while keeping the three intended positions at
+   −1, 0 and +1 mm.
+
+```{note}
+``create_fill_pattern`` requires Ansys release 25R2 or later.
+```
+
+```{code-cell} ipython3
+# Seed cylinder — full infill height so the hole is visible on the top face
+seed_sketch = Sketch(Plane(origin=Point3D([-PITCH, -PITCH, 0.97])))
+seed_sketch.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
+seed_hole = component.extrude_sketch("seed_hole", seed_sketch, distance=Distance(0.67))
+infill.subtract(seed_hole)  # merges seed into infill, leaving a through-hole
+
+# Identify the top face of the infill (outward normal along +Z)
+infill_top_face = next(f for f in infill.faces if f.normal().z > 0.99)
+
+# Find a straight edge along the global X direction
+# Note: edge start/end coordinates are returned in server units (metres);
+# use .m_as(UNITS.mm) so the thresholds stay in the same mm domain as BOARD_SIZE.
+x_edge = next(
+    e for e in infill.edges
+    if abs(e.end.x.m_as(UNITS.mm) - e.start.x.m_as(UNITS.mm)) > BOARD_SIZE * 0.9
+    and abs(e.end.y.m_as(UNITS.mm) - e.start.y.m_as(UNITS.mm)) < 0.01
+    and abs(e.end.z.m_as(UNITS.mm) - e.start.z.m_as(UNITS.mm)) < 0.01
+)
+
+# Stamp a 3 × 3 grid of solder through-holes — no manual copy loop required
+success = modeler.geometry_commands.create_fill_pattern(
+    infill_top_face,
+    x_edge,
+    FillPatternType.GRID,
+    margin=PITCH / 2,  # 0.5 mm → exactly 3 positions per side fit within the board
+    x_spacing=PITCH,
+    y_spacing=PITCH,
+)
+print(f"Fill pattern created: {success}")
+```
+
+### Create the 3 × 3 solder joints
+
+With the infill holes already in place, the solder cylinders and copper pads are
+created as separate bodies by extruding fresh sketch profiles at each of the nine
+grid positions.  No ``copy`` or ``translate`` calls are needed.
 
 ```{code-cell} ipython3
 for i in range(-1, 2):
     for j in range(-1, 2):
-        if i == 0 and j == 0:
-            # Center position — subtract the already-created solder bodies
-            # from the infill, keeping the solder bodies themselves.
-            infill.subtract(
-                [copper_pad_bottom, copper_pad_top, solder_cylinder],
-                keep_other=True,
-            )
-        else:
-            # Off-center positions — copy and translate the solder bodies,
-            # then subtract each copy from the infill.
-            for body, owner in [
-                (copper_pad_bottom, component),
-                (copper_pad_top, component),
-                (solder_cylinder, component),
-            ]:
-                new_body = body.copy(owner)
-                new_body.translate(direction=UNITVECTOR3D_X, distance=i)
-                new_body.translate(direction=UNITVECTOR3D_Y, distance=j)
-                infill.subtract(new_body, keep_other=True)
+        x, y = i * PITCH, j * PITCH
+
+        # Bottom copper pad
+        sk = Sketch(Plane(origin=Point3D([x, y, 0.97])))
+        sk.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
+        component.extrude_sketch("copper_pad", sk, distance=Distance(0.0382))
+
+        # Solder cylinder
+        sk = Sketch(Plane(origin=Point3D([x, y, 1.0082])))
+        sk.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
+        component.extrude_sketch("solder", sk, distance=Distance(0.5835))
+
+        # Top copper pad
+        sk = Sketch(Plane(origin=Point3D([x, y, 1.5918])))
+        sk.circle(center=Point2D([0, 0]), radius=Distance(SOLDER_RADIUS))
+        component.extrude_sketch("copper_pad", sk, distance=Distance(0.0482))
 ```
 
 ### Create the ``solder_cyl`` named selection
@@ -391,3 +424,4 @@ rest of the PCB mesh remains undisturbed.
 - [Sketch.arc_from_start_center_and_angle](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/sketch/sketch/Sketch.html#Sketch.arc_from_start_center_and_angle)
 - [Component.revolve_sketch](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/component/Component.html#Component.revolve_sketch)
 - [Design.create_named_selection](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/design/Design.html#Design.create_named_selection)
+- [GeometryCommands.create_fill_pattern](https://geometry.docs.pyansys.com/version/stable/api/ansys/geometry/core/designer/geometry_commands/GeometryCommands.html#GeometryCommands.create_fill_pattern)
