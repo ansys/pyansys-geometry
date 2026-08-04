@@ -551,10 +551,15 @@ def test_rotate_180_degrees(modeler: Modeler):
     trimmed_curve = edge.shape
 
     center = Point3D([0, 0, 1])
+    original_start = trimmed_curve.start.copy()
+    original_end = trimmed_curve.end.copy()
+
     trimmed_curve.rotate(center, UnitVector3D([0, 0, 1]), np.pi)
 
-    assert trimmed_curve.start is not None
-    assert trimmed_curve.end is not None
+    assert not (
+        np.allclose(trimmed_curve.start, original_start)
+        and np.allclose(trimmed_curve.end, original_end)
+    )
 
 
 def test_rotate_with_angle_quantity(modeler: Modeler):
@@ -567,11 +572,16 @@ def test_rotate_with_angle_quantity(modeler: Modeler):
     trimmed_curve = edge.shape
 
     origin = Point3D([0, 0, 0])
+    original_start = trimmed_curve.start.copy()
+    original_end = trimmed_curve.end.copy()
 
     angle = Angle(np.pi / 4)
     trimmed_curve.rotate(origin, UnitVector3D([0, 0, 1]), angle)
 
-    assert trimmed_curve.start is not None
+    assert not (
+        np.allclose(trimmed_curve.start, original_start)
+        and np.allclose(trimmed_curve.end, original_end)
+    )
 
 
 def test_rotate_about_different_axes(modeler: Modeler):
@@ -626,16 +636,19 @@ def test_reversed_trimmed_curve_proportional_reversal(hedgehog_design):
     hedgehog_body = hedgehog_design.bodies[0]
     edges = hedgehog_body.edges
 
-    for edge in edges:
-        if isinstance(edge.shape, ReversedTrimmedCurve):
-            reversed_curve = edge.shape
+    reversed_curves = [edge.shape for edge in edges if isinstance(edge.shape, ReversedTrimmedCurve)]
+    assert len(reversed_curves) > 0, "No ReversedTrimmedCurve found in test model"
 
-            eval_reversed_start = reversed_curve.evaluate_proportion(0.0)
-            eval_reversed_end = reversed_curve.evaluate_proportion(1.0)
+    for reversed_curve in reversed_curves:
+        # param=0 should evaluate at interval.end (reversed), matching the swapped start
+        eval_at_0 = reversed_curve.evaluate_proportion(0.0)
+        expected_at_0 = reversed_curve.geometry.evaluate(reversed_curve.interval.end)
+        assert np.allclose(eval_at_0.position, expected_at_0.position)
 
-            assert np.allclose(eval_reversed_start.position, reversed_curve.start)
-            assert np.allclose(eval_reversed_end.position, reversed_curve.end)
-            break
+        # param=1 should evaluate at interval.start (reversed), matching the swapped end
+        eval_at_1 = reversed_curve.evaluate_proportion(1.0)
+        expected_at_1 = reversed_curve.geometry.evaluate(reversed_curve.interval.start)
+        assert np.allclose(eval_at_1.position, expected_at_1.position)
 
 
 def test_transformed_copy_preserves_type(modeler: Modeler):
