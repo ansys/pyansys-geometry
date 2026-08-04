@@ -464,9 +464,8 @@ def test_intersect_curve_coplanar_lines(modeler: Modeler):
     )
 
     intersections = edge0.intersect_curve(edge1)
-    assert isinstance(intersections, list)
-    assert len(intersections) > 0
-    assert all(isinstance(p, Point3D) for p in intersections)
+    assert len(intersections) == 1
+    assert np.allclose(intersections[0], Point3D([-1.0, -1.0, 2.0]))
 
 
 def test_intersect_curve_non_intersecting(modeler: Modeler):
@@ -556,9 +555,11 @@ def test_rotate_180_degrees(modeler: Modeler):
 
     trimmed_curve.rotate(center, UnitVector3D([0, 0, 1]), np.pi)
 
-    assert not (
-        np.allclose(trimmed_curve.start, original_start)
-        and np.allclose(trimmed_curve.end, original_end)
+    assert np.allclose(
+        trimmed_curve.start, Point3D([-original_start.x.m, -original_start.y.m, original_start.z.m])
+    )
+    assert np.allclose(
+        trimmed_curve.end, Point3D([-original_end.x.m, -original_end.y.m, original_end.z.m])
     )
 
 
@@ -578,10 +579,8 @@ def test_rotate_with_angle_quantity(modeler: Modeler):
     angle = Angle(np.pi / 4)
     trimmed_curve.rotate(origin, UnitVector3D([0, 0, 1]), angle)
 
-    assert not (
-        np.allclose(trimmed_curve.start, original_start)
-        and np.allclose(trimmed_curve.end, original_end)
-    )
+    assert np.allclose(trimmed_curve.start, Point3D([0, -np.sqrt(2), original_start.z.m]))
+    assert np.allclose(trimmed_curve.end, Point3D([np.sqrt(2), 0, original_end.z.m]))
 
 
 def test_rotate_about_different_axes(modeler: Modeler):
