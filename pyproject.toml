@@ -108,7 +108,7 @@ general-all = [
   "scipy==1.18.0",
   "semver==3.0.4",
   "six==1.17.0",
-  "trame-client!=3.13.3",
+  "trame-client<3.13.3",
   "trame-vtk==2.10.2",
   "vtk==9.6.2",
 ]
