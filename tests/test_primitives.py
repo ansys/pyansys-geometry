@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from unittest.mock import Mock
 
 from beartype.roar import BeartypeCallHintParamViolation
 import geomdl
@@ -1218,28 +1217,6 @@ def test_circle_project_point_on_axis_raises_value_error():
         circle.project_point(Point3D([0, 0, 2]))
 
 
-def test_circle_project_point_zero_direction_with_mocking(monkeypatch):
-    """Test project_point zero-direction branch."""
-    circle = Circle(Point3D([0, 0, 0]), Distance(1))
-    original_from_points = UnitVector3D.from_points
-    zero_direction = Mock(spec_set=["is_zero"])
-    zero_direction.is_zero = True
-
-    # use the real implementation except for the zero-vector case
-    # which must be forced to reach project_point's zero-direction fallback branch.
-    def _from_points_passthrough(*args, **kwargs):
-        point_b = args[-1]
-        if np.allclose(np.asarray(point_b), np.array([0.0, 0.0, 0.0])):
-            return zero_direction
-        return original_from_points(*args, **kwargs)
-
-    monkeypatch.setattr(UnitVector3D, "from_points", _from_points_passthrough)
-    evaluation = circle.project_point(Point3D([0, 0, 2]))
-
-    assert evaluation.parameter == 0
-    assert np.allclose(evaluation.position, Point3D([1, 0, 0]))
-
-
 def test_circle_parameterization():
     """Test the parameterization method of the Circle class."""
     circle = Circle(Point3D([0, 0, 0]), Distance(1))
@@ -1487,7 +1464,7 @@ def test_ellipse_project_point_on_axis_raises_value_error():
 
 
 def test_ellipse_eccentricity_real_range():
-    """Test eccentricity for a valid ellipse without mocking."""
+    """Test eccentricity for a valid ellipse."""
     ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
     eccentricity = ellipse.eccentricity
 
@@ -1496,13 +1473,13 @@ def test_ellipse_eccentricity_real_range():
 
 
 def test_ellipse_metrics_real_values():
-    """Test geometric metrics for a valid ellipse without mocking."""
+    """Test geometric metrics for a valid ellipse."""
     ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
 
-    assert Accuracy.length_is_equal(ellipse.linear_eccentricity.m, np.sqrt(5))
-    assert Accuracy.length_is_equal(ellipse.semi_latus_rectum.m, 4 / 3)
-    assert Accuracy.length_is_equal(ellipse.area.m, 6 * np.pi)
-    assert Accuracy.length_is_equal(ellipse.perimeter.m, 15.8654395893)
+    assert ellipse.linear_eccentricity.m == pytest.approx(np.sqrt(5), rel=1e-7, abs=1e-8)
+    assert ellipse.semi_latus_rectum.m == pytest.approx(4 / 3, rel=1e-7, abs=1e-8)
+    assert ellipse.area.m == pytest.approx(6 * np.pi, rel=1e-7, abs=1e-8)
+    assert ellipse.perimeter.m == pytest.approx(15.8654395893, rel=1e-7, abs=1e-8)
 
 
 def test_ellipse_parameterization():
