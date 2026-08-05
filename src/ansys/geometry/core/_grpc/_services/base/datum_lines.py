@@ -20,25 +20,47 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""PyAnsys Geometry designer subpackage."""
+"""Module containing the datum lines service implementation (abstraction layer)."""
 
-from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
-from ansys.geometry.core.designer.component import Component, ExtrusionDirection, SharedTopologyType
-from ansys.geometry.core.designer.datumline import DatumLine
-from ansys.geometry.core.designer.datumplane import DatumPlane
-from ansys.geometry.core.designer.datumpoint import DatumPoint
-from ansys.geometry.core.designer.design import Design, DesignFileFormat
-from ansys.geometry.core.designer.designcurve import DesignCurve
-from ansys.geometry.core.designer.designpoint import DesignPoint
-from ansys.geometry.core.designer.edge import CurveType, Edge
-from ansys.geometry.core.designer.face import Face, SurfaceType
-from ansys.geometry.core.designer.geometry_commands import (
-    ExtrudeType,
-    OffsetMode,
-    SplitEdgeReference,
-    SplitEdgeType,
-    SplitFaceParameterType,
-    SplitFaceType,
-)
-from ansys.geometry.core.designer.part import MasterComponent, Part
-from ansys.geometry.core.designer.selection import NamedSelection
+from abc import ABC, abstractmethod
+
+import grpc
+
+
+class GRPCDatumLinesService(ABC):  # pragma: no cover
+    """Datum lines service for gRPC communication with the Geometry server.
+
+    Parameters
+    ----------
+    channel : grpc.Channel
+        The gRPC channel to the server.
+    """
+
+    def __init__(self, channel: grpc.Channel):
+        """Initialize the GRPCDatumLinesService class."""
+        pass
+
+    @abstractmethod
+    def create(self, **kwargs) -> dict:
+        """Create datum lines."""
+        pass
+
+    @abstractmethod
+    def delete(self, **kwargs) -> dict:
+        """Delete datum lines."""
+        pass
+
+    @abstractmethod
+    def get(self, **kwargs) -> dict:
+        """Get a datum line."""
+        pass
+
+    @abstractmethod
+    def get_all(self, **kwargs) -> dict:
+        """Get all datum lines."""
+        pass
+
+    @abstractmethod
+    def get_is_deleted(self, **kwargs) -> dict:
+        """Get whether datum lines are deleted."""
+        pass
