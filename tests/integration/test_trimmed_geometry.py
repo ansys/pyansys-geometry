@@ -588,17 +588,20 @@ def test_rotate_about_different_axes(modeler: Modeler):
     trimmed_curve_y = body.edges[1].shape
     trimmed_curve_z = body.edges[2].shape
 
-    original_start_x = trimmed_curve_x.start.copy()
+    # 90° about X at origin
     trimmed_curve_x.rotate(origin, UnitVector3D([1, 0, 0]), np.pi / 2)
-    assert trimmed_curve_x.start != original_start_x
+    assert np.allclose(trimmed_curve_x.start, Point3D([-1, -2, -1]))
+    assert np.allclose(trimmed_curve_x.end, Point3D([1, -2, -1]))
 
-    original_start_y = trimmed_curve_y.start.copy()
+    # 90° about Y at origin
     trimmed_curve_y.rotate(origin, UnitVector3D([0, 1, 0]), np.pi / 2)
-    assert trimmed_curve_y.start != original_start_y
+    assert np.allclose(trimmed_curve_y.start, Point3D([0, -1, 1]))
+    assert np.allclose(trimmed_curve_y.end, Point3D([2, -1, 1]))
 
-    original_start_z = trimmed_curve_z.start.copy()
+    # 90° about Z at origin
     trimmed_curve_z.rotate(origin, UnitVector3D([0, 0, 1]), np.pi / 2)
-    assert trimmed_curve_z.start != original_start_z
+    assert np.allclose(trimmed_curve_z.start, Point3D([-1, -1, 2]))
+    assert np.allclose(trimmed_curve_z.end, Point3D([1, -1, 2]))
 
 
 def test_reversed_trimmed_curve_evaluate_proportion(hedgehog_design):
