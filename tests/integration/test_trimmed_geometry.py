@@ -30,6 +30,7 @@ from ansys.geometry.core.connection import BackendType
 from ansys.geometry.core.designer.face import SurfaceType
 from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.math.point import Point2D
+from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.shapes import Circle, Line
@@ -343,3 +344,319 @@ def test_trimmed_curve(modeler: Modeler):
     assert edge0.length == Quantity(1, UNITS.m)
     assert edge0.intersect_curve(edge1) == [Point3D([-0.5, -0.5, 1.0])]
     assert edge0.intersect_curve(edge2) == []
+
+
+def test_evaluate_proportion_line_curve(modeler: Modeler):
+    """Test evaluate_proportion method for line curves."""
+    design = modeler.create_design("test_evaluate_proportion")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+
+    eval_at_start = trimmed_curve.evaluate_proportion(0.0)
+    assert np.allclose(eval_at_start.position, trimmed_curve.start)
+
+    eval_at_end = trimmed_curve.evaluate_proportion(1.0)
+    assert np.allclose(eval_at_end.position, trimmed_curve.end)
+
+    eval_at_mid = trimmed_curve.evaluate_proportion(0.5)
+    mid_point = (trimmed_curve.start + trimmed_curve.end) / 2
+    assert np.allclose(eval_at_mid.position, mid_point)
+
+    eval_at_quarter = trimmed_curve.evaluate_proportion(0.25)
+    quarter_point = trimmed_curve.start + (trimmed_curve.end - trimmed_curve.start) * 0.25
+    assert np.allclose(eval_at_quarter.position, quarter_point)
+
+
+def test_evaluate_proportion_circle_curve(hedgehog_design):
+    """Test evaluate_proportion method for circular curves."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+    edge = edges[0]
+    trimmed_curve = edge.shape
+
+    assert isinstance(trimmed_curve, TrimmedCurve)
+
+    eval_at_start = trimmed_curve.evaluate_proportion(0.0)
+    assert np.allclose(eval_at_start.position, trimmed_curve.start)
+
+    eval_at_end = trimmed_curve.evaluate_proportion(1.0)
+    assert np.allclose(eval_at_end.position, trimmed_curve.end)
+
+    eval_at_mid = trimmed_curve.evaluate_proportion(0.5)
+    assert trimmed_curve.start != trimmed_curve.end
+    assert eval_at_mid.position is not None
+
+
+def test_transformed_copy_line_curve(modeler: Modeler):
+    """Test transformed_copy method for line curves."""
+    from ansys.geometry.core.math.matrix import Matrix44
+
+    design = modeler.create_design("test_transformed_copy")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+    original_curve = edge.shape
+
+    assert isinstance(original_curve, TrimmedCurve)
+
+    translation_matrix = Matrix44.create_translation(Vector3D([1, 2, 3]))
+    transformed_curve = original_curve.transformed_copy(translation_matrix)
+
+    assert isinstance(transformed_curve, TrimmedCurve)
+    assert np.allclose(transformed_curve.start, original_curve.start + Point3D([1, 2, 3]))
+    assert np.allclose(transformed_curve.end, original_curve.end + Point3D([1, 2, 3]))
+    assert transformed_curve.length == original_curve.length
+    assert transformed_curve.interval == original_curve.interval
+
+    original_start = original_curve.start.copy()
+    assert np.allclose(original_curve.start, original_start)
+
+
+def test_transformed_copy_circle_curve(modeler: Modeler):
+    """Test transformed_copy with rotation preserves geometry properties."""
+    from ansys.geometry.core.math.matrix import Matrix44
+
+    design = modeler.create_design("test_transformed_copy_rotation")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    original_curve = edge.shape
+
+    rotation_matrix = Matrix44.create_matrix_from_rotation_about_axis(
+        UnitVector3D([0, 0, 1]), np.pi / 2
+    )
+    transformed_curve = original_curve.transformed_copy(rotation_matrix)
+
+    assert isinstance(transformed_curve, TrimmedCurve)
+    assert transformed_curve.length == original_curve.length
+
+    original_start_vector = Vector3D(
+        [original_curve.start.x.m, original_curve.start.y.m, original_curve.start.z.m]
+    )
+    transformed_start_vector = Vector3D(
+        [transformed_curve.start.x.m, transformed_curve.start.y.m, transformed_curve.start.z.m]
+    )
+    assert np.allclose(original_start_vector.magnitude, transformed_start_vector.magnitude)
+
+
+def test_intersect_curve_coplanar_lines(modeler: Modeler):
+    """Test intersect_curve with coplanar lines."""
+    design = modeler.create_design("test_intersect_coplanar")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    edge0 = TrimmedCurve(
+        geometry=body.edges[0].shape.geometry,
+        start=body.edges[0].shape.start,
+        end=body.edges[0].shape.end,
+        interval=body.edges[0].shape.interval,
+        length=body.edges[0].shape.length,
+        grpc_client=modeler.client,
+    )
+
+    edge1 = TrimmedCurve(
+        geometry=body.edges[1].shape.geometry,
+        start=body.edges[1].shape.start,
+        end=body.edges[1].shape.end,
+        interval=body.edges[1].shape.interval,
+        length=body.edges[1].shape.length,
+        grpc_client=modeler.client,
+    )
+
+    intersections = edge0.intersect_curve(edge1)
+    assert len(intersections) == 1
+    assert np.allclose(intersections[0], Point3D([-1.0, -1.0, 2.0]))
+
+
+def test_intersect_curve_non_intersecting(modeler: Modeler):
+    """Test intersect_curve with non-intersecting lines."""
+    design = modeler.create_design("test_intersect_non")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    edge0 = TrimmedCurve(
+        geometry=body.edges[0].shape.geometry,
+        start=body.edges[0].shape.start,
+        end=body.edges[0].shape.end,
+        interval=body.edges[0].shape.interval,
+        length=body.edges[0].shape.length,
+        grpc_client=modeler.client,
+    )
+
+    edge2 = TrimmedCurve(
+        geometry=body.edges[4].shape.geometry,
+        start=body.edges[4].shape.start,
+        end=body.edges[4].shape.end,
+        interval=body.edges[4].shape.interval,
+        length=body.edges[4].shape.length,
+        grpc_client=modeler.client,
+    )
+
+    intersections = edge0.intersect_curve(edge2)
+    assert isinstance(intersections, list)
+    assert len(intersections) == 0
+
+
+def test_translate_preserves_length(modeler: Modeler):
+    """Test translate method preserves curve length."""
+    design = modeler.create_design("test_translate_length")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    trimmed_curve = edge.shape
+
+    original_length = trimmed_curve.length
+    original_start = trimmed_curve.start.copy()
+
+    trimmed_curve.translate(UnitVector3D([1, 0, 0]), 0.5)
+
+    assert np.allclose(trimmed_curve.length.m, original_length.m)
+    assert np.allclose(trimmed_curve.start - original_start, Point3D([0.5, 0, 0]))
+
+
+def test_translate_with_quantity_distance(modeler: Modeler):
+    """Test translate with Quantity distance."""
+    from ansys.geometry.core.misc.measurements import Distance
+
+    design = modeler.create_design("test_translate_quantity")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    trimmed_curve = edge.shape
+
+    original_start = trimmed_curve.start.copy()
+
+    distance = Distance(1)
+    trimmed_curve.translate(UnitVector3D([0, 1, 0]), distance)
+
+    assert np.allclose(trimmed_curve.start - original_start, Point3D([0, 1, 0]))
+
+
+def test_translate_negative_direction(modeler: Modeler):
+    """Test translate with negative direction."""
+    design = modeler.create_design("test_translate_negative")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[1]
+    trimmed_curve = edge.shape
+
+    original_start = trimmed_curve.start.copy()
+    trimmed_curve.translate(UnitVector3D([-1, 0, 0]), 0.2)
+
+    assert np.allclose(trimmed_curve.start - original_start, Point3D([-0.2, 0, 0]))
+
+
+def test_rotate_180_degrees(modeler: Modeler):
+    """Test rotate method with 180 degree rotation."""
+    design = modeler.create_design("test_rotate_180")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    trimmed_curve = edge.shape
+
+    center = Point3D([0, 0, 1])
+
+    trimmed_curve.rotate(center, UnitVector3D([0, 0, 1]), np.pi)
+
+    # 180° around z at [0,0,1]: (x,y,z) -> (-x,-y,z)
+    assert np.allclose(trimmed_curve.start, Point3D([1, 1, 2]))
+    assert np.allclose(trimmed_curve.end, Point3D([-1, 1, 2]))
+
+
+def test_rotate_with_angle_quantity(modeler: Modeler):
+    """Test rotate method with Angle quantity."""
+    from ansys.geometry.core.misc.measurements import Angle
+
+    design = modeler.create_design("test_rotate_angle")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+    edge = body.edges[0]
+    trimmed_curve = edge.shape
+
+    origin = Point3D([0, 0, 0])
+
+    angle = Angle(np.pi / 4)
+    trimmed_curve.rotate(origin, UnitVector3D([0, 0, 1]), angle)
+
+    # π/4 around z at origin: [-1,-1,2] -> [0,-√2,2], [1,-1,2] -> [√2,0,2]
+    assert np.allclose(trimmed_curve.start, Point3D([0, -np.sqrt(2), 2]))
+    assert np.allclose(trimmed_curve.end, Point3D([np.sqrt(2), 0, 2]))
+
+
+def test_rotate_about_different_axes(modeler: Modeler):
+    """Test rotate method about different axes."""
+    design = modeler.create_design("test_rotate_axes")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
+
+    origin = Point3D([0, 0, 0])
+
+    trimmed_curve_x = body.edges[0].shape
+    trimmed_curve_y = body.edges[1].shape
+    trimmed_curve_z = body.edges[2].shape
+
+    # 90° about X at origin
+    trimmed_curve_x.rotate(origin, UnitVector3D([1, 0, 0]), np.pi / 2)
+    assert np.allclose(trimmed_curve_x.start, Point3D([-1, -2, -1]))
+    assert np.allclose(trimmed_curve_x.end, Point3D([1, -2, -1]))
+
+    # 90° about Y at origin
+    trimmed_curve_y.rotate(origin, UnitVector3D([0, 1, 0]), np.pi / 2)
+    assert np.allclose(trimmed_curve_y.start, Point3D([0, -1, 1]))
+    assert np.allclose(trimmed_curve_y.end, Point3D([2, -1, 1]))
+
+    # 90° about Z at origin
+    trimmed_curve_z.rotate(origin, UnitVector3D([0, 0, 1]), np.pi / 2)
+    assert np.allclose(trimmed_curve_z.start, Point3D([-1, -1, 2]))
+    assert np.allclose(trimmed_curve_z.end, Point3D([1, -1, 2]))
+
+
+def test_reversed_trimmed_curve_evaluate_proportion(hedgehog_design):
+    """Test ReversedTrimmedCurve evaluate_proportion method."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+
+    reversed_edge = None
+    for edge in edges:
+        if isinstance(edge.shape, ReversedTrimmedCurve):
+            reversed_edge = edge.shape
+            break
+
+    assert reversed_edge is not None, "No ReversedTrimmedCurve found in test model"
+
+    eval_at_start = reversed_edge.evaluate_proportion(0.0)
+    assert np.allclose(eval_at_start.position, reversed_edge.start)
+
+    eval_at_end = reversed_edge.evaluate_proportion(1.0)
+    assert np.allclose(eval_at_end.position, reversed_edge.end)
+
+    eval_at_mid = reversed_edge.evaluate_proportion(0.5)
+    assert eval_at_mid.position is not None
+
+
+def test_reversed_trimmed_curve_proportional_reversal(hedgehog_design):
+    """Test that ReversedTrimmedCurve evaluations are reversed."""
+    hedgehog_body = hedgehog_design.bodies[0]
+    edges = hedgehog_body.edges
+
+    reversed_curves = [edge.shape for edge in edges if isinstance(edge.shape, ReversedTrimmedCurve)]
+    assert len(reversed_curves) > 0, "No ReversedTrimmedCurve found in test model"
+
+    for reversed_curve in reversed_curves:
+        # param=0 should evaluate at interval.end (reversed), matching the swapped start
+        eval_at_0 = reversed_curve.evaluate_proportion(0.0)
+        expected_at_0 = reversed_curve.geometry.evaluate(reversed_curve.interval.end)
+        assert np.allclose(eval_at_0.position, expected_at_0.position)
+
+        # param=1 should evaluate at interval.start (reversed), matching the swapped end
+        eval_at_1 = reversed_curve.evaluate_proportion(1.0)
+        expected_at_1 = reversed_curve.geometry.evaluate(reversed_curve.interval.start)
+        assert np.allclose(eval_at_1.position, expected_at_1.position)
+
+
+def test_transformed_copy_preserves_type(modeler: Modeler):
+    """Test that transformed_copy returns TrimmedCurve instance."""
+    from ansys.geometry.core.math.matrix import Matrix44
+
+    design = modeler.create_design("test_transformed_type")
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    edge = body.edges[0]
+    original_curve = edge.shape
+
+    matrix = Matrix44.create_translation(Vector3D([1, 1, 1]))
+    transformed = original_curve.transformed_copy(matrix)
+
+    assert isinstance(transformed, TrimmedCurve)
