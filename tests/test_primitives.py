@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-
 from beartype.roar import BeartypeCallHintParamViolation
 import geomdl
 import numpy as np
