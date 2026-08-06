@@ -90,6 +90,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
         request = ExtractVolumeFromEdgeLoopsRequest(
             sealing_edge_ids=[build_grpc_id(edge) for edge in kwargs["sealing_edges"]],
             inside_face_ids=[build_grpc_id(face) for face in kwargs["inside_faces"]],
+            options=from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"])
         )
 
         # Call the gRPC service

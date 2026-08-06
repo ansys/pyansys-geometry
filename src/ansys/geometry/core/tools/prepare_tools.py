@@ -180,7 +180,10 @@ class PrepareTools:
 
     @min_backend_version(25, 1, 0)
     def extract_volume_from_edge_loops(
-        self, sealing_edges: list["Edge"], inside_faces: list["Face"] = None
+        self,
+        sealing_edges: list["Edge"],
+        inside_faces: list["Face"] | None = None,
+        options: VolumeExtractOptions | None = None,
     ) -> list["Body"]:
         """Extract a volume from input edge loops.
 
@@ -193,6 +196,8 @@ class PrepareTools:
             List of faces that seal the volume.
         inside_faces : list[Face], optional
             List of faces that define the interior of the solid (not always necessary).
+        options : VolumeExtractOptions, optional
+            Options for volume extraction.
 
         Returns
         -------
@@ -202,6 +207,7 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 25R1.
+        The ``options`` parameter is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
@@ -222,6 +228,7 @@ class PrepareTools:
         response = self._grpc_client._services.prepare_tools.extract_volume_from_edge_loops(
             sealing_edges=[edge.id for edge in sealing_edges],
             inside_faces=[face.id for face in inside_faces],
+            options=options,
         )
 
         if response.get("success"):
