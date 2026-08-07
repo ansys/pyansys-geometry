@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``curve_evaluation.py`` module
+==================================
+
+.. py:module:: ansys.geometry.core.primitives.curve_evaluation
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: curve_evaluation
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~CurveEvaluation`
+            - Provides for evaluating a curve.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 CurveEvaluation<CurveEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a curve.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

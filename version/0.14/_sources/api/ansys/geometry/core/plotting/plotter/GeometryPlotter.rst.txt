@@ -1,0 +1,641 @@
+
+
+
+
+
+
+:class:`GeometryPlotter`
+========================
+
+
+.. py:class:: ansys.geometry.core.plotting.plotter.GeometryPlotter(use_trame: bool | None = None, use_service_colors: bool | None = None, allow_picking: bool = False, show_plane: bool = True)
+
+   Bases: :py:obj:`ansys.tools.visualization_interface.Plotter`
+
+
+   
+   Plotter for PyAnsys Geometry objects.
+
+   This class is an implementation of the PlotterInterface class.
+
+   :Parameters:
+
+       **use_trame** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to use trame visualizer or not, by default None.
+
+       **use_service_colors** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to use service colors or not, by default None.
+
+       **allow_picking** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to allow picking or not, by default False.
+
+       **show_plane** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Whether to show the plane in the scene, by default True.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryPlotter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~add_frame`
+            - Plot a frame in the scene.
+          * - :py:attr:`~add_plane`
+            - Plot a plane in the scene.
+          * - :py:attr:`~add_sketch`
+            - Plot a sketch in the scene.
+          * - :py:attr:`~add_body_edges`
+            - Add the outer edges of a body to the plot.
+          * - :py:attr:`~add_body`
+            - Add a body to the scene.
+          * - :py:attr:`~add_face`
+            - Add a face to the scene.
+          * - :py:attr:`~add_component`
+            - Add a component to the scene.
+          * - :py:attr:`~add_component_by_body`
+            - Add a component on a per body basis.
+          * - :py:attr:`~add_sketch_polydata`
+            - Add sketches to the scene from PyVista polydata.
+          * - :py:attr:`~add_design_point`
+            - Add a DesignPoint object to the plotter.
+          * - :py:attr:`~plot_iter`
+            - Add a list of any type of object to the scene.
+          * - :py:attr:`~plot`
+            - Add a custom mesh to the plotter.
+          * - :py:attr:`~show`
+            - Show the plotter.
+          * - :py:attr:`~export_glb`
+            - Export the design to a glb file. Does not support picked objects.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~use_service_colors`
+            - Indicates whether to use service colors for plotting purposes.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.plotter import GeometryPlotter
+
+Property detail
+---------------
+
+.. py:property:: use_service_colors
+   :type: bool
+
+
+   
+   Indicates whether to use service colors for plotting purposes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: add_frame(frame: ansys.geometry.core.math.frame.Frame, plotting_options: dict | None = None) -> None
+
+   
+   Plot a frame in the scene.
+
+
+   :Parameters:
+
+       **frame** : :obj:`Frame`
+           Frame to render in the scene.
+
+       **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           dictionary containing parameters accepted by the
+           :func:`pyvista.create_axes_marker` class for customizing
+           the frame rendering in the scene.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_plane(plane: ansys.geometry.core.math.plane.Plane, plane_options: dict | None = None, plotting_options: dict | None = None) -> None
+
+   
+   Plot a plane in the scene.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane to render in the scene.
+
+       **plane_options** : :class:`python:dict`, default: :data:`python:None`
+           dictionary containing parameters accepted by the
+           :func:`pyvista.Plane  <pyvista.Plane>` function for customizing the mesh
+           representing the plane.
+
+       **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           dictionary containing parameters accepted by the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method for
+           customizing the mesh rendering of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_sketch(sketch: ansys.geometry.core.sketch.sketch.Sketch, show_plane: bool = False, show_frame: bool = False, **plotting_options: dict | None) -> None
+
+   
+   Plot a sketch in the scene.
+
+
+   :Parameters:
+
+       **sketch** : :obj:`Sketch`
+           Sketch to render in the scene.
+
+       **show_plane** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to render the sketch plane in the scene.
+
+       **show_frame** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to show the frame in the scene.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_body_edges(body_plot: ansys.tools.visualization_interface.MeshObjectPlot, **plotting_options: dict | None) -> None
+
+   
+   Add the outer edges of a body to the plot.
+
+   This method has the side effect of adding the edges to the GeomObject that
+   you pass through the parameters.
+
+   :Parameters:
+
+       **body_plot** : :obj:`MeshObjectPlot`
+           Body of which to add the edges.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_body(body: ansys.geometry.core.designer.body.Body, merge: bool = False, **plotting_options: dict | None) -> None
+
+   
+   Add a body to the scene.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to add.
+
+       **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the body into a single mesh. When ``True``, the
+           individual faces of the tessellation are merged. This
+           preserves the number of triangles and only merges the topology.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments,
+           see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_face(face: ansys.geometry.core.designer.face.Face, **plotting_options: dict | None) -> None
+
+   
+   Add a face to the scene.
+
+
+   :Parameters:
+
+       **face** : :obj:`Face`
+           Face to add.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_component(component: ansys.geometry.core.designer.component.Component, merge_component: bool = False, merge_bodies: bool = False, **plotting_options) -> None
+
+   
+   Add a component to the scene.
+
+
+   :Parameters:
+
+       **component** : :obj:`Component`
+           Component to add.
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the component into a single dataset. When
+           ``True``, all the individual bodies are effectively combined
+           into a single dataset without any hierarchy.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge each body into a single dataset. When ``True``,
+           all the faces of each individual body are effectively combined
+           into a single dataset without separating faces.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_component_by_body(component: ansys.geometry.core.designer.component.Component, merge_bodies: bool, **plotting_options: dict | None) -> None
+
+   
+   Add a component on a per body basis.
+
+
+   :Parameters:
+
+       **component** : :obj:`Component`
+           Component to add.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This will allow to make use of the service colors. At the same time, it will be
+   slower than the add_component method.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_sketch_polydata(polydata_entries: list[pyvista.PolyData], sketch: ansys.geometry.core.sketch.sketch.Sketch = None, **plotting_options) -> None
+
+   
+   Add sketches to the scene from PyVista polydata.
+
+
+   :Parameters:
+
+       **polydata_entries** : :class:`python:list`\[:obj:`pyvista.PolyData`]
+           Polydata to add.
+
+       **sketch** : :obj:`Sketch`, default: :data:`python:None`
+           Sketch to add.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: add_design_point(design_point: ansys.geometry.core.designer.designpoint.DesignPoint, **plotting_options) -> None
+
+   
+   Add a DesignPoint object to the plotter.
+
+
+   :Parameters:
+
+       **design_point** : :obj:`DesignPoint`
+           DesignPoint to add.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: plot_iter(plotting_list: list[Any], name_filter: str = None, **plotting_options) -> None
+
+   
+   Add a list of any type of object to the scene.
+
+   These types of objects are supported: ``Body``, ``Component``, ``list[pv.PolyData]``,
+   ``pv.MultiBlock``, and ``Sketch``.
+
+   :Parameters:
+
+       **plotting_list** : :class:`python:list`\[:obj:`Any`]
+           list of objects you want to plot.
+
+       **name_filter** : :class:`python:str`, default: :data:`python:None`
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: plot(plottable_object: Any, name_filter: str = None, **plotting_options) -> None
+
+   
+   Add a custom mesh to the plotter.
+
+
+   :Parameters:
+
+       **plottable_object** : :class:`python:str`, default: :data:`python:None`
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **name_filter: str, default: None**
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, depend of the backend implementation
+           you are using.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: show(plotting_object: Any = None, screenshot: str | None = None, **plotting_options) -> None | list[Any]
+
+   
+   Show the plotter.
+
+
+   :Parameters:
+
+       **plotting_object** : :obj:`Any`, default: :data:`python:None`
+           Object you can add to the plotter.
+
+       **screenshot** : :class:`python:str`, default: :data:`python:None`
+           Path to save a screenshot of the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for the plotter. Arguments depend of the backend implementation
+           you are using.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: export_glb(plotting_object: Any = None, filename: str | pathlib.Path | None = None, **plotting_options) -> pathlib.Path
+
+   
+   Export the design to a glb file. Does not support picked objects.
+
+
+   :Parameters:
+
+       **plotting_object** : :obj:`Any`, default: :data:`python:None`
+           Object you can add to the plotter.
+
+       **filename** : :class:`python:str` | :obj:`~pathlib.Path`, default: :data:`python:None`
+           Path to save a GLB file of the plotter. If None, the file will be saved as
+           temp_glb.glb.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for the plotter. Arguments depend of the backend implementation
+           you are using.
+
+
+
+   :Returns:
+
+       :obj:`~pathlib.Path`
+           Path to the exported glb file.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

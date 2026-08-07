@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``ruler.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.ruler
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ruler
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Ruler`
+            - Provides the ruler widget for the PyAnsys Geometry ``Plotter`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Ruler<Ruler>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ruler widget for the PyAnsys Geometry plotter.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

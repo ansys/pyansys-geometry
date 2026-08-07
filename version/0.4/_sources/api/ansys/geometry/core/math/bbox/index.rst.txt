@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``bbox.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.math.bbox
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: bbox
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~BoundingBox2D`
+            - Maintains the X and Y dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 BoundingBox2D<BoundingBox2D>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a bounding box.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

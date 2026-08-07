@@ -1,0 +1,289 @@
+
+
+
+
+
+
+The ``usd_export.py`` module
+============================
+
+.. py:module:: ansys.geometry.core.plotting.usd_export
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.plotting.usd_export
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~sanitize_usd_name`
+            - Convert an arbitrary string to a valid USD prim name.
+
+
+          * - :py:obj:`~unique_name`
+            - Return ``name`` or a de-duplicated variant if it already exists in ``existing``.
+
+
+          * - :py:obj:`~raw_tess_to_usd_mesh_data`
+            - Convert raw tessellation data to USD mesh arrays.
+
+
+          * - :py:obj:`~run_if_usd_required`
+            - Check that usd-core is installed, raising ImportError if not.
+
+
+          * - :py:obj:`~usd_required`
+            - Decorate a method as requiring usd-core.
+
+
+          * - :py:obj:`~export_design_to_usd`
+            - Export a design's tessellation to a USD stage file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides USD export utilities for PyAnsys Geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: sanitize_usd_name(name: str) -> str
+
+   
+   Convert an arbitrary string to a valid USD prim name.
+
+   USD prim names must match ``[A-Za-z_][A-Za-z0-9_]*``.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Input name (e.g. body or component name from the service).
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           A valid USD prim name.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: unique_name(name: str, existing: set[str]) -> str
+
+   
+   Return ``name`` or a de-duplicated variant if it already exists in ``existing``.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Desired prim name.
+
+       **existing** : :obj:`set`\[:class:`python:str`]
+           Names already in use within the current USD prim scope.
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           ``name`` if no collision, otherwise ``name_1``, ``name_2``, etc.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: raw_tess_to_usd_mesh_data(raw_tess: dict) -> tuple[list[tuple[float, float, float]], list[int], list[int]]
+
+   
+   Convert raw tessellation data to USD mesh arrays.
+
+
+   :Parameters:
+
+       **raw_tess** : :class:`python:dict`
+           Raw tessellation as returned by ``Body.get_raw_tessellation()``.
+           Keys are face/edge IDs; values are dicts with ``"vertices"`` (flat float list),
+           ``"faces"`` (VTK connectivity ``[3, i, j, k, ...]``), and ``"is_edge"`` (bool).
+
+
+
+   :Returns:
+
+       :class:`python:tuple`
+           A 3-tuple of ``(points, face_vertex_counts, face_vertex_indices)``:
+           
+           - ``points``: list of ``(x, y, z)`` float tuples.
+           - ``face_vertex_counts``: list of ints (all 3 for triangulated meshes).
+           - ``face_vertex_indices``: flat list of vertex indices.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: run_if_usd_required() -> None
+
+   
+   Check that usd-core is installed, raising ImportError if not.
+
+
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`ImportError`
+           If ``usd-core`` is not installed.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: usd_required(method: Callable) -> Callable
+
+   
+   Decorate a method as requiring usd-core.
+
+
+   :Parameters:
+
+       **method** : :func:`python:callable`
+           Method to decorate.
+
+
+
+   :Returns:
+
+       :func:`python:callable`
+           Decorated method that raises ``ImportError`` if ``usd-core`` is not installed.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: export_design_to_usd(design: ansys.geometry.core.designer.design.Design, path: pathlib.Path, tess_options: TessellationOptions | None = None) -> None
+
+   
+   Export a design's tessellation to a USD stage file.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           The design to export.
+
+       **path** : :obj:`~pathlib.Path`
+           Output file path. Must end with ``.usda``, ``.usdc``, ``.usdz``, or ``.usd``.
+
+       **tess_options** : :obj:`~ansys.geometry.core.misc.options.TessellationOptions` | :data:`python:None`, default: :data:`python:None`
+           Tessellation quality options. ``None`` uses the server default.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

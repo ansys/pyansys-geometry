@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`ParameterUpdateStatus`
+==============================
+
+
+.. py:class:: ansys.geometry.core.parameters.parameter.ParameterUpdateStatus(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the status messages associated with parameter updates.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ParameterUpdateStatus
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~SUCCESS`
+            - 
+          * - :py:attr:`~FAILURE`
+            - 
+          * - :py:attr:`~CONSTRAINED_PARAMETERS`
+            - 
+          * - :py:attr:`~UNKNOWN`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.parameters.parameter import ParameterUpdateStatus
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: SUCCESS
+   :value: 0
+
+
+.. py:attribute:: FAILURE
+   :value: 1
+
+
+.. py:attribute:: CONSTRAINED_PARAMETERS
+   :value: 2
+
+
+.. py:attribute:: UNKNOWN
+   :value: 3
+
+
+
+
+
+

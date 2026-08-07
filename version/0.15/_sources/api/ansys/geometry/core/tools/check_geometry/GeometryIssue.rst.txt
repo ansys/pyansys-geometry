@@ -1,0 +1,207 @@
+
+
+
+
+
+
+:class:`GeometryIssue`
+======================
+
+
+.. py:class:: ansys.geometry.core.tools.check_geometry.GeometryIssue(message_type: str, message_id: str, message: str, edges: list[str], faces: list[str])
+
+   
+   Provides return message for the repair tool methods.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryIssue
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~message_type`
+            - The type of the message (warning, error, info).
+          * - :py:attr:`~message_id`
+            - The identifier for the message.
+          * - :py:attr:`~message`
+            - The content of the message.
+          * - :py:attr:`~edges`
+            - The List of edges (if any) that are part of the issue.
+          * - :py:attr:`~faces`
+            - The List of faces (if any) that are part of the issue.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.check_geometry import GeometryIssue
+
+Property detail
+---------------
+
+.. py:property:: message_type
+   :type: str
+
+
+   
+   The type of the message (warning, error, info).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: message_id
+   :type: str
+
+
+   
+   The identifier for the message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: message
+   :type: str
+
+
+   
+   The content of the message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edges
+   :type: list[str]
+
+
+   
+   The List of edges (if any) that are part of the issue.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: faces
+   :type: list[str]
+
+
+   
+   The List of faces (if any) that are part of the issue.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

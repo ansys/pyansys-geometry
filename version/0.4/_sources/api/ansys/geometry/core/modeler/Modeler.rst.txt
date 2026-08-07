@@ -1,0 +1,467 @@
+
+
+
+
+Modeler
+=======
+
+.. py:class:: Modeler(host: str = DEFAULT_HOST, port: beartype.typing.Union[str, int] = DEFAULT_PORT, channel: beartype.typing.Optional[grpc.Channel] = None, remote_instance: beartype.typing.Optional[ansys.platform.instancemanagement.Instance] = None, docker_instance: beartype.typing.Optional[ansys.geometry.core.connection.docker_instance.LocalDockerInstance] = None, product_instance: beartype.typing.Optional[ansys.geometry.core.connection.product_instance.ProductInstance] = None, timeout: beartype.typing.Optional[ansys.geometry.core.typing.Real] = 120, logging_level: beartype.typing.Optional[int] = logging.INFO, logging_file: beartype.typing.Optional[beartype.typing.Union[pathlib.Path, str]] = None, backend_type: beartype.typing.Optional[ansys.geometry.core.connection.backend.BackendType] = None)
+   :canonical: ansys.geometry.core.modeler.Modeler
+
+
+
+
+
+   Provides for interacting with an open session of the Geometry service.
+
+
+   :Parameters:
+
+       **host** : :class:`python:str`,  default: :obj:`DEFAULT_HOST`
+           Host where the server is running.
+
+       **port** : :obj:`Union`\[:class:`python:str`, :class:`python:int`], default: :obj:`DEFAULT_PORT`
+           Port number where the server is running.
+
+       **channel** : :obj:`~grpc.Channel`, default: :data:`python:None`
+           gRPC channel for server communication.
+
+       **remote_instance** : :obj:`ansys.platform.instancemanagement.Instance`, default: :data:`python:None`
+           Corresponding remote instance when the Geometry service
+           is launched using `PyPIM <https://github.com/ansys/pypim>`_. This instance
+           is deleted when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
+           method is called.
+
+       **docker_instance** : :obj:`LocalDockerInstance`, default: :data:`python:None`
+           Corresponding local Docker instance when the Geometry service is launched using the
+           :func:`launch_docker_modeler<ansys.geometry.core.connection.launcher.launch_docker_modeler>`
+           method. This instance is deleted when the
+           :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close>`
+           method is called.
+
+       **product_instance** : :obj:`ProductInstance`, default: :data:`python:None`
+           Corresponding local product instance when the product (Discovery or SpaceClaim)
+           is launched through the ``launch_modeler_with_geometry_service()``,
+           ``launch_modeler_with_discovery()`` or the ``launch_modeler_with_spaceclaim()``
+           interface. This instance will be deleted
+           when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **timeout** : :obj:`Real`, default: 120
+           Time in seconds for trying to achieve the connection.
+
+       **logging_level** : :class:`python:int`, default: :obj:`INFO`
+           Logging level to apply to the client.
+
+       **logging_file** : :class:`python:str`, :obj:`Path`, default: :data:`python:None`
+           File to output the log to, if requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Modeler
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_design`
+            - Initialize a new design with the connected client.
+          * - :py:attr:`~get_active_design`
+            - Get the active design on the modeler object.
+          * - :py:attr:`~read_existing_design`
+            - Read the existing design on the service with the connected client.
+          * - :py:attr:`~close`
+            - ``Modeler`` method for easily accessing the client's close method.
+          * - :py:attr:`~open_file`
+            - Open a file.
+          * - :py:attr:`~run_discovery_script_file`
+            - Run a Discovery script file.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~client`
+            - ``Modeler`` instance client.
+          * - :py:attr:`~repair_tools`
+            - Access to repair tools.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the modeler as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.modeler import Modeler
+
+
+Property detail
+---------------
+.. py:property:: client
+   :canonical: ansys.geometry.core.modeler.Modeler.client
+   :type: GrpcClient
+
+
+   
+   ``Modeler`` instance client.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: repair_tools
+   :canonical: ansys.geometry.core.modeler.Modeler.repair_tools
+   :type: RepairTools
+
+
+   
+   Access to repair tools.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+.. py:method:: create_design(name: str) -> ansys.geometry.core.designer.design.Design
+
+   
+   Initialize a new design with the connected client.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name for the new design.
+
+   :Returns:
+
+       :obj:`Design`
+           Design object created on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_active_design(sync_with_backend: bool = True) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the active design on the modeler object.
+
+
+   :Parameters:
+
+       **sync_with_backend** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether to sync the active design with the remote service. If set to False,
+           the active design may be out-of-sync with the remote service. This is useful
+           when the active design is known to be up-to-date.
+
+   :Returns:
+
+       :obj:`Design`
+           Design object already existing on the modeler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: read_existing_design() -> ansys.geometry.core.designer.design.Design
+
+   
+   Read the existing design on the service with the connected client.
+
+
+
+   :Returns:
+
+       :obj:`Design`
+           Design object already existing on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: close() -> None
+
+   
+   ``Modeler`` method for easily accessing the client's close method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: open_file(file_path: str, upload_to_server: bool = True, import_options: ansys.geometry.core.misc.options.ImportOptions = ImportOptions()) -> ansys.geometry.core.designer.design.Design
+
+   
+   Open a file.
+
+   This method imports a design into the service. On Windows, ``.scdocx``
+   and HOOPS Exchange formats are supported. On Linux, only the ``.scdocx``
+   format is supported.
+
+   If the file is a shattered assembly with external references, the whole containing folder
+   will need to be uploaded. Ensure proper folder structure in order to prevent the uploading
+   of unnecessary files.
+
+   :Parameters:
+
+       **file_path** : :class:`python:str`
+           Path of the file to open. The extension of the file must be included.
+
+       **upload_to_server** : :ref:`bool <python:bltin-boolean-values>`
+           True if the service is running on a remote machine. If service is running on the local
+           machine, set to False, as there is no reason to upload the file.
+
+       **import_options** : :obj:`ImportOptions`
+           Import options that toggle certain features when opening a file.
+
+   :Returns:
+
+       :obj:`Design`
+           Newly imported design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the modeler as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: run_discovery_script_file(file_path: str, script_args: beartype.typing.Optional[beartype.typing.Dict[str, str]] = None, import_design=False) -> beartype.typing.Tuple[beartype.typing.Dict[str, str], beartype.typing.Optional[ansys.geometry.core.designer.design.Design]]
+
+   
+   Run a Discovery script file.
+
+   .. note::
+
+       If arguments are passed to the script, they must be in the form of a dictionary.
+       On the server side, the script will receive the arguments as a dictionary of strings,
+       under the variable name ``argsDict``. For example, if the script is called with the
+       arguments ``run_discovery_script_file(..., script_args = {"length": "20"}, ...)``,
+       the script will receive the dictionary ``argsDict`` with the key-value pair
+       ``{"length": "20"}``.
+
+   .. note::
+
+       If an output is expected from the script, it will be returned as a dictionary of
+       strings. The keys and values of the dictionary are the variables and their values
+       that the script returns. However, it is necessary that the script creates a
+       dictionary called ``result`` with the variables and their values that are expected
+       to be returned. For example, if the script is expected to return the number of bodies
+       in the design, the script should create a dictionary called ``result`` with the
+       key-value pair ``{"numBodies": numBodies}``, where ``numBodies`` is the number of
+       bodies in the design.
+
+   The implied API version of the script should match the API version of the running
+   Geometry Service. DMS API versions 23.2.1 and later are supported. DMS is a
+   Windows-based modeling service that has been containerized to ease distribution,
+   execution, and remotability operations.
+
+   :Parameters:
+
+       **file_path** : :class:`python:str`
+           Path of the file. The extension of the file must be included.
+
+       **script_args** : :obj:`Optional`\[:obj:`Dict`\[:class:`python:str`, :class:`python:str`]], optional.
+           Arguments to pass to the script. By default, ``None``.
+
+       **import_design** : :ref:`bool <python:bltin-boolean-values>`, optional.
+           Whether to refresh the current design from the service. When the script
+           is expected to modify the existing design, set this to ``True`` to retrieve
+           up-to-date design data. When this is set to ``False`` (default) and the
+           script modifies the current design, the design may be out-of-sync. By default,
+           ``False``.
+
+   :Returns:
+
+       :class:`python:dict`\[:class:`python:str`, :class:`python:str`]
+           Values returned from the script.
+
+       :obj:`Design`, :obj:`optional`
+           Up-to-date current design. This is only returned if ``import_design=True``.
+
+
+
+
+   :Raises:
+
+       :obj:`GeometryRuntimeError`
+           If the Discovery script fails to run. Otherwise, assume that the script
+           ran successfully.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

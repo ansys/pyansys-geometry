@@ -1,0 +1,442 @@
+
+
+
+
+BoundingBox2D
+=============
+
+.. py:class:: BoundingBox2D(x_min: ansys.geometry.core.typing.Real = sys.float_info.max, x_max: ansys.geometry.core.typing.Real = sys.float_info.min, y_min: ansys.geometry.core.typing.Real = sys.float_info.max, y_max: ansys.geometry.core.typing.Real = sys.float_info.min)
+   :canonical: ansys.geometry.core.math.bbox.BoundingBox2D
+
+
+
+
+Maintains the X and Y dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: BoundingBox2D
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~add_point`
+            - Extend the ranges of the bounding box to include a point.
+          * - :py:attr:`~add_point_components`
+            - Extend the ranges of the bounding box to include the X and Y values.
+          * - :py:attr:`~add_points`
+            - Extend the ranges of the bounding box to include given points.
+          * - :py:attr:`~contains_point`
+            - Evaluate whether a provided point lies within the X and Y ranges of the bounds.
+          * - :py:attr:`~contains_point_components`
+            - Check if point components are within current X and Y ranges of the bounds.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~x_min`
+            - Minimum value of X-dimensional bounds.
+          * - :py:attr:`~x_max`
+            - Maximum value of the X-dimensional bounds.
+          * - :py:attr:`~y_min`
+            - Minimum value of Y-dimensional bounds.
+          * - :py:attr:`~y_max`
+            - Maximum value of Y-dimensional bounds.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``BoundingBox2D`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``BoundingBox2D`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.bbox import BoundingBox2D
+
+
+Property detail
+---------------
+.. py:property:: x_min
+   :canonical: ansys.geometry.core.math.bbox.BoundingBox2D.x_min
+   :type: Real
+
+
+   
+   Minimum value of X-dimensional bounds.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Minimum value of the X-dimensional bounds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: x_max
+   :canonical: ansys.geometry.core.math.bbox.BoundingBox2D.x_max
+   :type: Real
+
+
+   
+   Maximum value of the X-dimensional bounds.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Maximum value of the X-dimensional bounds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: y_min
+   :canonical: ansys.geometry.core.math.bbox.BoundingBox2D.y_min
+   :type: Real
+
+
+   
+   Minimum value of Y-dimensional bounds.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Minimum value of Y-dimensional bounds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: y_max
+   :canonical: ansys.geometry.core.math.bbox.BoundingBox2D.y_max
+   :type: Real
+
+
+   
+   Maximum value of Y-dimensional bounds.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Maximum value of Y-dimensional bounds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: add_point(point: ansys.geometry.core.math.point.Point2D) -> None
+
+   
+   Extend the ranges of the bounding box to include a point.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point2D`
+           Point to include within the bounds.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method is only applicable if the point components are outside
+   the current bounds.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_point_components(x: ansys.geometry.core.typing.Real, y: ansys.geometry.core.typing.Real) -> None
+
+   
+   Extend the ranges of the bounding box to include the X and Y values.
+
+
+   :Parameters:
+
+       **x** : :obj:`Real`
+           Point X component to include within the bounds.
+
+       **y** : :obj:`Real`
+           Point Y component to include within the bounds.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method is only applicable if the point components are outside
+   the current bounds.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_points(points: beartype.typing.List[ansys.geometry.core.math.point.Point2D]) -> None
+
+   
+   Extend the ranges of the bounding box to include given points.
+
+
+   :Parameters:
+
+       **points** : :obj:`List`\[:obj:`Point2D`]
+           List of points to include within the bounds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point2D) -> bool
+
+   
+   Evaluate whether a provided point lies within the X and Y ranges of the bounds.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point2D`
+           Point to compare against the bounds.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the point is contained in the bounding box. Otherwise, ``False``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: contains_point_components(x: ansys.geometry.core.typing.Real, y: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check if point components are within current X and Y ranges of the bounds.
+
+
+   :Parameters:
+
+       **x** : :obj:`Real`
+           Point X component to compare against the bounds.
+
+       **y** : :obj:`Real`
+           Point Y component to compare against the bounds.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the components are contained in the bounding box. Otherwise, ``False``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __eq__(other: BoundingBox2D) -> bool
+
+   
+   Equals operator for the ``BoundingBox2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __ne__(other: BoundingBox2D) -> bool
+
+   
+   Not equals operator for the ``BoundingBox2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

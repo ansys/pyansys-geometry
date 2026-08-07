@@ -1,0 +1,227 @@
+
+
+
+
+SketchEllipse
+=============
+
+.. py:class:: SketchEllipse(center: ansys.geometry.core.math.point.Point2D, major_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], minor_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = 0, plane: ansys.geometry.core.math.plane.Plane = Plane())
+   :canonical: ansys.geometry.core.sketch.ellipse.SketchEllipse
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`, :py:obj:`ansys.geometry.core.primitives.ellipse.Ellipse`
+
+Provides for modeling an ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: SketchEllipse
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plane_change`
+            - Redefine the plane containing ``SketchEllipse`` objects.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center point of the ellipse.
+          * - :py:attr:`~angle`
+            - Orientation angle of the ellipse.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the circle.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.ellipse import SketchEllipse
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.ellipse.SketchEllipse.center
+   :type: Point2D
+
+
+   
+   Center point of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle
+   :canonical: ansys.geometry.core.sketch.ellipse.SketchEllipse.angle
+   :type: pint.Quantity
+
+
+   
+   Orientation angle of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.sketch.ellipse.SketchEllipse.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This property resolves the dilemma between using the ``SkethFace.perimeter``
+   property and the ``Ellipse.perimeter`` property.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.ellipse.SketchEllipse.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: plane_change(plane: ansys.geometry.core.math.plane.Plane) -> None
+
+   
+   Redefine the plane containing ``SketchEllipse`` objects.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Desired new plane that is to contain the sketched ellipse.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This implies that their 3D definition might suffer changes.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

@@ -1,0 +1,182 @@
+
+
+
+
+
+
+:class:`Material`
+=================
+
+
+.. py:class:: ansys.geometry.core.materials.material.Material(name: str, density: pint.Quantity, additional_properties: collections.abc.Sequence[ansys.geometry.core.materials.property.MaterialProperty] | None = None)
+
+   
+   Provides the data structure for a material.
+
+
+   :Parameters:
+
+       **name: str**
+           Material name.
+
+       **density: ~pint.Quantity**
+           Material density.
+
+       **additional_properties: Sequence[MaterialProperty], default: None**
+           Additional material properties.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Material
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~add_property`
+            - Add a material property to the ``Material`` class.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~properties`
+            - Dictionary of the material property type and material properties.
+          * - :py:attr:`~name`
+            - Material name.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.materials.material import Material
+
+Property detail
+---------------
+
+.. py:property:: properties
+   :type: dict[ansys.geometry.core.materials.property.MaterialPropertyType, ansys.geometry.core.materials.property.MaterialProperty]
+
+
+   
+   Dictionary of the material property type and material properties.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Material name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: add_property(type: ansys.geometry.core.materials.property.MaterialPropertyType, name: str, quantity: pint.Quantity) -> None
+
+   
+   Add a material property to the ``Material`` class.
+
+
+   :Parameters:
+
+       **type** : :obj:`MaterialPropertyType`
+           Material property type.
+
+       **name: str**
+           Material name.
+
+       **quantity: ~pint.Quantity**
+           Material value and unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

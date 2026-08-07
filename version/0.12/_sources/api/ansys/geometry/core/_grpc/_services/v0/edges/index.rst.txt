@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``edges.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.edges
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: edges
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.edges.GRPCEdgesServiceV0`
+            - Edges service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCEdgesServiceV0</api/ansys/geometry/core/_grpc/_services/v0/edges/GRPCEdgesServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the edges service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
