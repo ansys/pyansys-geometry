@@ -160,7 +160,7 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
-      - tests/integration/test_plotting.py::test_plot_highlight_bracket_face_selection
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
 
   - version: "24.2"
     incompatible_tests:
@@ -316,7 +316,7 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
-      - tests/integration/test_plotting.py::test_plot_highlight_bracket_face_selection
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
 
   - version: "25.1"
     incompatible_tests:
@@ -440,7 +440,7 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
-      - tests/integration/test_plotting.py::test_plot_highlight_bracket_face_selection
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
 
   - version: "25.2"
     incompatible_tests:
@@ -515,7 +515,7 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
-      - tests/integration/test_plotting.py::test_plot_highlight_bracket_face_selection
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
 
   - version: "26.1"
     incompatible_tests:
