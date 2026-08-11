@@ -27,26 +27,48 @@ result is rendered with the ``highlight`` parameter of
 
 ```{code-cell} ipython3
 from pathlib import Path
+import requests
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.selection_builder.selection_builder import RangeType
 ```
 
+## Download the bracket file
+
+```{code-cell} ipython3
+BASE_URL = (
+    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/"
+)
+
+
+def download_file(filename):
+    """Download a file from the PyAnsys Geometry repository."""
+    url = BASE_URL + filename
+    local_path = Path.cwd() / filename
+    response = requests.get(url)
+    response.raise_for_status()
+    local_path.write_bytes(response.content)
+    return local_path
+
+
+bracket_file = download_file("Bracket_Static_Stress.dsco")
+```
+
 ## Initialize the modeler
 
 ```{code-cell} ipython3
-modeler = Modeler(host="127.0.0.1", port=50051, timeout=10, transport_mode="insecure")
+modeler = launch_modeler()
+print(modeler)
 ```
 
 ## Open the bracket file
 
 ```{code-cell} ipython3
-file = Path("Bracket_Static_Stress.dsco")
 options = ImportOptions()
 options.import_names = True
-design = modeler.open_file(file_path=file, import_options=options)
+design = modeler.open_file(file_path=bracket_file, import_options=options)
 ```
 
 ## Build the face selection
