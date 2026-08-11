@@ -1,0 +1,99 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.19.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Highlight a face selection in the plotter
+
+This example shows how to use ``FaceSelection`` together with ``GeometryPlotter``
+to visually highlight a filtered subset of faces on top of a 3D geometry.
+
+A bracket model is loaded, a chain of filters is applied to isolate small
+triangular/quadrilateral fillet faces in a specific spatial region, and the
+result is rendered with the ``highlight`` parameter of
+:meth:`GeometryPlotter.plot() <ansys.geometry.core.plotting.plotter.GeometryPlotter.plot>`.
+
++++
+
+## Perform required imports
+
+```{code-cell} ipython3
+from pathlib import Path
+
+from ansys.geometry.core import Modeler
+from ansys.geometry.core.misc.options import ImportOptions
+from ansys.geometry.core.plotting import GeometryPlotter
+from ansys.geometry.core.selection_builder.selection_builder import RangeType
+```
+
+## Initialize the modeler
+
+```{code-cell} ipython3
+modeler = Modeler(host="127.0.0.1", port=50051, timeout=10, transport_mode="insecure")
+```
+
+## Open the bracket file
+
+```{code-cell} ipython3
+file = Path("Bracket_Static_Stress.dsco")
+options = ImportOptions()
+options.import_names = True
+design = modeler.open_file(file_path=file, import_options=options)
+```
+
+## Build the face selection
+
+Apply a chain of filters to isolate small fillet faces (3–4 edges, limited
+area) that lie within a specific X/Y spatial window.
+
+```{code-cell} ipython3
+sb = modeler.create_selection_builder()
+
+all_faces = sb.faces.get_all_faces()
+print("All faces:", len(all_faces.items))
+
+faces_3_4_edges = all_faces.filter_faces_by_edge_count(3, 4)
+print("Faces with 3-4 edges:", len(faces_3_4_edges.items))
+
+faces_by_area = faces_3_4_edges.filter_faces_by_area(0.00000247858, 0.0002564094)
+print("Faces in area range:", len(faces_by_area.items))
+
+faces_by_x = faces_by_area & faces_by_area.get_faces_with_x_location(
+    range_type=RangeType.RANGETYPE_CONTAIN, min=0, max=0.010
+)
+print("Faces in X window:", len(faces_by_x.items))
+
+remove_face = faces_by_x.get_faces_with_y_location(
+    range_type=RangeType.RANGETYPE_INTERSECT, min=0.11753, max=0.122
+)
+print("Faces to exclude:", len(remove_face.items))
+
+final_faces = faces_by_x - remove_face
+print("Final highlighted faces:", len(final_faces.items))
+```
+
+## Plot with highlight
+
+Pass the ``FaceSelection`` to the ``highlight`` parameter. The selected faces
+are rendered on top of the full geometry with a distinct color. Use
+``highlight_color`` to customize the color (default is ``"#FF0000"``).
+
+```{code-cell} ipython3
+plotter = GeometryPlotter()
+plotter.plot(design, highlight=final_faces)
+plotter.show()
+```
+
+## Close the modeler
+
+```{code-cell} ipython3
+modeler.close()
+```
