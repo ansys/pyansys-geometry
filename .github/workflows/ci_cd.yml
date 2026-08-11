@@ -781,7 +781,7 @@ jobs:
         env:
           BUILD_MODE: ${{ matrix.mode }}
         run: |
-          docker build -f windows/$env:BUILD_MODE/Dockerfile -t ghcr.io/ansys/geometry:windows-tmp .
+          docker build -f windows/$env:BUILD_MODE/Dockerfile.net10 -t ghcr.io/ansys/geometry:windows-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -830,7 +830,7 @@ jobs:
       - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
-          files: docker/windows/${{ matrix.mode }}/Dockerfile
+          files: docker/windows/${{ matrix.mode }}/Dockerfile.net10
           dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
@@ -895,7 +895,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
+          docker build -f linux/coreservice/Dockerfile.net10 -t ghcr.io/ansys/geometry:linux-tmp .
 
       - name: Install test dependencies
         run: uv sync --group tests
@@ -934,7 +934,7 @@ jobs:
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
-          files: docker/linux/coreservice/Dockerfile
+          files: docker/linux/coreservice/Dockerfile.net10
           dest: linux-core-dockerfile.zip
 
       - name: Upload Linux Dockerfile
