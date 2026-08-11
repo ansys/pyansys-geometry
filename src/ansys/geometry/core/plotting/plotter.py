@@ -67,6 +67,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
+from ansys.geometry.core.selection_builder.face_selection import FaceSelection
 from ansys.geometry.core.shapes.curves import Curve
 from ansys.geometry.core.shapes.surfaces import Surface
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -507,7 +508,13 @@ class GeometryPlotter(PlotterInterface):
             _ = self.plot(object, name_filter, **plotting_options)
 
     # Override add function from plotter
-    def plot(self, plottable_object: Any, name_filter: str = None, **plotting_options) -> None:
+    def plot(
+        self,
+        plottable_object: Any,
+        name_filter: str = None,
+        highlight: "FaceSelection | None" = None,
+        **plotting_options,
+    ) -> None:
         """Add a custom mesh to the plotter.
 
         Parameters
@@ -516,6 +523,8 @@ class GeometryPlotter(PlotterInterface):
             Regular expression with the desired name or names you want to include in the plotter.
         name_filter: str, default: None
             Regular expression with the desired name or names you want to include in the plotter.
+        highlight : FaceSelection, default: None
+            Face selection to highlight on top of the plotted object.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
             you are using.
@@ -565,6 +574,16 @@ class GeometryPlotter(PlotterInterface):
         else:
             # any left type should be a PyVista object
             self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
+
+        if highlight is not None:
+            for face in highlight.items:
+                self._backend.pv_interface.plot(
+                    face.tessellate(),
+                    color="#0C0CF534",
+                    opacity=1,
+                    show_edges=False,
+                    edge_color="#FF0000",
+                )
 
     def show(
         self,
