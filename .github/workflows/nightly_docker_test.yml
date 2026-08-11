@@ -253,6 +253,7 @@ jobs:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
+          optional-dependencies-name: ""
           pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
