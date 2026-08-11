@@ -513,6 +513,7 @@ class GeometryPlotter(PlotterInterface):
         plottable_object: Any,
         name_filter: str = None,
         highlight: "FaceSelection | None" = None,
+        highlight_color: str = "#FF0000",
         **plotting_options,
     ) -> None:
         """Add a custom mesh to the plotter.
@@ -525,6 +526,8 @@ class GeometryPlotter(PlotterInterface):
             Regular expression with the desired name or names you want to include in the plotter.
         highlight : FaceSelection, default: None
             Face selection to highlight on top of the plotted object.
+        highlight_color : str, default: "#FF0000"
+            Color to use for the highlighted faces.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
             you are using.
@@ -579,7 +582,7 @@ class GeometryPlotter(PlotterInterface):
             for face in highlight.items:
                 self._backend.pv_interface.plot(
                     face.tessellate(),
-                    color="#0C0CF534",
+                    color=highlight_color,
                     opacity=1,
                     show_edges=False,
                     edge_color="#FF0000",
