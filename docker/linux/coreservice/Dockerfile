@@ -23,8 +23,8 @@ RUN unzip -qq linux-core-binaries.zip -d . && \
     rm -rf bin
 
 # Permission adjustments for /app and /tmp directories
-RUN chmod -R 750 /app
-RUN chmod -R 750 /tmp
+RUN chmod -R 750 /app && \
+    chmod -R 750 /tmp
 
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH=/app:/app/CADIntegration/bin:/app/Native/Linux
