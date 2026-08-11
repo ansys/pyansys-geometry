@@ -11,7 +11,7 @@ kernelspec:
   name: python3
 ---
 
-# Highlight a face selection in the plotter
+# Tools: Highlighting a face selection in the plotter
 
 This example shows how to use ``FaceSelection`` together with ``GeometryPlotter``
 to visually highlight a filtered subset of faces on top of a 3D geometry.
@@ -21,9 +21,14 @@ triangular/quadrilateral fillet faces in a specific spatial region, and the
 result is rendered with the ``highlight`` parameter of
 :meth:`GeometryPlotter.plot() <ansys.geometry.core.plotting.plotter.GeometryPlotter.plot>`.
 
+The ``SelectionBuilder`` instance is accessible through ``modeler.create_selection_builder()``.
+It should not be instantiated directly by the user.
+
 +++
 
 ## Perform required imports
+
+Perform the required imports.
 
 ```{code-cell} ipython3
 from pathlib import Path
@@ -50,6 +55,7 @@ def download_file(filename):
     response = requests.get(url)
     response.raise_for_status()
     local_path.write_bytes(response.content)
+    print(f"Downloaded: {filename}")
     return local_path
 
 
@@ -69,6 +75,7 @@ print(modeler)
 options = ImportOptions()
 options.import_names = True
 design = modeler.open_file(file_path=bracket_file, import_options=options)
+design.plot()
 ```
 
 ## Build the face selection
