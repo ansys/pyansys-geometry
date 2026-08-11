@@ -83,6 +83,7 @@ the ``MeasurementTools`` class for measuring distances between geometric objects
 .. nbgallery::
     :caption: Tools examples
 
+    examples/05_tools/face_selection_highlight.mystnb
     examples/05_tools/repair_tools.mystnb
     examples/05_tools/prepare_tools.mystnb
     examples/05_tools/measurement_tools.mystnb
