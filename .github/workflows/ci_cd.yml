@@ -38,7 +38,7 @@ jobs:
       contents: write # Required to create the changelog on the release branch
       pull-requests: write # Required to create on main the associated PR with the changelog
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+      - uses: ansys/actions/doc-deploy-changelog@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -48,7 +48,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+      - uses: ansys/actions/check-vulnerabilities@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/check-pr-title@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/doc-style@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,7 +100,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/build-wheelhouse@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/docker-style@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           directory: docker
           recursive: true
@@ -353,7 +353,7 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/doc-build@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           add-pdf-html-docs-as-assets: true
@@ -379,7 +379,7 @@ jobs:
       contents: write # Needed to update files on the gh-pages branch
       pull-requests: write # Needed to create deployment comments on PRs
     steps:
-      - uses: ansys/actions/doc-deploy-pr@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+      - uses: ansys/actions/doc-deploy-pr@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
@@ -483,7 +483,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/tests-pytest@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         env:
           ALLOW_PLOTTING: true
         with:
@@ -492,6 +492,7 @@ jobs:
           checkout: false
           randomize: true
           group-dependencies-name: "tests"
+          optional-dependencies-name: ""
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
@@ -656,7 +657,7 @@ jobs:
       id-token: write # Required for OIDC authentication to upload provenance attestations
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/build-library@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -920,7 +921,7 @@ jobs:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/tests-pytest@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         env:
           ALLOW_PLOTTING: true
         with:
@@ -962,7 +963,7 @@ jobs:
       contents: write # Required for GitHub release
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/release-github@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -1004,7 +1005,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/doc-deploy-dev@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -1020,7 +1021,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/doc-deploy-stable@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -1037,7 +1038,7 @@ jobs:
       pull-requests: write # Required to allow automerge
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/hk-automerge-prs@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

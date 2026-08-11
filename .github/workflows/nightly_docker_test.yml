@@ -246,13 +246,14 @@ jobs:
         uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@9dc4e3161033d2c2485fbf9687d40cfb7a661fb2 # v10.3.6
+        uses: ansys/actions/tests-pytest@e2075e950bdec40b816670160e98c4c184c7b281 # v11.0.0
         env:
           ALLOW_PLOTTING: true
         with:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
+          optional-dependencies-name: ""
           pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
