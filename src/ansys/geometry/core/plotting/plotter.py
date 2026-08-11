@@ -512,7 +512,7 @@ class GeometryPlotter(PlotterInterface):
         self,
         plottable_object: Any,
         name_filter: str = None,
-        highlight: "FaceSelection | None" = None,
+        highlight: FaceSelection | None = None,
         highlight_color: str = "#FF0000",
         **plotting_options,
     ) -> None:
