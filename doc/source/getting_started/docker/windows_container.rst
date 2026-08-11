@@ -92,18 +92,14 @@ container for the Geometry service and install this image.
 Build the Geometry service Windows container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The Geometry service Docker containers can be easily built by following
-these steps.
+The Geometry service Docker container can be easily built by using the provided
+Python build script or manually from the Dockerfiles in the repository.
 
-Inside the repository's ``docker`` folder, there are two ``Dockerfile`` files:
+Inside the repository's ``docker`` folder, the relevant Dockerfiles for Windows are:
 
-* ``linux/Dockerfile``: Builds the Linux-based Docker image.
-* ``windows/Dockerfile``: Builds the Windows-based Docker image.
-
-Depending on the characteristics of the Docker engine installed on your
-machine, either one or the other has to be built.
-
-This guide focuses on building the ``windows/Dockerfile`` image.
+* ``windows/dms/Dockerfile``: Builds the Windows DMS Service image (for Ansys versions prior to 2025R2).
+* ``windows/coreservice/Dockerfile``: Builds the Windows Core Service image (.NET 8, for Ansys 2025R2 up to 2026R2).
+* ``windows/coreservice/Dockerfile.net10``: Builds the Windows Core Service image (.NET 10, for Ansys 2027R1 and newer).
 
 There are two build modes:
 
@@ -141,6 +137,16 @@ To build your own image based on your own Ansys installation, follow these instr
   .. code:: bash
 
      python build_docker_windows.py
+
+  The script automatically selects the appropriate backend based on the Ansys version:
+
+  * **DMS Service** for Ansys versions prior to 2025R2.
+  * **Core Service** for Ansys 2025R2 (version 252) and newer.
+
+  .. note::
+
+     The Linux Geometry service is only available as Core Service starting from
+     Ansys 2025R2. See :ref:`ref_linux_docker` for details.
 
 
 Check that the image has been created successfully. You should see output similar
