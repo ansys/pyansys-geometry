@@ -37,8 +37,9 @@ except ImportError:
     )
 
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
-from ansys.tools.visualization_interface import MeshObjectPlot
+from ansys.tools.visualization_interface import EdgePlot, MeshObjectPlot
 import numpy as np
 from pint import Quantity
 import pytest
@@ -49,7 +50,9 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.misc.measurements import Angle
+from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.plotting import GeometryPlotter
+from ansys.geometry.core.selection_builder.selection_builder import RangeType
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.curves.line import Line
@@ -1590,3 +1593,130 @@ def test_plot_datum_plane(modeler: Modeler, verify_image_cache):
     pl = GeometryPlotter()
     pl.plot(datum_plane)
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_datum_plane.png"))
+
+
+@skip_no_xserver
+def test_plot_highlight_face_selection(modeler: Modeler, verify_image_cache):
+    """Test that a FaceSelection passed via highlight renders without error."""
+    design = modeler.create_design("HighlightFaceSelection")
+    design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+
+    selection = modeler.create_selection_builder().faces.get_all_faces()
+    assert len(selection.items) == 6
+
+    pl = GeometryPlotter()
+    pl.plot(design, highlight=selection)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_face_selection.png"))
+
+
+@skip_no_xserver
+def test_plot_highlight_filtered_selection(modeler: Modeler, verify_image_cache):
+    """Test that a filtered FaceSelection highlights only the matching faces."""
+    design = modeler.create_design("HighlightFilteredSelection")
+    design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(4, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(1, UNITS.m),
+    )
+
+    all_faces = modeler.create_selection_builder().faces.get_all_faces()
+    largest = all_faces.filter_faces_max_area()
+    assert len(largest.items) == 2
+
+    pl = GeometryPlotter()
+    pl.plot(design, highlight=largest)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_filtered_selection.png"))
+
+
+@skip_no_xserver
+def test_plot_highlight_none_does_not_error(modeler: Modeler, verify_image_cache):
+    """Test that highlight=None (default) produces the same result as omitting it."""
+    design = modeler.create_design("HighlightNone")
+    design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+
+    pl = GeometryPlotter()
+    pl.plot(design, highlight=None)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_none.png"))
+
+
+FILES_DIR = Path(Path(__file__).parent, "files")
+
+
+@skip_no_xserver
+def test_show_returns_unwrapped_mesh_object_plot():
+    """Test that show() unwraps MeshObjectPlot into its custom_object."""
+    pl = GeometryPlotter(allow_picking=True)
+    mock_body = MagicMock()
+    mesh_plot = MeshObjectPlot(custom_object=mock_body, mesh=pv.Sphere())
+    with patch.object(pl._backend, "show", return_value=[mesh_plot]):
+        result = pl.show()
+    assert result == [mock_body]
+
+
+@skip_no_xserver
+def test_show_returns_unwrapped_edge_plot():
+    """Test that show() unwraps EdgePlot into its edge_object."""
+    pl = GeometryPlotter(allow_picking=True)
+    mock_edge = MagicMock()
+    edge_plot = MagicMock(spec=EdgePlot)
+    edge_plot.edge_object = mock_edge
+    with patch.object(pl._backend, "show", return_value=[edge_plot]):
+        result = pl.show()
+    assert result == [mock_edge]
+
+
+@skip_no_xserver
+def test_show_returns_raw_pyvista_object():
+    """Test that show() returns non-wrapped PyVista objects as-is."""
+    pl = GeometryPlotter(allow_picking=True)
+    raw = pv.Sphere()
+    with patch.object(pl._backend, "show", return_value=[raw]):
+        result = pl.show()
+    assert result == [raw]
+
+
+@skip_no_xserver
+def test_plot_highlight_bracket_face_selection(modeler: Modeler, verify_image_cache):
+    """Test highlight with a real bracket file using the same filtering logic as prueba.py."""
+    bracket_file = FILES_DIR / "Bracket_Static_Stress.dsco"
+    if not bracket_file.exists():
+        pytest.skip("Bracket_Static_Stress.dsco not found in integration files directory")
+
+    options = ImportOptions()
+    options.import_names = True
+    design = modeler.open_file(file_path=bracket_file, import_options=options)
+
+    sb = modeler.create_selection_builder()
+    all_faces = sb.faces.get_all_faces()
+    assert len(all_faces.items) == 99
+
+    faces_3_4_edges = all_faces.filter_faces_by_edge_count(3, 4)
+    assert len(faces_3_4_edges.items) == 83
+
+    faces_by_area = faces_3_4_edges.filter_faces_by_area(0.00000247858, 0.0002564094)
+    assert len(faces_by_area.items) == 77
+
+    faces_by_x = faces_by_area & faces_by_area.get_faces_with_x_location(
+        range_type=RangeType.RANGETYPE_CONTAIN, min=0, max=0.010
+    )
+    assert len(faces_by_x.items) == 61
+
+    remove_face = faces_by_x.get_faces_with_y_location(
+        range_type=RangeType.RANGETYPE_INTERSECT, min=0.11753, max=0.122
+    )
+    assert len(remove_face.items) == 5
+
+    final_faces = faces_by_x - remove_face
+    assert len(final_faces.items) == 60
+
+    pl = GeometryPlotter()
+    pl.plot(design, highlight=final_faces)
+    pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_bracket.png"))
