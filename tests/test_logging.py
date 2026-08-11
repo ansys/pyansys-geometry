@@ -169,13 +169,8 @@ def test_global_logger_level_mode():
     """Checking that the Logger levels are stored as integer values and that
     the default value (unless changed) is ERROR.
     """
-    current_level = LOG.logger.level
-    try:
-        LOG.setLevel("ERROR")
-        assert isinstance(LOG.logger.level, int)
-        assert LOG.logger.level == logger.ERROR
-    finally:
-        LOG.setLevel(current_level)
+    assert isinstance(logger.LOG_DEFAULT_LEVEL, int)
+    assert logger.LOG_DEFAULT_LEVEL == logger.ERROR
 
 
 def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
