@@ -301,8 +301,8 @@ def test_global_methods(caplog: pytest.LogCaptureFixture):
     assert msg in caplog.text
 
     # Setting back to original level
-    LOG.logger.setLevel("INFO")
-    LOG.std_out_handler.setLevel("INFO")
+    LOG.logger.setLevel("ERROR")
+    LOG.std_out_handler.setLevel("ERROR")
 
 
 def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):

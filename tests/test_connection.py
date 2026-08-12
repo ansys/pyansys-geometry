@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import logging
 import os
 import socket
 import tempfile
@@ -200,6 +201,10 @@ def test_manifest_path_does_not_exist(tmp_path, caplog):
 
     # Ensure the default manifest file does not exist
     assert not default_manifest_path.exists()
+
+    # Ensure WARNING messages are captured regardless of the global LOG level,
+    # which other tests may have modified (e.g. test_global_logger_logging resets to ERROR).
+    caplog.set_level(logging.WARNING, logger="PyAnsys_Geometry_global")
 
     # Call the function and expect a RuntimeError
     with pytest.raises(RuntimeError, match="Default manifest file's path does not exist."):

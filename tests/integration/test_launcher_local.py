@@ -22,6 +22,7 @@
 
 """Testing module for the local launcher."""
 
+import logging
 import os
 import re
 
@@ -87,6 +88,10 @@ def test_local_launcher_connect(
     """Checking connection to existing service using launch modeler."""
     if not docker_instance:
         pytest.skip("Docker local launcher tests are not runnable.")
+
+    # Ensure WARNING messages are captured regardless of the global LOG level,
+    # which other tests may have modified (e.g. test_global_logger_logging resets to ERROR).
+    caplog.set_level(logging.WARNING, logger="PyAnsys_Geometry_global")
 
     # Get the existing target
     target = modeler.client.target().lstrip("dns:///").split(":")
