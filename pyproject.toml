@@ -98,7 +98,7 @@ general-all = [
   "grpcio==1.83.0",
   "grpcio-health-checking==1.83.0",
   "matplotlib==3.11.1",
-  "numpy==2.5.1",
+  "numpy==2.5.2",
   "pint==0.25.3",
   "protobuf==7.35.1",
   "pydantic==2.13.4",
