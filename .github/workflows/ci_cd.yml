@@ -356,7 +356,7 @@ jobs:
         uses: ansys/actions/doc-build@d98e1a4008dab392f8c114a483c2c5624076ccd6 # v11.0.1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          add-pdf-html-docs-as-assets: true
+          add-pdf-html-docs-as-assets: false
           needs-quarto: false
           dependencies: 'pandoc texlive-xetex texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-science
             texlive-luatex lmodern latexmk'
