@@ -44,6 +44,7 @@ repos:
     rev: 55c5b6a5439abd847613579c6924da750e8b78b2 # frozen: v0.8.0
     hooks:
       - id: add-license-headers
+        files: '(src|examples|tests|doc|docker)/.*\.(py)'
         args:
           - --start_year=2023
 
