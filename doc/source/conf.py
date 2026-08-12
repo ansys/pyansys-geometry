@@ -69,11 +69,8 @@ if BUILD_EXAMPLES:
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
 
-def get_wheelhouse_assets_dictionary():
-    """Auxiliary method to build the wheelhouse assets dictionary."""
-    assets_context_os = ["Linux", "Windows", "MacOS"]
-    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.12", "3.13", "3.14"]
+def get_release_prefix_url():
+    """Resolve the GitHub release prefix URL based on the current version."""
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -90,21 +87,27 @@ def get_wheelhouse_assets_dictionary():
 
         if content is None:
             print("Adapting URL to point to the latest version... (hack)")
-            assets_context_version = "dev"
+            return "https://github.com/ansys/pyansys-geometry/releases/latest/download", "dev"
         else:
             # Just point to the latest version
-            assets_context_version = json.loads(content)["name"]
+            version = json.loads(content)["name"]
+            return f"https://github.com/ansys/pyansys-geometry/releases/download/{version}", version
     else:
-        assets_context_version = f"v{__version__}"
+        version = f"v{__version__}"
+        return f"https://github.com/ansys/pyansys-geometry/releases/download/{version}", version
+
+
+def get_wheelhouse_assets_dictionary():
+    """Auxiliary method to build the wheelhouse assets dictionary."""
+    assets_context_os = ["Linux", "Windows", "MacOS"]
+    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
+    assets_context_python_versions = ["3.12", "3.13", "3.14"]
+    prefix_url, assets_context_version = get_release_prefix_url()
 
     assets = {}
     for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
         download_links = []
         for assets_py_ver in assets_context_python_versions:
-            if assets_context_version == "dev":
-                prefix_url = "https://github.com/ansys/pyansys-geometry/releases/latest/download"
-            else:
-                prefix_url = f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}"
             temp_dict = {
                 "os": assets_os,
                 "runner": assets_runner,
@@ -459,6 +462,7 @@ jinja_contexts = {
         "add_windows_warnings": True,
     },
     "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
+    "doc-assets": {"prefix_url": get_release_prefix_url()[0]},
 }
 
 nitpick_ignore_regex = [
