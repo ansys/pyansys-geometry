@@ -41,17 +41,17 @@ class Curve(ABC):
     """Provides the abstract base class representing a 3D curve."""
 
     @abstractmethod
-    def parameterization(self) -> Parameterization:
+    def parameterization(self) -> Parameterization:  # pragma: no cover
         """Parameterize the curve."""
         return
 
     @abstractmethod
-    def contains_param(self, param: Real) -> bool:
+    def contains_param(self, param: Real) -> bool:  # pragma: no cover
         """Check a parameter is within the parametric range of the curve."""
         return
 
     @abstractmethod
-    def contains_point(self, point: Point3D) -> bool:
+    def contains_point(self, point: Point3D) -> bool:  # pragma: no cover
         """Check a point is contained by the curve.
 
         The point can either lie within the curve or on its boundary.
@@ -59,22 +59,22 @@ class Curve(ABC):
         return
 
     @abstractmethod
-    def transformed_copy(self, matrix: Matrix44) -> "Curve":
+    def transformed_copy(self, matrix: Matrix44) -> "Curve":  # pragma: no cover
         """Create a transformed copy of the curve."""
         return
 
     @abstractmethod
-    def __eq__(self, other: "Curve") -> bool:
+    def __eq__(self, other: "Curve") -> bool:  # pragma: no cover
         """Determine if two curves are equal."""
         return
 
     @abstractmethod
-    def evaluate(self, parameter: Real) -> CurveEvaluation:
+    def evaluate(self, parameter: Real) -> CurveEvaluation:  # pragma: no cover
         """Evaluate the curve at the given parameter."""
         return
 
     @abstractmethod
-    def project_point(self, point: Point3D) -> CurveEvaluation:
+    def project_point(self, point: Point3D) -> CurveEvaluation:  # pragma: no cover
         """Project a point to the curve.
 
         This method returns the evaluation at the closest point.
@@ -82,7 +82,7 @@ class Curve(ABC):
         return
 
     @abstractmethod
-    def visualization_polydata(self) -> "pv.PolyData":
+    def visualization_polydata(self) -> "pv.PolyData":  # pragma: no cover
         """Get the visualization polydata for the curve."""
         return
 

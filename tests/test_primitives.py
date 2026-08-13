@@ -1197,6 +1197,53 @@ def test_circle_evaluation():
     assert eval2.curvature == 1
 
 
+def test_circle_radius_not_positive():
+    """Test that a ValueError is raised when the circle radius is not positive."""
+    origin = Point3D([0, 0, 0])
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Circle(origin, 0)
+
+    with pytest.raises(ValueError, match="Radius must be a real positive value."):
+        Circle(origin, -1)
+
+
+def test_circle_project_point_on_axis_raises_value_error():
+    """Test project_point behavior for a point on the circle axis."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(ValueError, match="The norm of the 3D vector is not valid."):
+        circle.project_point(Point3D([0, 0, 2]))
+
+
+def test_circle_parameterization():
+    """Test the parameterization method of the Circle class."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+    parameterization = circle.parameterization()
+
+    assert isinstance(parameterization, Parameterization)
+    assert parameterization.form == ParamForm.PERIODIC
+    assert parameterization.type == ParamType.CIRCULAR
+    assert parameterization.interval.start == 0
+    assert parameterization.interval.end == 2 * np.pi
+
+
+def test_circle_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        circle.contains_param(0.5)
+
+
+def test_circle_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    circle = Circle(Point3D([0, 0, 0]), Distance(1))
+
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        circle.contains_point(Point3D([1, 0, 0]))
+
+
 def test_line():
     """``Line`` construction and equivalency."""
     origin = Point3D([0, 0, 0])
@@ -1229,6 +1276,50 @@ def test_line():
     line_transformation = line_2.transformed_copy(matrix=rotation_matrix)
     assert np.allclose(line_transformation._origin, Point3D([-99, 42, 13]))
     assert np.allclose(line_transformation._direction, UnitVector3D([-99, 0, -31]))
+
+
+def test_line_equality_with_non_line_object():
+    """Test that a line is not equal to a non-line object."""
+    line = Line(Point3D([0, 0, 0]), UNITVECTOR3D_X)
+
+    assert line != "not a line"
+
+
+def test_line_non_parallel_and_non_opposite_cases():
+    """Test line comparisons when the other line is neither coincident nor opposite."""
+    x_line = Line(Point3D([0, 0, 0]), UNITVECTOR3D_X)
+    y_line = Line(Point3D([0, 0, 0]), UNITVECTOR3D_Y)
+    shifted_x_line = Line(Point3D([0, 1, 0]), UNITVECTOR3D_X)
+
+    assert not x_line.is_coincident_line(y_line)
+    assert not x_line.is_opposite_line(shifted_x_line)
+
+
+def test_line_parameterization():
+    """Test the parameterization method of the Line class."""
+    parameterization = Line(Point3D([0, 0, 0]), UNITVECTOR3D_X).parameterization()
+
+    assert isinstance(parameterization, Parameterization)
+    assert parameterization.form == ParamForm.OPEN
+    assert parameterization.type == ParamType.LINEAR
+    assert parameterization.interval.start == -np.inf
+    assert parameterization.interval.end == np.inf
+
+
+def test_line_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    line = Line(Point3D([0, 0, 0]), UNITVECTOR3D_X)
+
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        line.contains_param(0.5)
+
+
+def test_line_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    line = Line(Point3D([0, 0, 0]), UNITVECTOR3D_X)
+
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        line.contains_point(Point3D([1, 0, 0]))
 
 
 def test_line_evaluation():
@@ -1361,6 +1452,61 @@ def test_ellipse_evaluation():
     )
 
     assert Accuracy.length_is_equal(eval2.curvature, 0.31540327)
+
+
+def test_ellipse_project_point_on_axis_raises_value_error():
+    """Test project_point behavior for a point on the ellipse axis."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+
+    with pytest.raises(ValueError, match="The norm of the 3D vector is not valid."):
+        ellipse.project_point(Point3D([0, 0, 2]))
+
+
+def test_ellipse_eccentricity_real_range():
+    """Test eccentricity for a valid ellipse."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+    eccentricity = ellipse.eccentricity
+
+    assert Accuracy.length_is_equal(eccentricity, np.sqrt(5) / 3)
+    assert 0 <= eccentricity < 1
+
+
+def test_ellipse_metrics_real_values():
+    """Test geometric metrics for a valid ellipse."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+
+    assert ellipse.linear_eccentricity.m == pytest.approx(np.sqrt(5), rel=1e-7, abs=1e-8)
+    assert ellipse.semi_latus_rectum.m == pytest.approx(4 / 3, rel=1e-7, abs=1e-8)
+    assert ellipse.area.m == pytest.approx(6 * np.pi, rel=1e-7, abs=1e-8)
+    assert ellipse.perimeter.m == pytest.approx(15.8654395893, rel=1e-7, abs=1e-8)
+
+
+def test_ellipse_parameterization():
+    """Test the parameterization method of the Ellipse class."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+    parameterization = ellipse.parameterization()
+
+    assert isinstance(parameterization, Parameterization)
+    assert parameterization.form == ParamForm.PERIODIC
+    assert parameterization.type == ParamType.OTHER
+    assert parameterization.interval.start == 0
+    assert parameterization.interval.end == 2 * np.pi
+
+
+def test_ellipse_contains_param_not_implemented():
+    """Test that contains_param raises NotImplementedError."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+
+    with pytest.raises(NotImplementedError, match="contains_param\\(\\) is not implemented."):
+        ellipse.contains_param(0.5)
+
+
+def test_ellipse_contains_point_not_implemented():
+    """Test that contains_point raises NotImplementedError."""
+    ellipse = Ellipse(Point3D([0, 0, 0]), Distance(3), Distance(2))
+
+    with pytest.raises(NotImplementedError, match="contains_point\\(\\) is not implemented."):
+        ellipse.contains_point(Point3D([1, 0, 0]))
 
 
 def test_nurbs_curve_from_control_points():

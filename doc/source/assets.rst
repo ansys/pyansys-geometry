@@ -8,8 +8,10 @@ Documentation
 
 The following links provide users with downloadable documentation in various formats
 
-* `Documentation in HTML format <_static/assets/download/documentation-html.zip>`_
-* `Documentation in PDF format <_static/assets/download/ansys-geometry-core.pdf>`_
+.. jinja:: doc-assets
+
+    * `Documentation in HTML format <{{ prefix_url }}/documentation-html.zip>`_
+    * `Documentation in PDF format <{{ prefix_url }}/documentation-pdf.zip>`_
 
 Wheelhouse
 ----------
@@ -54,11 +56,9 @@ Geometry service Docker container assets
 Build the latest Geometry service Docker container using the following assets. For
 information on how to build the container, see :ref:`Docker containers <ref_docker>`.
 
-Currently, the Geometry service backend is mainly delivered as a **Windows** Docker container.
-However, these containers require a Windows machine to run them.
-
-.. A Linux version of the Geometry service is also available but with limited capabilities,
-.. meaning that certain operations are not available or fail.
+The Geometry service backend can also be delivered as a Docker container. This is specially useful for
+users who want to run the Geometry service on a containerized environment. The Geometry service Docker
+container is available for both Windows and Linux.
 
 
 Windows container
@@ -72,12 +72,13 @@ Windows container
 * `Latest Geometry service binaries for Windows containers <https://github.com/ansys/pyansys-geometry-binaries>`_
 * `Latest Geometry service Dockerfile for Windows containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/windows-core-dockerfile.zip>`_
 
-.. Linux container
-.. ^^^^^^^^^^^^^^^
+Linux container
+^^^^^^^^^^^^^^^
 
-.. .. note::
+.. note::
 
-..    Only users with access to https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
+   Only Ansys employees with access to
+   https://github.com/ansys/pyansys-geometry-binaries can download these binaries.
 
-.. * `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
-.. * `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-dockerfile.zip>`_
+* `Latest Geometry service binaries for Linux containers <https://github.com/ansys/pyansys-geometry-binaries>`_
+* `Latest Geometry service Dockerfile for Linux containers <https://github.com/ansys/pyansys-geometry/releases/latest/download/linux-core-dockerfile.zip>`_

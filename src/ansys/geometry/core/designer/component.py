@@ -41,6 +41,7 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
@@ -64,6 +65,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
@@ -185,9 +187,10 @@ class Component:
     _beams: list[Beam]
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
-    _datum_planes: list[DatumPlane]
     _design_curves: list[DesignCurve]
+    _datum_planes: list[DatumPlane]
     _datum_points: list[DatumPoint]
+    _datum_lines: list[DatumLine]
 
     @check_input_types
     def __init__(
@@ -245,9 +248,10 @@ class Component:
         self._beams = []
         self._coordinate_systems = []
         self._design_points = []
-        self._datum_planes = []
         self._design_curves = []
+        self._datum_planes = []
         self._datum_points = []
+        self._datum_lines = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -361,19 +365,24 @@ class Component:
         return self._design_points
 
     @property
-    def datum_planes(self) -> list[DatumPlane]:
-        """List of ``DatumPlane`` objects inside of the component."""
-        return self._datum_planes
-
-    @property
     def design_curves(self) -> list[DesignCurve]:
         """List of ``DesignCurve`` objects inside of the component."""
         return self._design_curves
 
     @property
+    def datum_planes(self) -> list[DatumPlane]:
+        """List of ``DatumPlane`` objects inside of the component."""
+        return self._datum_planes
+
+    @property
     def datum_points(self) -> list[DatumPoint]:
         """List of ``DatumPoint`` objects inside of the component."""
         return self._datum_points
+
+    @property
+    def datum_lines(self) -> list[DatumLine]:
+        """List of ``DatumLine`` objects inside of the component."""
+        return self._datum_lines
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -1734,6 +1743,74 @@ class Component:
             )
             pass
 
+    @min_backend_version(27, 1, 0)
+    @check_input_types
+    @ensure_design_is_active
+    def create_datum_line(self, name: str, line: Line) -> DatumLine:
+        """Create a datum line on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum line.
+        line : Line
+            Line object defining the datum line's geometry.
+
+        Returns
+        -------
+        DatumLine
+            Created datum line object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating datum line on {self.id}...")
+        response = self._grpc_client.services.datum_lines.create(
+            name=name,
+            parent_id=self.id,
+            line=line,
+        )
+        self._grpc_client.log.debug("Datum line successfully created.")
+        datum_line = DatumLine(response.get("id"), name, line, self)
+        self._datum_lines.append(datum_line)
+        return datum_line
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_datum_line(self, datum_line: DatumLine | str) -> None:
+        """Delete a datum line from this component.
+
+        Parameters
+        ----------
+        datum_line : DatumLine | str
+            ID of the datum line or instance to delete.
+
+        Notes
+        -----
+        If the datum line belongs to this component's children, it is deleted.
+        If the datum line does not belong to this component, it is not deleted.
+        """
+        id = datum_line if isinstance(datum_line, str) else datum_line.id
+        dl_requested = self.search_datum_line(id)
+
+        if dl_requested:
+            # If the datum line belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.datum_lines.delete(ids=[dl_requested.id])
+
+            # If the datum line was deleted from the server side... "kill" it
+            # on the client side
+            dl_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumLine {dl_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumLine {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
     @check_input_types
     @ensure_design_is_active
     def delete_beam(self, beam: Beam | str) -> None:
@@ -2072,6 +2149,40 @@ class Component:
                 return result
 
         # If you reached this point... this means that no datum point was found!
+        return None
+
+    @check_input_types
+    def search_datum_line(self, id: str) -> DatumLine | None:
+        """Search datum lines in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum line to search for.
+
+        Returns
+        -------
+        DatumLine | None
+            DatumLine with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum lines in the component and nested components
+        recursively.
+        """
+        # Search in component's datum lines
+        for dl in self.datum_lines:
+            if dl.id == id and dl.is_alive:
+                return dl
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_line(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum line was found!
         return None
 
     @check_input_types
