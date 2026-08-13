@@ -615,6 +615,59 @@ def graphics_required(method: _F) -> _F:
     return wrapper  # type: ignore[return-value]
 
 
+ERROR_USD_REQUIRED = (
+    "The 'usd-core' package is required for USD export. "
+    "Install it with: pip install ansys-geometry-core[usd]"
+)
+"""Message to display when usd-core is required for a method."""
+
+__USD_AVAILABLE = None
+"""Global variable to store the result of the usd-core imports."""
+
+
+def run_if_usd_required():
+    """Check if usd-core is available.
+
+    Raises
+    ------
+    ImportError
+        If ``usd-core`` is not installed.
+    """
+    global __USD_AVAILABLE
+    if __USD_AVAILABLE is None:
+        try:
+            from pxr import Usd  # noqa: F401
+
+            __USD_AVAILABLE = True
+        except (ModuleNotFoundError, ImportError):
+            __USD_AVAILABLE = False
+
+    if __USD_AVAILABLE is False:
+        raise ImportError(ERROR_USD_REQUIRED)
+
+
+def usd_required(method: _F) -> _F:
+    """Decorate a method as requiring usd-core.
+
+    Parameters
+    ----------
+    method : callable
+        Method to decorate.
+
+    Returns
+    -------
+    callable
+        Decorated method that raises ``ImportError`` if ``usd-core`` is not installed.
+    """
+
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        run_if_usd_required()
+        return method(*args, **kwargs)
+
+    return wrapper  # type: ignore[return-value]
+
+
 def kwargs_passed_not_accepted(method: _F) -> _F:
     """Check that no unexpected kwargs are passed to the method.
 

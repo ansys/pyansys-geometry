@@ -49,6 +49,8 @@ from ansys.geometry.core.misc.checks import (
     kwargs_passed_not_accepted,
     min_backend_version,
     run_if_graphics_required,
+    run_if_usd_required,
+    usd_required,
 )
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions

@@ -21,12 +21,13 @@
 
 """Provides USD export utilities for PyAnsys Geometry."""
 
-import functools
 from pathlib import Path
 import re
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import matplotlib.colors as mcolors
+
+from ansys.geometry.core.misc.checks import run_if_usd_required, usd_required  # noqa: F401
 
 if TYPE_CHECKING:
     from pxr import Usd as UsdModule
@@ -36,16 +37,8 @@ if TYPE_CHECKING:
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.misc.options import TessellationOptions
 
-_USD_AVAILABLE: bool | None = None
-"""Cached availability flag for usd-core. ``None`` means not yet checked."""
-
 _VALID_USD_FORMATS: frozenset[str] = frozenset({"usda", "usdc", "usdz", "usd"})
 """Valid USD file format extensions (without leading dot)."""
-
-_ERROR_USD_REQUIRED = (
-    "The 'usd-core' package is required for USD export. "
-    "Install it with: pip install ansys-geometry-core[usd]"
-)
 
 
 def sanitize_usd_name(name: str) -> str:
@@ -147,49 +140,6 @@ def raw_tess_to_usd_mesh_data(
             all_indices.extend(face_indices)
 
     return all_points, all_counts, all_indices
-
-
-def run_if_usd_required() -> None:
-    """Check that usd-core is installed, raising ImportError if not.
-
-    Raises
-    ------
-    ImportError
-        If ``usd-core`` is not installed.
-    """
-    global _USD_AVAILABLE
-    if _USD_AVAILABLE is None:
-        try:
-            from pxr import Usd  # noqa: F401
-
-            _USD_AVAILABLE = True
-        except (ModuleNotFoundError, ImportError):
-            _USD_AVAILABLE = False
-
-    if _USD_AVAILABLE is False:
-        raise ImportError(_ERROR_USD_REQUIRED)
-
-
-def usd_required(method: Callable) -> Callable:
-    """Decorate a method as requiring usd-core.
-
-    Parameters
-    ----------
-    method : callable
-        Method to decorate.
-
-    Returns
-    -------
-    callable
-        Decorated method that raises ``ImportError`` if ``usd-core`` is not installed.
-    """
-
-    @functools.wraps(method)
-    def wrapper(*args, **kwargs):
-        run_if_usd_required()
-        return method(*args, **kwargs)
-
-    return wrapper
 
 
 def _validate_usd_format(file_format: str) -> None:

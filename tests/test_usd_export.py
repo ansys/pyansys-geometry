@@ -53,15 +53,15 @@ from pxr import Usd, UsdGeom, UsdShade  # noqa: E402
 
 def test_usd_required_raises_when_unavailable():
     """run_if_usd_required raises ImportError when usd-core is not available."""
-    import ansys.geometry.core.plotting.usd_export as usd_mod
+    import ansys.geometry.core.misc.checks as checks_mod
 
-    original = usd_mod._USD_AVAILABLE
-    usd_mod._USD_AVAILABLE = False
+    original = checks_mod.__USD_AVAILABLE
+    checks_mod.__USD_AVAILABLE = False
     try:
         with pytest.raises(ImportError, match="usd-core"):
-            usd_mod.run_if_usd_required()
+            checks_mod.run_if_usd_required()
     finally:
-        usd_mod._USD_AVAILABLE = original
+        checks_mod.__USD_AVAILABLE = original
 
 
 
@@ -473,15 +473,15 @@ def test_export_to_usd_method_invalid_format_raises():
 def test_export_to_usd_method_missing_usd_core():
     """Design.export_to_usd raises ImportError when usd-core is not installed."""
     from ansys.geometry.core.designer.design import Design
-    import ansys.geometry.core.plotting.usd_export as usd_mod
+    import ansys.geometry.core.misc.checks as checks_mod
 
-    original = usd_mod._USD_AVAILABLE
-    usd_mod._USD_AVAILABLE = False
+    original = checks_mod.__USD_AVAILABLE
+    checks_mod.__USD_AVAILABLE = False
     try:
         with pytest.raises(ImportError, match="usd-core"):
             Design.export_to_usd.__wrapped__(_make_design("D"))
     finally:
-        usd_mod._USD_AVAILABLE = original
+        checks_mod.__USD_AVAILABLE = original
 
 
 # ====================================
@@ -569,12 +569,12 @@ def test_export_to_html_method_missing_viz_interface():
 def test_export_to_html_method_missing_usd_core():
     """Design.export_to_html raises ImportError when usd-core is not installed."""
     from ansys.geometry.core.designer.design import Design
-    import ansys.geometry.core.plotting.usd_export as usd_mod
+    import ansys.geometry.core.misc.checks as checks_mod
 
-    original = usd_mod._USD_AVAILABLE
-    usd_mod._USD_AVAILABLE = False
+    original = checks_mod.__USD_AVAILABLE
+    checks_mod.__USD_AVAILABLE = False
     try:
         with pytest.raises(ImportError, match="usd-core"):
             Design.export_to_html.__wrapped__(_make_design("D"))
     finally:
-        usd_mod._USD_AVAILABLE = original
+        checks_mod.__USD_AVAILABLE = original
