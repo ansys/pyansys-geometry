@@ -617,7 +617,7 @@ def graphics_required(method: _F) -> _F:
 
 ERROR_USD_REQUIRED = (
     "The 'usd-core' package is required for USD export. "
-    "Install it with: pip install ansys-geometry-core[usd]"
+    "Install it with: pip install ansys-geometry-core[usd] or pip install ansys-geometry-core[all]"
 )
 """Message to display when usd-core is required for a method."""
 
