@@ -22,6 +22,10 @@ RUN unzip -qq linux-core-binaries.zip -d . && \
     mv bin/x64/Release_Core_Linux/net8.0/* . && \
     rm -rf bin
 
+# Permission adjustments for /app and /tmp directories
+RUN chmod -R 750 /app && \
+    chmod -R 750 /tmp
+
 # Let the dynamic link loader where to search for shared libraries
 ENV LD_LIBRARY_PATH=/app:/app/CADIntegration/bin:/app/Native/Linux
 
@@ -34,7 +38,6 @@ ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
 ENV ANSYSCL252_DIR=/app/licensingclient/
 ENV ANSYSCL261_DIR=/app/licensingclient/
-ENV ANSYSCL271_DIR=/app/licensingclient/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."

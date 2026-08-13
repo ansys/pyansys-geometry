@@ -15,13 +15,13 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: 3632ea90e7641b574983ddf3a11ccedefff3c881 # frozen: v2.25.3
+    rev: b82a24a520c5d496cb7b23b4e9b63537c280f51b # frozen: v2.27.0
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 2700fd5671c633760d912769c041bfcde2b9a01b # frozen: v0.15.22
+    rev: 39d9ac5938dadb73df0564a45f163e25ff9fa6e2 # frozen: v0.16.1
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -44,6 +44,7 @@ repos:
     rev: 55c5b6a5439abd847613579c6924da750e8b78b2 # frozen: v0.8.0
     hooks:
       - id: add-license-headers
+        files: '(src|examples|tests|doc|docker)/.*\.(py)'
         args:
           - --start_year=2023
 

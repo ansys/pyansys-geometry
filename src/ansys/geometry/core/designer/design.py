@@ -42,6 +42,7 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
@@ -1731,6 +1732,19 @@ class Design(Component):
             # Append the datum point to the component to which it belongs
             created_dp.parent_component._datum_points.append(created_dp)
 
+        # Create Datum Lines - only available for 27r1 and later
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            for dl in response.get("datum_lines", []):
+                created_dl = DatumLine(
+                    dl.get("id"),
+                    dl.get("name"),
+                    dl.get("line"),
+                    created_components.get(dl.get("parent_id"), self),
+                )
+
+                # Append the datum line to the component to which it belongs
+                created_dl.parent_component._datum_lines.append(created_dl)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1783,6 +1797,7 @@ class Design(Component):
         self._coordinate_systems = []
         self._datum_planes = []
         self._datum_points = []
+        self._datum_lines = []
         self._design_curves = []
         self._design_points = []
         self._beam_profiles = {}

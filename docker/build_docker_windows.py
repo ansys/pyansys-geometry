@@ -1,4 +1,4 @@
-# Copyright (C) 2023 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """Script to build docker image for the project."""
 
 import os
@@ -47,8 +48,9 @@ for env_key, env_val in os.environ.items():
 
 if len(awp_root) == 0:
     # There are no Ansys installations
-    print("XXXXXXX No Ansys compatible installations found.. exiting process. XXXXXXX")
-    print("XXXXXXX Please install Ansys 2024R1 or newer.                      XXXXXXX")
+    print("XXXXXXX No compatible Ansys installations found.. exiting process.        XXXXXXX")
+    print("XXXXXXX Root cause: compatible AWP_ROOT* environment variables not found. XXXXXXX")
+    print("XXXXXXX Please install Ansys 2024R1 or newer.                             XXXXXXX")
     exit(0)
 
 # Request the user to select the version of Ansys to use
@@ -92,7 +94,13 @@ print(f">>> Copying Geometry Service files to temporary directory to {TMP_DIR}")
 if backend_selection == 1:
     BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Headless" / "net472"
 else:
-    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Core_Windows" / "net8.0"
+    if ANSYS_VER >= 271:
+        print(">>> Using .NET 10 based on Ansys release version")
+        net_folder = "net10.0"
+    else:
+        print(">>> Using .NET 8 based on Ansys release version")
+        net_folder = "net8.0"
+    BIN_DIR = TMP_DIR / "archive" / "bin" / "x64" / "Release_Core_Windows" / net_folder
 
 # Create the directory structure
 shutil.copytree(
@@ -121,7 +129,8 @@ print(">>> Downloading Dockerfile")
 if backend_selection == 1:
     dockerfile_url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/dms/Dockerfile"
 else:
-    dockerfile_url = "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/coreservice/Dockerfile"
+    dockerfile_suffix = ".net10" if ANSYS_VER >= 271 else ""
+    dockerfile_url = f"https://raw.githubusercontent.com/ansys/pyansys-geometry/main/docker/windows/coreservice/Dockerfile{dockerfile_suffix}"
 urllib.request.urlretrieve(
     dockerfile_url,
     TMP_DIR / "Dockerfile",

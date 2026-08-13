@@ -21,7 +21,7 @@ jobs:
       contents: write # Required to push changes back to the PR
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # To be able to commit it needs to fetch the head of the branch, not the
           # merge commit
@@ -34,7 +34,7 @@ jobs:
           persist-credentials: true # Required for `git push` command
 
       - name: "Run PyAnsys code style checks"
-        uses: ansys/actions/code-style@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/code-style@d98e1a4008dab392f8c114a483c2c5624076ccd6 # v11.0.1
         with:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
