@@ -885,7 +885,7 @@ class Design(Component):
         ------
         ImportError
             If ``usd-core`` or ``ansys-tools-visualization-interface[usd]`` is not installed.
-            Install both with: ``pip install ansys-geometry-core[html]``.
+            Install both with: ``pip install ansys-geometry-core[usd]``.
 
         Examples
         --------
@@ -907,7 +907,7 @@ class Design(Component):
             raise ImportError(
                 "The 'ansys-tools-visualization-interface' package with the 'usd' extra "
                 "is required for HTML export. "
-                "Install it with: pip install ansys-geometry-core[html]"
+                "Install it with: pip install ansys-geometry-core[usd]"
             ) from e
 
         html_location = self.__build_export_file_location(location, "html")

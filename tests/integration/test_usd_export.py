@@ -58,7 +58,6 @@ def test_export_to_usd_binary_format(modeler: Modeler, tmp_path):
     assert path.suffix == ".usdc"
 
 
-
 def test_export_to_html_creates_file(modeler: Modeler, tmp_path):
     """export_to_html writes a .html file that exists and is non-empty."""
     pytest.importorskip(
