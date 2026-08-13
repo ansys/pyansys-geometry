@@ -27,8 +27,6 @@ from typing import TYPE_CHECKING
 
 import matplotlib.colors as mcolors
 
-from ansys.geometry.core.misc.checks import run_if_usd_required, usd_required  # noqa: F401
-
 if TYPE_CHECKING:
     from pxr import Usd as UsdModule
 

@@ -64,6 +64,7 @@ from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
     min_backend_version,
+    usd_required,
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
@@ -789,6 +790,7 @@ class Design(Component):
         return file_location
 
     @ensure_design_is_active
+    @usd_required
     def export_to_usd(
         self,
         location: Path | str | None = None,
@@ -838,16 +840,15 @@ class Design(Component):
         from ansys.geometry.core.plotting.usd_export import (
             _validate_usd_format as _usd_validate_format,
             export_design_to_usd as _export_to_usd_impl,
-            run_if_usd_required,
         )
 
-        run_if_usd_required()
         _usd_validate_format(file_format)
         file_location = self.__build_export_file_location(location, file_format)
         _export_to_usd_impl(self, file_location, tess_options)
         return file_location
 
     @ensure_design_is_active
+    @usd_required
     def export_to_html(
         self,
         location: Path | str | None = None,
@@ -893,12 +894,8 @@ class Design(Component):
 
         >>> html_path = design.export_to_html("output/", show_mesh_lines=False)
         """
-        from ansys.geometry.core.plotting.usd_export import (
-            _build_stage,
-            run_if_usd_required,
-        )
+        from ansys.geometry.core.plotting.usd_export import _build_stage
 
-        run_if_usd_required()
         stage = _build_stage(self, tess_options)
 
         try:

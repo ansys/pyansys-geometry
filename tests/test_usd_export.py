@@ -500,7 +500,6 @@ def test_export_to_html_method_calls_export_usd_to_html(tmp_path):
     mock_viz.export_usd_to_html.return_value = expected
 
     with (
-        patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"),
         patch("ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage),
         patch.dict("sys.modules", {"ansys.tools.visualization_interface": mock_viz}),
     ):
@@ -527,7 +526,6 @@ def test_export_to_html_method_custom_kwargs(tmp_path):
     mock_viz = MagicMock()
 
     with (
-        patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"),
         patch("ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage),
         patch.dict("sys.modules", {"ansys.tools.visualization_interface": mock_viz}),
     ):
@@ -557,7 +555,6 @@ def test_export_to_html_method_missing_viz_interface():
     mock_stage = MagicMock()
 
     with (
-        patch("ansys.geometry.core.plotting.usd_export.run_if_usd_required"),
         patch("ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage),
         patch.dict("sys.modules", {"ansys.tools.visualization_interface": None}),
     ):
