@@ -709,6 +709,7 @@ def test_boolean_body_operations(modeler: Modeler):
                 y) transform
     """
     design = modeler.create_design("TestBooleanOperations")
+    backend_version = modeler.client.backend_version
 
     comp1 = design.add_component("Comp1")
     comp2 = design.add_component("Comp2")
@@ -766,10 +767,17 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.b.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy1a = body1.copy(comp1, "Copy1a")
-    copy1.subtract(copy1a)
+    if backend_version >= (27, 1, 0):
+        copy1.subtract(copy1a)
 
-    assert copy1.is_alive
-    assert not copy1a.is_alive
+        assert copy1.is_alive
+        assert not copy1a.is_alive
+    else:
+        with pytest.raises(ValueError):
+            copy1.subtract(copy1a)
+
+        assert copy1.is_alive
+        assert copy1a.is_alive
 
     # 1.b.iii
     copy1 = body1.copy(comp1, "Copy1")
@@ -874,10 +882,17 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.b.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy1a = body1.copy(comp1_i, "Copy1a")
-    copy1.subtract(copy1a)
+    if backend_version >= (27, 1, 0):
+        copy1.subtract(copy1a)
 
-    assert copy1.is_alive
-    assert not copy1a.is_alive
+        assert copy1.is_alive
+        assert not copy1a.is_alive
+    else:
+        with pytest.raises(ValueError):
+            copy1.subtract(copy1a)
+
+        assert copy1.is_alive
+        assert copy1a.is_alive
 
     # 2.b.iii
     copy1 = body1.copy(comp1_i, "Copy1")
