@@ -451,8 +451,13 @@ def test_design_import_cat5_2024(modeler: Modeler):
 def test_design_import_catia_named_selections_file(modeler: Modeler):
     """Test importing a CATIA V5 file with named selections (SelectionSets)."""
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"))
-    assert design is not None
-    assert len(design.bodies) >= 1
+    assert {selection.name for selection in design.named_selections} == {
+        "GSMExtrude.1",
+        "GSMFill.1",
+        "Pad.1",
+        "Pad.2",
+    }
+    assert all(len(selection.bodies) == 1 for selection in design.named_selections)
 
 
 def test_design_import_catia_named_selections_with_geometric_sets(modeler: Modeler):
@@ -463,8 +468,14 @@ def test_design_import_catia_named_selections_with_geometric_sets(modeler: Model
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
     )
-    assert design is not None
-    assert len(design.bodies) >= 1
+    assert {selection.name for selection in design.named_selections} == {
+        "GSMExtrude.1",
+        "GSMFill.1",
+        "Open_body.1",
+        "Pad.1",
+        "Pad.2",
+    }
+    assert len(design._named_selections["Open_body.1"].bodies) == 2
 
 
 def test_design_import_catia_named_selections_with_publications(modeler: Modeler):
@@ -475,15 +486,17 @@ def test_design_import_catia_named_selections_with_publications(modeler: Modeler
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
     )
-    assert design is not None
-    assert len(design.bodies) >= 1
+    assert {selection.name for selection in design.named_selections} == {
+        "GSMExtrude.1",
+        "GSMFill.1",
+        "Pad.1",
+        "Pad.2",
+    }
 
 
 def test_design_import_cat5_2024_with_catia_named_selections(modeler: Modeler):
-    """Test importing a 2024 CATIA V5 file with named selections from geometric sets."""
-    from ansys.geometry.core.misc.options import ImportOptions
-
-    options = ImportOptions(map_catia_sets_to_groups=True, publications_only_to_groups=False)
+    """Test importing a 2024 CATIA V5 file with geometric sets mapped to named selections."""
+    options = ImportOptions(map_catia_sets_to_groups=True)
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"), import_options=options
     )
@@ -492,9 +505,7 @@ def test_design_import_cat5_2024_with_catia_named_selections(modeler: Modeler):
 
 
 def test_design_import_cat5_2024_with_publications_to_groups(modeler: Modeler):
-    """Test importing a 2024 CATIA V5 file with publications as named selection groups."""
-    from ansys.geometry.core.misc.options import ImportOptions
-
+    """Test importing a 2024 CATIA V5 file with publication groups enabled."""
     options = ImportOptions(map_catia_sets_to_groups=True, publications_only_to_groups=True)
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"), import_options=options
