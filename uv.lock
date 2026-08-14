@@ -201,15 +201,15 @@ wheels = [
 
 [[package]]
 name = "ansys-api-platform-instancemanagement"
-version = "1.1.4"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "grpcio" },
     { name = "protobuf" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/6b/e3/27575d89bfeafe68a22ce67ffbad98a0c8453ba11ae055857c01b812fc71/ansys_api_platform_instancemanagement-1.1.4.tar.gz", hash = "sha256:4a133c45951414842c126adc30f0c86b43ca117acebc4d436958c778350c7fe6", size = 12472, upload-time = "2026-07-07T10:46:58.059Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/64/b379b2ae643564f14cc6ea97996319ee5bbe6382d58267fa48e78a89ed57/ansys_api_platform_instancemanagement-1.2.0.tar.gz", hash = "sha256:27d20efcd15039506f3efc769665123da36d6de0191a51337cb2dcbd4001a80e", size = 15489, upload-time = "2026-08-05T08:43:39.992Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5f/ce/5b35347116c99bdbb2df83bc41385b8ba39d8dfb21a30c937f6ffeacb85e/ansys_api_platform_instancemanagement-1.1.4-py3-none-any.whl", hash = "sha256:f61db26a40cf11ef8f47f0e98d4b123979c9d5020a62e93ae6a510b9ba10acf8", size = 15172, upload-time = "2026-07-07T10:46:56.606Z" },
+    { url = "https://files.pythonhosted.org/packages/a1/1d/9b7a4f4e0bcaaf54ff16dbf66be8678a93b2df64ce901d43a67326724d08/ansys_api_platform_instancemanagement-1.2.0-py3-none-any.whl", hash = "sha256:4e6d0c42c5344f52aeaab6423f09efa52a565080e2f45463b9c40cf4ab449347", size = 18676, upload-time = "2026-08-05T08:43:38.496Z" },
 ]
 
 [[package]]
@@ -422,7 +422,7 @@ provides-extras = ["all", "graphics"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "ansys-platform-instancemanagement", specifier = "==1.1.2" },
+    { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.10.0" },
     { name = "ansys-tools-common", specifier = "==0.5.2" },
     { name = "ansys-tools-visualization-interface", specifier = "==0.14.0" },
@@ -466,7 +466,7 @@ dev = [
     { name = "vtk", specifier = "==9.6.2" },
 ]
 doc = [
-    { name = "ansys-platform-instancemanagement", specifier = "==1.1.2" },
+    { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.10.0" },
     { name = "ansys-tools-common", specifier = "==0.5.2" },
     { name = "ansys-tools-visualization-interface", specifier = "==0.14.0" },
@@ -504,7 +504,7 @@ doc = [
     { name = "vtk", specifier = "==9.6.2" },
 ]
 general-all = [
-    { name = "ansys-platform-instancemanagement", specifier = "==1.1.2" },
+    { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-tools-common", specifier = "==0.5.2" },
     { name = "ansys-tools-visualization-interface", specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
@@ -527,7 +527,7 @@ general-all = [
     { name = "vtk", specifier = "==9.6.2" },
 ]
 tests = [
-    { name = "ansys-platform-instancemanagement", specifier = "==1.1.2" },
+    { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-tools-common", specifier = "==0.5.2" },
     { name = "ansys-tools-visualization-interface", specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
@@ -562,15 +562,16 @@ tests-minimal = [
 
 [[package]]
 name = "ansys-platform-instancemanagement"
-version = "1.1.2"
+version = "1.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-api-platform-instancemanagement" },
+    { name = "ansys-tools-common" },
     { name = "importlib-metadata" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/10/16/c78dc035a3a357f0796e75b41aa7a77f6ff36f5866c57c3f99781ffc7bef/ansys_platform_instancemanagement-1.1.2.tar.gz", hash = "sha256:940d7a27d26e4c6d1228da5e139948fc4b1388f7cc7c3f5356b2b3b41e8d7c48", size = 15519, upload-time = "2023-08-10T09:00:57.37Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c9/33/afcc4f5b51d27ee3d2a039f94f5c3644d9a8e950cd458b16c24f72e22da6/ansys_platform_instancemanagement-1.2.0.tar.gz", hash = "sha256:dcff3b759bec05a8d0029d9e74b97b469738739dc8444568fbd20ca31a9b37e0", size = 25401, upload-time = "2026-08-14T14:10:56.617Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/14/1f/a05b62b999ca895ea66e7dbc6242e8121ea578d71fff1055b6cea7e45a51/ansys_platform_instancemanagement-1.1.2-py3-none-any.whl", hash = "sha256:52afe4755c4233985a1f5f33cdb2a163a53db5cee75f04c3a4e47fc81e1d0bb1", size = 18470, upload-time = "2023-08-10T09:00:55.39Z" },
+    { url = "https://files.pythonhosted.org/packages/66/51/23ca197fecf0ebe7b23b66a78bb350775b3e39e5b4031d9466a5e2059a92/ansys_platform_instancemanagement-1.2.0-py3-none-any.whl", hash = "sha256:1c9326b7ffd6d0030237de2230ae5a4475a61cfb61d613431b74e5cdb6e5efab", size = 34870, upload-time = "2026-08-14T14:10:54.98Z" },
 ]
 
 [[package]]
