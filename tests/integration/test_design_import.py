@@ -462,7 +462,6 @@ def test_design_import_catia_named_selections_file(modeler: Modeler):
 
 def test_design_import_catia_named_selections_with_geometric_sets(modeler: Modeler):
     """Test importing a CATIA V5 file with geometric sets mapped to named selections."""
-    from ansys.geometry.core.misc.options import ImportOptions
 
     options = ImportOptions(map_catia_sets_to_groups=True)
     design = modeler.open_file(
