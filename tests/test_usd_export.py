@@ -547,7 +547,7 @@ def test_export_to_html_method_custom_kwargs(tmp_path):
 
 
 def test_export_to_html_method_missing_viz_interface():
-    """Design.export_to_html raises ImportError with the [html] install hint
+    """Design.export_to_html raises ImportError with the [usd] install hint
     when viz-interface is absent."""
     from ansys.geometry.core.designer.design import Design
 
@@ -558,7 +558,7 @@ def test_export_to_html_method_missing_viz_interface():
         patch("ansys.geometry.core.plotting.usd_export._build_stage", return_value=mock_stage),
         patch.dict("sys.modules", {"ansys.tools.visualization_interface": None}),
     ):
-        with pytest.raises(ImportError, match=r"ansys-geometry-core\[html\]"):
+        with pytest.raises(ImportError, match=r"ansys-geometry-core\[usd\]"):
             Design.export_to_html.__wrapped__(design)
 
 
