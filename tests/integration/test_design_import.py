@@ -451,16 +451,14 @@ def test_design_import_cat5_2024(modeler: Modeler):
 def test_design_import_catia_named_selections_file(modeler: Modeler):
     """Test importing a CATIA V5 file with named selections (SelectionSets)."""
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"))
-    expected_publications = {
-        "GSMExtrude.1",
-        "GSMFill.1",
-        "Pad.1",
-        "Pad.2",
-    }
-    assert expected_publications <= {selection.name for selection in design.named_selections}
-    for selection in design.named_selections:
-        if selection.name in expected_publications:
-            assert len(selection.bodies) == 1
+    assert "GSMExtrude.1" in design._named_selections
+    assert len(design._named_selections["GSMExtrude.1"].bodies) == 1
+    assert "GSMFill.1" in design._named_selections
+    assert len(design._named_selections["GSMFill.1"].bodies) == 1
+    assert "Pad.1" in design._named_selections
+    assert len(design._named_selections["Pad.1"].bodies) == 1
+    assert "Pad.2" in design._named_selections
+    assert len(design._named_selections["Pad.2"].bodies) == 1
 
 
 def test_design_import_catia_named_selections_with_geometric_sets(modeler: Modeler):
@@ -469,15 +467,16 @@ def test_design_import_catia_named_selections_with_geometric_sets(modeler: Model
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
     )
-    expected_named_selections = {
-        "GSMExtrude.1",
-        "GSMFill.1",
-        "Open_body.1",
-        "Pad.1",
-        "Pad.2",
-    }
-    assert expected_named_selections <= {selection.name for selection in design.named_selections}
+    assert "GSMExtrude.1" in design._named_selections
+    assert len(design._named_selections["GSMExtrude.1"].bodies) == 1
+    assert "GSMFill.1" in design._named_selections
+    assert len(design._named_selections["GSMFill.1"].bodies) == 1
+    assert "Open_body.1" in design._named_selections
     assert len(design._named_selections["Open_body.1"].bodies) == 2
+    assert "Pad.1" in design._named_selections
+    assert len(design._named_selections["Pad.1"].bodies) == 1
+    assert "Pad.2" in design._named_selections
+    assert len(design._named_selections["Pad.2"].bodies) == 1
 
 
 def test_design_import_catia_named_selections_with_publications(modeler: Modeler):
@@ -486,15 +485,15 @@ def test_design_import_catia_named_selections_with_publications(modeler: Modeler
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
     )
-    expected_publications = {
-        "GSMExtrude.1",
-        "GSMFill.1",
-        "Pad.1",
-        "Pad.2",
-    }
-    named_selection_names = {selection.name for selection in design.named_selections}
-    assert expected_publications <= named_selection_names
-    assert "Open_body.1" not in named_selection_names
+    assert "GSMExtrude.1" in design._named_selections
+    assert len(design._named_selections["GSMExtrude.1"].bodies) == 1
+    assert "GSMFill.1" in design._named_selections
+    assert len(design._named_selections["GSMFill.1"].bodies) == 1
+    assert "Pad.1" in design._named_selections
+    assert len(design._named_selections["Pad.1"].bodies) == 1
+    assert "Pad.2" in design._named_selections
+    assert len(design._named_selections["Pad.2"].bodies) == 1
+    assert "Open_body.1" not in design._named_selections
 
 
 def test_design_import_cat5_2024_with_catia_named_selections(modeler: Modeler):
