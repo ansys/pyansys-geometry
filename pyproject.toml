@@ -24,7 +24,7 @@ classifiers = [
 ]
 dependencies = [
   "ansys-api-discovery==1.2.12",
-  "ansys-tools-common>=0.3,<1",
+  "ansys-tools-common<1,>=0.3",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
   "grpcio>=1.71.2",
@@ -95,8 +95,8 @@ doc = [
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.1.2",
-  "ansys-tools-common==0.5.1",
   "ansys-tools-visualization-interface[usd]==0.14.0",
+  "ansys-tools-common==0.5.2",
   "beartype==0.22.9",
   "docker==7.2.0",
   "geomdl==5.4.0",
