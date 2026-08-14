@@ -121,7 +121,7 @@ jobs:
       pull-requests: write # Required to create changelog fragment
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-changelog@d98e1a4008dab392f8c114a483c2c5624076ccd6 # v11.0.1
+      - uses: ansys/actions/doc-changelog@0b23d99e6800f16337ff173fcfbfcc1251130e99 # v11.0.2
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           use-pull-request-title: true
