@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer.body import FillStyle
 from ansys.geometry.core.designer.part import Part
@@ -671,7 +672,6 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
-@pytest.mark.skip(reason="See issue 3043")
 def test_boolean_body_operations(modeler: Modeler):
     """
     Test cases:
@@ -709,6 +709,9 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        pytest.skip("See issue 3043 when tracker updates are disabled")
+
     design = modeler.create_design("TestBooleanOperations")
     backend_version = modeler.client.backend_version
 
