@@ -539,6 +539,8 @@ backends:
 
   - version: "26.1"
     incompatible_tests:
+      # CATIA geometric-set mapping is not available in 26.1
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
       # NURBS Curves and surfaces for intersection was introduced in 27.1
