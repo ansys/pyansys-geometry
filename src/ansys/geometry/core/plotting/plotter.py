@@ -273,7 +273,13 @@ class GeometryPlotter(PlotterInterface):
             edge_plot_list.append(edge_plot)
         body_plot.edges = edge_plot_list
 
-    def add_body(self, body: Body, merge: bool = False, **plotting_options: dict | None) -> None:
+    def add_body(
+        self,
+        body: Body,
+        merge: bool = False,
+        exclude_face_ids: set[str] | None = None,
+        **plotting_options: dict | None,
+    ) -> None:
         """Add a body to the scene.
 
         Parameters
@@ -296,11 +302,13 @@ class GeometryPlotter(PlotterInterface):
             # Inserted in 25R2
             pass
 
-        if self.use_service_colors:
+        if self.use_service_colors and not (merge and exclude_face_ids):
             faces = body.faces
             body_color = body.color
             if not merge:
                 for face in faces:
+                    if exclude_face_ids and face.id in exclude_face_ids:
+                        continue
                     face_color = face.color
                     if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
@@ -316,6 +324,13 @@ class GeometryPlotter(PlotterInterface):
                 plotting_options["opacity"] = body.opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
+
+        if exclude_face_ids:
+            for face in body.faces:
+                if face.id not in exclude_face_ids:
+                    self.add_face(face, **plotting_options)
+            return
+
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
         # we need to set the color manually
@@ -369,6 +384,7 @@ class GeometryPlotter(PlotterInterface):
         component: Component,
         merge_component: bool = False,
         merge_bodies: bool = False,
+        exclude_face_ids: set[str] | None = None,
         **plotting_options,
     ) -> None:
         """Add a component to the scene.
@@ -390,6 +406,14 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         if merge_component:
+            if exclude_face_ids:
+                self.add_component_by_body(
+                    component,
+                    merge_bodies=merge_bodies,
+                    exclude_face_ids=exclude_face_ids,
+                    **plotting_options,
+                )
+                return
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
             dataset = component.tessellate()
             component_polydata = MeshObjectPlot(component, dataset)
@@ -398,11 +422,16 @@ class GeometryPlotter(PlotterInterface):
             self.add_component_by_body(
                 component,
                 merge_bodies=merge_bodies,
+                exclude_face_ids=exclude_face_ids,
                 **plotting_options,
             )
 
     def add_component_by_body(
-        self, component: Component, merge_bodies: bool, **plotting_options: dict | None
+        self,
+        component: Component,
+        merge_bodies: bool,
+        exclude_face_ids: set[str] | None = None,
+        **plotting_options: dict | None,
     ) -> None:
         """Add a component on a per body basis.
 
@@ -421,11 +450,21 @@ class GeometryPlotter(PlotterInterface):
         """
         # Recursively add the bodies, design curves, and components
         for body in component.bodies:
-            self.add_body(body, merge=merge_bodies, **plotting_options)
+            self.add_body(
+                body,
+                merge=merge_bodies,
+                exclude_face_ids=exclude_face_ids,
+                **plotting_options,
+            )
         for design_curve in component.design_curves:
             self.add_design_curve(design_curve, **plotting_options)
         for comp in component.components:
-            self.add_component_by_body(comp, merge_bodies=merge_bodies, **plotting_options)
+            self.add_component_by_body(
+                comp,
+                merge_bodies=merge_bodies,
+                exclude_face_ids=exclude_face_ids,
+                **plotting_options,
+            )
 
     def add_sketch_polydata(
         self, polydata_entries: list[pv.PolyData], sketch: Sketch = None, **plotting_options
@@ -544,6 +583,9 @@ class GeometryPlotter(PlotterInterface):
             plotting_options.pop("merge_component", None)
         else:
             merge_component = None
+
+        exclude_face_ids = {face.id for face in highlight.items} if highlight is not None else None
+
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
             self.add_design_point(plottable_object, **plotting_options)
@@ -558,11 +600,22 @@ class GeometryPlotter(PlotterInterface):
         elif isinstance(plottable_object, Curve):
             self.add_curve(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Body, MasterBody)):
-            self.add_body(plottable_object, merge_bodies, **plotting_options)
+            self.add_body(
+                plottable_object,
+                merge=merge_bodies,
+                exclude_face_ids=exclude_face_ids,
+                **plotting_options,
+            )
         elif isinstance(plottable_object, Face):
             self.add_face(plottable_object, **plotting_options)
         elif isinstance(plottable_object, (Design, Component)):
-            self.add_component(plottable_object, merge_component, merge_bodies, **plotting_options)
+            self.add_component(
+                plottable_object,
+                merge_component=merge_component,
+                merge_bodies=merge_bodies,
+                exclude_face_ids=exclude_face_ids,
+                **plotting_options,
+            )
         elif (
             isinstance(plottable_object, list)
             and len(plottable_object) > 0
@@ -579,13 +632,22 @@ class GeometryPlotter(PlotterInterface):
             self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
 
         if highlight is not None:
-            for face in highlight.items:
+            datasets = [face.tessellate() for face in highlight.items]
+            if len(datasets) == 1:
                 self._backend.pv_interface.plot(
-                    face.tessellate(),
+                    datasets[0],
                     color=highlight_color,
                     opacity=1,
                     show_edges=False,
-                    edge_color="#FF0000",
+                    smooth_shading=True,
+                )
+            elif datasets:
+                self._backend.pv_interface.plot(
+                    pv.MultiBlock(datasets),
+                    color=highlight_color,
+                    opacity=1,
+                    show_edges=False,
+                    smooth_shading=True,
                 )
 
     def show(
