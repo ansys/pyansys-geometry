@@ -40,7 +40,7 @@ dependencies = [
   "six>=1.16.0,<2",
 ]
 optional-dependencies.all = [
-  "ansys-platform-instancemanagement>=1.0.3,<2",
+  "ansys-platform-instancemanagement<2,>=1.0.3",
   "ansys-tools-visualization-interface>=0.2.6",
   "docker<8,>=6.0.1",
   "pygltflib>=1.16,<2",
@@ -65,8 +65,8 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.6.1",
-  "ty==0.0.69",
+  "pre-commit==4.6.2",
+  "ty==0.0.70",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -89,7 +89,7 @@ doc = [
   { include-group = "general-all" },
 ]
 general-all = [
-  "ansys-platform-instancemanagement==1.1.2",
+  "ansys-platform-instancemanagement==1.2.0",
   "ansys-tools-common==0.5.2",
   "ansys-tools-visualization-interface==0.14.0",
   "beartype==0.22.9",
