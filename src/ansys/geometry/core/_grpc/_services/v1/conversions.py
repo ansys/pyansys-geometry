@@ -1434,17 +1434,19 @@ def from_surface_evaluation_to_grpc_surface_evaluation(
         Geometry service gRPC surface evaluation message.
     """
     return GRPCSurfaceEvaluation(
-        point=from_point3d_to_grpc_point(surface_evaluation.point),
+        point=from_point3d_to_grpc_point(surface_evaluation.position),
+        param_u=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.u),
+        param_v=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.v),
         normal=from_unit_vector_to_grpc_direction(surface_evaluation.normal),
-        u_derivative=from_unit_vector_to_grpc_direction(surface_evaluation.u_derivative),
-        v_derivative=from_unit_vector_to_grpc_direction(surface_evaluation.v_derivative),
-        u_second_derivative=from_unit_vector_to_grpc_direction(
+        derivative_u=from_unit_vector_to_grpc_direction(surface_evaluation.u_derivative),
+        derivative_v=from_unit_vector_to_grpc_direction(surface_evaluation.v_derivative),
+        derivative_uu=from_unit_vector_to_grpc_direction(
             surface_evaluation.uu_derivative
         ),
-        v_second_derivative=from_unit_vector_to_grpc_direction(
+        derivative_vv=from_unit_vector_to_grpc_direction(
             surface_evaluation.vv_derivative
         ),
-        uv_mixed_derivative=from_unit_vector_to_grpc_direction(
+        derivative_uv=from_unit_vector_to_grpc_direction(
             surface_evaluation.uv_derivative
         ),
     )
