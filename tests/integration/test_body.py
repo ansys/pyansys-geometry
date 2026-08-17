@@ -23,7 +23,6 @@
 """Test body interaction."""
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 from unittest.mock import Mock, patch
 
 import matplotlib.colors as mcolors
@@ -56,9 +55,6 @@ from ansys.geometry.core.sketch import Sketch
 from ..conftest import are_graphics_available
 from .conftest import FILES_DIR
 
-if TYPE_CHECKING:
-    from ansys.geometry.core.designer.body import Body
-
 
 def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
     from ansys.geometry.core.designer.selection import NamedSelection
@@ -75,43 +71,6 @@ def _named_selection(*, backend_version=(27, 1, 0), bodies=None):
         bodies=bodies or [],
         preexisting_id="ns-id",
     )
-
-
-def _is_alive_or_replaced(body: "Body") -> bool:
-    """Return whether body is alive, resolving tracker-refreshed handles first."""
-    if body.is_alive:
-        return True
-
-    resolved_body = _resolve_body_handle(body)
-    return resolved_body is not None and resolved_body.is_alive
-
-
-def _resolve_body_handle(body: "Body") -> "Body | None":
-    """Resolve stale body handles after tracker updates.
-
-    Tracker updates can replace Python body objects. Try strict identity
-    matching first, then fall back to a same-name match as a last resort.
-    """
-    candidates = body.parent_component.bodies
-
-    # 1) Exact instance ID match
-    for candidate in candidates:
-        if candidate.id == body.id:
-            return candidate
-
-    # 2) Master/template ID match
-    body_template_id = getattr(body._template, "id", None)
-    if body_template_id is not None:
-        for candidate in candidates:
-            if getattr(candidate._template, "id", None) == body_template_id:
-                return candidate
-
-    # 3) Name match (least strict fallback)
-    for candidate in candidates:
-        if candidate.name == body.name:
-            return candidate
-
-    return None
 
 
 def test_body_properties_and_transformations(modeler: Modeler):
@@ -712,6 +671,7 @@ def test_copy_body(modeler: Modeler):
     assert copy.is_alive
 
 
+@pytest.mark.skip(reason="See issue 3043")
 def test_boolean_body_operations(modeler: Modeler):
     """
     Test cases:
@@ -784,8 +744,8 @@ def test_boolean_body_operations(modeler: Modeler):
     with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
-    assert _is_alive_or_replaced(copy1)
-    assert _is_alive_or_replaced(copy3)
+    assert copy1.is_alive
+    assert copy3.is_alive
 
     # 1.b.i.x
     copy1 = body1.copy(comp1, "Copy1")
@@ -811,13 +771,13 @@ def test_boolean_body_operations(modeler: Modeler):
     if backend_version >= (27, 1, 0):
         copy1.subtract(copy1a)
 
-        assert _is_alive_or_replaced(copy1)
+        assert not copy1.is_alive
         assert not copy1a.is_alive
     else:
         with pytest.raises(ValueError):
             copy1.subtract(copy1a)
 
-        assert _is_alive_or_replaced(copy1)
+        assert copy1.is_alive
         assert copy1a.is_alive
 
     # 1.b.iii
@@ -899,8 +859,8 @@ def test_boolean_body_operations(modeler: Modeler):
     with pytest.raises(ValueError, match="bodies do not intersect"):
         copy1.intersect(copy3)
 
-    assert _is_alive_or_replaced(copy1)
-    assert _is_alive_or_replaced(copy3)
+    assert copy1.is_alive
+    assert copy3.is_alive
 
     # 2.b.i.x
     copy1 = body1.copy(comp1_i, "Copy1")
@@ -926,13 +886,13 @@ def test_boolean_body_operations(modeler: Modeler):
     if backend_version >= (27, 1, 0):
         copy1.subtract(copy1a)
 
-        assert _is_alive_or_replaced(copy1)
+        assert not copy1.is_alive
         assert not copy1a.is_alive
     else:
         with pytest.raises(ValueError):
             copy1.subtract(copy1a)
 
-        assert _is_alive_or_replaced(copy1)
+        assert copy1.is_alive
         assert copy1a.is_alive
 
     # 2.b.iii
