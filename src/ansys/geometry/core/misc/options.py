@@ -64,14 +64,14 @@ class ImportOptions:
     publications_only_to_groups : bool = False
         Import only CATIA publications as named selection groups.
 
-    Notes
-    -----
-    import_as_lightweight and import_using_spaceclaim_colors are only available
-    starting in version 27R1.
-
     Warnings
     --------
     map_catia_sets_to_groups and publications_only_to_groups are only available
+    starting in version 27R1.
+
+    Notes
+    -----
+    import_as_lightweight and import_using_spaceclaim_colors are only available
     starting in version 27R1.
     """
 
