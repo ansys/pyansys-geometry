@@ -67,7 +67,7 @@ from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
-from ansys.geometry.core.selection_builder.face_selection import FaceSelection
+from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 from ansys.geometry.core.shapes.curves import Curve
 from ansys.geometry.core.shapes.surfaces import Surface
 from ansys.geometry.core.sketch.sketch import Sketch
@@ -277,7 +277,7 @@ class GeometryPlotter(PlotterInterface):
         self,
         body: Body,
         merge: bool = False,
-        exclude_face_ids: set[str] | None = None,
+        exclude_ids: set[str] | None = None,
         **plotting_options: dict | None,
     ) -> None:
         """Add a body to the scene.
@@ -302,13 +302,23 @@ class GeometryPlotter(PlotterInterface):
             # Inserted in 25R2
             pass
 
-        if self.use_service_colors and not (merge and exclude_face_ids):
+        if exclude_ids and body.id in exclude_ids:
+            return
+
+        excluded_faces = (
+            {face.id for face in body.faces if face.id in exclude_ids} if exclude_ids else set()
+        )
+        if excluded_faces:
+            for face in body.faces:
+                if face.id not in excluded_faces:
+                    self.add_face(face, **plotting_options)
+            return
+
+        if self.use_service_colors and "color" not in plotting_options:
             faces = body.faces
             body_color = body.color
             if not merge:
                 for face in faces:
-                    if exclude_face_ids and face.id in exclude_face_ids:
-                        continue
                     face_color = face.color
                     if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
@@ -324,12 +334,6 @@ class GeometryPlotter(PlotterInterface):
                 plotting_options["opacity"] = body.opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
-
-        if exclude_face_ids:
-            for face in body.faces:
-                if face.id not in exclude_face_ids:
-                    self.add_face(face, **plotting_options)
-            return
 
         # WORKAROUND: multi_colors is not properly supported in PyVista PolyData
         # so if multi_colors is True and merge is True (returns PolyData) then
@@ -364,7 +368,7 @@ class GeometryPlotter(PlotterInterface):
         """
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = face.tessellate()
-        if self.use_service_colors:
+        if self.use_service_colors and "color" not in plotting_options:
             face_color = face.color
             if face_color != DEFAULT_COLOR:
                 plotting_options["color"] = face_color
@@ -384,7 +388,7 @@ class GeometryPlotter(PlotterInterface):
         component: Component,
         merge_component: bool = False,
         merge_bodies: bool = False,
-        exclude_face_ids: set[str] | None = None,
+        exclude_ids: set[str] | None = None,
         **plotting_options,
     ) -> None:
         """Add a component to the scene.
@@ -405,12 +409,15 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        if exclude_ids and component.id in exclude_ids:
+            return
+
         if merge_component:
-            if exclude_face_ids:
+            if exclude_ids:
                 self.add_component_by_body(
                     component,
                     merge_bodies=merge_bodies,
-                    exclude_face_ids=exclude_face_ids,
+                    exclude_ids=exclude_ids,
                     **plotting_options,
                 )
                 return
@@ -422,7 +429,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_component_by_body(
                 component,
                 merge_bodies=merge_bodies,
-                exclude_face_ids=exclude_face_ids,
+                exclude_ids=exclude_ids,
                 **plotting_options,
             )
 
@@ -430,7 +437,7 @@ class GeometryPlotter(PlotterInterface):
         self,
         component: Component,
         merge_bodies: bool,
-        exclude_face_ids: set[str] | None = None,
+        exclude_ids: set[str] | None = None,
         **plotting_options: dict | None,
     ) -> None:
         """Add a component on a per body basis.
@@ -453,7 +460,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_body(
                 body,
                 merge=merge_bodies,
-                exclude_face_ids=exclude_face_ids,
+                exclude_ids=exclude_ids,
                 **plotting_options,
             )
         for design_curve in component.design_curves:
@@ -462,7 +469,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_component_by_body(
                 comp,
                 merge_bodies=merge_bodies,
-                exclude_face_ids=exclude_face_ids,
+                exclude_ids=exclude_ids,
                 **plotting_options,
             )
 
@@ -551,7 +558,7 @@ class GeometryPlotter(PlotterInterface):
         self,
         plottable_object: Any,
         name_filter: str = None,
-        highlight: FaceSelection | None = None,
+        highlight: TypedSelection | None = None,
         highlight_color: str = "#FF0000",
         **plotting_options,
     ) -> None:
@@ -559,17 +566,22 @@ class GeometryPlotter(PlotterInterface):
 
         Parameters
         ----------
-        plottable_object : str, default: None
-            Regular expression with the desired name or names you want to include in the plotter.
-        name_filter: str, default: None
-            Regular expression with the desired name or names you want to include in the plotter.
-        highlight : FaceSelection, default: None
-            Face selection to highlight on top of the plotted object.
+        plottable_object : Any
+            Object to add to the plotter.
+        name_filter : str, default: None
+            Regular expression used to filter plotted objects by name.
+        highlight : TypedSelection, default: None
+            Selection to highlight on top of the plotted object.
         highlight_color : str, default: "#FF0000"
-            Color to use for the highlighted faces.
+            Color used to highlight the selection.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
             you are using.
+
+        Warnings
+        --------
+        Highlighting changes the color of the selected objects. Selection
+        items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
         if "merge_bodies" in plotting_options:
@@ -584,7 +596,21 @@ class GeometryPlotter(PlotterInterface):
         else:
             merge_component = None
 
-        exclude_face_ids = {face.id for face in highlight.items} if highlight is not None else None
+        highlight_items = []
+        if highlight is not None:
+            for item in highlight.items:
+                try:
+                    item.color = highlight_color
+                    item_id = item.id
+                    highlight_items.append((item, item_id))
+                except (AttributeError, GeometryRuntimeError):
+                    LOG.warning(
+                        "Skipping highlighted item %s because it does not provide writable "
+                        "color and id properties or its color could not be set.",
+                        item,
+                    )
+
+        exclude_ids = {item_id for _, item_id in highlight_items} if highlight_items else None
 
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):
@@ -603,7 +629,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_body(
                 plottable_object,
                 merge=merge_bodies,
-                exclude_face_ids=exclude_face_ids,
+                exclude_ids=exclude_ids,
                 **plotting_options,
             )
         elif isinstance(plottable_object, Face):
@@ -613,7 +639,7 @@ class GeometryPlotter(PlotterInterface):
                 plottable_object,
                 merge_component=merge_component,
                 merge_bodies=merge_bodies,
-                exclude_face_ids=exclude_face_ids,
+                exclude_ids=exclude_ids,
                 **plotting_options,
             )
         elif (
@@ -631,24 +657,9 @@ class GeometryPlotter(PlotterInterface):
             # any left type should be a PyVista object
             self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
 
-        if highlight is not None:
-            datasets = [face.tessellate() for face in highlight.items]
-            if len(datasets) == 1:
-                self._backend.pv_interface.plot(
-                    datasets[0],
-                    color=highlight_color,
-                    opacity=1,
-                    show_edges=False,
-                    smooth_shading=True,
-                )
-            elif datasets:
-                self._backend.pv_interface.plot(
-                    pv.MultiBlock(datasets),
-                    color=highlight_color,
-                    opacity=1,
-                    show_edges=False,
-                    smooth_shading=True,
-                )
+        if highlight_items:
+            for item, _ in highlight_items:
+                self.plot(item, color=highlight_color)
 
     def show(
         self,
