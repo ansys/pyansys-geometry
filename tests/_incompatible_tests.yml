@@ -558,5 +558,7 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 27.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
       # Datum lines not supported until 27.1
       - tests/integration/test_datum_lines.py::test_import_datum_lines
