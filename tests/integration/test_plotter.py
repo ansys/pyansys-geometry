@@ -53,6 +53,7 @@ from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.selection_builder.selection_builder import RangeType
+from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.ellipse import Ellipse
 from ansys.geometry.core.shapes.curves.line import Line
@@ -1720,3 +1721,56 @@ def test_plot_highlight_bracket_face_selection(modeler: Modeler, verify_image_ca
     pl = GeometryPlotter()
     pl.plot(design, highlight=final_faces)
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_bracket.png"))
+
+
+@skip_no_xserver
+def test_plot_typed_selection_highlight(modeler: Modeler):
+    """Test highlighting a real item through the TypedSelection base class."""
+    design = modeler.create_design("TypedSelectionHighlight")
+    body = design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+    selection = TypedSelection([body.faces[0]])
+
+    plotter = GeometryPlotter()
+    plotter.plot(design, highlight=selection, highlight_color="yellow")
+    plotter.show()
+
+    assert body.faces[0].color == "#ffff00ff"
+
+
+@skip_no_xserver
+def test_plot_typed_selection_skips_uncolorable_item(modeler: Modeler, caplog):
+    """Test that a real selection item without a color property is skipped with a warning."""
+    design = modeler.create_design("UncolorableTypedSelection")
+    design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+    selection = TypedSelection([design.bodies[0].edges[0]])
+
+    plotter = GeometryPlotter()
+    plotter.plot(design, highlight=selection)
+    plotter.show()
+
+    assert "does not provide writable color and id properties" in caplog.text
+
+
+@skip_no_xserver
+def test_plotter_excludes_selected_body_and_component(modeler: Modeler):
+    """Test excluding real bodies and components from the base render by ID."""
+    design = modeler.create_design("ExcludedSelectionItems")
+    body = design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+
+    plotter = GeometryPlotter(use_service_colors=False)
+    plotter.add_body(body, exclude_ids={body.id})
+    plotter.add_component(design, merge_component=True, exclude_ids={body.id})
+    plotter.add_component(design, exclude_ids={design.id})
+    plotter.show()
