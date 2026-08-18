@@ -453,7 +453,7 @@ def test_design_import_cat5_2024(modeler: Modeler):
 
 
 def test_design_import_catia_named_selections_file(modeler: Modeler):
-    """Test importing a CATIA V5 file with named selections (SelectionSets)."""
+    """Test importing CATIA publications and geometric sets as named selections."""
     design = modeler.open_file(Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"))
     assert "GSMExtrude.1" in design._named_selections
     assert len(design._named_selections["GSMExtrude.1"].bodies) == 1
@@ -464,9 +464,6 @@ def test_design_import_catia_named_selections_file(modeler: Modeler):
     assert "Pad.2" in design._named_selections
     assert len(design._named_selections["Pad.2"].bodies) == 1
 
-
-def test_design_import_catia_named_selections_with_geometric_sets(modeler: Modeler):
-    """Test importing a CATIA V5 file with geometric sets mapped to named selections."""
     options = ImportOptions(map_catia_sets_to_groups=True)
     design = modeler.open_file(
         Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options

@@ -162,7 +162,6 @@ backends:
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
       # CATIA named selections mapping only available from 26.1 onwards
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
-      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
@@ -323,7 +322,6 @@ backends:
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
       # CATIA named selections mapping only available from 26.1 onwards
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
-      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
@@ -452,7 +450,6 @@ backends:
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
       # CATIA named selections mapping only available from 26.1 onwards
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
-      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
@@ -532,7 +529,6 @@ backends:
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
       # CATIA named selections mapping only available from 26.1 onwards
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
-      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
       - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
@@ -540,7 +536,6 @@ backends:
   - version: "26.1"
     incompatible_tests:
       # CATIA geometric-set mapping is not available in 26.1
-      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_geometric_sets
       # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
       # NURBS Curves and surfaces for intersection was introduced in 27.1
