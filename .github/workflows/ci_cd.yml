@@ -928,6 +928,7 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
           skip-install: true
 
       - name: "Compressing Linux Dockerfile"
