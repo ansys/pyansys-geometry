@@ -1752,6 +1752,8 @@ def test_plot_typed_selection_highlight(modeler: Modeler):
 @skip_no_xserver
 def test_plot_typed_selection_skips_uncolorable_item(modeler: Modeler, caplog):
     """Test that a real selection item without a color property is skipped with a warning."""
+    import logging
+
     design = modeler.create_design("UncolorableTypedSelection")
     design.extrude_sketch(
         "Box",
@@ -1761,6 +1763,8 @@ def test_plot_typed_selection_skips_uncolorable_item(modeler: Modeler, caplog):
     selection = TypedSelection([design.bodies[0].edges[0]])
 
     plotter = GeometryPlotter()
+    # Set client log level to WARNING to capture warning messages
+    modeler.client.log_level = logging.WARNING
     plotter.plot(design, highlight=selection)
     plotter.show()
 
