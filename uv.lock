@@ -214,7 +214,7 @@ wheels = [
 
 [[package]]
 name = "ansys-geometry-core"
-version = "0.16.dev0"
+version = "0.17.0"
 source = { editable = "." }
 dependencies = [
     { name = "ansys-api-discovery" },
