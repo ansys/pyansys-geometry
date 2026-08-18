@@ -1663,15 +1663,23 @@ def test_show_returns_unwrapped_mesh_object_plot():
 
 
 @skip_no_xserver
-def test_show_returns_unwrapped_edge_plot():
-    """Test that show() unwraps EdgePlot into its edge_object."""
+def test_show_returns_unwrapped_edge_plot(modeler: Modeler):
+    """Test that show() unwraps EdgePlot into its edge_object when picking is enabled."""
+    design = modeler.create_design("EdgePlotUnwrap")
+    design.extrude_sketch(
+        "Box",
+        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
+        Quantity(2, UNITS.m),
+    )
+
+    # Get a real edge object from the body
+    real_edge = design.bodies[0].edges[0]
+
     pl = GeometryPlotter(allow_picking=True)
-    mock_edge = MagicMock()
-    edge_plot = MagicMock(spec=EdgePlot)
-    edge_plot.edge_object = mock_edge
+    edge_plot = EdgePlot(MagicMock(), real_edge, MagicMock())
     with patch.object(pl._backend, "show", return_value=[edge_plot]):
         result = pl.show()
-    assert result == [mock_edge]
+    assert result == [real_edge]
 
 
 @skip_no_xserver
