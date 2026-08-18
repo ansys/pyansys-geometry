@@ -67,7 +67,12 @@ class ImportOptions:
     Notes
     -----
     import_as_lightweight and import_using_spaceclaim_colors are only available
-    starting in version 2027 R1.
+    starting in version 27R1.
+
+    Warnings
+    --------
+    map_catia_sets_to_groups and publications_only_to_groups are only available
+    starting in version 27R1.
     """
 
     cleanup_bodies: bool = False
