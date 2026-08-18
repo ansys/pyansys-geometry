@@ -366,9 +366,10 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
+        color_was_provided = "color" in plotting_options
         self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
         dataset = face.tessellate()
-        if self.use_service_colors and "color" not in plotting_options:
+        if self.use_service_colors and not color_was_provided:
             face_color = face.color
             if face_color != DEFAULT_COLOR:
                 plotting_options["color"] = face_color
@@ -600,6 +601,8 @@ class GeometryPlotter(PlotterInterface):
         if highlight is not None:
             for item in highlight.items:
                 try:
+                    if not hasattr(item, "color") or not hasattr(item, "id"):
+                        raise AttributeError
                     item.color = highlight_color
                     item_id = item.id
                     highlight_items.append((item, item_id))
