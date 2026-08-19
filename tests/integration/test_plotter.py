@@ -1763,7 +1763,7 @@ def test_plot_typed_selection_skips_uncolorable_item(modeler: Modeler, caplog):
     selection = TypedSelection([design.bodies[0].edges[0]])
 
     plotter = GeometryPlotter()
-    # Set client log level to WARNING to capture warning messages
+    caplog.set_level(logging.WARNING, logger="PyAnsys_Geometry_global")
     modeler.client.log_level = logging.WARNING
     plotter.plot(design, highlight=selection)
     plotter.show()
