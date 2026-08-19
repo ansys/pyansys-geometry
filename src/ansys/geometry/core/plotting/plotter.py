@@ -613,7 +613,11 @@ class GeometryPlotter(PlotterInterface):
                         item,
                     )
 
-        exclude_ids = {item_id for _, item_id in highlight_items} if highlight_items else None
+        exclude_ids = (
+            {item_id for item, item_id in highlight_items if isinstance(item, Face)}
+            if highlight_items
+            else None
+        )
 
         # Add the custom object to the plotter
         if isinstance(plottable_object, DesignPoint):

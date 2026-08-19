@@ -17,15 +17,19 @@ This example demonstrates how to build a ``FaceSelection`` from a real model and
 overlay the selected faces on top of the plotted geometry by using the
 ``highlight`` parameter of ``GeometryPlotter.plot()``.
 
-Create a face selection and progressively narrow it down by using a filtering
-workflow.
+The workflow mirrors a typical selection-builder pipeline: start from all faces,
+filter the selection by edge count, area, and location, and then highlight only
+the final subset in the plot.
 
 +++
 
 ## Perform required imports
 
+Perform the required imports.
+
 ```{code-cell} ipython3
 from pathlib import Path
+import requests
 
 from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.misc.options import ImportOptions
@@ -33,23 +37,28 @@ from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.selection_builder.selection_builder import RangeType
 ```
 
-## Locate the example file
+## Download the example file
 
-Locate the bracket model shipped with the PyAnsys Geometry repository.
+Download the bracket model from the PyAnsys Geometry repository.
 
 ```{code-cell} ipython3
-def find_example_file(filename):
-    """Find an example file stored in the integration tests folder."""
-    current = Path.cwd().resolve()
-    for candidate_root in [current, *current.parents]:
-        candidate = candidate_root / "tests" / "integration" / "files" / filename
-        if candidate.exists():
-            return candidate
-    raise FileNotFoundError(f"Could not locate {filename} in tests/integration/files")
+BASE_URL = (
+    "https://raw.githubusercontent.com/ansys/pyansys-geometry/main/tests/integration/files/"
+)
 
 
-file_path = find_example_file("Bracket_Static_Stress.dsco")
-print(f"Using example file: {file_path}")
+def download_file(filename):
+    """Download an example file from the PyAnsys Geometry repository."""
+    url = BASE_URL + filename
+    local_path = Path.cwd() / filename
+    response = requests.get(url)
+    response.raise_for_status()
+    local_path.write_bytes(response.content)
+    print(f"Downloaded: {filename}")
+    return local_path
+
+
+file_path = download_file("Bracket_Static_Stress.dsco")
 ```
 
 ## Initialize the modeler
@@ -68,16 +77,17 @@ options = ImportOptions()
 options.import_names = True
 
 design = modeler.open_file(file_path=file_path, import_options=options)
-design.plot()
 ```
 
 ## Build the face selection to highlight
 
-Create a face selection and progressively narrow it down by using a filtering
-workflow.
+Create a face selection and progressively narrow it down by using the same
+filtering workflow as the local plotting script.
 
 ```{code-cell} ipython3
-all_faces = modeler.create_selection_builder().faces.get_all_faces()
+sb = modeler.create_selection_builder()
+
+all_faces = sb.faces.get_all_faces()
 print("All faces:", len(all_faces.items))
 
 faces_3_4_edges = all_faces.filter_faces_by_edge_count(3, 4)

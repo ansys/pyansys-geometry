@@ -77,6 +77,8 @@ from ansys.geometry.core.sketch import (
     Triangle,
 )
 
+from .conftest import FILES_DIR
+
 skip_no_xserver = pytest.mark.skipif(
     not system_supports_plotting(), reason="Requires active X Server"
 )
@@ -1632,6 +1634,8 @@ def test_plot_highlight_filtered_selection(modeler: Modeler, verify_image_cache)
     pl.plot(design, highlight=largest)
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_filtered_selection.png"))
 
+    assert largest.items[0].color == "#ff0000ff"
+
 
 @skip_no_xserver
 def test_plot_highlight_none_does_not_error(modeler: Modeler, verify_image_cache):
@@ -1646,9 +1650,6 @@ def test_plot_highlight_none_does_not_error(modeler: Modeler, verify_image_cache
     pl = GeometryPlotter()
     pl.plot(design, highlight=None)
     pl.show(screenshot=Path(IMAGE_RESULTS_DIR, "test_plot_highlight_none.png"))
-
-
-FILES_DIR = Path(Path(__file__).parent, "files")
 
 
 @skip_no_xserver
@@ -1732,21 +1733,43 @@ def test_plot_highlight_bracket_face_selection(modeler: Modeler, verify_image_ca
 
 
 @skip_no_xserver
-def test_plot_typed_selection_highlight(modeler: Modeler):
-    """Test highlighting a real item through the TypedSelection base class."""
-    design = modeler.create_design("TypedSelectionHighlight")
+def test_plot_mixed_body_and_face_selection_highlight(modeler: Modeler):
+    """Test highlighting a selection containing both a body and a face."""
+    design = modeler.create_design("MixedBodyAndFaceSelectionHighlight")
     body = design.extrude_sketch(
         "Box",
         Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
         Quantity(2, UNITS.m),
     )
-    selection = TypedSelection([body.faces[0]])
+    selection = TypedSelection([body, body.faces[0]])
 
     plotter = GeometryPlotter()
     plotter.plot(design, highlight=selection, highlight_color="yellow")
     plotter.show()
 
+    assert body.color == "#ffff00ff"
     assert body.faces[0].color == "#ffff00ff"
+
+
+@skip_no_xserver
+def test_plot_component_selection_is_not_excluded(modeler: Modeler, caplog):
+    """Test that selecting a component does not exclude it from the base plot."""
+    import logging
+
+    design = modeler.create_design("ComponentSelectionHighlight")
+    component = design.add_component("Component")
+    sketch = Sketch()
+    sketch.box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m))
+    component.create_surface("Surface", sketch)
+    selection = TypedSelection([component])
+
+    plotter = GeometryPlotter()
+    caplog.set_level(logging.WARNING, logger="PyAnsys_Geometry_global")
+    with patch.object(plotter._backend.pv_interface, "plot") as plot_mock:
+        plotter.plot(component, highlight=selection, highlight_color="yellow", merge_component=True)
+
+    assert "Skipping highlighted item" in caplog.text
+    plot_mock.assert_called_once()
 
 
 @skip_no_xserver
@@ -1769,20 +1792,3 @@ def test_plot_typed_selection_skips_uncolorable_item(modeler: Modeler, caplog):
     plotter.show()
 
     assert "does not provide writable color and id properties" in caplog.text
-
-
-@skip_no_xserver
-def test_plotter_excludes_selected_body_and_component(modeler: Modeler):
-    """Test excluding real bodies and components from the base render by ID."""
-    design = modeler.create_design("ExcludedSelectionItems")
-    body = design.extrude_sketch(
-        "Box",
-        Sketch().box(Point2D([0, 0], UNITS.m), Quantity(2, UNITS.m), Quantity(2, UNITS.m)),
-        Quantity(2, UNITS.m),
-    )
-
-    plotter = GeometryPlotter(use_service_colors=False)
-    plotter.add_body(body, exclude_ids={body.id})
-    plotter.add_component(design, merge_component=True, exclude_ids={body.id})
-    plotter.add_component(design, exclude_ids={design.id})
-    plotter.show()
