@@ -21,7 +21,7 @@ repos:
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 39d9ac5938dadb73df0564a45f163e25ff9fa6e2 # frozen: v0.16.1
+    rev: 7c55798a78262d14b2074abf623d8a992ebb70d4 # frozen: v0.16.2
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -50,7 +50,7 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 6b63472e72e1a91ed8a2f6d483790dfb644fa1d3 # frozen: 0.37.4
+    rev: 12e63946db2c5cfcc9030fac21c3883ba88c6ed8 # frozen: 0.38.0
     hooks:
       - id: check-github-workflows
 
