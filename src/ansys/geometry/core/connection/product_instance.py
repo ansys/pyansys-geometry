@@ -185,7 +185,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    version: str | int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -324,7 +324,8 @@ def prepare_and_start_backend(
     ):
         # If the user has set the ANSYS_GEOMETRY_SERVICE_ROOT environment variable,
         # we will use it as the root folder for the Geometry Service.
-        pass
+        # We will still set the version to avoid later errors
+        version = get_latest_ansys_installation()[0]
     else:
         if version is not None:
             try:
