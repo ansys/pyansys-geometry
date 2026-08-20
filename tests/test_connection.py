@@ -184,6 +184,24 @@ def test_manifest_path_exists(tmp_path):
     assert result == str(manifest_path)
 
 
+@pytest.mark.parametrize(
+    ("version", "relative_manifest_path"),
+    [
+        (261, ("Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
+        (271, ("Discovery", "Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
+    ],
+)
+def test_default_manifest_path(version, relative_manifest_path, tmp_path):
+    """Test default manifests use the version-specific installation layout."""
+    manifest_path = tmp_path.joinpath(*relative_manifest_path)
+    manifest_path.parent.mkdir(parents=True)
+    manifest_path.touch()
+
+    result = _manifest_path_provider(version, {version: str(tmp_path)})
+
+    assert result == manifest_path.as_posix()
+
+
 def test_manifest_path_does_not_exist(tmp_path, caplog):
     """Test when the manifest path does not exist and handle RuntimeError."""
 
