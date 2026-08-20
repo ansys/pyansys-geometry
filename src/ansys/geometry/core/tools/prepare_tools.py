@@ -160,6 +160,16 @@ class PrepareTools:
             sealing_faces[0] if sealing_faces else inside_faces[0]
         )
 
+        # Inside faces must be provided
+        if len(inside_faces) == 0:
+            self._grpc_client.log.info("No inside faces provided...")
+            return []
+
+        # If sealing_faces is empty, options for leak detection must be provided
+        if len(sealing_faces) == 0 and options is None:
+            self._grpc_client.log.info("If options are empty, sealing faces must be provided.")
+            return []
+
         response = self._grpc_client._services.prepare_tools.extract_volume_from_faces(
             sealing_faces=[face.id for face in sealing_faces],
             inside_faces=[face.id for face in inside_faces],

@@ -60,11 +60,18 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
     def extract_volume_from_faces(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ExtractVolumeFromFacesRequest
 
+        # Handle the volume extract options
+        options = (
+            from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"])
+            if kwargs["options"]
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromFacesRequest(
             sealing_face_ids=[build_grpc_id(face) for face in kwargs["sealing_faces"]],
             inside_face_ids=[build_grpc_id(face) for face in kwargs["inside_faces"]],
-            options=from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"]),
+            options=options,
         )
 
         # Call the gRPC service
@@ -86,11 +93,18 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
     def extract_volume_from_edge_loops(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import ExtractVolumeFromEdgeLoopsRequest
 
+        # Handle the volume extract options
+        options = (
+            from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"])
+            if kwargs["options"]
+            else None
+        )
+
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExtractVolumeFromEdgeLoopsRequest(
             sealing_edge_ids=[build_grpc_id(edge) for edge in kwargs["sealing_edges"]],
             inside_face_ids=[build_grpc_id(face) for face in kwargs["inside_faces"]],
-            options=from_volume_extract_options_to_grpc_volume_extract_options(kwargs["options"])
+            options=options
         )
 
         # Call the gRPC service

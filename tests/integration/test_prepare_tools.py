@@ -24,7 +24,6 @@
 
 import numpy as np
 from pint import Quantity
-import pytest
 
 from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.math.frame import Frame
