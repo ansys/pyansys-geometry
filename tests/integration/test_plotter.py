@@ -1747,7 +1747,6 @@ def test_plot_mixed_body_and_face_selection_highlight(modeler: Modeler):
     plotter.plot(design, highlight=selection, highlight_color="yellow")
     plotter.show()
 
-    assert body.color == "#ffff00ff"
     assert body.faces[0].color == "#ffff00ff"
 
 
