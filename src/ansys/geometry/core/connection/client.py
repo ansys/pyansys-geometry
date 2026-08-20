@@ -482,7 +482,6 @@ class GrpcClient:
                 self.services.admin.close()
             except Exception as err:
                 self.log.debug(f"Shutdown call failed. Temporary files may be stranded: {err}")
-            finally:
                 self._product_instance.close()
 
         self._closed = True
