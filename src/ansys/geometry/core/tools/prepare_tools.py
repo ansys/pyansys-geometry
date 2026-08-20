@@ -905,3 +905,35 @@ class PrepareTools:
             (face, bool(result_data.get("mappable", False)))
             for face, result_data in zip(faces, response.get("results", []))
         ]
+
+
+    @min_backend_version(27, 1, 0)
+    def detect_leaks(self, inside_faces: list["Face"]) -> list["Body"]:
+        """Detect and cap leaks in the geometry based on the provided inside faces.
+        
+        Parameters
+        ----------
+        inside_faces : list[Face]
+            List of faces that are inside the geometry to check for leaks.
+
+        Returns
+        -------
+        list[Body]
+            List of bodies resulting from the leak detection and capping operation.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.face import Face
+        
+        check_type_all_elements_in_iterable(inside_faces, Face)
+        options = VolumeExtractOptions(detect_leaks=True, create_capping_surfaces=True)
+
+        created_bodies = self.extract_volume_from_faces(
+            sealing_faces=[],
+            inside_faces=inside_faces,
+            options=options,
+        )
+
+        return created_bodies

@@ -24,7 +24,9 @@
 
 import numpy as np
 from pint import Quantity
+import pytest
 
+from ansys.geometry.core.designer.body import Body
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.point import Point2D, Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
@@ -399,3 +401,22 @@ def test_find_mappable_faces(modeler: Modeler):
 
     # ---- Empty input ----
     assert modeler.prepare_tools.find_mappable_faces([]) == []
+
+
+def test_detect_leaks(modeler: Modeler):
+    """Test detecting leaks in a geometry using inside faces."""
+    design = modeler.create_design("Leak Detection")
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    # Create a hole in the box to act as leaks.
+    design.extrude_sketch(
+        name="Hole",
+        sketch=Sketch().circle(Point2D([0, 0]), 0.2),
+        distance=1,
+        cut=True
+    )
+
+    # Detect leaks using the inside faces of the hole.
+    caps = modeler.prepare_tools.detect_leaks([box.faces[-1]])
+    assert all(isinstance(body, Body) for body in caps)
+    assert len(caps) == 2
