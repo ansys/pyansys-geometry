@@ -302,9 +302,6 @@ class GeometryPlotter(PlotterInterface):
             # Inserted in 25R2
             pass
 
-        if exclude_ids and body.id in exclude_ids:
-            return
-
         excluded_faces = (
             {face.id for face in body.faces if face.id in exclude_ids} if exclude_ids else set()
         )
@@ -410,9 +407,6 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments, see the
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        if exclude_ids and component.id in exclude_ids:
-            return
-
         if merge_component:
             if exclude_ids:
                 self.add_component_by_body(
