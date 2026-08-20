@@ -338,6 +338,7 @@ class GrpcClient:
         try:
             response = self._services.admin.get_backend()
         except GeometryExitedError as exc:
+            self.close()
             raise GeometryRuntimeError(
                 "Failed to retrieve backend information. Check server logs for licensing and "
                 "connectivity.\nDefault server logs path is "
@@ -481,7 +482,6 @@ class GrpcClient:
                 self.services.admin.close()
             except Exception as err:
                 self.log.debug(f"Shutdown call failed. Temporary files may be stranded: {err}")
-            finally:
                 self._product_instance.close()
 
         self._closed = True

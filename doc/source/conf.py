@@ -1,3 +1,25 @@
+# Copyright (C) 2023 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Sphinx documentation configuration file."""
 
 from datetime import datetime
@@ -47,11 +69,8 @@ if BUILD_EXAMPLES:
 LaTeXBuilder.supported_image_types = ["image/png", "image/pdf", "image/svg+xml"]
 
 
-def get_wheelhouse_assets_dictionary():
-    """Auxiliary method to build the wheelhouse assets dictionary."""
-    assets_context_os = ["Linux", "Windows", "MacOS"]
-    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
-    assets_context_python_versions = ["3.12", "3.13", "3.14"]
+def get_release_prefix_url():
+    """Resolve the GitHub release prefix URL based on the current version."""
     if get_version_match(__version__) == "dev":
         # Try to retrieve the content three times before failing
         content = None
@@ -68,21 +87,27 @@ def get_wheelhouse_assets_dictionary():
 
         if content is None:
             print("Adapting URL to point to the latest version... (hack)")
-            assets_context_version = "dev"
+            return "https://github.com/ansys/pyansys-geometry/releases/latest/download", "dev"
         else:
             # Just point to the latest version
-            assets_context_version = json.loads(content)["name"]
+            version = json.loads(content)["name"]
+            return f"https://github.com/ansys/pyansys-geometry/releases/download/{version}", version
     else:
-        assets_context_version = f"v{__version__}"
+        version = f"v{__version__}"
+        return f"https://github.com/ansys/pyansys-geometry/releases/download/{version}", version
+
+
+def get_wheelhouse_assets_dictionary():
+    """Auxiliary method to build the wheelhouse assets dictionary."""
+    assets_context_os = ["Linux", "Windows", "MacOS"]
+    assets_context_runners = ["ubuntu-latest", "windows-latest", "macos-latest"]
+    assets_context_python_versions = ["3.12", "3.13", "3.14"]
+    prefix_url, assets_context_version = get_release_prefix_url()
 
     assets = {}
     for assets_os, assets_runner in zip(assets_context_os, assets_context_runners):
         download_links = []
         for assets_py_ver in assets_context_python_versions:
-            if assets_context_version == "dev":
-                prefix_url = "https://github.com/ansys/pyansys-geometry/releases/latest/download"
-            else:
-                prefix_url = f"https://github.com/ansys/pyansys-geometry/releases/download/{assets_context_version}"
             temp_dict = {
                 "os": assets_os,
                 "runner": assets_runner,
@@ -390,6 +415,7 @@ linkcheck_exclude_documents = [
 ]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
+    r"https://developer.ansys.com/",
     r"https://download.ansys.com/",
     r"https://stackoverflow.com/",  # Requires human authentication
     r"https://docs.pyvista.org/",  # Intermittent timeout issues
@@ -437,6 +463,7 @@ jinja_contexts = {
         "add_windows_warnings": True,
     },
     "wheelhouse-assets": {"assets": get_wheelhouse_assets_dictionary()},
+    "doc-assets": {"prefix_url": get_release_prefix_url()[0]},
 }
 
 nitpick_ignore_regex = [

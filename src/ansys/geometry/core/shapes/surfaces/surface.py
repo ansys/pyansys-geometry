@@ -41,17 +41,17 @@ class Surface(ABC):
     """Provides the abstract base class for a 3D surface."""
 
     @abstractmethod
-    def parameterization(self) -> tuple[Parameterization, Parameterization]:
+    def parameterization(self) -> tuple[Parameterization, Parameterization]:  # pragma: no cover
         """Parameterize the surface as a tuple (U and V respectively)."""
         return
 
     @abstractmethod
-    def contains_param(self, param_uv: ParamUV) -> bool:
+    def contains_param(self, param_uv: ParamUV) -> bool:  # pragma: no cover
         """Check a parameter is within the parametric range of the surface."""
         return
 
     @abstractmethod
-    def contains_point(self, point: Point3D) -> bool:
+    def contains_point(self, point: Point3D) -> bool:  # pragma: no cover
         """Check a point is contained by the surface.
 
         The point can either lie within the surface or on its boundary.
@@ -59,22 +59,22 @@ class Surface(ABC):
         return
 
     @abstractmethod
-    def transformed_copy(self, matrix: Matrix44) -> "Surface":
+    def transformed_copy(self, matrix: Matrix44) -> "Surface":  # pragma: no cover
         """Create a transformed copy of the surface."""
         return
 
     @abstractmethod
-    def __eq__(self, other: "Surface") -> bool:
+    def __eq__(self, other: "Surface") -> bool:  # pragma: no cover
         """Determine if two surfaces are equal."""
         return
 
     @abstractmethod
-    def evaluate(self, parameter: ParamUV) -> SurfaceEvaluation:
+    def evaluate(self, parameter: ParamUV) -> SurfaceEvaluation:  # pragma: no cover
         """Evaluate the surface at the given parameter."""
         return
 
     @abstractmethod
-    def project_point(self, point: Point3D) -> SurfaceEvaluation:
+    def project_point(self, point: Point3D) -> SurfaceEvaluation:  # pragma: no cover
         """Project a point to the surface.
 
         This method returns the evaluation at the closest point.
@@ -82,7 +82,7 @@ class Surface(ABC):
         return
 
     @abstractmethod
-    def visualization_polydata(self) -> "pv.PolyData":
+    def visualization_polydata(self) -> "pv.PolyData":  # pragma: no cover
         """Get the visualization polydata for the surface."""
         return
 

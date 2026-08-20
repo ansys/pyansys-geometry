@@ -185,7 +185,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    version: str | int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -681,9 +681,12 @@ def _manifest_path_provider(
                 "Specified manifest file's path does not exist. Taking install default path."
             )
 
-    # Default manifest path
+    # Starting with 2027 R1, Discovery's add-ins are installed under its product folder.
+    def_addins_folder = (
+        Path(DISCOVERY_FOLDER, ADDINS_SUBFOLDER) if version >= 271 else Path(ADDINS_SUBFOLDER)
+    )
     def_manifest_path = Path(
-        available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
+        available_installations[version], def_addins_folder, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
     if def_manifest_path.exists():

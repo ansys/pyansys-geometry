@@ -1,7 +1,7 @@
 # Geometry service Linux-based Dockerfile
 #
-# Based on mcr.microsoft.com/dotnet/aspnet:8.0
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Based on mcr.microsoft.com/dotnet/aspnet:10.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 # Define the working directory - /app
 WORKDIR /app
@@ -9,9 +9,9 @@ WORKDIR /app
 # Install unzip
 RUN apt-get update && \
     apt-get install -y --no-install-recommends unzip=6.* && \
-    apt-get install -y --no-install-recommends gcc=4:12.2.* && \
+    apt-get install -y --no-install-recommends gcc=4:13.2.* && \
     apt-get install -y --no-install-recommends mono-mcs=6.8.0.* && \
-    apt-get install -y --no-install-recommends libgfortran5=12.2.* && \
+    apt-get install -y --no-install-recommends libgfortran5=14.* && \
     rm -rf /var/lib/apt/lists/*
 
 # Add the binary files from the latest release
@@ -19,7 +19,7 @@ COPY linux-core-binaries.zip .
 RUN unzip -qq linux-core-binaries.zip -d . && \
     rm linux-core-binaries.zip && \
     chmod -R 0755 bin && \
-    mv bin/x64/Release_Core_Linux/net8.0/* . && \
+    mv bin/x64/Release_Core_Linux/net10.0/* . && \
     rm -rf bin
 
 # Permission adjustments for /app and /tmp directories
@@ -36,8 +36,7 @@ ENV LOG_LEVEL=2
 ENV ANSYSLMD_LICENSE_FILE=""
 ENV ANSYS_CI_INSTALL=/app/CADIntegration
 ENV P_SCHEMA=/app/Schema/
-ENV ANSYSCL252_DIR=/app/licensingclient/
-ENV ANSYSCL261_DIR=/app/licensingclient/
+ENV ANSYSCL271_DIR=/app/licensingclient/
 
 # Add container labels
 LABEL org.opencontainers.image.authors="ANSYS Inc."
