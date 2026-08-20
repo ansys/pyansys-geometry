@@ -185,7 +185,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    version: str | int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
