@@ -59,11 +59,20 @@ class ImportOptions:
         Import bodies as lightweight.
     import_using_spaceclaim_colors : bool = False
         Import geometry using SpaceClaim colors.
+    map_catia_sets_to_groups : bool = False
+        Map CATIA geometric sets to named selection groups. Only applies to CATIA files.
+    publications_only_to_groups : bool = False
+        Import only CATIA publications as named selection groups.
+
+    Warnings
+    --------
+    map_catia_sets_to_groups and publications_only_to_groups are only available
+    starting in version 27R1.
 
     Notes
     -----
     import_as_lightweight and import_using_spaceclaim_colors are only available
-    starting in version 2027 R1.
+    starting in version 27R1.
     """
 
     cleanup_bodies: bool = False
@@ -76,6 +85,8 @@ class ImportOptions:
     import_named_selections: bool = True
     import_as_lightweight: bool = False
     import_using_spaceclaim_colors: bool = False
+    map_catia_sets_to_groups: bool = False
+    publications_only_to_groups: bool = False
 
     def to_dict(self):
         """Provide the dictionary representation of the ImportOptions class."""
