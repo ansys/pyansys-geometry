@@ -324,8 +324,7 @@ def prepare_and_start_backend(
     ):
         # If the user has set the ANSYS_GEOMETRY_SERVICE_ROOT environment variable,
         # we will use it as the root folder for the Geometry Service.
-        # We will still set the version to avoid later errors
-        version = get_latest_ansys_installation()[0]
+        pass
     else:
         if version is not None:
             try:
