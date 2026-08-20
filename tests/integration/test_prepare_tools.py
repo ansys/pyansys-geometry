@@ -409,10 +409,7 @@ def test_detect_leaks(modeler: Modeler):
 
     # Create a hole in the box to act as leaks.
     design.extrude_sketch(
-        name="Hole",
-        sketch=Sketch().circle(Point2D([0, 0]), 0.2),
-        distance=1,
-        cut=True
+        name="Hole", sketch=Sketch().circle(Point2D([0, 0]), 0.2), distance=1, cut=True
     )
 
     # Detect leaks using the inside faces of the hole.

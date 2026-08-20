@@ -1440,15 +1440,9 @@ def from_surface_evaluation_to_grpc_surface_evaluation(
         normal=from_unit_vector_to_grpc_direction(surface_evaluation.normal),
         derivative_u=from_unit_vector_to_grpc_direction(surface_evaluation.u_derivative),
         derivative_v=from_unit_vector_to_grpc_direction(surface_evaluation.v_derivative),
-        derivative_uu=from_unit_vector_to_grpc_direction(
-            surface_evaluation.uu_derivative
-        ),
-        derivative_vv=from_unit_vector_to_grpc_direction(
-            surface_evaluation.vv_derivative
-        ),
-        derivative_uv=from_unit_vector_to_grpc_direction(
-            surface_evaluation.uv_derivative
-        ),
+        derivative_uu=from_unit_vector_to_grpc_direction(surface_evaluation.uu_derivative),
+        derivative_vv=from_unit_vector_to_grpc_direction(surface_evaluation.vv_derivative),
+        derivative_uv=from_unit_vector_to_grpc_direction(surface_evaluation.uv_derivative),
     )
 
 
