@@ -156,9 +156,7 @@ class PrepareTools:
         check_type_all_elements_in_iterable(sealing_faces, Face)
         check_type_all_elements_in_iterable(inside_faces, Face)
 
-        parent_design = get_design_from_face(
-            sealing_faces[0] if sealing_faces else inside_faces[0]
-        )
+        parent_design = get_design_from_face(sealing_faces[0] if sealing_faces else inside_faces[0])
 
         # Inside faces must be provided
         if len(inside_faces) == 0:
@@ -916,11 +914,10 @@ class PrepareTools:
             for face, result_data in zip(faces, response.get("results", []))
         ]
 
-
     @min_backend_version(27, 1, 0)
     def detect_leaks(self, inside_faces: list["Face"]) -> list["Body"]:
         """Detect and cap leaks in the geometry based on the provided inside faces.
-        
+
         Parameters
         ----------
         inside_faces : list[Face]
@@ -936,7 +933,7 @@ class PrepareTools:
         This method is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.face import Face
-        
+
         check_type_all_elements_in_iterable(inside_faces, Face)
         options = VolumeExtractOptions(detect_leaks=True, create_capping_surfaces=True)
 
