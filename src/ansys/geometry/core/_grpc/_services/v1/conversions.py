@@ -63,6 +63,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     PartEntity as GRPCPartEntity,
     PMDBExportOptions as GRPCPMDBExportOptions,
     Surface as GRPCSurface,
+    SurfaceEvaluation as GRPCSurfaceEvaluation,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
     TrackedChanges as GRPCTrackedChanges,
@@ -90,6 +91,7 @@ from ansys.api.discovery.v1.geometryenums_pb2 import (
 )
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
+    VolumeExtractOptions as GRPCVolumeExtractOptions,
 )
 from ansys.api.discovery.v1.operations.repair_pb2 import (
     RepairToolMessage as GRPCRepairToolResponse,
@@ -122,6 +124,7 @@ if TYPE_CHECKING:  # pragma: no cover
         ImportOptionsDefinitions,
         PMDBExportOptions,
         TessellationOptions,
+        VolumeExtractOptions,
     )
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
@@ -131,7 +134,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.shapes.curves.line import Line
     from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-    from ansys.geometry.core.shapes.surfaces.surface import Surface
+    from ansys.geometry.core.shapes.surfaces.surface import Surface, SurfaceEvaluation
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
     from ansys.geometry.core.sketch.arc import Arc
     from ansys.geometry.core.sketch.circle import SketchCircle
@@ -1415,6 +1418,34 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     return result
 
 
+def from_surface_evaluation_to_grpc_surface_evaluation(
+    surface_evaluation: "SurfaceEvaluation",
+) -> GRPCSurfaceEvaluation:
+    """Convert a v1 ``SurfaceEvaluation`` class to a surface evaluation gRPC message.
+
+    Parameters
+    ----------
+    surface_evaluation : SurfaceEvaluation
+        Source surface evaluation data.
+
+    Returns
+    -------
+    GRPCSurfaceEvaluation
+        Geometry service gRPC surface evaluation message.
+    """
+    return GRPCSurfaceEvaluation(
+        point=from_point3d_to_grpc_point(surface_evaluation.position),
+        param_u=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.u),
+        param_v=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.v),
+        normal=from_unit_vector_to_grpc_direction(surface_evaluation.normal),
+        derivative_u=from_unit_vector_to_grpc_direction(surface_evaluation.u_derivative),
+        derivative_v=from_unit_vector_to_grpc_direction(surface_evaluation.v_derivative),
+        derivative_uu=from_unit_vector_to_grpc_direction(surface_evaluation.uu_derivative),
+        derivative_vv=from_unit_vector_to_grpc_direction(surface_evaluation.vv_derivative),
+        derivative_uv=from_unit_vector_to_grpc_direction(surface_evaluation.uv_derivative),
+    )
+
+
 def from_grpc_driving_dimension_to_driving_dimension(
     driving_dimension: GRPCDrivingDimension,
 ) -> "Parameter":
@@ -1894,6 +1925,40 @@ def from_enclosure_options_to_grpc_enclosure_options(
         subtract_bodies=enclosure_options.subtract_bodies,
         frame=from_frame_to_grpc_frame(frame) if frame is not None else None,
         cushion_proportion=enclosure_options.cushion_proportion,
+    )
+
+
+def from_volume_extract_options_to_grpc_volume_extract_options(
+    volume_extract_options: "VolumeExtractOptions",
+) -> GRPCVolumeExtractOptions:
+    """Convert volume_extract_options to grpc definition.
+
+    Parameters
+    ----------
+    volume_extract_options : VolumeExtractOptions
+        Definition of the volume extract options.
+
+    Returns
+    -------
+    GRPCVolumeExtractOptions
+        Grpc converted definition.
+    """
+    return GRPCVolumeExtractOptions(
+        create_shared_topology=volume_extract_options.create_shared_topology,
+        imprint_capping_edges=volume_extract_options.imprint_capping_edges,
+        merge_created_volume=volume_extract_options.merge_created_volume,
+        seed_point=(
+            from_surface_evaluation_to_grpc_surface_evaluation(volume_extract_options.seed_point)
+            if volume_extract_options.seed_point is not None
+            else None
+        ),
+        tolerance=(
+            from_length_to_grpc_quantity(volume_extract_options.tolerance)
+            if volume_extract_options.tolerance is not None
+            else None
+        ),
+        create_capping_surfaces=volume_extract_options.create_capping_surfaces,
+        detect_leaks=volume_extract_options.detect_leaks,
     )
 
 
