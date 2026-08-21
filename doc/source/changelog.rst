@@ -9,6 +9,76 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.17.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.17.1>`_ - August 21, 2026
+============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Added support to highlight faces with plotter
+          - `#3023 <https://github.com/ansys/pyansys-geometry/pull/3023>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Leverage test group dependency on releasing with \`\`build-linux-container\`\` stage
+          - `#3049 <https://github.com/ansys/pyansys-geometry/pull/3049>`_
+
+        * - Clean up temp files on process close
+          - `#3050 <https://github.com/ansys/pyansys-geometry/pull/3050>`_
+
+        * - Discovery add-in manifest path
+          - `#3052 <https://github.com/ansys/pyansys-geometry/pull/3052>`_
+
+        * - Close server process on license checkout failure
+          - `#3055 <https://github.com/ansys/pyansys-geometry/pull/3055>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ty from 0.0.71 to 0.0.72
+          - `#3051 <https://github.com/ansys/pyansys-geometry/pull/3051>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump main branch to 0.18.dev0
+          - `#3042 <https://github.com/ansys/pyansys-geometry/pull/3042>`_
+
+        * - Update CHANGELOG for v0.17.0
+          - `#3048 <https://github.com/ansys/pyansys-geometry/pull/3048>`_
+
+        * - Bump https://github.com/tox-dev/pyproject-fmt from v2.27.0 to 2.27.1 in the pre-commit-hooks group
+          - `#3053 <https://github.com/ansys/pyansys-geometry/pull/3053>`_
+
+        * - Bump astral-sh/setup-uv from 9.0.0 to 10.0.0 in the actions group
+          - `#3054 <https://github.com/ansys/pyansys-geometry/pull/3054>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.2 to 0.16.3 in the pre-commit-hooks group
+          - `#3057 <https://github.com/ansys/pyansys-geometry/pull/3057>`_
+
+        * - Bump the actions group with 3 updates
+          - `#3058 <https://github.com/ansys/pyansys-geometry/pull/3058>`_
+
+
 `0.17.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.17.0>`_ - August 18, 2026
 ============================================================================================
 
