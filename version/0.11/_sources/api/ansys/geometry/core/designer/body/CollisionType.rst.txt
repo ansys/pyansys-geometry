@@ -1,0 +1,105 @@
+
+
+
+
+
+
+:class:`CollisionType`
+======================
+
+
+.. py:class:: ansys.geometry.core.designer.body.CollisionType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for collision types between bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: CollisionType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NONE`
+            - 
+          * - :py:attr:`~TOUCH`
+            - 
+          * - :py:attr:`~INTERSECT`
+            - 
+          * - :py:attr:`~CONTAINED`
+            - 
+          * - :py:attr:`~CONTAINEDTOUCH`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.body import CollisionType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NONE
+   :value: 0
+
+
+.. py:attribute:: TOUCH
+   :value: 1
+
+
+.. py:attribute:: INTERSECT
+   :value: 2
+
+
+.. py:attribute:: CONTAINED
+   :value: 3
+
+
+.. py:attribute:: CONTAINEDTOUCH
+   :value: 4
+
+
+
+
+
+

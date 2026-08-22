@@ -1,0 +1,119 @@
+
+
+
+
+
+
+:class:`ImportOptionsDefinitions`
+=================================
+
+
+.. py:class:: ansys.geometry.core.misc.options.ImportOptionsDefinitions
+
+   
+   Import options definitions when opening a file.
+
+
+   :Parameters:
+
+       **import_named_selections_keys** : :class:`python:str` = :data:`python:None`
+           Import the named selections keys associated with the root component being inserted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ImportOptionsDefinitions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~to_dict`
+            - Provide the dictionary representation of the ImportOptionsDefinitions class.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~import_named_selections_keys`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import ImportOptionsDefinitions
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: import_named_selections_keys
+   :type:  str
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: to_dict()
+
+   
+   Provide the dictionary representation of the ImportOptionsDefinitions class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

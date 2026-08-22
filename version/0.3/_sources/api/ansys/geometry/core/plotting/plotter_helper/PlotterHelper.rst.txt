@@ -1,0 +1,374 @@
+
+
+
+
+PlotterHelper
+=============
+
+.. py:class:: PlotterHelper(use_trame: beartype.typing.Optional[bool] = None, allow_picking: beartype.typing.Optional[bool] = False)
+   :canonical: ansys.geometry.core.plotting.plotter_helper.PlotterHelper
+
+
+
+
+Provides for simplifying the selection of trame in ``plot()`` functions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: PlotterHelper
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~enable_widgets`
+            - Enable the widgets for the plotter.
+          * - :py:attr:`~select_object`
+            - Select an object in the plotter.
+          * - :py:attr:`~unselect_object`
+            - Unselect an object in the plotter.
+          * - :py:attr:`~picker_callback`
+            - Define callback for the element picker.
+          * - :py:attr:`~compute_edge_object_map`
+            - Compute the mapping between plotter actors and EdgePlot objects.
+          * - :py:attr:`~enable_picking`
+            - Enable picking capabilities in the plotter.
+          * - :py:attr:`~disable_picking`
+            - Disable picking capabilities in the plotter.
+          * - :py:attr:`~plot`
+            - Plot and show any PyAnsys Geometry object.
+          * - :py:attr:`~show_plotter`
+            - Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.plotter_helper import PlotterHelper
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: enable_widgets()
+
+   
+   Enable the widgets for the plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: select_object(geom_object: beartype.typing.Union[ansys.geometry.core.plotting.plotting_types.GeomObjectPlot, ansys.geometry.core.plotting.plotting_types.EdgePlot], pt: numpy.ndarray) -> None
+
+   
+   Select an object in the plotter.
+
+   Highlights the object edges and adds a label with the object name and adds
+   it to the PyAnsys Geometry object selection.
+
+   :Parameters:
+
+       **geom_object** : :obj:`Union`\[:obj:`GeomObjectPlot`, :obj:`EdgePlot`]
+           Geometry object to select.
+
+       **pt** : :obj:`~numpy.ndarray`
+           Set of points to determine the label position.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: unselect_object(geom_object: beartype.typing.Union[ansys.geometry.core.plotting.plotting_types.GeomObjectPlot, ansys.geometry.core.plotting.plotting_types.EdgePlot]) -> None
+
+   
+   Unselect an object in the plotter.
+
+   Removes edge highlighting and label from a plotter actor and removes it
+   from the PyAnsys Geometry object selection.
+
+   :Parameters:
+
+       **geom_object** : :obj:`Union`\[:obj:`GeomObjectPlot`, :obj:`EdgePlot`]
+           Object to unselect.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: picker_callback(actor: pyvista.Actor) -> None
+
+   
+   Define callback for the element picker.
+
+
+   :Parameters:
+
+       **actor** : :obj:`~pyvista.Actor`
+           Actor that we are picking.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: compute_edge_object_map() -> beartype.typing.Dict[pyvista.Actor, ansys.geometry.core.plotting.plotting_types.EdgePlot]
+
+   
+   Compute the mapping between plotter actors and EdgePlot objects.
+
+
+
+   :Returns:
+
+       :obj:`Dict`\[:obj:`~pyvista.Actor`, :obj:`EdgePlot`]
+           Mapping between plotter actors and EdgePlot objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: enable_picking()
+
+   
+   Enable picking capabilities in the plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: disable_picking()
+
+   
+   Disable picking capabilities in the plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: plot(object: beartype.typing.Any, screenshot: beartype.typing.Optional[str] = None, merge_bodies: bool = False, merge_component: bool = False, view_2d: beartype.typing.Dict = None, filter: str = None, **plotting_options) -> beartype.typing.List[beartype.typing.Any]
+
+   
+   Plot and show any PyAnsys Geometry object.
+
+   These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+   ``pv.MultiBlock``, and ``Sketch``.
+
+   :Parameters:
+
+       **object** : :obj:`Any`
+           Any object or list of objects that you want to plot.
+
+       **screenshot** : :class:`python:str`, default: :data:`python:None`
+           Path for saving a screenshot of the image that is being represented.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge each body into a single dataset. When ``True``,
+           all the faces of each individual body are effectively combined
+           into a single dataset without separating faces.
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge this component into a single dataset. When ``True``,
+           all the individual bodies are effectively combined into a single
+           dataset without any hierarchy.
+
+       **view_2d** : :obj:`Dict`, default: :data:`python:None`
+           Dictionary with the plane and the viewup vectors of the 2D plane.
+
+       **filter** : :class:`python:str`, default: :data:`python:None`
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Any`]
+           List with the picked bodies in the picked order.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: show_plotter(screenshot: beartype.typing.Optional[str] = None) -> None
+
+   
+   Show the plotter or start the `trame <https://kitware.github.io/trame/index.html>`_ service.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`Plotter`
+           PyAnsys Geometry plotter with the meshes added.
+
+       **screenshot** : :class:`python:str`, default: :data:`python:None`
+           Path for saving a screenshot of the image that is being represented.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

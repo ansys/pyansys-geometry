@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``cylinder.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.primitives.cylinder
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: cylinder
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Cylinder`
+            - Provides 3D cylinder representation.
+
+
+          * - :py:attr:`~CylinderEvaluation`
+            - Provides evaluation of a cylinder at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Cylinder<Cylinder>
+    🝆 CylinderEvaluation<CylinderEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a cylinder.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

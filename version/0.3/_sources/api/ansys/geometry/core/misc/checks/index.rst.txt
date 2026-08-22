@@ -1,0 +1,392 @@
+
+
+
+
+
+The ``checks.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.misc.checks
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: checks
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~check_is_float_int`
+            - Check if a parameter has a float or integer value.
+
+
+          * - :py:attr:`~check_ndarray_is_float_int`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` has float or integer values.
+
+
+          * - :py:attr:`~check_ndarray_is_not_none`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` has all ``None`` values.
+
+
+          * - :py:attr:`~check_ndarray_is_all_nan`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+
+
+          * - :py:attr:`~check_ndarray_is_non_zero`
+            - Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+
+
+          * - :py:attr:`~check_pint_unit_compatibility`
+            - Check if input for :class:`pint.Unit` is compatible with the expected input.
+
+
+          * - :py:attr:`~check_type_equivalence`
+            - Check if an input object is of the same class as an expected object.
+
+
+          * - :py:attr:`~check_type`
+            - Check if an input object is of the same type as expected types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides functions for performing common checks.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+
+
+.. py:function:: check_is_float_int(param: object, param_name: beartype.typing.Optional[beartype.typing.Union[str, None]] = None) -> None
+
+   
+   Check if a parameter has a float or integer value.
+
+
+   :Parameters:
+
+       **param** : :obj:`object`
+           Object instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           Parameter name (if any).
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the parameter does not have a float or integer value.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_ndarray_is_float_int(param: numpy.ndarray, param_name: beartype.typing.Optional[beartype.typing.Union[str, None]] = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` has float or integer values.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance does not
+           have float or integer values.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_ndarray_is_not_none(param: numpy.ndarray, param_name: beartype.typing.Optional[beartype.typing.Union[str, None]] = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` has all ``None`` values.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance has a value
+           of ``None`` for all parameters.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_ndarray_is_all_nan(param: numpy.ndarray, param_name: beartype.typing.Optional[beartype.typing.Union[str, None]] = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` is all nan-valued.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str` or :data:`python:None`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance is all nan-valued.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_ndarray_is_non_zero(param: numpy.ndarray, param_name: beartype.typing.Optional[beartype.typing.Union[str, None]] = None) -> None
+
+   
+   Check if a :class:`numpy.ndarray <numpy.ndarray>` is zero-valued.
+
+
+   :Parameters:
+
+       **param** : :obj:`~numpy.ndarray`
+           :class:`numpy.ndarray <numpy.ndarray>` instance to check.
+
+       **param_name** : :class:`python:str`, default: :data:`python:None`
+           :class:`numpy.ndarray <numpy.ndarray>` instance name (if any).
+
+
+
+
+
+   :Raises:
+
+       :obj:`ValueError`
+           If the :class:`numpy.ndarray <numpy.ndarray>` instance is zero-valued.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_pint_unit_compatibility(input: pint.Unit, expected: pint.Unit) -> None
+
+   
+   Check if input for :class:`pint.Unit` is compatible with the expected input.
+
+
+   :Parameters:
+
+       **input** : :obj:`~pint.Unit`
+           :class:`pint.Unit` input.
+
+       **expected** : :obj:`~pint.Unit`
+           :class:`pint.Unit` expected dimensionality.
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the input is not compatible with the :class:`pint.Unit` class.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_type_equivalence(input: object, expected: object) -> None
+
+   
+   Check if an input object is of the same class as an expected object.
+
+
+   :Parameters:
+
+       **input** : :obj:`object`
+           Input object.
+
+       **expected** : :obj:`object`
+           Expected object.
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the objects are not of the same class.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: check_type(input: object, expected_type: beartype.typing.Union[type, beartype.typing.Tuple[type, beartype.typing.Any]]) -> None
+
+   
+   Check if an input object is of the same type as expected types.
+
+
+   :Parameters:
+
+       **input** : :obj:`object`
+           Input object.
+
+       **expected_type** : :obj:`Union`\[:obj:`type`, :obj:`Tuple`\[:obj:`type`, ...]]
+           One or more types to compare the input object against.
+
+
+
+
+
+   :Raises:
+
+       :obj:`TypeError`
+           If the object does not match the one or more expected types.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

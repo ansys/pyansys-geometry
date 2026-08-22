@@ -1,0 +1,134 @@
+
+
+
+
+
+
+:class:`ReversedTrimmedCurve`
+=============================
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.trimmed_curve.ReversedTrimmedCurve(geometry: ansys.geometry.core.shapes.curves.curve.Curve, start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, interval: ansys.geometry.core.shapes.parameterization.Interval, length: pint.Quantity, grpc_client: ansys.geometry.core.connection.client.GrpcClient = None)
+
+   Bases: :py:obj:`TrimmedCurve`
+
+
+   
+   Represents a reversed trimmed curve.
+
+   When a curve is reversed, its start and end points are swapped, and parameters for evaluations
+   are handled to provide expected results conforming to the direction of the curve. For example,
+   evaluating a trimmed curve proportionally at 0 evaluates at the start point of the curve,
+   but evaluating a reversed trimmed curve proportionally at 0 evaluates at what was previously
+   the end point of the curve but is now the start point.
+
+   :Parameters:
+
+       **geometry** : :obj:`Curve`
+           Underlying mathematical representation of the curve.
+
+       **start** : :obj:`Point3D`
+           Original start point of the curve.
+
+       **end** : :obj:`Point3D`
+           Original end point of the curve.
+
+       **interval** : :obj:`Interval`
+           Parametric interval that bounds the curve.
+
+       **length** : :obj:`Quantity`
+           Length of the curve.
+
+       **grpc_client** : :obj:`GrpcClient`, default: :data:`python:None`
+           gRPC client that is required for advanced functions such as `intersect_curve()`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ReversedTrimmedCurve
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~evaluate_proportion`
+            - Evaluate the curve at a proportional value.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.trimmed_curve import ReversedTrimmedCurve
+
+
+
+Method detail
+-------------
+
+.. py:method:: evaluate_proportion(param: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.curves.curve_evaluation.CurveEvaluation
+
+   
+   Evaluate the curve at a proportional value.
+
+   A parameter of ``0`` corresponds to the start of the curve, while a parameter of ``1``
+   corresponds to the end of the curve.
+
+   :Parameters:
+
+       **param** : :obj:`Real`
+           Parameter in the proportional range [0,1].
+
+
+
+   :Returns:
+
+       :obj:`CurveEvaluation`
+           Resulting curve evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``cone.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.cone
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: cone
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.cone.Cone`
+            - Provides 3D cone representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.cone.ConeEvaluation`
+            - Evaluate the cone at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Cone</api/ansys/geometry/core/shapes/surfaces/cone/Cone>
+    <span class="nf nf-cod-symbol_class"></span> ConeEvaluation</api/ansys/geometry/core/shapes/surfaces/cone/ConeEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a cone.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
