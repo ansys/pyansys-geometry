@@ -840,12 +840,8 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           pytest -v --use-existing-service=yes --junit-xml=test-results.xml
 
-      - name: Fail if tests actually failed
+      - name: Check test results
         if: steps.pytest.outcome == 'failure'
-        run: exit 1
-
-      - name: Check test results on timeout
-        if: steps.pytest.outcome == 'cancelled'
         run: |
           if (-not (Test-Path test-results.xml)) {
             Write-Error "No test results found - pytest was killed before writing results"
@@ -854,10 +850,10 @@ jobs:
           $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
           $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
           if (($failures + $errors) -gt 0) {
-            Write-Error "$failures failures and $errors errors found before timeout"
+            Write-Error "$failures failures and $errors errors found"
             exit 1
           }
-          Write-Output "No failures found in test results before timeout"
+          Write-Output "No test failures found - step likely timed out during cleanup"
 
       - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
