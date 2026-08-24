@@ -372,6 +372,7 @@ def test_grpc_client_get_backend_failure():
     Mocks wait_until_healthy and _GRPCServices so that the admin.get_backend()
     call raises a grpc.RpcError, verifying it is wrapped in GeometryRuntimeError with chaining.
     Both grpc.RpcError and GeometryExitedError are caught by the same handler.
+    Also verifies that cleanup (channel close) is performed before the exception propagates.
     """
     mock_channel = MagicMock()
 
@@ -395,3 +396,4 @@ def test_grpc_client_get_backend_failure():
         GrpcClient(host="localhost", port=50051)
 
     assert exc.value.__cause__ is not None
+    mock_channel.close.assert_called_once()
