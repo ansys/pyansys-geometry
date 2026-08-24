@@ -281,7 +281,6 @@ jobs:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Testing
-        id: pytest
         if: env.SKIP_UNSTABLE == 'false'
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
