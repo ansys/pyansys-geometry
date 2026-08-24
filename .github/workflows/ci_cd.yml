@@ -238,6 +238,19 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         run: uv sync --group tests
 
+      - name: Ensure Docker service is running
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          $maxRetries = 6
+          for ($i = 1; $i -le $maxRetries; $i++) {
+            Start-Service docker -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 10
+            if ((docker info 2>&1 | Out-String) -notmatch 'error') { break }
+            if ($i -eq $maxRetries) { Write-Error "Docker failed to start after $maxRetries attempts"; exit 1 }
+            Write-Host "Docker not ready yet (attempt $i/$maxRetries), retrying..."
+          }
+          Write-Host "Docker is ready"
+
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
@@ -282,7 +295,6 @@ jobs:
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20 # Sometimes hangs...
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: uv run pytest -v --use-tracker=$env:USE_TRACKER
@@ -821,10 +833,27 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
+        id: pytest
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs on cleanup after all tests pass
+        continue-on-error: true
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --use-existing-service=yes
+          pytest -v --use-existing-service=yes --junit-xml=test-results.xml
+
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          if (-not (Test-Path test-results.xml)) {
+            Write-Error "No test results found - pytest was killed before writing results"
+            exit 1
+          }
+          $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          if (($failures + $errors) -gt 0) {
+            Write-Error "$failures failures and $errors errors found"
+            exit 1
+          }
+          Write-Output "No test failures found - step likely timed out during cleanup"
 
       - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3

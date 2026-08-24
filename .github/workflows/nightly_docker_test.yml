@@ -129,6 +129,18 @@ jobs:
       - name: Install packages for testing
         run: uv sync --group tests
 
+      - name: Ensure Docker service is running
+        run: |
+          $maxRetries = 6
+          for ($i = 1; $i -le $maxRetries; $i++) {
+            Start-Service docker -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 10
+            if ((docker info 2>&1 | Out-String) -notmatch 'error') { break }
+            if ($i -eq $maxRetries) { Write-Error "Docker failed to start after $maxRetries attempts"; exit 1 }
+            Write-Host "Docker not ready yet (attempt $i/$maxRetries), retrying..."
+          }
+          Write-Host "Docker is ready"
+
       - name: Login to GitHub Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
@@ -302,6 +314,18 @@ jobs:
     permissions:
       packages: write # Required to promote the Geometry docker image
     steps:
+      - name: Ensure Docker service is running
+        run: |
+          $maxRetries = 6
+          for ($i = 1; $i -le $maxRetries; $i++) {
+            Start-Service docker -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 10
+            if ((docker info 2>&1 | Out-String) -notmatch 'error') { break }
+            if ($i -eq $maxRetries) { Write-Error "Docker failed to start after $maxRetries attempts"; exit 1 }
+            Write-Host "Docker not ready yet (attempt $i/$maxRetries), retrying..."
+          }
+          Write-Host "Docker is ready"
+
       - name: Login in Github Container registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
