@@ -283,30 +283,9 @@ jobs:
       - name: Testing
         id: pytest
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20 # Sometimes hangs on cleanup after all tests pass
-        continue-on-error: true
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
-        run: uv run pytest -v --use-tracker=$env:USE_TRACKER --junit-xml=test-results.xml
-
-      - name: Fail if tests actually failed
-        if: steps.pytest.outcome == 'failure'
-        run: exit 1
-
-      - name: Check test results on timeout
-        if: steps.pytest.outcome == 'cancelled'
-        run: |
-          if (-not (Test-Path test-results.xml)) {
-            Write-Error "No test results found - pytest was killed before writing results"
-            exit 1
-          }
-          $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
-          $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
-          if (($failures + $errors) -gt 0) {
-            Write-Error "$failures failures and $errors errors found before timeout"
-            exit 1
-          }
-          Write-Output "No failures found in test results before timeout"
+        run: uv run pytest -v --use-tracker=$env:USE_TRACKER
 
       - name: Upload integration test logs
         if: always()
