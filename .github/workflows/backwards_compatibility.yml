@@ -119,13 +119,34 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
+        id: pytest
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs on cleanup after all tests pass
+        continue-on-error: true
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
           # These older images only support proto v0, so no need to loop over proto versions here
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf --junit-xml=test-results.xml
+
+      - name: Fail if tests actually failed
+        if: steps.pytest.outcome == 'failure'
+        run: exit 1
+
+      - name: Check test results on timeout
+        if: steps.pytest.outcome == 'cancelled'
+        run: |
+          if (-not (Test-Path test-results.xml)) {
+            Write-Error "No test results found - pytest was killed before writing results"
+            exit 1
+          }
+          $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          if (($failures + $errors) -gt 0) {
+            Write-Error "$failures failures and $errors errors found before timeout"
+            exit 1
+          }
+          Write-Output "No failures found in test results before timeout"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
