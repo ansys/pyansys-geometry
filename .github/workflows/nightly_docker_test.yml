@@ -124,7 +124,7 @@ jobs:
           enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@b0bf9f57d62d2b3fee9f1c0e0c7e390f05e97a4e # v5.0.0
 
       - name: Install packages for testing
         run: uv sync --group tests
@@ -255,10 +255,10 @@ jobs:
           echo "ANSYS_GEOMETRY_TEST_FILES=/test-files" >> $GITHUB_ENV
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@b0bf9f57d62d2b3fee9f1c0e0c7e390f05e97a4e # v5.0.0
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@7e89e00c5619374a1da8c2e876309d8b15ff0559 # v11.0.3
+        uses: ansys/actions/tests-pytest@21c78f8b27683ae8c93557345392abe39ab21d2f # v11.0.4
         env:
           ALLOW_PLOTTING: true
         with:
