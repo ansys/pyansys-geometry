@@ -105,7 +105,7 @@ general-all = [
   "matplotlib==3.11.1",
   "numpy==2.5.2",
   "pint==0.25.3",
-  "protobuf==7.35.1",
+  "protobuf==7.36.0",
   "pydantic==2.13.4",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.4",
