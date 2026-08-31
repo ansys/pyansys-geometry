@@ -2339,8 +2339,7 @@ def serialize_face_group_response(response: GRPCFaceGroupResponse) -> dict:
             {
                 "groups": [
                     {
-                        "faces": [face.id.id for face in group.faces],
-                        "faces_data": [
+                        "faces": [
                             {
                                 "id": face.id.id,
                                 "surface_type": face.surface_type,
