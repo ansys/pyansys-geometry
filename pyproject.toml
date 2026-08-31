@@ -71,7 +71,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.2",
-  "ty==0.0.74",
+  "ty==0.0.75",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -106,7 +106,7 @@ general-all = [
   "numpy==2.5.2",
   "pint==0.25.3",
   "protobuf==7.36.0",
-  "pydantic==2.13.4",
+  "pydantic==2.13.5",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.4",
   "requests==2.34.2",
