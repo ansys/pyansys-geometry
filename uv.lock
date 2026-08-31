@@ -432,7 +432,7 @@ provides-extras = ["all", "graphics", "usd"]
 dev = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.10.0" },
-    { name = "ansys-tools-common", specifier = "==0.5.2" },
+    { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
@@ -476,7 +476,7 @@ dev = [
 doc = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.10.0" },
-    { name = "ansys-tools-common", specifier = "==0.5.2" },
+    { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
@@ -513,7 +513,7 @@ doc = [
 ]
 general-all = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-tools-common", specifier = "==0.5.2" },
+    { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
@@ -536,7 +536,7 @@ general-all = [
 ]
 tests = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-tools-common", specifier = "==0.5.2" },
+    { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
@@ -608,7 +608,7 @@ autoapi = [
 
 [[package]]
 name = "ansys-tools-common"
-version = "0.5.2"
+version = "0.5.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
@@ -617,9 +617,9 @@ dependencies = [
     { name = "scooby" },
     { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c8/26/ce1d9dac0dcf9751879856c7f28a790b0da6b8c60d29c50d188d92491c72/ansys_tools_common-0.5.2.tar.gz", hash = "sha256:f9a69834d12eb066316b20c2538bce33031ee4a9e5ffc1ab067e24da947f0b66", size = 324497, upload-time = "2026-08-13T10:58:02.759Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/04/0a/1291f8c5167c68a920361d214c6be8516f3452392dccbb72fb9f41a825ac/ansys_tools_common-0.5.3.tar.gz", hash = "sha256:f922fe151d76d94b42658c2f1a23111c9d05147a35aac0c88cba3155462bacae", size = 327064, upload-time = "2026-08-31T09:36:51.907Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/5c/980135e1016d2c66a7392f0f96a8b86474cfe7400cb684bc239dd6e2efd9/ansys_tools_common-0.5.2-py3-none-any.whl", hash = "sha256:53f3cdce59cba868ef5fb585281cfd0b46653862dada6fa818db19883b8c3647", size = 87326, upload-time = "2026-08-13T10:58:00.94Z" },
+    { url = "https://files.pythonhosted.org/packages/62/fc/30cee1f72d0add309f45503255040087f65458b446b47743c550aa2ff707/ansys_tools_common-0.5.3-py3-none-any.whl", hash = "sha256:f1f70e424ba5f5ead6925b7d9471b0df691d80f8371f36997dcca63bdd11af85", size = 88760, upload-time = "2026-08-31T09:36:50.268Z" },
 ]
 
 [[package]]
