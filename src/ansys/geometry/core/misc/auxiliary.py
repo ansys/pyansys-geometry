@@ -274,13 +274,13 @@ def get_faces_from_metadata(design: "Design", metadata: dict) -> list["Face"]:
     -----
     This method takes a design and face metadata, and gets their corresponding ``Face`` objects.
     """
-    from ansys.geometry.core.designer.face import Face
+    from ansys.geometry.core.designer.face import Face, SurfaceType
 
     body_map = {body._template.id: body for body in __traverse_all_bodies(design)}
     return [
         Face(
             face.get("id"),
-            face.get("surface_type"),
+            SurfaceType(face.get("surface_type")),
             body_map[face.get("body_id")],
             body_map[face.get("body_id")]._grpc_client,
             face.get("is_reversed"),
