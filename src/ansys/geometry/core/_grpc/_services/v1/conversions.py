@@ -2304,7 +2304,15 @@ def serialize_face_selection_response(response: GRPCFaceSelectionResponse) -> di
     return {
         "response_data": [
             {
-                "faces": [face.id.id for face in rd.faces],
+                "faces": [
+                    {
+                        "id": face.id.id,
+                        "surface_type": face.surface_type,
+                        "is_reversed": face.is_reversed,
+                        "body_id": face.parent.id.id,
+                    }
+                    for face in rd.faces
+                ],
                 "success": rd.command_response.success,
                 "message": rd.command_response.message,
             }
@@ -2329,7 +2337,20 @@ def serialize_face_group_response(response: GRPCFaceGroupResponse) -> dict:
     return {
         "response_data": [
             {
-                "groups": [[face.id.id for face in group.faces] for group in rd.groups],
+                "groups": [
+                    {
+                        "faces": [
+                            {
+                                "id": face.id.id,
+                                "surface_type": face.surface_type,
+                                "is_reversed": face.is_reversed,
+                                "body_id": face.parent.id.id,
+                            }
+                            for face in group.faces
+                        ],
+                    }
+                    for group in rd.groups
+                ],
                 "success": rd.command_response.success,
                 "message": rd.command_response.message,
             }
