@@ -2716,7 +2716,7 @@ class GeometryCommands:
 
         if result.get("success"):
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-                design._update_from_tracker(result.get("tracked_response"))
+                design._update_from_tracker(result.get("tracker_response"))
             else:
                 design._update_design_inplace()
         return result.get("success")
