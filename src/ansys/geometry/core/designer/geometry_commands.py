@@ -2705,7 +2705,7 @@ class GeometryCommands:
 
         faces: list[Face] = faces if isinstance(faces, list) else [faces]
         check_type_all_elements_in_iterable(faces, Face)
-        
+
         design = get_design_from_face(faces[0])
 
         # Using the remove_rounds backend as it performs the same operation
