@@ -297,6 +297,8 @@ class GrpcClient:
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
+        self._host = host
+        self._port = port
         self._remote_instance = remote_instance
         self._docker_instance = docker_instance
         self._product_instance = product_instance
@@ -381,6 +383,16 @@ class GrpcClient:
             Backend version.
         """
         return self._backend_version
+
+    @property
+    def host(self) -> str:
+        """Host of the client connection."""
+        return self._host
+
+    @property
+    def port(self) -> str:
+        """Port of the client connection."""
+        return self._port
 
     @property
     def channel(self) -> grpc.Channel:
