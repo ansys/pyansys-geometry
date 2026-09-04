@@ -2686,6 +2686,7 @@ class GeometryCommands:
                 design._update_design_inplace()
         return result.get("success")
 
+    @min_backend_version(25, 2, 0)
     def fill(self, faces: Union["Face", list["Face"]]) -> bool:
         """Fill the specified faces.
 
