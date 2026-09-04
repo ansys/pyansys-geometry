@@ -1,0 +1,371 @@
+
+
+
+
+
+
+:class:`BoxUV`
+==============
+
+
+.. py:class:: ansys.geometry.core.shapes.box_uv.BoxUV(range_u: ansys.geometry.core.shapes.parameterization.Interval = None, range_v: ansys.geometry.core.shapes.parameterization.Interval = None)
+
+   
+   Provides the implementation for ``BoxUV`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: BoxUV
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_empty`
+            - Check if this BoxUV is empty.
+          * - :py:attr:`~proportion`
+            - Evaluate the BoxUV at the given proportions.
+          * - :py:attr:`~get_center`
+            - Evaluate the this BoxUV in the center.
+          * - :py:attr:`~is_negative`
+            - Check whether the BoxUV is negative.
+          * - :py:attr:`~contains`
+            - Check whether the BoxUV contains a given u and v pair parameter.
+          * - :py:attr:`~inflate`
+            - Enlarge the BoxUV u and v intervals by deltas.
+          * - :py:attr:`~get_corner`
+            - Get the corner location of the BoxUV.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~interval_u`
+            - ``u`` interval.
+          * - :py:attr:`~interval_v`
+            - ``v`` interval.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Check whether two BoxUV instances are equal.
+          * - :py:attr:`~__ne__`
+            - Check whether two BoxUV instances are not equal.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.box_uv import BoxUV
+
+Property detail
+---------------
+
+.. py:property:: interval_u
+   :type: ansys.geometry.core.shapes.parameterization.Interval
+
+
+   
+   ``u`` interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: interval_v
+   :type: ansys.geometry.core.shapes.parameterization.Interval
+
+
+   
+   ``v`` interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: object) -> bool
+
+   
+   Check whether two BoxUV instances are equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: object) -> bool
+
+   
+   Check whether two BoxUV instances are not equal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_empty()
+
+   
+   Check if this BoxUV is empty.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: proportion(prop_u: ansys.geometry.core.typing.Real, prop_v: ansys.geometry.core.typing.Real) -> ansys.geometry.core.shapes.parameterization.ParamUV
+
+   
+   Evaluate the BoxUV at the given proportions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_center() -> ansys.geometry.core.shapes.parameterization.ParamUV
+
+   
+   Evaluate the this BoxUV in the center.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: is_negative(tolerance_u: ansys.geometry.core.typing.Real, tolerance_v: ansys.geometry.core.typing.Real) -> bool
+
+   
+   Check whether the BoxUV is negative.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains(param: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+
+   
+   Check whether the BoxUV contains a given u and v pair parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: inflate(delta_u: ansys.geometry.core.typing.Real, delta_v: ansys.geometry.core.typing.Real) -> BoxUV
+
+   
+   Enlarge the BoxUV u and v intervals by deltas.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_corner(location: LocationUV) -> ansys.geometry.core.shapes.parameterization.ParamUV
+
+   
+   Get the corner location of the BoxUV.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

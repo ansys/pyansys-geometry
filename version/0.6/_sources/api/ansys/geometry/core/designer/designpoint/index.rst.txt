@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``designpoint.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core.designer.designpoint
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: designpoint
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.designpoint.DesignPoint`
+            - Provides for creating design points in components.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> DesignPoint</api/ansys/geometry/core/designer/designpoint/DesignPoint>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating and managing design points.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

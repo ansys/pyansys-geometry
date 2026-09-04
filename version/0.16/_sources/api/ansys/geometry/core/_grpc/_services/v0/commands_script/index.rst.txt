@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``commands_script.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.commands_script
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v0.commands_script
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.commands_script.GRPCCommandsScriptServiceV0`
+            - DBU Application service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCCommandsScriptServiceV0</api/ansys/geometry/core/_grpc/_services/v0/commands_script/GRPCCommandsScriptServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the DBU Application service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

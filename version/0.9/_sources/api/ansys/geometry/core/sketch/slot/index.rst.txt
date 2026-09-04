@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``slot.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.sketch.slot
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: slot
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.slot.Slot`
+            - Provides for modeling a 2D slot.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Slot</api/ansys/geometry/core/sketch/slot/Slot>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a slot.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

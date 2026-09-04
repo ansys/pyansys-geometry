@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`SplitFaceParameterType`
+===============================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.SplitFaceParameterType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for parameters when splitting faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SplitFaceParameterType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~UV`
+            - 
+          * - :py:attr:`~PERPENDICULAR`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import SplitFaceParameterType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: UV
+   :value: 0
+
+
+.. py:attribute:: PERPENDICULAR
+   :value: 1
+
+
+
+
+
+

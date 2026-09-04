@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``model_tools.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.model_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: model_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.model_tools.GRPCModelToolsServiceV1`
+            - Model tools service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCModelToolsServiceV1</api/ansys/geometry/core/_grpc/_services/v1/model_tools/GRPCModelToolsServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the model tools service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

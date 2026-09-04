@@ -1,0 +1,151 @@
+
+
+
+
+
+
+:class:`NamedSelection`
+=======================
+
+.. py:class:: ansys.geometry.core.designer.selection.NamedSelection(name: str, grpc_client: ansys.geometry.core.connection.client.GrpcClient, bodies: list[ansys.geometry.core.designer.body.Body] | None = None, faces: list[ansys.geometry.core.designer.face.Face] | None = None, edges: list[ansys.geometry.core.designer.edge.Edge] | None = None, beams: list[ansys.geometry.core.designer.beam.Beam] | None = None, design_points: list[ansys.geometry.core.designer.designpoint.DesignPoint] | None = None, preexisting_id: str | None = None)
+
+   
+   Represents a single named selection within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   A named selection organizes one or more design entities together for common actions
+   against the entire group.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined name for the named selection.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], default: :data:`python:None`
+           All bodies to include in the named selection.
+
+       **faces** : :class:`python:list`\[:obj:`Face`], default: :data:`python:None`
+           All faces to include in the named selection.
+
+       **edges** : :class:`python:list`\[:obj:`Edge`], default: :data:`python:None`
+           All edges to include in the named selection.
+
+       **beams** : :class:`python:list`\[:obj:`Beam`], default: :data:`python:None`
+           All beams to include in the named selection.
+
+       **design_points** : :class:`python:list`\[:obj:`DesignPoints`], default: :data:`python:None`
+           All design points to include in the named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: NamedSelection
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the named selection.
+          * - :py:attr:`~name`
+            - Name of the named selection.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.selection import NamedSelection
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

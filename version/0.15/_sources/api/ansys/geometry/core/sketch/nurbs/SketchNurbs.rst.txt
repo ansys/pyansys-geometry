@@ -1,0 +1,406 @@
+
+
+
+
+
+
+:class:`SketchNurbs`
+====================
+
+
+.. py:class:: ansys.geometry.core.sketch.nurbs.SketchNurbs
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.edge.SketchEdge`
+
+
+   
+   Represents a NURBS sketch curve.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       NURBS sketching is only supported in 26R1 and later versions of Ansys.
+
+
+   .. rubric:: Notes
+
+   This class is a wrapper around the NURBS curve class from the `geomdl` library.
+   By leveraging the `geomdl` library, this class provides a high-level interface
+   to create and manipulate NURBS curves. The `geomdl` library is a powerful
+   library for working with NURBS curves and surfaces. For more information, see
+   https://pypi.org/project/geomdl/.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: SketchNurbs
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fit_curve_from_points`
+            - Fit a NURBS curve to a set of points.
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_point`
+            - Check if the curve contains a given point within a specified tolerance.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~geomdl_nurbs_curve`
+            - Get the underlying NURBS curve.
+          * - :py:attr:`~control_points`
+            - Get the control points of the curve.
+          * - :py:attr:`~degree`
+            - Get the degree of the curve.
+          * - :py:attr:`~knots`
+            - Get the knot vector of the curve.
+          * - :py:attr:`~weights`
+            - Get the weights of the control points.
+          * - :py:attr:`~start`
+            - Get the start point of the curve.
+          * - :py:attr:`~end`
+            - Get the end point of the curve.
+          * - :py:attr:`~visualization_polydata`
+            - Get the VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.nurbs import SketchNurbs
+
+Property detail
+---------------
+
+.. py:property:: geomdl_nurbs_curve
+   :type: geomdl.NURBS.Curve
+
+
+   
+   Get the underlying NURBS curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This property gives access to the full functionality of the NURBS curve
+   coming from the `geomdl` library. Use with caution.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: control_points
+   :type: list[ansys.geometry.core.math.point.Point2D]
+
+
+   
+   Get the control points of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: degree
+   :type: int
+
+
+   
+   Get the degree of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: knots
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the knot vector of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: weights
+   :type: list[ansys.geometry.core.typing.Real]
+
+
+   
+   Get the weights of the control points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Get the start point of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Get the end point of the curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   Get the VTK polydata representation for PyVista visualization.
+
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point2D, tolerance: ansys.geometry.core.typing.Real = 1e-06) -> bool
+
+   
+   Check if the curve contains a given point within a specified tolerance.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point2D`
+           The point to check.
+
+       **tolerance** : :obj:`Real`, :obj:`optional`
+           The tolerance for the containment check, by default 1e-6.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if the curve contains the point within the tolerance, False otherwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fit_curve_from_points(points: list[ansys.geometry.core.math.point.Point2D], degree: int = 3) -> SketchNurbs
+   :classmethod:
+
+
+   
+   Fit a NURBS curve to a set of points.
+
+
+   :Parameters:
+
+       **points** : :class:`python:list`\[:obj:`Point2D`]
+           The points to fit the curve to.
+
+       **degree** : :class:`python:int`, :obj:`optional`
+           The degree of the NURBS curve, by default 3.
+
+
+
+   :Returns:
+
+       :obj:`SketchNurbs`
+           A new instance of SketchNurbs fitted to the given points.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

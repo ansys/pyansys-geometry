@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``edge.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.edge
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: edge
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Edge`
+            - Represents a single edge of a body within the design assembly.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~CurveType`
+            - Provides values for the curve types supported by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Edge<Edge>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ CurveType<CurveType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for managing an edge.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

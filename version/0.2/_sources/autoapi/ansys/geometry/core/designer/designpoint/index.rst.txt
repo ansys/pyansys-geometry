@@ -1,0 +1,182 @@
+:py:mod:`ansys.geometry.core.designer.designpoint`
+==================================================
+
+.. py:module:: ansys.geometry.core.designer.designpoint
+
+.. autoapi-nested-parse::
+
+   ``DesignPoint`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.designpoint.DesignPoint
+
+
+
+
+.. py:class:: DesignPoint(id: str, name: str, point: ansys.geometry.core.math.Point3D, parent_component: ansys.geometry.core.designer.component.Component)
+
+
+   
+   Provides the ``DesignPoint`` class for creating design points in components.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the design points.
+
+       **name** : :class:`python:str`
+           User-defined label for the design points.
+
+       **points** : :obj:`Point3D`
+           3D point constituting the design points.
+
+       **parent_component** : :obj:`Component`
+           Parent component to nest the new design point under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: value
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Design point value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parent_component
+      :type: beartype.typing.Union[ansys.geometry.core.designer.component.Component, None]
+
+      
+      Component node that the design point is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``DesignPoints`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

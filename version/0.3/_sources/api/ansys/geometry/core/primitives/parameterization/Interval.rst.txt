@@ -1,0 +1,256 @@
+
+
+
+
+Interval
+========
+
+.. py:class:: Interval(start: ansys.geometry.core.typing.Real, end: ansys.geometry.core.typing.Real)
+   :canonical: ansys.geometry.core.primitives.parameterization.Interval
+
+
+
+
+Interval class that defines a range of values.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Interval
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_open`
+            - If the interval is open (-inf, inf).
+          * - :py:attr:`~is_closed`
+            - If the interval is closed. Neither value is inf or -inf.
+          * - :py:attr:`~get_span`
+            - Return the quantity contained by the interval. Interval must be closed.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start`
+            - Start value of the interval.
+          * - :py:attr:`~end`
+            - End value of the interval.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``Interval`` as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.parameterization import Interval
+
+
+Property detail
+---------------
+.. py:property:: start
+   :canonical: ansys.geometry.core.primitives.parameterization.Interval.start
+   :type: Real
+
+
+   
+   Start value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :canonical: ansys.geometry.core.primitives.parameterization.Interval.end
+   :type: Real
+
+
+   
+   End value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: is_open() -> bool
+
+   
+   If the interval is open (-inf, inf).
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if both ends of the interval are negative and positive infinity respectively.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: is_closed() -> bool
+
+   
+   If the interval is closed. Neither value is inf or -inf.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           True if neither bound of the interval is infinite.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: get_span() -> ansys.geometry.core.typing.Real
+
+   
+   Return the quantity contained by the interval. Interval must be closed.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           The difference between the end and start of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``Interval`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

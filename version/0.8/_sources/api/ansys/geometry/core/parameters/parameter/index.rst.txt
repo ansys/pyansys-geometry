@@ -1,0 +1,107 @@
+
+
+
+
+
+
+The ``parameter.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.parameters.parameter
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: parameter
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.parameters.parameter.Parameter`
+            - Represents a parameter.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.parameters.parameter.ParameterType`
+            - Provides values for the parameter types supported.
+
+
+          * - :py:obj:`~ansys.geometry.core.parameters.parameter.ParameterUpdateStatus`
+            - Provides values for the status messages associated with parameter updates.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Parameter</api/ansys/geometry/core/parameters/parameter/Parameter>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> ParameterType</api/ansys/geometry/core/parameters/parameter/ParameterType>
+    <span class="nf nf-cod-symbol_enum"></span> ParameterUpdateStatus</api/ansys/geometry/core/parameters/parameter/ParameterUpdateStatus>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides get and set methods for parameters.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

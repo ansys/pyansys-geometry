@@ -1,0 +1,101 @@
+
+
+
+
+
+
+The ``vector.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.math.vector
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: vector
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.vector.Vector3D`
+            - Provides for managing and creating a 3D vector.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.vector.Vector2D`
+            - Provides for creating and managing a 2D vector.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.vector.UnitVector3D`
+            - Provides for creating and managing a 3D unit vector.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.vector.UnitVector2D`
+            - Provides for creating and managing a 3D unit vector.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Vector3D</api/ansys/geometry/core/math/vector/Vector3D>
+    <span class="nf nf-cod-symbol_class"></span> Vector2D</api/ansys/geometry/core/math/vector/Vector2D>
+    <span class="nf nf-cod-symbol_class"></span> UnitVector3D</api/ansys/geometry/core/math/vector/UnitVector3D>
+    <span class="nf nf-cod-symbol_class"></span> UnitVector2D</api/ansys/geometry/core/math/vector/UnitVector2D>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing 2D and 3D vectors.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

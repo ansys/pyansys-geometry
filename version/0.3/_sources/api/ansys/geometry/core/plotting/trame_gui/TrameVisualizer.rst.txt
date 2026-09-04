@@ -1,0 +1,119 @@
+
+
+
+
+TrameVisualizer
+===============
+
+.. py:class:: TrameVisualizer
+   :canonical: ansys.geometry.core.plotting.trame_gui.TrameVisualizer
+
+
+
+
+Defines the trame layout view.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: TrameVisualizer
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_scene`
+            - Set the trame layout view and the mesh to show through the PyVista plotter.
+          * - :py:attr:`~show`
+            - Start the trame server and show the mesh.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.trame_gui import TrameVisualizer
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: set_scene(plotter)
+
+   
+   Set the trame layout view and the mesh to show through the PyVista plotter.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`~pyvista.Plotter`
+           PyVista plotter with the rendered mesh.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: show()
+
+   
+   Start the trame server and show the mesh.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

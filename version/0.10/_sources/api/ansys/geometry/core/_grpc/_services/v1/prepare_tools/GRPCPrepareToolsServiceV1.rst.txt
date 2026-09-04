@@ -1,0 +1,321 @@
+
+
+
+
+
+
+:class:`GRPCPrepareToolsServiceV1`
+==================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.prepare_tools.GRPCPrepareToolsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.prepare_tools.GRPCPrepareToolsService`
+
+
+   
+   Prepare tools service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   Prepare Tools service. It is specifically designed for the v1 version
+   of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCPrepareToolsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~extract_volume_from_faces`
+            - Extract a volume from input faces.
+          * - :py:attr:`~extract_volume_from_edge_loops`
+            - Extract a volume from input edge loop.
+          * - :py:attr:`~remove_rounds`
+            - Remove rounds from geometry.
+          * - :py:attr:`~share_topology`
+            - Share topology between the given bodies.
+          * - :py:attr:`~enhanced_share_topology`
+            - Share topology between the given bodies.
+          * - :py:attr:`~find_logos`
+            - Detect logos in geometry.
+          * - :py:attr:`~find_and_remove_logos`
+            - Detect and remove logos in geometry.
+          * - :py:attr:`~remove_logo`
+            - Remove logos in geometry.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.prepare_tools import GRPCPrepareToolsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: extract_volume_from_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extract a volume from input faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extract_volume_from_edge_loops(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extract a volume from input edge loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: remove_rounds(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Remove rounds from geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: share_topology(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Share topology between the given bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: enhanced_share_topology(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Share topology between the given bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_logos(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Detect logos in geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_remove_logos(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Detect and remove logos in geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: remove_logo(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Remove logos in geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
