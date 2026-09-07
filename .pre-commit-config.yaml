@@ -15,7 +15,7 @@ repos:
           - ".codacy.yml"
 
   - repo: https://github.com/tox-dev/pyproject-fmt
-    rev: cc0b0f8d4107cfe80d6571644e639b05aee29128 # frozen: v2.28.1
+    rev: bdc53142c79093f52931be2be9aee90756f39f53 # frozen: v2.29.0
     hooks:
       - id: pyproject-fmt
         args: [--keep-full-version]
