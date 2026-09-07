@@ -251,6 +251,7 @@ class PrepareTools:
             self._grpc_client.log.info("Failed to extract volume from edge loops...")
             return []
 
+    @min_backend_version(25, 2, 0)
     def remove_rounds(self, faces: list["Face"], auto_shrink: bool = False) -> bool:
         """Remove rounds from geometry.
 
