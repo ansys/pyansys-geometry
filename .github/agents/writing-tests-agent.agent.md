@@ -119,9 +119,7 @@ of the techniques below.
 curves = modeler.geometry_commands.revolve_points([dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad))
 
 # Correct — wrap the arguments:
-curves = modeler.geometry_commands.revolve_points(
-    [dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad)
-)
+curves = modeler.geometry_commands.revolve_points([dp1, dp2, dp3], axis, Angle(np.pi, UNITS.rad))
 ```
 
 **Technique 2 — extract long sub-expressions into local variables:**
