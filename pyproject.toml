@@ -23,7 +23,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.2.12",
+  "ansys-api-discovery==1.2.13",
   "ansys-tools-common<1,>=0.3",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
@@ -40,11 +40,12 @@ dependencies = [
   "six>=1.16.0,<2",
 ]
 optional-dependencies.all = [
-  "ansys-platform-instancemanagement<2,>=1.0.3",
-  "ansys-tools-visualization-interface>=0.2.6",
-  "docker<8,>=6.0.1",
+  "ansys-platform-instancemanagement>=1.0.3,<2",
+  "ansys-tools-visualization-interface[usd]>=0.14.0",
+  "docker>=6.0.1,<8",
   "pygltflib>=1.16,<2",
   "pyvista[jupyter]>=0.38.1,<1",
+  "usd-core>=24.0",
   "vtk>=9,<10",
 ]
 optional-dependencies.graphics = [
@@ -52,6 +53,10 @@ optional-dependencies.graphics = [
   "pygltflib>=1.16,<2",
   "pyvista[jupyter]>=0.38.1,<1",
   "vtk>=9,<10",
+]
+optional-dependencies.usd = [
+  "ansys-tools-visualization-interface[usd]>=0.14.0",
+  "usd-core>=24.0",
 ]
 urls.Changelog = "https://github.com/ansys/pyansys-geometry/blob/main/doc/source/changelog.rst"
 urls.Discussions = "https://github.com/ansys/pyansys-geometry/discussions"
@@ -66,7 +71,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.2",
-  "ty==0.0.72",
+  "ty==0.0.78",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -83,29 +88,29 @@ doc = [
   "pdf2image==1.17.0",
   "quarto-cli==1.10.18",
   "sphinx==9.1.0",
-  "sphinx-autodoc-typehints==3.13.2",
+  "sphinx-autodoc-typehints==3.13.5",
   "sphinx-copybutton==0.5.2",
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
 ]
 general-all = [
   "ansys-platform-instancemanagement==1.2.0",
-  "ansys-tools-common==0.5.2",
-  "ansys-tools-visualization-interface==0.14.0",
+  "ansys-tools-common==0.5.3",
+  "ansys-tools-visualization-interface[usd]==0.14.0",
   "beartype==0.22.9",
   "docker==7.2.0",
   "geomdl==5.4.0",
-  "grpcio==1.83.0",
-  "grpcio-health-checking==1.83.0",
+  "grpcio==1.83.1",
+  "grpcio-health-checking==1.83.1",
   "matplotlib==3.11.1",
   "numpy==2.5.2",
   "pint==0.25.3",
-  "protobuf==7.35.1",
-  "pydantic==2.13.4",
+  "protobuf==7.36.1",
+  "pydantic==2.13.5",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.48.4",
   "requests==2.34.2",
-  "scipy==1.18.0",
+  "scipy==1.18.1",
   "semver==3.0.4",
   "six==1.17.0",
   "trame-vtk==2.10.2",

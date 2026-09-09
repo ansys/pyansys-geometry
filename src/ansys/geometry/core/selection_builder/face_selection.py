@@ -26,7 +26,10 @@ from numbers import Real
 from typing import TYPE_CHECKING, Union
 
 from ansys.geometry.core.designer.edge import CurveType
-from ansys.geometry.core.misc.auxiliary import convert_color_to_hex, get_faces_from_ids
+from ansys.geometry.core.misc.auxiliary import (
+    convert_color_to_hex,
+    get_faces_from_metadata,
+)
 from ansys.geometry.core.misc.checks import min_backend_version
 from ansys.geometry.core.misc.measurements import Area, Distance
 from ansys.geometry.core.selection_builder.selection_builder import (
@@ -97,7 +100,7 @@ class FaceSelection(TypedSelection):
             All visible faces.
         """
         response = self._grpc_client.services.face_selection.get_all_visible_faces()
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -110,7 +113,7 @@ class FaceSelection(TypedSelection):
             All faces.
         """
         response = self._grpc_client.services.face_selection.get_all_faces()
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -130,7 +133,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.get_faces_from_named_selection(
             name=name,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -159,7 +162,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -192,7 +195,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -225,7 +228,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -258,7 +261,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -281,7 +284,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.get_faces_with_color(
             color=convert_color_to_hex(color)
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -305,7 +308,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -335,7 +338,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -350,7 +353,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_max_area(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -365,7 +368,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_min_area(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -395,7 +398,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -410,7 +413,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_max_perimeter(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -425,7 +428,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_min_perimeter(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -453,7 +456,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -468,7 +471,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_max_edge_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -483,7 +486,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_min_edge_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -511,7 +514,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -526,7 +529,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_max_loop_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -541,7 +544,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.filter_faces_min_loop_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -573,7 +576,7 @@ class FaceSelection(TypedSelection):
             min=min,
             max=max,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -594,7 +597,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             curve_type=curve_type.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -615,7 +618,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             curve_type=curve_type.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -643,7 +646,7 @@ class FaceSelection(TypedSelection):
             curve_types=curve_type,
             exclusive=exclusive,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -667,7 +670,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             color=convert_color_to_hex(color),
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -695,7 +698,7 @@ class FaceSelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -723,7 +726,7 @@ class FaceSelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -751,7 +754,7 @@ class FaceSelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -779,7 +782,7 @@ class FaceSelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -812,7 +815,7 @@ class FaceSelection(TypedSelection):
             min_percentile=min_percentile,
             max_percentile=max_percentile,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -836,7 +839,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -860,7 +863,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -884,7 +887,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -908,7 +911,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -932,7 +935,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -956,7 +959,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             scope=scope.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -971,7 +974,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.order_faces_by_area(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -986,7 +989,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.order_faces_by_perimeter(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -1001,7 +1004,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.order_faces_by_edge_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -1016,7 +1019,7 @@ class FaceSelection(TypedSelection):
         response = self._grpc_client.services.face_selection.order_faces_by_loop_count(
             face_ids=[f.id for f in self.items],
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -1037,7 +1040,7 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
             curve_type=curve_type.value,
         )
-        faces = get_faces_from_ids(self._design, response["response_data"][0]["faces"])
+        faces = get_faces_from_metadata(self._design, response["response_data"][0])
         return FaceSelection(self._design, self._grpc_client, faces)
 
     @min_backend_version(27, 1, 0)
@@ -1053,7 +1056,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1070,7 +1075,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1087,7 +1094,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1104,7 +1113,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1121,7 +1132,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1138,7 +1151,9 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]
 
@@ -1155,6 +1170,8 @@ class FaceSelection(TypedSelection):
             face_ids=[f.id for f in self.items],
         )
         return [
-            FaceSelection(self._design, self._grpc_client, get_faces_from_ids(self._design, group))
+            FaceSelection(
+                self._design, self._grpc_client, get_faces_from_metadata(self._design, group)
+            )
             for group in response["response_data"][0]["groups"]
         ]

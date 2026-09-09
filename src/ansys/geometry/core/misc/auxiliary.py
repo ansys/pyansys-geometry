@@ -255,6 +255,40 @@ def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     ]  # noqa: E501
 
 
+def get_faces_from_metadata(design: "Design", metadata: dict) -> list["Face"]:
+    """Construct ``Face`` objects from their metadata.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the faces.
+    metadata : dict
+        Metadata containing face information.
+
+    Returns
+    -------
+    list[Face]
+        List of Face objects.
+
+    Notes
+    -----
+    This method takes a design and face metadata, and gets their corresponding ``Face`` objects.
+    """
+    from ansys.geometry.core.designer.face import Face, SurfaceType
+
+    body_map = {body._template.id: body for body in __traverse_all_bodies(design)}
+    return [
+        Face(
+            face.get("id"),
+            SurfaceType(face.get("surface_type")),
+            body_map[face.get("body_id")],
+            body_map[face.get("body_id")]._grpc_client,
+            face.get("is_reversed"),
+        )
+        for face in metadata.get("faces")
+    ]
+
+
 def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """Find the ``Edge`` objects inside a ``Design`` from its ids.
 
