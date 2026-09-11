@@ -1422,7 +1422,14 @@ def test_create_surface_merge_inner_loops(modeler: Modeler):
     # The option is ignored on older backends
     with patch.object(modeler.client, "_backend_version", (25, 1, 0)):
         too_old_body = design.create_surface("too_old", plate_sketch(), merge_inner_loops=True)
-    assert len(too_old_body.faces) == 2
+    assert len(too_old_body.faces) <= 2
+    if len(too_old_body.faces) == 2:
+        assert sorted(face.area.m for face in too_old_body.faces) == pytest.approx(
+            [np.pi * 0.25**2, 1 - np.pi * 0.25**2]
+        )
+    else:
+        assert len(too_old_body.faces) == 1
+        assert too_old_body.faces[0].area.m == pytest.approx(1 - np.pi * 0.25**2)
 
 
 def test_shell_body(modeler: Modeler):
