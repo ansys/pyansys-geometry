@@ -1,0 +1,333 @@
+
+
+
+
+
+The ``auxiliary.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.misc.auxiliary
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: auxiliary
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~get_design_from_component`
+            - Get the ``Design`` of the given ``Component`` object.
+
+
+          * - :py:attr:`~get_design_from_body`
+            - Get the ``Design`` of the given ``Body`` object.
+
+
+          * - :py:attr:`~get_design_from_face`
+            - Get the ``Design`` of the given ``Face`` object.
+
+
+          * - :py:attr:`~get_design_from_edge`
+            - Get the ``Design`` of the given ``Edge`` object.
+
+
+          * - :py:attr:`~get_bodies_from_ids`
+            - Find the ``Body`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:attr:`~get_faces_from_ids`
+            - Find the ``Face`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:attr:`~get_edges_from_ids`
+            - Find the ``Edge`` objects inside a ``Design`` from its ids.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Auxiliary functions for the PyAnsys Geometry library.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_design_from_component(component: ansys.geometry.core.designer.component.Component) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Component`` object.
+
+
+   :Parameters:
+
+       **component** : :obj:`Component`
+           The component object for which to find the ``Design``.
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided component object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_body(body: ansys.geometry.core.designer.body.Body) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Body`` object.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           The body object for which to find the ``Design``.
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided body object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_face(face: ansys.geometry.core.designer.face.Face) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Face`` object.
+
+
+   :Parameters:
+
+       **face** : :obj:`Face`
+           The face object for which to find the ``Design``.
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided face object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_edge(edge: ansys.geometry.core.designer.edge.Edge) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Edge`` object.
+
+
+   :Parameters:
+
+       **edge** : :obj:`Edge`
+           The edge object for which to find the ``Design``.
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided edge object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_bodies_from_ids(design: ansys.geometry.core.designer.design.Design, body_ids: beartype.typing.List[str]) -> beartype.typing.List[ansys.geometry.core.designer.body.Body]
+
+   
+   Find the ``Body`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the faces.
+
+       **body_ids** : :obj:`List`\[:class:`python:str`]
+           List of body ids.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Body`]
+           List of Body objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and body ids, and gets their corresponding ``Body`` object.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_faces_from_ids(design: ansys.geometry.core.designer.design.Design, face_ids: beartype.typing.List[str]) -> beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+   
+   Find the ``Face`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the faces.
+
+       **face_ids** : :obj:`List`\[:class:`python:str`]
+           List of face ids.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Face`]
+           List of Face objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and face ids, and gets their corresponding ``Face`` object.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_edges_from_ids(design: ansys.geometry.core.designer.design.Design, edge_ids: beartype.typing.List[str]) -> beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+   
+   Find the ``Edge`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the edges.
+
+       **edge_ids** : :obj:`List`\[:class:`python:str`]
+           List of edge ids.
+
+   :Returns:
+
+       :obj:`List`\[:obj:`Edge`]
+           List of Edge objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

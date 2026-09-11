@@ -1,0 +1,153 @@
+
+
+
+
+
+
+:class:`ReversedTrimmedSurface`
+===============================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.trimmed_surface.ReversedTrimmedSurface(geometry: ansys.geometry.core.shapes.surfaces.surface.Surface, box_uv: ansys.geometry.core.shapes.box_uv.BoxUV)
+
+   Bases: :py:obj:`TrimmedSurface`
+
+
+   
+   Represents a reversed trimmed surface.
+
+   When a surface is reversed, its normal vector is negated to provide the proper
+   outward facing vector.
+
+   :Parameters:
+
+       **face** : :obj:`Face`
+           Face that the trimmed surface belongs to.
+
+       **geometry** : :obj:`Surface`
+           Underlying mathematical representation of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ReversedTrimmedSurface
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~normal`
+            - Provide the normal to the surface.
+          * - :py:attr:`~project_point`
+            - Project a point onto the surface and evaluate it at that location.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.trimmed_surface import ReversedTrimmedSurface
+
+
+
+Method detail
+-------------
+
+.. py:method:: normal(u: ansys.geometry.core.typing.Real, v: ansys.geometry.core.typing.Real) -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Provide the normal to the surface.
+
+
+   :Parameters:
+
+       **u** : :obj:`Real`
+           First coordinate of the 2D representation of a surface in UV space.
+
+       **v** : :obj:`Real`
+           Second coordinate of the 2D representation of a surface in UV space.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Unit vector is normal to the surface at the given UV coordinates.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation
+
+   
+   Project a point onto the surface and evaluate it at that location.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the surface.
+
+
+
+   :Returns:
+
+       :obj:`SurfaceEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

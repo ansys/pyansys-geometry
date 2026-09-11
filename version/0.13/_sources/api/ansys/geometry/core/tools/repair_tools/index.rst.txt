@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``repair_tools.py`` module
+==============================
+
+.. py:module:: ansys.geometry.core.tools.repair_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: repair_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.repair_tools.RepairTools`
+            - Repair tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> RepairTools</api/ansys/geometry/core/tools/repair_tools/RepairTools>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for repairing bodies.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

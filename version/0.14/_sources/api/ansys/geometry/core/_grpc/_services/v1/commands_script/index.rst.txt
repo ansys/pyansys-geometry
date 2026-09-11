@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``commands_script.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v1.commands_script
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v1.commands_script
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v1.commands_script.GRPCCommandsScriptServiceV1`
+            - Commands Script service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCCommandsScriptServiceV1</api/ansys/geometry/core/_grpc/_services/v1/commands_script/GRPCCommandsScriptServiceV1>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Commands Script service implementation for v1.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

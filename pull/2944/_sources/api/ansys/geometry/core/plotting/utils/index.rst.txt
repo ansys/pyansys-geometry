@@ -1,0 +1,131 @@
+
+
+
+
+
+
+The ``utils.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.plotting.utils
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.plotting.utils
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~create_elliptical_polydata`
+            - Create PyVista PolyData for an ellipse or circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Utility functions for plotting and visualization.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: create_elliptical_polydata(origin: ansys.geometry.core.math.point.Point3D, dir_x: ansys.geometry.core.math.vector.Vector3D, dir_y: ansys.geometry.core.math.vector.Vector3D, dir_z: ansys.geometry.core.math.vector.Vector3D, major_radius: ansys.geometry.core.typing.Real, minor_radius: Real | None = None, num_points: int = 100) -> pyvista.PolyData
+
+   
+   Create PyVista PolyData for an ellipse or circle.
+
+   This function creates a discretized representation of an ellipse (or circle)
+   as a closed loop of line segments for visualization purposes.
+
+   :Parameters:
+
+       **origin** : :obj:`Point3D`
+           Center point of the ellipse/circle.
+
+       **dir_x** : :obj:`Vector3D`
+           Direction vector for the major axis (or X axis for circles).
+
+       **dir_y** : :obj:`Vector3D`
+           Direction vector for the minor axis (or Y axis for circles).
+
+       **dir_z** : :obj:`Vector3D`
+           Normal direction vector.
+
+       **major_radius** : :obj:`Real`
+           Major radius of the ellipse. For circles, this is the radius.
+
+       **minor_radius** : :obj:`Real`, :obj:`optional`
+           Minor radius of the ellipse. If None, defaults to major_radius
+           (creating a circle).
+
+       **num_points** : :class:`python:int`, default: 100
+           Number of points to use for discretization.
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK PolyData representation with line segments forming a closed loop.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   For a circle, either pass the same value for both radii or only provide
+   major_radius (minor_radius will default to major_radius).
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

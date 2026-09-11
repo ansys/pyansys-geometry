@@ -1,0 +1,563 @@
+:py:mod:`ansys.geometry.core.designer.face`
+===========================================
+
+.. py:module:: ansys.geometry.core.designer.face
+
+.. autoapi-nested-parse::
+
+   Provides the ``Face`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.face.SurfaceType
+   ansys.geometry.core.designer.face.FaceLoopType
+   ansys.geometry.core.designer.face.FaceLoop
+   ansys.geometry.core.designer.face.Face
+
+
+
+
+.. py:class:: SurfaceType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Enum holding the possible values for surface types by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: SURFACETYPE_UNKNOWN
+      :value: 0
+
+      
+
+   .. py:attribute:: SURFACETYPE_PLANE
+      :value: 1
+
+      
+
+   .. py:attribute:: SURFACETYPE_CYLINDER
+      :value: 2
+
+      
+
+   .. py:attribute:: SURFACETYPE_CONE
+      :value: 3
+
+      
+
+   .. py:attribute:: SURFACETYPE_TORUS
+      :value: 4
+
+      
+
+   .. py:attribute:: SURFACETYPE_SPHERE
+      :value: 5
+
+      
+
+   .. py:attribute:: SURFACETYPE_NURBS
+      :value: 6
+
+      
+
+   .. py:attribute:: SURFACETYPE_PROCEDURAL
+      :value: 7
+
+      
+
+
+.. py:class:: FaceLoopType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Provides an enum holding the possible values for face loop types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: INNER_LOOP
+      :value: 'INNER'
+
+      
+
+   .. py:attribute:: OUTER_LOOP
+      :value: 'OUTER'
+
+      
+
+
+.. py:class:: FaceLoop(type: FaceLoopType, length: pint.Quantity, min_bbox: ansys.geometry.core.math.Point3D, max_bbox: ansys.geometry.core.math.Point3D, edges: beartype.typing.List[ansys.geometry.core.designer.edge.Edge])
+
+
+   
+   Provides an internal class holding the face loops defined by the server side.
+
+
+   :Parameters:
+
+       **type** : :obj:`FaceLoopType`
+           Type of loop.
+
+       **length** : :obj:`Quantity`
+           Length of the loop.
+
+       **min_bbox** : :obj:`Point3D`
+           Minimum point of the bounding box containing the loop.
+
+       **max_bbox** : :obj:`Point3D`
+           Maximum point of the bounding box containing the loop.
+
+       **edges** : :obj:`List`\[:obj:`Edge`]
+           Edges contained in the loop.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class is to be used only when parsing server side results. It is not
+   intended to be instantiated by a user.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: type
+      :type: FaceLoopType
+
+      
+      Type of the face loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: length
+      :type: pint.Quantity
+
+      
+      Length of the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: min_bbox
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Minimum point of the bounding box containing the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: max_bbox
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Maximum point of the bounding box containing the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+      
+      Edges contained in the loop.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Face(id: str, surface_type: SurfaceType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.GrpcClient)
+
+
+   
+   Represents a single face of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **surface_type** : :obj:`SurfaceType`
+           Type of surface that the face forms.
+
+       **body** : :obj:`Body`
+           Parent body that the face constructs.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      Face ID.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: body
+      :type: ansys.geometry.core.designer.body.Body
+
+      
+      Body that the face belongs to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: area
+      :type: pint.Quantity
+
+      
+      Calculated area of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_type
+      :type: SurfaceType
+
+      
+      Surface type of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+      
+      Get all edges of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: loops
+      :type: beartype.typing.List[FaceLoop]
+
+      
+      Get all face loops of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: face_normal(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.UnitVector3D
+
+      
+      Get the normal direction to the face evaluated at certain UV coordinates.
+
+
+      :Parameters:
+
+          **u** : :class:`python:float`, default: 0.5
+              First coordinate of the 2D representation of a surface in UV space.
+              The default is the center of the surface.
+
+          **v** : :class:`python:float`, default: 0.5
+              Second coordinate of the 2D representation of a surface in UV space.
+              The default is the center of the surface.
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+              object evaluated at the given U and V coordinates.
+              This :class:`UnitVector3D <ansys.geometry.core.math.vector.unitVector3D>`
+              object is perpendicular to the surface at the given UV coordinates.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      To properly use this method, you must handle UV coordinates. Thus, you must
+      know how these relate to the underlying Geometry service. It is an advanced
+      method for Geometry experts only.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: face_point(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.Point3D
+
+      
+      Get a point of the face evaluated at certain UV coordinates.
+
+
+      :Parameters:
+
+          **u** : :class:`python:float`, default: 0.5
+              First coordinate of the 2D representation of a surface in UV space.
+              The default is the center of the surface.
+
+          **v** : :class:`python:float`, default: 0.5
+              Second coordinate of the 2D representation of a surface in UV space.
+              The default is the center of the surface.
+
+      :Returns:
+
+          :obj:`Point`
+              The :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+              object evaluated at the given UV coordinates.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      To properly use this method, you must handle UV coordinates. Thus, you must
+      know how these relate to the underlying Geometry service. It is an advanced
+      method for Geometry experts only.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,201 @@
+
+
+
+
+
+
+:class:`FMDExportOptions`
+=========================
+
+
+.. py:class:: ansys.geometry.core.misc.options.FMDExportOptions(deviation: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, angle: ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real, aspect_ratio: int = -3, max_edge_length: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 0.0)
+
+   
+   Provides options for FMD export.
+
+
+   :Parameters:
+
+       **deviation** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface position.
+           If a Real is provided, it is assumed to be in the default length unit.
+           Must be between 0.00003 m and 0.002 m.
+
+       **angle** : :obj:`Angle` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface normal.
+           If a Real is provided, it is assumed to be in radians.
+           Must be between 0.05 degrees (≈ 8.727e-4 rad) and 30 degrees (≈ 0.5236 rad).
+
+       **aspect_ratio** : :class:`python:int`, default=-3
+           The maximum aspect ratio of facets.
+
+       **max_edge_length** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, default=0.0
+           The maximum facet edge length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: FMDExportOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~deviation`
+            - Deviation.
+          * - :py:attr:`~angle`
+            - Angle.
+          * - :py:attr:`~aspect_ratio`
+            - Aspect ratio.
+          * - :py:attr:`~max_edge_length`
+            - Maximum edge length.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import FMDExportOptions
+
+Property detail
+---------------
+
+.. py:property:: deviation
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Deviation.
+
+   The maximum deviation from the true surface position.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle
+   :type: ansys.geometry.core.misc.measurements.Angle
+
+
+   
+   Angle.
+
+   The maximum deviation from the true surface normal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: aspect_ratio
+   :type: int
+
+
+   
+   Aspect ratio.
+
+   The maximum aspect ratio of facets.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_edge_length
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Maximum edge length.
+
+   The maximum facet edge length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

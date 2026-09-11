@@ -1,0 +1,88 @@
+
+
+
+
+ParamForm
+=========
+
+.. py:class:: ParamForm
+   :canonical: ansys.geometry.core.primitives.parameterization.ParamForm
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+ParamForm enum class that defines the form of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ParamForm
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~OPEN`
+            - 
+          * - :py:attr:`~CLOSED`
+            - 
+          * - :py:attr:`~PERIODIC`
+            - 
+          * - :py:attr:`~OTHER`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.parameterization import ParamForm
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: OPEN
+   :value: 1
+
+   
+
+.. py:attribute:: CLOSED
+   :value: 2
+
+   
+
+.. py:attribute:: PERIODIC
+   :value: 3
+
+   
+
+.. py:attribute:: OTHER
+   :value: 4
+
+   
+
+
+

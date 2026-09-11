@@ -1,0 +1,126 @@
+
+
+
+
+
+The ``body.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.body
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: body
+.. tab-set::
+
+
+
+    .. tab-item:: Interfaces
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~IBody`
+            - Defines the common methods for a body, providing the abstract body interface.
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~MasterBody`
+            - Represents solids and surfaces organized within the design assembly.
+
+
+          * - :py:attr:`~Body`
+            - Represents solids and surfaces organized within the design assembly.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~MidSurfaceOffsetType`
+            - Provides values for mid-surface offsets supported by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 IBody<IBody>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 MasterBody<MasterBody>
+    🝆 Body<Body>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ MidSurfaceOffsetType<MidSurfaceOffsetType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a body.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

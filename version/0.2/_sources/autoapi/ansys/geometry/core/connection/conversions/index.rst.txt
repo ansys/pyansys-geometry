@@ -1,0 +1,514 @@
+:py:mod:`ansys.geometry.core.connection.conversions`
+====================================================
+
+.. py:module:: ansys.geometry.core.connection.conversions
+
+.. autoapi-nested-parse::
+
+   Provides the ``Conversions`` module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.connection.conversions.unit_vector_to_grpc_direction
+   ansys.geometry.core.connection.conversions.frame_to_grpc_frame
+   ansys.geometry.core.connection.conversions.plane_to_grpc_plane
+   ansys.geometry.core.connection.conversions.sketch_shapes_to_grpc_geometries
+   ansys.geometry.core.connection.conversions.sketch_edges_to_grpc_geometries
+   ansys.geometry.core.connection.conversions.sketch_arc_to_grpc_arc
+   ansys.geometry.core.connection.conversions.sketch_ellipse_to_grpc_ellipse
+   ansys.geometry.core.connection.conversions.sketch_circle_to_grpc_circle
+   ansys.geometry.core.connection.conversions.point3d_to_grpc_point
+   ansys.geometry.core.connection.conversions.point2d_to_grpc_point
+   ansys.geometry.core.connection.conversions.sketch_polygon_to_grpc_polygon
+   ansys.geometry.core.connection.conversions.sketch_segment_to_grpc_line
+   ansys.geometry.core.connection.conversions.tess_to_pd
+   ansys.geometry.core.connection.conversions.grpc_matrix_to_matrix
+   ansys.geometry.core.connection.conversions.grpc_frame_to_frame
+
+
+
+.. py:function:: unit_vector_to_grpc_direction(unit_vector: ansys.geometry.core.math.UnitVector3D) -> ansys.api.geometry.v0.models_pb2.Direction
+
+   
+   Marshals a ``UnitVector3D`` class to a unit vector Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **unit_vector** : :obj:`UnitVector3D`
+           Source vector data.
+
+   :Returns:
+
+       :obj:`GRPCDirection`
+           Geometry service gRPC direction message.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: frame_to_grpc_frame(frame: ansys.geometry.core.math.Frame) -> ansys.api.geometry.v0.models_pb2.Frame
+
+   
+   Marshals a ``Frame`` class to a frame Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **frame** : :obj:`Frame`
+           Source frame data.
+
+   :Returns:
+
+       :obj:`GRPCFrame`
+           Geometry service gRPC frame message. The unit for the frame origin is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: plane_to_grpc_plane(plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Plane
+
+   
+   Marshals a ``Plane`` class to a plane Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Source plane data.
+
+   :Returns:
+
+       :obj:`GRPCPlane`
+           Geometry service gRPC plane message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_shapes_to_grpc_geometries(plane: ansys.geometry.core.math.Plane, edges: beartype.typing.List[ansys.geometry.core.sketch.SketchEdge], faces: beartype.typing.List[ansys.geometry.core.sketch.SketchFace], only_one_curve: beartype.typing.Optional[bool] = False) -> ansys.api.geometry.v0.models_pb2.Geometries
+
+   
+   Marshals a list of ``SketchEdge`` and ``SketchFace`` to a geometries gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D sketches.
+
+       **edges** : :obj:`List`\[:obj:`SketchEdge`]
+           Source edge data.
+
+       **faces** : :obj:`List`\[:obj:`SketchFace`]
+           Source face data.
+
+       **shapes** : :obj:`List`\[:obj:`BaseShape`]
+           Source shape data.
+
+       **only_one_curve** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to project one curve of the whole set of geometries to
+           enhance performance.
+
+   :Returns:
+
+       :obj:`Geometries`
+           Geometry service gRPC geometries message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_edges_to_grpc_geometries(edges: beartype.typing.List[ansys.geometry.core.sketch.SketchEdge], plane: ansys.geometry.core.math.Plane) -> beartype.typing.Tuple[beartype.typing.List[ansys.api.geometry.v0.models_pb2.Line], beartype.typing.List[ansys.api.geometry.v0.models_pb2.Arc]]
+
+   
+   Marshals a list of ``SketchEdge`` to a geometries gRPC message.
+
+
+   :Parameters:
+
+       **edges** : :obj:`List`\[:obj:`SketchEdge`]
+           Source edge data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D sketches.
+
+   :Returns:
+
+       :obj:`Tuple`\[:obj:`List`\[:obj:`GRPCLine`], :obj:`List`\[:obj:`GRPCArc`]]
+           Geometry service gRPC line and arc messages. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_arc_to_grpc_arc(arc: ansys.geometry.core.sketch.Arc, plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Arc
+
+   
+   Marshals an ``Arc`` class to an arc Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **arc** : :obj:`Arc`
+           Source arc data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the arc within.
+
+   :Returns:
+
+       :obj:`GRPCArc`
+           Geometry service gRPC arc message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_ellipse_to_grpc_ellipse(ellipse: ansys.geometry.core.sketch.SketchEllipse, plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Ellipse
+
+   
+   Marshals a ``SketchEllipse`` class to an ellipse Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **ellipse** : :obj:`SketchEllipse`
+           Source ellipse data.
+
+   :Returns:
+
+       :obj:`GRPCEllipse`
+           Geometry service gRPC ellipse message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_circle_to_grpc_circle(circle: ansys.geometry.core.sketch.SketchCircle, plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Circle
+
+   
+   Marshals a ``SketchCircle`` class to a circle Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **circle** : :obj:`SketchCircle`
+           Source circle data.
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the circle.
+
+   :Returns:
+
+       :obj:`GRPCCircle`
+           Geometry service gRPC circle message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: point3d_to_grpc_point(point: ansys.geometry.core.math.Point3D) -> ansys.api.geometry.v0.models_pb2.Point
+
+   
+   Marshals a ``Point3D`` class to a point Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Source point data.
+
+   :Returns:
+
+       :obj:`GRPCPoint`
+           Geometry service gRPC point message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: point2d_to_grpc_point(plane: ansys.geometry.core.math.Plane, point2d: ansys.geometry.core.math.Point2D) -> ansys.api.geometry.v0.models_pb2.Point
+
+   
+   Marshals a ``Point2D`` class to a point Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane for positioning the 2D point.
+
+       **point** : :obj:`Point2D`
+           Source point data.
+
+   :Returns:
+
+       :obj:`GRPCPoint`
+           Geometry service gRPC point message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_polygon_to_grpc_polygon(polygon: ansys.geometry.core.sketch.Polygon, plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Polygon
+
+   
+   Marshals a ``Polygon`` class to a polygon Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **polygon** : :obj:`Polygon`
+           Source polygon data.
+
+   :Returns:
+
+       :obj:`GRPCPolygon`
+           Geometry service gRPC polygon message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: sketch_segment_to_grpc_line(segment: ansys.geometry.core.sketch.SketchSegment, plane: ansys.geometry.core.math.Plane) -> ansys.api.geometry.v0.models_pb2.Line
+
+   
+   Marshals a ``Segment`` class to a line Geometry service gRPC message.
+
+
+   :Parameters:
+
+       **segment** : :obj:`SketchSegment`
+           Source segment data.
+
+   :Returns:
+
+       :obj:`GRPCLine`
+           Geometry service gRPC line message. The unit is meters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: tess_to_pd(tess: ansys.api.geometry.v0.models_pb2.Tessellation) -> pyvista.PolyData
+
+   
+   Convert an ``ansys.api.geometry.Tessellation`` class to a `pyvista.PolyData` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: grpc_matrix_to_matrix(m: ansys.api.geometry.v0.models_pb2.Matrix) -> ansys.geometry.core.math.Matrix44
+
+   
+   Convert an ``ansys.api.geometry.Matrix`` class to a `ansys.geometry.core.math.Matrix44` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: grpc_frame_to_frame(frame: ansys.api.geometry.v0.models_pb2.Frame) -> ansys.geometry.core.math.Frame
+
+   
+   Convert an ``ansys.api.geometry.Frame`` grpc message to a ``Frame`` class.
+
+
+   :Parameters:
+
+       **GRPCFrame**
+           Geometry service gRPC frame message. The unit for the frame origin is meters.
+
+   :Returns:
+
+       **frame** : :obj:`Frame`
+           Resulting converted frame.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

@@ -1,0 +1,113 @@
+:py:mod:`ansys.geometry.core.plotting.widgets.button`
+=====================================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.button
+
+.. autoapi-nested-parse::
+
+   Module containing the Button abstract class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.widgets.button.Button
+
+
+
+
+.. py:class:: Button(plotter: pyvista.Plotter, button_config: tuple)
+
+
+   Bases: :py:obj:`ansys.geometry.core.plotting.widgets.widget.PlotterWidget`
+
+   
+   Abstract class for implementing buttons in PyGeometry.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`Plotter`
+           Plotter on which the buttons will be drawn.
+
+       **button_config** : :class:`python:tuple`
+           Tuple containing the position and the path to the icon of the button.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Wraps the function ``add_check_button_widget()`` from ``PyVista``.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: callback(state: bool) -> None
+      :abstractmethod:
+
+      
+      Functionality of the button, to be implemented by subclasses.
+
+
+      :Parameters:
+
+          **state** : :ref:`bool <python:bltin-boolean-values>`
+              True if the button is active.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: update() -> None
+
+      
+      Assign the image that will represent the button.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

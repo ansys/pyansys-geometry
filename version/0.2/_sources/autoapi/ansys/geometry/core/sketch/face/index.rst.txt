@@ -1,0 +1,159 @@
+:py:mod:`ansys.geometry.core.sketch.face`
+=========================================
+
+.. py:module:: ansys.geometry.core.sketch.face
+
+.. autoapi-nested-parse::
+
+   Provides the ``SketchFace`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.face.SketchFace
+
+
+
+
+.. py:class:: SketchFace
+
+
+   
+   Provides modeling closed 2D sketches.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: edges
+      :type: beartype.typing.List[ansys.geometry.core.sketch.edge.SketchEdge]
+
+      
+      List of all component edges forming the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: perimeter
+      :type: pint.Quantity
+
+      
+      Perimeter of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: plane_change(plane: ansys.geometry.core.math.Plane) -> None
+
+      
+      Redefine the plane containing SketchFace objects.
+
+
+      :Parameters:
+
+          **plane** : :obj:`Plane`
+              Desired new plane which will contain the sketched face.
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      This implies that their 3D definition may suffer changes. By default, it does
+      nothing. It is required to be implemented in child SketchFace classes.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``unsupported.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.unsupported
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: unsupported
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.unsupported.GRPCUnsupportedService`
+            - Unsupported service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCUnsupportedService</api/ansys/geometry/core/_grpc/_services/base/unsupported/GRPCUnsupportedService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the unsupported service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

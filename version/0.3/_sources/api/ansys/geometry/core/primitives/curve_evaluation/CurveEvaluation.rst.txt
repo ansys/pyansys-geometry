@@ -1,0 +1,249 @@
+
+
+
+
+CurveEvaluation
+===============
+
+.. py:class:: CurveEvaluation(parameter: ansys.geometry.core.typing.Real = None)
+   :canonical: ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation
+
+
+
+
+Provides for evaluating a curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: CurveEvaluation
+.. tab-set::
+
+    .. tab-item:: Abstract methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~first_derivative`
+            - First derivative of the evaluation.
+          * - :py:attr:`~second_derivative`
+            - Second derivative of the evaluation.
+          * - :py:attr:`~curvature`
+            - Curvature of the evaluation.
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~is_set`
+            - Determine if the parameter for the evaluation has been set.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.curve_evaluation import CurveEvaluation
+
+
+Property detail
+---------------
+.. py:property:: parameter
+   :canonical: ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation.parameter
+   :type: Real
+
+   :abstractmethod:
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: is_set() -> bool
+
+   
+   Determine if the parameter for the evaluation has been set.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+   :abstractmethod:
+
+   
+   Position of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: first_derivative() -> ansys.geometry.core.math.vector.Vector3D
+   :abstractmethod:
+
+   
+   First derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: second_derivative() -> ansys.geometry.core.math.vector.Vector3D
+   :abstractmethod:
+
+   
+   Second derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: curvature() -> ansys.geometry.core.typing.Real
+   :abstractmethod:
+
+   
+   Curvature of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

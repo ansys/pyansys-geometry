@@ -1,0 +1,156 @@
+
+
+
+
+PlotterWidget
+=============
+
+.. py:class:: PlotterWidget(plotter: pyvista.Plotter)
+   :canonical: ansys.geometry.core.plotting.widgets.widget.PlotterWidget
+
+
+
+Bases: :py:obj:`abc.ABC`
+
+Provides an abstract class for plotter widgets.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: PlotterWidget
+.. tab-set::
+
+    .. tab-item:: Abstract methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - General callback function for ``PlotterWidget`` objects.
+          * - :py:attr:`~update`
+            - General update function for ``PlotterWidget`` objects.
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plotter`
+            - Plotter object the widget is assigned to.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.widget import PlotterWidget
+
+
+Property detail
+---------------
+.. py:property:: plotter
+   :canonical: ansys.geometry.core.plotting.widgets.widget.PlotterWidget.plotter
+   :type: pyvista.Plotter
+
+
+   
+   Plotter object the widget is assigned to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: callback(state) -> None
+   :abstractmethod:
+
+   
+   General callback function for ``PlotterWidget`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: update() -> None
+   :abstractmethod:
+
+   
+   General update function for ``PlotterWidget`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

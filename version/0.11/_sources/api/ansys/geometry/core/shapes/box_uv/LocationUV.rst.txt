@@ -1,0 +1,129 @@
+
+
+
+
+
+
+:class:`LocationUV`
+===================
+
+
+.. py:class:: ansys.geometry.core.shapes.box_uv.LocationUV(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides the enumeration for indicating locations for BoxUV.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: LocationUV
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~TopLeft`
+            - 
+          * - :py:attr:`~TopCenter`
+            - 
+          * - :py:attr:`~TopRight`
+            - 
+          * - :py:attr:`~BottomLeft`
+            - 
+          * - :py:attr:`~BottomCenter`
+            - 
+          * - :py:attr:`~BottomRight`
+            - 
+          * - :py:attr:`~LeftCenter`
+            - 
+          * - :py:attr:`~RightCenter`
+            - 
+          * - :py:attr:`~Center`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.box_uv import LocationUV
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: TopLeft
+   :value: 1
+
+
+.. py:attribute:: TopCenter
+   :value: 2
+
+
+.. py:attribute:: TopRight
+   :value: 3
+
+
+.. py:attribute:: BottomLeft
+   :value: 4
+
+
+.. py:attribute:: BottomCenter
+   :value: 5
+
+
+.. py:attribute:: BottomRight
+   :value: 6
+
+
+.. py:attribute:: LeftCenter
+   :value: 7
+
+
+.. py:attribute:: RightCenter
+   :value: 8
+
+
+.. py:attribute:: Center
+   :value: 9
+
+
+
+
+
+

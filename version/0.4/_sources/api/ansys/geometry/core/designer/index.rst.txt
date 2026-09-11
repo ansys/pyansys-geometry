@@ -1,0 +1,136 @@
+
+
+
+
+
+The ``designer`` package 
+============================
+
+.. py:module:: ansys.geometry.core.designer
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: designer
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.beam`
+            - Provides for creating and managing a beam.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.body`
+            - Provides for managing a body.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.component`
+            - Provides for managing components.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.coordinate_system`
+            - Provides for managing a user-defined coordinate system.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.design`
+            - Provides for managing designs.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.designpoint`
+            - Module for creating and managing design points.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.edge`
+            - Module for managing an edge.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.face`
+            - Module for managing a face.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.part`
+            - Module providing fundamental data of an assembly.
+
+
+          * - :py:attr:`~ansys.geometry.core.designer.selection`
+            - Module for creating a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 beam<beam/index.rst>
+    🗎 body<body/index.rst>
+    🗎 component<component/index.rst>
+    🗎 coordinate_system<coordinate_system/index.rst>
+    🗎 design<design/index.rst>
+    🗎 designpoint<designpoint/index.rst>
+    🗎 edge<edge/index.rst>
+    🗎 face<face/index.rst>
+    🗎 part<part/index.rst>
+    🗎 selection<selection/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry designer subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

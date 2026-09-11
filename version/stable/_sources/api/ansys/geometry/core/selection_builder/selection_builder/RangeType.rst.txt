@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`RangeType`
+==================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.RangeType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the range of location-based selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RangeType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~RANGETYPE_INTERSECT`
+            - 
+          * - :py:attr:`~RANGETYPE_CONTAIN`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import RangeType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: RANGETYPE_INTERSECT
+   :value: 0
+
+
+.. py:attribute:: RANGETYPE_CONTAIN
+   :value: 1
+
+
+
+
+
+

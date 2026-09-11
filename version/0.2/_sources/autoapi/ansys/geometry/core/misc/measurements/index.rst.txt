@@ -1,0 +1,442 @@
+:py:mod:`ansys.geometry.core.misc.measurements`
+===============================================
+
+.. py:module:: ansys.geometry.core.misc.measurements
+
+.. autoapi-nested-parse::
+
+   Provides various measurement-related classes.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.misc.measurements.SingletonMeta
+   ansys.geometry.core.misc.measurements.DefaultUnitsClass
+   ansys.geometry.core.misc.measurements.Measurement
+   ansys.geometry.core.misc.measurements.Distance
+   ansys.geometry.core.misc.measurements.Angle
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.misc.measurements.DEFAULT_UNITS
+
+
+.. py:class:: SingletonMeta
+
+
+   Bases: :py:obj:`type`
+
+   
+   This is a thread-safe implementation of Singleton.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: __call__(*args, **kwargs)
+
+      
+      Return a single instance of the class.
+
+      Possible changes to the value of the `__init__` argument do not affect the
+      returned instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: DefaultUnitsClass
+
+
+   
+   PyGeometry default units singleton class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: LENGTH
+      :type: pint.Unit
+
+      
+      Default length unit for PyGeometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: ANGLE
+      :type: pint.Unit
+
+      
+      Default angle unit for PyGeometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: SERVER_LENGTH
+      :type: pint.Unit
+
+      
+      Default length unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The default units on the server side are not modifiable yet.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: SERVER_AREA
+      :type: pint.Unit
+
+      
+      Default area unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The default units on the server side are not modifiable yet.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: SERVER_VOLUME
+      :type: pint.Unit
+
+      
+      Default volume unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The default units on the server side are not modifiable yet.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: SERVER_ANGLE
+      :type: pint.Unit
+
+      
+      Default angle unit for supporting Geometry services for gRPC messages.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The default units on the server side are not modifiable yet.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:data:: DEFAULT_UNITS
+
+   
+   PyGeometry default units object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Measurement(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: pint.Unit, dimensions: pint.Unit)
+
+
+   Bases: :py:obj:`ansys.geometry.core.misc.units.PhysicalQuantity`
+
+   
+   Provides the ``PhysicalQuantity`` subclass for holding a measurement.
+
+
+   :Parameters:
+
+       **value** : :obj:`Union`\[:obj:`Real`, :obj:`Quantity`]
+           Value of the measurement.
+
+       **unit** : :obj:`~pint.Unit`
+           Units for the measurement.
+
+       **dimensions** : :obj:`~pint.Unit`
+           Units for extracting the dimensions of the measurement.
+           If ``~pint.Unit.meter`` is given, the dimension extracted is ``[length]``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: value
+      :type: pint.Quantity
+
+      
+      Value of the measurement.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Measurement) -> bool
+
+      
+      Equals operator for the ``Measurement`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Distance(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: beartype.typing.Optional[pint.Unit] = None)
+
+
+   Bases: :py:obj:`Measurement`
+
+   
+   Provides the ``Measurement`` subclass for holding a distance.
+
+
+   :Parameters:
+
+       **value** : :obj:`Union`\[:obj:`Real`, :obj:`Quantity`]
+           Value of the distance.
+
+       **unit** : :obj:`~pint.Unit`, :obj:`optional`
+           Units for the distance. By default, ``DEFAULT_UNITS.LENGTH``
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Angle(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: beartype.typing.Optional[pint.Unit] = None)
+
+
+   Bases: :py:obj:`Measurement`
+
+   
+   Provides the ``Measurement`` subclass for holding an angle.
+
+
+   :Parameters:
+
+       **value** : :obj:`Union`\[:obj:`Real`, :obj:`Quantity`]
+           Value of the angle.
+
+       **unit** : :obj:`~pint.Unit`, :obj:`optional`
+           Units for the distance. By default, ``DEFAULT_UNITS.ANGLE``
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+

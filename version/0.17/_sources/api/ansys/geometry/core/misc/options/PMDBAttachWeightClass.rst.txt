@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`PMDBAttachWeightClass`
+==============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBAttachWeightClass
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the attach weight class used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBAttachWeightClass
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~HEAVYWEIGHT`
+            - 
+          * - :py:attr:`~MIDDLEWEIGHT`
+            - 
+          * - :py:attr:`~LIGHTWEIGHT`
+            - 
+          * - :py:attr:`~FEATHERWEIGHT`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBAttachWeightClass
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: HEAVYWEIGHT
+   :value: 0
+
+
+.. py:attribute:: MIDDLEWEIGHT
+   :value: 1
+
+
+.. py:attribute:: LIGHTWEIGHT
+   :value: 2
+
+
+.. py:attribute:: FEATHERWEIGHT
+   :value: 3
+
+
+
+
+
+

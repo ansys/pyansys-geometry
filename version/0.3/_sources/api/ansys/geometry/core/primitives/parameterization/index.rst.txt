@@ -1,0 +1,120 @@
+
+
+
+
+
+The ``parameterization.py`` module
+==================================
+
+.. py:module:: ansys.geometry.core.primitives.parameterization
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: parameterization
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ParamUV`
+            - Parameter class containing 2 parameters: (u, v).
+
+
+          * - :py:attr:`~Interval`
+            - Interval class that defines a range of values.
+
+
+          * - :py:attr:`~Parameterization`
+            - Parameterization class describes the parameters of a specific geometry.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ParamForm`
+            - ParamForm enum class that defines the form of a Parameterization.
+
+
+          * - :py:attr:`~ParamType`
+            - ParamType enum class that defines the type of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 ParamUV<ParamUV>
+    🝆 Interval<Interval>
+    🝆 Parameterization<Parameterization>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ ParamForm<ParamForm>
+    ≔ ParamType<ParamType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the parametrization-related classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

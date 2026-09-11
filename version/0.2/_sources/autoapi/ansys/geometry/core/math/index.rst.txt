@@ -1,0 +1,44 @@
+:py:mod:`ansys.geometry.core.math`
+==================================
+
+.. py:module:: ansys.geometry.core.math
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``math`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   bbox/index.rst
+   constants/index.rst
+   frame/index.rst
+   matrix/index.rst
+   plane/index.rst
+   point/index.rst
+   vector/index.rst
+
+

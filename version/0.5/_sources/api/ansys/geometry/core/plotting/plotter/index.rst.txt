@@ -1,0 +1,207 @@
+
+
+
+
+
+
+The ``plotter.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.plotting.plotter
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotter
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.plotter.Plotter`
+            - Provides for plotting sketches and bodies.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_COLOR`
+            - Default color we use for the plotter actors.
+
+
+          * - :py:obj:`~PICKED_COLOR`
+            - Color to use for the actors that are currently picked.
+
+
+          * - :py:obj:`~EDGE_COLOR`
+            - Default color to use for the edges.
+
+
+          * - :py:obj:`~PICKED_EDGE_COLOR`
+            - Color to use for the edges that are currently picked.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Plotter</api/ansys/geometry/core/plotting/plotter/Plotter>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides plotting for various PyAnsys Geometry objects.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_COLOR
+   :value: '#D6F7D1'
+
+
+   
+   Default color we use for the plotter actors.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: PICKED_COLOR
+   :value: '#BB6EEE'
+
+
+   
+   Color to use for the actors that are currently picked.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: EDGE_COLOR
+   :value: '#000000'
+
+
+   
+   Default color to use for the edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: PICKED_EDGE_COLOR
+   :value: '#9C9C9C'
+
+
+   
+   Color to use for the edges that are currently picked.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

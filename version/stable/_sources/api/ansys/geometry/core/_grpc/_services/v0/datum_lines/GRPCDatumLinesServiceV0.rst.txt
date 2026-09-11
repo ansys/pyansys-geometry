@@ -1,0 +1,226 @@
+
+
+
+
+
+
+:class:`GRPCDatumLinesServiceV0`
+================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.datum_lines.GRPCDatumLinesServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.datum_lines.GRPCDatumLinesService`
+
+
+   
+   Datum lines service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   datum lines service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The DatumLine service is only available in the v1 API. All methods in this
+   class raise ``NotImplementedError``.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCDatumLinesServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create`
+            - Create datum lines.
+          * - :py:attr:`~delete`
+            - Delete datum lines.
+          * - :py:attr:`~get`
+            - Get a datum line.
+          * - :py:attr:`~get_all`
+            - Get all datum lines.
+          * - :py:attr:`~get_is_deleted`
+            - Get whether datum lines are deleted.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.datum_lines import GRPCDatumLinesServiceV0
+
+
+
+Method detail
+-------------
+
+.. py:method:: create(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Delete datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get a datum line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get all datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_is_deleted(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get whether datum lines are deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

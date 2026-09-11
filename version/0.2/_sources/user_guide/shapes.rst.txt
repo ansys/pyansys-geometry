@@ -1,0 +1,87 @@
+.. _ref_sketch:
+
+Sketch
+*******
+
+In PyGeometry, a :class:`Sketch() <ansys.geometry.core.sketch>` is a class used to build 2D basic shape elements.
+PyGeometry Sketch contains two fundamental constructs:
+
+* Edges - a connection between two or more Point2D along a particular path. It represents open shapes such as arc, lines.
+* Faces - a set of edges that enclose a surface representing closed shapes such as circle, triangle and so on.
+
+To initialize the sketch, first you can specify the :class:`Plane() <ansys.geometry.core.math.plane>` which
+represents a plane in space, from which other PyGeometry objects can be located.
+
+You can initialize the sketch by:
+
+.. code:: python
+
+    from ansys.geometry.core.sketch import Sketch
+
+    sketch = Sketch()
+
+The sketch can be constructed using different approaches.
+
+Functional-style API
+====================
+
+This is sometimes termed a 'fluent functional-style api, or fluent API' in the developer community. The latter
+term is avoided in the context of Ansys APIs to avoid confusion with the Ansys Fluent product.
+
+One of the key features of this approach is keeping an active context based upon the previously created
+edges to use as a reference start point for additional objects.
+
+
+.. code:: python
+
+    sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
+        Point2D([3, 2]), "Segment3"
+    )
+    sketch.plot()
+
+The sketch has been created with its origin as a starting point. Subsequent calls create segments,
+which take as a starting point the last point of the previous edge.
+
+It is also able to get a desired shape of the sketch object by taking advantage of the user-defined labels.
+
+.. code:: python
+
+    sketch.get("<tag>")
+
+.. jupyter-execute::
+    :hide-code:
+
+    from ansys.geometry.core.sketch import Sketch
+    from ansys.geometry.core.math import Point2D
+
+    sketch = Sketch()
+    sketch.segment_to_point(Point2D([3, 3]), "Segment2").segment_to_point(
+        Point2D([3, 2]), "Segment3"
+    )
+    sketch.plot()
+
+Element-based approach (Direct API)
+===================================
+
+You can also create multiple elements independently and combine them all together in a single plane.
+
+.. code:: python
+
+    sketch.triangle(
+        Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2"
+    )
+    sketch.plot()
+
+.. jupyter-execute::
+    :hide-code:
+
+    from ansys.geometry.core.sketch import Sketch
+    from ansys.geometry.core.math import Point2D
+
+    sketch = Sketch()
+    sketch.triangle(
+        Point2D([-10, 10]), Point2D([5, 6]), Point2D([-10, -10]), tag="triangle2"
+    )
+    sketch.plot()
+
+For further details and familiarizing with different sketch shapes, refer to :class:`Sketch() <ansys.geometry.core.sketch>`.

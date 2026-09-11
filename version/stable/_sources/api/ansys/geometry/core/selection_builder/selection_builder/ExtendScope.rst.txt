@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`ExtendScope`
+====================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.ExtendScope
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the scope of selection extension.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ExtendScope
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~EXTENDSCOPE_ALL`
+            - 
+          * - :py:attr:`~EXTENDSCOPE_BODY`
+            - 
+          * - :py:attr:`~EXTENDSCOPE_VISIBLE`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import ExtendScope
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: EXTENDSCOPE_ALL
+   :value: 0
+
+
+.. py:attribute:: EXTENDSCOPE_BODY
+   :value: 1
+
+
+.. py:attribute:: EXTENDSCOPE_VISIBLE
+   :value: 2
+
+
+
+
+
+

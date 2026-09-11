@@ -1,0 +1,147 @@
+
+
+
+
+
+
+:class:`NURBSCurveModel`
+========================
+
+
+.. py:class:: ansys.geometry.core.shapes.curves.nurbs.NURBSCurveModel(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   Pydantic model for NURBS curve data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Pure data model — no file I/O. All orchestration (reading the JSON,
+   building the geometry) lives in ``NURBSCurve.from_json_file`` /
+   ``NURBSCurve.to_json_file``.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: NURBSCurveModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~effective_weights`
+            - Weights to use, defaulting to all-1.0 if not provided.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~type`
+            - 
+          * - :py:attr:`~degree`
+            - 
+          * - :py:attr:`~knots`
+            - 
+          * - :py:attr:`~control_points`
+            - 
+          * - :py:attr:`~weights`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.curves.nurbs import NURBSCurveModel
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: type
+   :type:  Literal['nurbs_curve']
+   :value: 'nurbs_curve'
+
+
+.. py:attribute:: degree
+   :type:  int
+   :value: None
+
+
+.. py:attribute:: knots
+   :type:  list[float]
+
+.. py:attribute:: control_points
+   :type:  list[tuple[float, float, float]]
+
+.. py:attribute:: weights
+   :type:  Optional[list[float]]
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: effective_weights() -> list[float]
+
+   
+   Weights to use, defaulting to all-1.0 if not provided.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

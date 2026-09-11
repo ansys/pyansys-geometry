@@ -1,0 +1,93 @@
+
+
+
+
+
+The ``gears.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.sketch.gears
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: gears
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Gear`
+            - Provides the base class for sketching gears.
+
+
+          * - :py:attr:`~DummyGear`
+            - Provides the dummy class for sketching gears.
+
+
+          * - :py:attr:`~SpurGear`
+            - Provides the class for sketching spur gears.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Gear<Gear>
+    🝆 DummyGear<DummyGear>
+    🝆 SpurGear<SpurGear>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating and managing gears.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

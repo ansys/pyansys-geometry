@@ -1,0 +1,151 @@
+
+
+
+
+
+The ``sketch`` package 
+==========================
+
+.. py:module:: ansys.geometry.core.sketch
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: sketch
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.arc`
+            - Provides for creating and managing an arc.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.box`
+            - Provides for creating and managing a box (quadrilateral).
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.circle`
+            - Provides for creating and managing a circle.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.edge`
+            - Provides for creating and managing an edge.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.ellipse`
+            - Provides for creating and managing an ellipse.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.face`
+            - Provides for creating and managing a face (closed 2D sketch).
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.gears`
+            - Module for creating and managing gears.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.polygon`
+            - Provides for creating and managing a polygon.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.segment`
+            - Provides for creating and managing a segment.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.sketch`
+            - Provides for creating and managing a sketch.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.slot`
+            - Provides for creating and managing a slot.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.trapezoid`
+            - Provides for creating and managing a trapezoid.
+
+
+          * - :py:attr:`~ansys.geometry.core.sketch.triangle`
+            - Provides for creating and managing a triangle.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 arc<arc/index.rst>
+    🗎 box<box/index.rst>
+    🗎 circle<circle/index.rst>
+    🗎 edge<edge/index.rst>
+    🗎 ellipse<ellipse/index.rst>
+    🗎 face<face/index.rst>
+    🗎 gears<gears/index.rst>
+    🗎 polygon<polygon/index.rst>
+    🗎 segment<segment/index.rst>
+    🗎 sketch<sketch/index.rst>
+    🗎 slot<slot/index.rst>
+    🗎 trapezoid<trapezoid/index.rst>
+    🗎 triangle<triangle/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry sketch subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`AnalysisType`
+=====================
+
+
+.. py:class:: ansys.geometry.core.misc.options.AnalysisType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the analysis type used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: AnalysisType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~THREE_D`
+            - 
+          * - :py:attr:`~TWO_D`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import AnalysisType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: THREE_D
+   :value: 0
+
+
+.. py:attribute:: TWO_D
+   :value: 1
+
+
+
+
+
+

@@ -1,0 +1,793 @@
+
+
+
+
+
+
+:class:`EdgeSelection`
+======================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.edge_selection.EdgeSelection(design: ansys.geometry.core.designer.design.Design, grpc_client: ansys.geometry.core.connection.client.GrpcClient, items: list[ansys.geometry.core.designer.edge.Edge] = None)
+
+   Bases: :py:obj:`ansys.geometry.core.selection_builder.typed_selection.TypedSelection`
+
+
+   
+   A builder for creating an edge selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: EdgeSelection
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_edges`
+            - Return all visible edges in the active document.
+          * - :py:attr:`~get_all_edges`
+            - Return all edges in the active document.
+          * - :py:attr:`~get_edges_from_named_selection`
+            - Return edges belonging to a named selection.
+          * - :py:attr:`~get_edges_with_length`
+            - Return edges whose length falls within a range.
+          * - :py:attr:`~get_edges_with_x_location`
+            - Return edges whose X-location falls within a range.
+          * - :py:attr:`~get_edges_with_y_location`
+            - Return edges whose Y-location falls within a range.
+          * - :py:attr:`~get_edges_with_z_location`
+            - Return edges whose Z-location falls within a range.
+          * - :py:attr:`~invert_edge_selection`
+            - Return the complement of this edge selection.
+          * - :py:attr:`~filter_edges_by_length`
+            - Filter edges by length range.
+          * - :py:attr:`~filter_edges_max_length`
+            - Filter edges keeping only the edge(s) with the maximum length.
+          * - :py:attr:`~filter_edges_min_length`
+            - Filter edges keeping only the edge(s) with the minimum length.
+          * - :py:attr:`~filter_edges_by_curve_type`
+            - Filter edges by curve type.
+          * - :py:attr:`~filter_edges_length_percentile`
+            - Filter edges by length percentile range.
+          * - :py:attr:`~extend_nearby_edges`
+            - Extend selection to include nearby edges within a distance.
+          * - :py:attr:`~extend_to_connected`
+            - Extend selection to all topologically connected edges.
+          * - :py:attr:`~extend_to_tangent_chain`
+            - Extend selection to all tangentially chained edges.
+          * - :py:attr:`~extend_to_coaxial_edges`
+            - Extend selection to all coaxial edges.
+          * - :py:attr:`~order_edges_by_length`
+            - Order edges by length (ascending).
+          * - :py:attr:`~group_edges_by_curve_type`
+            - Group edges by curve type.
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__add__`
+            - Return a new selection that is the union of this selection and another.
+          * - :py:attr:`~__sub__`
+            - Return a new selection that is the difference of this selection and another.
+          * - :py:attr:`~__and__`
+            - Return a new selection that is the intersection of this selection and another.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.edge_selection import EdgeSelection
+
+
+
+Method detail
+-------------
+
+.. py:method:: __add__(other: EdgeSelection) -> EdgeSelection
+
+   
+   Return a new selection that is the union of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __sub__(other: EdgeSelection) -> EdgeSelection
+
+   
+   Return a new selection that is the difference of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __and__(other: EdgeSelection) -> EdgeSelection
+
+   
+   Return a new selection that is the intersection of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_visible_edges() -> EdgeSelection
+
+   
+   Return all visible edges in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           All visible edges.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_edges() -> EdgeSelection
+
+   
+   Return all edges in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           All edges.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_from_named_selection(name: str) -> EdgeSelection
+
+   
+   Return edges belonging to a named selection.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name of the named selection.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges belonging to the matched named selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_length(min: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance], max: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None) -> EdgeSelection
+
+   
+   Return edges whose length falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`
+           Minimum edge length (in mm if a plain number).
+
+       **max** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Maximum edge length. If ``None``, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges whose length is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_x_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType, min: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None, max: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None) -> EdgeSelection
+
+   
+   Return edges whose X-location falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`
+           Whether to intersect or contain the range.
+
+       **min** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Minimum X coordinate (in mm if a plain number).
+
+       **max** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Maximum X coordinate.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges within the specified X-location range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_y_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType, min: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None, max: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None) -> EdgeSelection
+
+   
+   Return edges whose Y-location falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`
+           Whether to intersect or contain the range.
+
+       **min** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Minimum Y coordinate (in mm if a plain number).
+
+       **max** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Maximum Y coordinate.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges within the specified Y-location range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_z_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType, min: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None, max: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None) -> EdgeSelection
+
+   
+   Return edges whose Z-location falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`
+           Whether to intersect or contain the range.
+
+       **min** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Minimum Z coordinate (in mm if a plain number).
+
+       **max** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`, :obj:`optional`
+           Maximum Z coordinate.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges within the specified Z-location range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_edge_selection(scope: ansys.geometry.core.selection_builder.selection_builder.InvertTopologyScope = InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL) -> EdgeSelection
+
+   
+   Return the complement of this edge selection.
+
+
+   :Parameters:
+
+       **scope** : :obj:`InvertTopologyScope`, default: :obj:`InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL`
+           Whether to invert relative to all edges or only visible edges.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           The inverted edge selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_by_length(min: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance], max: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance, None] = None) -> EdgeSelection
+
+   
+   Filter edges by length range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Real` or :obj:`Quantity`
+           Minimum edge length (in mm if a plain number).
+
+       **max** : :obj:`Real` or :obj:`Quantity`, :obj:`optional`
+           Maximum edge length. If ``None``, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges within the specified length range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_max_length() -> EdgeSelection
+
+   
+   Filter edges keeping only the edge(s) with the maximum length.
+
+
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edge(s) with the maximum length.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_min_length() -> EdgeSelection
+
+   
+   Filter edges keeping only the edge(s) with the minimum length.
+
+
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edge(s) with the minimum length.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_by_curve_type(curve_type: ansys.geometry.core.designer.edge.CurveType) -> EdgeSelection
+
+   
+   Filter edges by curve type.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to retain.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges matching the given curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_length_percentile(min_percentile: float, max_percentile: float) -> EdgeSelection
+
+   
+   Filter edges by length percentile range.
+
+
+   :Parameters:
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile (0.0-100.0).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile (0.0-100.0).
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges whose lengths fall within the given percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_nearby_edges(distance: Union[numbers.Real, pint.Quantity, ansys.geometry.core.misc.measurements.Distance], scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> EdgeSelection
+
+   
+   Extend selection to include nearby edges within a distance.
+
+
+   :Parameters:
+
+       **distance** : :obj:`Real`, :obj:`Quantity`, :obj:`or` :obj:`Distance`
+           Maximum gap distance (in mm if a plain number).
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Scope of edges to consider for extension.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Extended edge selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_connected(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> EdgeSelection
+
+   
+   Extend selection to all topologically connected edges.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Scope of edges to consider for extension.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Extended edge selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_tangent_chain(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> EdgeSelection
+
+   
+   Extend selection to all tangentially chained edges.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Scope of edges to consider for extension.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Extended edge selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coaxial_edges(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> EdgeSelection
+
+   
+   Extend selection to all coaxial edges.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Scope of edges to consider for extension.
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Extended edge selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_edges_by_length() -> EdgeSelection
+
+   
+   Order edges by length (ascending).
+
+
+
+
+
+   :Returns:
+
+       :obj:`EdgeSelection`
+           Edges ordered by ascending length.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_edges_by_curve_type() -> list[EdgeSelection]
+
+   
+   Group edges by curve type.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`EdgeSelection`]
+           Edges partitioned into groups of the same curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

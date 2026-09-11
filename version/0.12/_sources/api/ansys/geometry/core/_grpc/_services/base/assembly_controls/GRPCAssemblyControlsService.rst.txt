@@ -1,0 +1,163 @@
+
+
+
+
+
+
+:class:`GRPCAssemblyControlsService`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.assembly_controls.GRPCAssemblyControlsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Assembly controls service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: GRPCAssemblyControlsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_align_condition`
+            - Create an align condition between two geometry objects.
+          * - :py:attr:`~create_tangent_condition`
+            - Create a tangent condition between two geometry objects.
+          * - :py:attr:`~create_orient_condition`
+            - Create an orient condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.assembly_controls import GRPCAssemblyControlsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_align_condition(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create an align condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_tangent_condition(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a tangent condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_orient_condition(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create an orient condition between two geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

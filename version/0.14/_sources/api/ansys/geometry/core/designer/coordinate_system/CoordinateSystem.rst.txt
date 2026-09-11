@@ -1,0 +1,259 @@
+
+
+
+
+
+
+:class:`CoordinateSystem`
+=========================
+
+
+.. py:class:: ansys.geometry.core.designer.coordinate_system.CoordinateSystem(name: str, frame: ansys.geometry.core.math.frame.Frame, parent_component: ansys.geometry.core.designer.component.Component, grpc_client: ansys.geometry.core.connection.client.GrpcClient, preexisting_id: str | None = None)
+
+   
+   Represents a user-defined coordinate system within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry
+   service instance.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the coordinate system.
+
+       **frame** : :obj:`Frame`
+           Frame defining the coordinate system bounds.
+
+       **parent_component** : :obj:`Component`, default: :obj:`Component`
+           Parent component the coordinate system is assigned against.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: CoordinateSystem
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the coordinate system.
+          * - :py:attr:`~name`
+            - Name of the coordinate system.
+          * - :py:attr:`~frame`
+            - Frame of the coordinate system.
+          * - :py:attr:`~parent_component`
+            - Parent component of the coordinate system.
+          * - :py:attr:`~is_alive`
+            - Flag indicating if coordinate system is still alive on the server.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the coordinate system as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: frame
+   :type: ansys.geometry.core.math.frame.Frame
+
+
+   
+   Frame of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Parent component of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Flag indicating if coordinate system is still alive on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the coordinate system as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

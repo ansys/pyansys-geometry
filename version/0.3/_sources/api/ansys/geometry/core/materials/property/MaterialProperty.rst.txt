@@ -1,0 +1,144 @@
+
+
+
+
+MaterialProperty
+================
+
+.. py:class:: MaterialProperty(type: MaterialPropertyType, name: str, quantity: pint.Quantity)
+   :canonical: ansys.geometry.core.materials.property.MaterialProperty
+
+
+
+
+Provides the data structure for a material property.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: MaterialProperty
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~type`
+            - Material property ID.
+          * - :py:attr:`~name`
+            - Material property name.
+          * - :py:attr:`~quantity`
+            - Material property quantity and unit.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.materials.property import MaterialProperty
+
+
+Property detail
+---------------
+.. py:property:: type
+   :canonical: ansys.geometry.core.materials.property.MaterialProperty.type
+   :type: MaterialPropertyType
+
+
+   
+   Material property ID.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.materials.property.MaterialProperty.name
+   :type: str
+
+
+   
+   Material property name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: quantity
+   :canonical: ansys.geometry.core.materials.property.MaterialProperty.quantity
+   :type: pint.Quantity
+
+
+   
+   Material property quantity and unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

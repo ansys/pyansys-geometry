@@ -1,0 +1,102 @@
+
+
+
+
+CurveType
+=========
+
+.. py:class:: CurveType
+   :canonical: ansys.geometry.core.designer.edge.CurveType
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides values for the curve types supported by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: CurveType
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~CURVETYPE_UNKNOWN`
+            - 
+          * - :py:attr:`~CURVETYPE_LINE`
+            - 
+          * - :py:attr:`~CURVETYPE_CIRCLE`
+            - 
+          * - :py:attr:`~CURVETYPE_ELLIPSE`
+            - 
+          * - :py:attr:`~CURVETYPE_NURBS`
+            - 
+          * - :py:attr:`~CURVETYPE_PROCEDURAL`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.edge import CurveType
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: CURVETYPE_UNKNOWN
+   :value: 0
+
+   
+
+.. py:attribute:: CURVETYPE_LINE
+   :value: 1
+
+   
+
+.. py:attribute:: CURVETYPE_CIRCLE
+   :value: 2
+
+   
+
+.. py:attribute:: CURVETYPE_ELLIPSE
+   :value: 3
+
+   
+
+.. py:attribute:: CURVETYPE_NURBS
+   :value: 4
+
+   
+
+.. py:attribute:: CURVETYPE_PROCEDURAL
+   :value: 5
+
+   
+
+
+

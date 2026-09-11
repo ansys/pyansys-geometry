@@ -1,0 +1,169 @@
+
+
+
+
+
+
+:class:`MaterialProperty`
+=========================
+
+
+.. py:class:: ansys.geometry.core.materials.property.MaterialProperty(type: MaterialPropertyType | str, name: str, quantity: pint.Quantity | ansys.geometry.core.typing.Real)
+
+   
+   Provides the data structure for a material property.
+
+
+   :Parameters:
+
+       **type** : :obj:`MaterialPropertyType` | :class:`python:str`
+           Type of the material property. If the type is a string, it must be a valid
+           material property type - though it might not be supported by the MaterialPropertyType
+           enum.
+
+       **name: str**
+           Material property name.
+
+       **quantity: ~pint.Quantity | Real**
+           Value and unit in case of a supported Quantity. If the type is not supported, it
+           must be a Real value (float or integer).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MaterialProperty
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~type`
+            - Material property ID.
+          * - :py:attr:`~name`
+            - Material property name.
+          * - :py:attr:`~quantity`
+            - Material property quantity and unit.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.materials.property import MaterialProperty
+
+Property detail
+---------------
+
+.. py:property:: type
+   :type: MaterialPropertyType | str
+
+
+   
+   Material property ID.
+
+   If the type is not supported, it will be a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Material property name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: quantity
+   :type: pint.Quantity | ansys.geometry.core.typing.Real
+
+
+   
+   Material property quantity and unit.
+
+   If the type is not supported, it will be a Real value (float or
+   integer).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
