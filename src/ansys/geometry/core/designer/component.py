@@ -1060,7 +1060,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def create_surface(self, name: str, sketch: Sketch) -> Body:
+    def create_surface(self, name: str, sketch: Sketch, merge_inner_loops: bool = False) -> Body:
         """Create a surface body with a sketch profile.
 
         The newly created body is placed under this component within the design assembly.
@@ -1071,6 +1071,13 @@ class Component:
             User-defined label for the new surface body.
         sketch : Sketch
             Two-dimensional sketch source for the surface definition.
+        merge_inner_loops : bool, default: False
+            Whether the inner closed profiles of the sketch are treated as holes of the
+            outer profile instead of independent faces. By default, each closed profile
+            of the sketch becomes its own face, so a sketch such as a rectangle
+            containing a circle results in a body with two faces. When ``True``, a single
+            face with inner loops is created. On backends older than 25R2, this option is
+            ignored and a warning is issued.
 
         Returns
         -------
@@ -1080,8 +1087,17 @@ class Component:
         Warnings
         --------
         Creating a surface from a NURBS sketch requires a minimum Ansys release version of 26R1.
+        Using ``merge_inner_loops`` requires a minimum Ansys release version of 25R2.
         """
         check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
+        if merge_inner_loops and self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "The 'merge_inner_loops' option requires a minimum Ansys release version of "
+                f"25.2.0, but the current version used is {self._grpc_client.backend_version}. "
+                "Ignoring the option."
+            )
+            merge_inner_loops = False
 
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
@@ -1093,7 +1109,18 @@ class Component:
             backend_version=self._grpc_client.backend_version,
         )
 
-        return self.__build_body_from_response(response)
+        body = self.__build_body_from_response(response)
+
+        if merge_inner_loops and len(body.faces) > 1:
+            # The service keeps the inner regions of the sketch as independent faces. Rebuilding
+            # the body from its own edges makes the service interpret them as a single profile.
+            merged_body = self.create_surface_from_trimmed_curves(
+                name, [edge.shape for edge in body.edges]
+            )
+            self.delete_body(body)
+            return merged_body
+
+        return body
 
     @check_input_types
     @ensure_design_is_active
