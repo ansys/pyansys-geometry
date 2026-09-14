@@ -2802,3 +2802,28 @@ def test_fill_edge_loops(modeler: Modeler):
     assert len(new_bodies2) == 1
     assert new_bodies2[0].is_surface
     assert new_bodies2[0].faces[0].area.m == pytest.approx(np.pi * 0.5**2, rel=1e-5)
+
+
+def test_fill_faces(modeler: Modeler):
+    """Test the fill_faces command by creating a box with a hole and attempting to fill the hole."""
+    design = modeler.create_design("Fill Holes")
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(box.faces) == 6
+
+    hole = design.extrude_sketch("hole", Sketch().circle(Point2D([0, 0]), 0.25), 1)
+    box.subtract(hole)
+
+    # Test filling a single face
+    assert len(box.faces) == 7
+    modeler.geometry_commands.fill(box.faces[-1])
+    assert len(box.faces) == 6
+
+    hole2 = design.extrude_sketch("hole", Sketch().circle(Point2D([-0.25, -0.25]), 0.125), 1)
+    hole3 = design.extrude_sketch("hole", Sketch().circle(Point2D([0.25, 0.25]), 0.125), 1)
+    box.subtract(hole2)
+    box.subtract(hole3)
+
+    # Test filling multiple faces
+    assert len(box.faces) == 8
+    modeler.geometry_commands.fill([box.faces[-2], box.faces[-1]])
+    assert len(box.faces) == 6

@@ -184,6 +184,24 @@ def test_manifest_path_exists(tmp_path):
     assert result == str(manifest_path)
 
 
+@pytest.mark.parametrize(
+    ("version", "relative_manifest_path"),
+    [
+        (261, ("Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
+        (271, ("Discovery", "Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
+    ],
+)
+def test_default_manifest_path(version, relative_manifest_path, tmp_path):
+    """Test default manifests use the version-specific installation layout."""
+    manifest_path = tmp_path.joinpath(*relative_manifest_path)
+    manifest_path.parent.mkdir(parents=True)
+    manifest_path.touch()
+
+    result = _manifest_path_provider(version, {version: str(tmp_path)})
+
+    assert result == manifest_path.as_posix()
+
+
 def test_manifest_path_does_not_exist(tmp_path, caplog):
     """Test when the manifest path does not exist and handle RuntimeError."""
 
@@ -354,6 +372,7 @@ def test_grpc_client_get_backend_failure():
     Mocks wait_until_healthy and _GRPCServices so that the admin.get_backend()
     call raises a grpc.RpcError, verifying it is wrapped in GeometryRuntimeError with chaining.
     Both grpc.RpcError and GeometryExitedError are caught by the same handler.
+    Also verifies that cleanup (channel close) is performed before the exception propagates.
     """
     mock_channel = MagicMock()
 
@@ -377,3 +396,4 @@ def test_grpc_client_get_backend_failure():
         GrpcClient(host="localhost", port=50051)
 
     assert exc.value.__cause__ is not None
+    mock_channel.close.assert_called_once()

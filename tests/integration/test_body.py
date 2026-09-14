@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 import pytest
 
+import ansys.geometry.core as pyansys_geo
 from ansys.geometry.core import Modeler
 from ansys.geometry.core.designer.body import FillStyle
 from ansys.geometry.core.designer.part import Part
@@ -708,7 +709,11 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
+    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+        pytest.skip("See issue 3043 when tracker updates are disabled")
+
     design = modeler.create_design("TestBooleanOperations")
+    backend_version = modeler.client.backend_version
 
     comp1 = design.add_component("Comp1")
     comp2 = design.add_component("Comp2")
@@ -766,11 +771,17 @@ def test_boolean_body_operations(modeler: Modeler):
     # 1.b.ii
     copy1 = body1.copy(comp1, "Copy1")
     copy1a = body1.copy(comp1, "Copy1a")
-    with pytest.raises(ValueError):
+    if backend_version >= (27, 1, 0):
         copy1.subtract(copy1a)
 
-    assert copy1.is_alive
-    assert copy1a.is_alive
+        assert not copy1.is_alive
+        assert not copy1a.is_alive
+    else:
+        with pytest.raises(ValueError):
+            copy1.subtract(copy1a)
+
+        assert copy1.is_alive
+        assert copy1a.is_alive
 
     # 1.b.iii
     copy1 = body1.copy(comp1, "Copy1")
@@ -875,11 +886,17 @@ def test_boolean_body_operations(modeler: Modeler):
     # 2.b.ii
     copy1 = body1.copy(comp1_i, "Copy1")
     copy1a = body1.copy(comp1_i, "Copy1a")
-    with pytest.raises(ValueError):
+    if backend_version >= (27, 1, 0):
         copy1.subtract(copy1a)
 
-    assert copy1.is_alive
-    assert copy1a.is_alive
+        assert not copy1.is_alive
+        assert not copy1a.is_alive
+    else:
+        with pytest.raises(ValueError):
+            copy1.subtract(copy1a)
+
+        assert copy1.is_alive
+        assert copy1a.is_alive
 
     # 2.b.iii
     copy1 = body1.copy(comp1_i, "Copy1")
@@ -1362,6 +1379,57 @@ def test_create_surface_body_from_trimmed_curves(modeler: Modeler):
     assert body.faces[0].area.m == pytest.approx(
         Quantity(2 + np.pi, UNITS.m**2).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_create_surface_merge_inner_loops(modeler: Modeler):
+    """Test that inner sketch profiles become holes instead of independent faces."""
+    design = modeler.create_design("plate_with_hole")
+
+    def plate_sketch() -> Sketch:
+        sketch = Sketch()
+        sketch.box(Point2D([0, 0]), 1, 1)
+        sketch.circle(Point2D([0, 0]), 0.25)
+        return sketch
+
+    # By default, the inner circle is kept as an independent face
+    default_body = design.create_surface("default", plate_sketch())
+    assert default_body.is_surface
+    assert len(default_body.faces) <= 2
+    if len(default_body.faces) == 2:
+        assert sorted(face.area.m for face in default_body.faces) == pytest.approx(
+            [np.pi * 0.25**2, 1 - np.pi * 0.25**2]
+        )
+    else:
+        assert len(default_body.faces) == 1
+        assert default_body.faces[0].area.m == pytest.approx(1 - np.pi * 0.25**2)
+
+    # With merge_inner_loops, a single face containing the hole is created
+    merged_body = design.create_surface("merged", plate_sketch(), merge_inner_loops=True)
+    assert merged_body.is_surface
+    assert len(merged_body.faces) == 1
+    assert merged_body.faces[0].area.m == pytest.approx(1 - np.pi * 0.25**2)
+
+    # The temporary body used to build the merged one is not kept around
+    assert len(design.bodies) == 2
+
+    # Sketches without inner loops are unaffected
+    simple_body = design.create_surface(
+        "simple", Sketch().box(Point2D([2, 0]), 1, 1), merge_inner_loops=True
+    )
+    assert len(simple_body.faces) == 1
+    assert simple_body.faces[0].area.m == pytest.approx(1)
+
+    # The option is ignored on older backends
+    with patch.object(modeler.client, "_backend_version", (25, 1, 0)):
+        too_old_body = design.create_surface("too_old", plate_sketch(), merge_inner_loops=True)
+    assert len(too_old_body.faces) <= 2
+    if len(too_old_body.faces) == 2:
+        assert sorted(face.area.m for face in too_old_body.faces) == pytest.approx(
+            [np.pi * 0.25**2, 1 - np.pi * 0.25**2]
+        )
+    else:
+        assert len(too_old_body.faces) == 1
+        assert too_old_body.faces[0].area.m == pytest.approx(1 - np.pi * 0.25**2)
 
 
 def test_shell_body(modeler: Modeler):
