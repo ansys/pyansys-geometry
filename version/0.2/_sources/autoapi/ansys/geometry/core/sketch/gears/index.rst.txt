@@ -1,0 +1,403 @@
+:py:mod:`ansys.geometry.core.sketch.gears`
+==========================================
+
+.. py:module:: ansys.geometry.core.sketch.gears
+
+.. autoapi-nested-parse::
+
+   Module for sketching gears.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.gears.Gear
+   ansys.geometry.core.sketch.gears.DummyGear
+   ansys.geometry.core.sketch.gears.SpurGear
+
+
+
+
+.. py:class:: Gear
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+   
+   Base class for sketching gears.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: DummyGear(origin: ansys.geometry.core.math.Point2D, outer_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], n_teeth: int)
+
+
+   Bases: :py:obj:`Gear`
+
+   
+   Dummy gear sketching class.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Point2D`
+           Origin of the gear.
+
+       **outer_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Outer radius of the gear.
+
+       **inner_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Inner radius of the gear.
+
+       **n_teeth** : :class:`python:int`
+           Number of teeth of the gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: SpurGear(origin: ansys.geometry.core.math.Point2D, module: ansys.geometry.core.typing.Real, pressure_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real], n_teeth: int)
+
+
+   Bases: :py:obj:`Gear`
+
+   
+   Class for sketching spur gears.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Point2D`
+           Origin of the spur gear.
+
+       **module** : :obj:`Real`
+           Module of the spur gear. This is also the ratio between the pitch circle
+           diameter in millimeters and the number of teeth.
+
+       **pressure_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`]
+           Pressure angle of the spur gear.
+
+       **n_teeth** : :class:`python:int`
+           Number of teeth of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Origin of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: module
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Module of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: pressure_angle
+      :type: pint.Quantity
+
+      
+      Pressure angle of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: n_teeth
+      :type: int
+
+      
+      Number of teeth of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: ref_diameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Reference diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: base_diameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Base diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: addendum
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Addendum of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dedendum
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Dedendum of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: tip_diameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Tip diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: root_diameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Root diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

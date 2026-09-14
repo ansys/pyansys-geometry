@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``planes.py`` module
+========================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.planes
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.base.planes
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.planes.GRPCPlanesService`
+            - Planes service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCPlanesService</api/ansys/geometry/core/_grpc/_services/base/planes/GRPCPlanesService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the planes service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

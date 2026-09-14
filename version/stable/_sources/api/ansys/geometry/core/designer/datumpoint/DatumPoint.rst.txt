@@ -1,0 +1,293 @@
+
+
+
+
+
+
+:class:`DatumPoint`
+===================
+
+
+.. py:class:: ansys.geometry.core.designer.datumpoint.DatumPoint(id: str, name: str, point: ansys.geometry.core.math.point.Point3D, parent_component: ansys.geometry.core.designer.component.Component)
+
+   
+   Provides for creating datum points in components.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the datum point.
+
+       **name** : :class:`python:str`
+           User-defined label for the datum point.
+
+       **point** : :obj:`Point3D`
+           3D point constituting the datum point.
+
+       **parent_component** : :obj:`Component`
+           Parent component to place the new datum point under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DatumPoint
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_named_selections`
+            - Get named selections that contain this datum point.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the datum point.
+          * - :py:attr:`~name`
+            - Name of the datum point.
+          * - :py:attr:`~value`
+            - Value of the datum point.
+          * - :py:attr:`~parent_component`
+            - Component node that the datum point is under.
+          * - :py:attr:`~is_alive`
+            - Check if the datum point is still present on the server.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the datum point as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.datumpoint import DatumPoint
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the datum point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the datum point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: value
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Value of the datum point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Component node that the datum point is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Check if the datum point is still present on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_named_selections() -> list[ansys.geometry.core.designer.selection.NamedSelection]
+
+   
+   Get named selections that contain this datum point.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`NamedSelection`]
+           List of named selections that contain this datum point.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the datum point as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

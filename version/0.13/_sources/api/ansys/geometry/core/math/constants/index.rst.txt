@@ -1,0 +1,422 @@
+
+
+
+
+
+
+The ``constants.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.math.constants
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: constants
+.. tab-set::
+
+
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_POINT3D`
+            - Default value for a 3D point.
+
+
+          * - :py:obj:`~DEFAULT_POINT2D`
+            - Default value for a 2D point.
+
+
+          * - :py:obj:`~IDENTITY_MATRIX33`
+            - Identity for a ``Matrix33`` object.
+
+
+          * - :py:obj:`~IDENTITY_MATRIX44`
+            - Identity for a ``Matrix44`` object.
+
+
+          * - :py:obj:`~UNITVECTOR3D_X`
+            - Default 3D unit vector in the Cartesian traditional X direction.
+
+
+          * - :py:obj:`~UNITVECTOR3D_Y`
+            - Default 3D unit vector in the Cartesian traditional Y direction.
+
+
+          * - :py:obj:`~UNITVECTOR3D_Z`
+            - Default 3D unit vector in the Cartesian traditional Z direction.
+
+
+          * - :py:obj:`~UNITVECTOR2D_X`
+            - Default 2D unit vector in the Cartesian traditional X direction.
+
+
+          * - :py:obj:`~UNITVECTOR2D_Y`
+            - Default 2D unit vector  in the Cartesian traditional Y direction.
+
+
+          * - :py:obj:`~ZERO_VECTOR3D`
+            - Zero-valued ``Vector3D`` object.
+
+
+          * - :py:obj:`~ZERO_VECTOR2D`
+            - Zero-valued ``Vector2D`` object.
+
+
+          * - :py:obj:`~ZERO_POINT3D`
+            - Zero-valued ``Point3D`` object.
+
+
+          * - :py:obj:`~ZERO_POINT2D`
+            - Zero-valued ``Point2D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides mathematical constants.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_POINT3D
+
+   
+   Default value for a 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_POINT2D
+
+   
+   Default value for a 2D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: IDENTITY_MATRIX33
+
+   
+   Identity for a ``Matrix33`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: IDENTITY_MATRIX44
+
+   
+   Identity for a ``Matrix44`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: UNITVECTOR3D_X
+
+   
+   Default 3D unit vector in the Cartesian traditional X direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: UNITVECTOR3D_Y
+
+   
+   Default 3D unit vector in the Cartesian traditional Y direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: UNITVECTOR3D_Z
+
+   
+   Default 3D unit vector in the Cartesian traditional Z direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: UNITVECTOR2D_X
+
+   
+   Default 2D unit vector in the Cartesian traditional X direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: UNITVECTOR2D_Y
+
+   
+   Default 2D unit vector  in the Cartesian traditional Y direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ZERO_VECTOR3D
+
+   
+   Zero-valued ``Vector3D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ZERO_VECTOR2D
+
+   
+   Zero-valued ``Vector2D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ZERO_POINT3D
+
+   
+   Zero-valued ``Point3D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ZERO_POINT2D
+
+   
+   Zero-valued ``Point2D`` object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

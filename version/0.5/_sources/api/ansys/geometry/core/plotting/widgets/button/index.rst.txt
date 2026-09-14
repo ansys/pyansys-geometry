@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``button.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.button
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: button
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.button.Button`
+            - Provides the abstract class for implementing buttons in PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Button</api/ansys/geometry/core/plotting/widgets/button/Button>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for implementing buttons in PyAnsys Geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

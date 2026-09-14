@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``edge.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.sketch.edge
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: edge
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~SketchEdge`
+            - Provides for modeling edges forming sketched shapes.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 SketchEdge<SketchEdge>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing an edge.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

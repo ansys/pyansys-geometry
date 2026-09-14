@@ -1,0 +1,100 @@
+
+
+
+
+
+
+The ``box_uv.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.shapes.box_uv
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: box_uv
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.box_uv.BoxUV`
+            - Provides the implementation for ``BoxUV`` class.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.box_uv.LocationUV`
+            - Provides the enumeration for indicating locations for BoxUV.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BoxUV</api/ansys/geometry/core/shapes/box_uv/BoxUV>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> LocationUV</api/ansys/geometry/core/shapes/box_uv/LocationUV>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ``BoxUV`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

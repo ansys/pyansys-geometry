@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``prepare_tools.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.prepare_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: prepare_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.prepare_tools.GRPCPrepareToolsService`
+            - Prepare tools service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCPrepareToolsService</api/ansys/geometry/core/_grpc/_services/base/prepare_tools/GRPCPrepareToolsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the prepare tools service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

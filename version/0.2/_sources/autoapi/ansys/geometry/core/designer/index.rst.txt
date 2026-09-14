@@ -1,0 +1,47 @@
+:py:mod:`ansys.geometry.core.designer`
+======================================
+
+.. py:module:: ansys.geometry.core.designer
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``designer`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   beam/index.rst
+   body/index.rst
+   component/index.rst
+   coordinate_system/index.rst
+   design/index.rst
+   designpoint/index.rst
+   edge/index.rst
+   face/index.rst
+   part/index.rst
+   selection/index.rst
+
+

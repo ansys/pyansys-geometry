@@ -1,0 +1,168 @@
+
+
+
+
+
+
+:class:`NURBSurfaceModel`
+=========================
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.nurbs.NURBSurfaceModel(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   Pydantic model for NURBS surface curve data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This model is used to validate the input data for creating a NURBS surface curve.
+   It ensures that the required fields are present and have the correct types.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: NURBSurfaceModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~model_config`
+            - Configuration for the model, should be a dictionary conforming to [`ConfigDict`][pydantic.config.ConfigDict].
+          * - :py:attr:`~type`
+            - 
+          * - :py:attr:`~degree_u`
+            - 
+          * - :py:attr:`~degree_v`
+            - 
+          * - :py:attr:`~knots_u`
+            - 
+          * - :py:attr:`~knots_v`
+            - 
+          * - :py:attr:`~control_points`
+            - 
+          * - :py:attr:`~weights`
+            - 
+          * - :py:attr:`~origin`
+            - 
+          * - :py:attr:`~reference`
+            - 
+          * - :py:attr:`~axis`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.nurbs import NURBSurfaceModel
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: model_config
+
+   
+   Configuration for the model, should be a dictionary conforming to [`ConfigDict`][pydantic.config.ConfigDict].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:attribute:: type
+   :type:  Literal['nurbs_surface']
+   :value: 'nurbs_surface'
+
+
+.. py:attribute:: degree_u
+   :type:  int
+   :value: None
+
+
+.. py:attribute:: degree_v
+   :type:  int
+   :value: None
+
+
+.. py:attribute:: knots_u
+   :type:  list[float]
+
+.. py:attribute:: knots_v
+   :type:  list[float]
+
+.. py:attribute:: control_points
+   :type:  Optional[list[tuple[float, float, float]]]
+
+.. py:attribute:: weights
+   :type:  Optional[list[float]] | None
+   :value: None
+
+
+.. py:attribute:: origin
+   :type:  Optional[tuple[float, float, float]]
+   :value: None
+
+
+.. py:attribute:: reference
+   :type:  Optional[tuple[float, float, float]]
+   :value: None
+
+
+.. py:attribute:: axis
+   :type:  Optional[tuple[float, float, float]]
+   :value: None
+
+
+
+
+
+

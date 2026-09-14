@@ -1,0 +1,116 @@
+
+
+
+
+SurfaceType
+===========
+
+.. py:class:: SurfaceType
+   :canonical: ansys.geometry.core.designer.face.SurfaceType
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides values for the surface types supported by the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: SurfaceType
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~SURFACETYPE_UNKNOWN`
+            - 
+          * - :py:attr:`~SURFACETYPE_PLANE`
+            - 
+          * - :py:attr:`~SURFACETYPE_CYLINDER`
+            - 
+          * - :py:attr:`~SURFACETYPE_CONE`
+            - 
+          * - :py:attr:`~SURFACETYPE_TORUS`
+            - 
+          * - :py:attr:`~SURFACETYPE_SPHERE`
+            - 
+          * - :py:attr:`~SURFACETYPE_NURBS`
+            - 
+          * - :py:attr:`~SURFACETYPE_PROCEDURAL`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.face import SurfaceType
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: SURFACETYPE_UNKNOWN
+   :value: 0
+
+   
+
+.. py:attribute:: SURFACETYPE_PLANE
+   :value: 1
+
+   
+
+.. py:attribute:: SURFACETYPE_CYLINDER
+   :value: 2
+
+   
+
+.. py:attribute:: SURFACETYPE_CONE
+   :value: 3
+
+   
+
+.. py:attribute:: SURFACETYPE_TORUS
+   :value: 4
+
+   
+
+.. py:attribute:: SURFACETYPE_SPHERE
+   :value: 5
+
+   
+
+.. py:attribute:: SURFACETYPE_NURBS
+   :value: 6
+
+   
+
+.. py:attribute:: SURFACETYPE_PROCEDURAL
+   :value: 7
+
+   
+
+
+

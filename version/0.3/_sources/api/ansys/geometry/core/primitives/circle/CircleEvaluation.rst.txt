@@ -1,0 +1,321 @@
+
+
+
+
+CircleEvaluation
+================
+
+.. py:class:: CircleEvaluation(circle: Circle, parameter: ansys.geometry.core.typing.Real)
+   :canonical: ansys.geometry.core.primitives.circle.CircleEvaluation
+
+
+
+Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+Provides evaluation of a circle at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: CircleEvaluation
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~tangent`
+            - Tangent of the evaluation.
+          * - :py:attr:`~normal`
+            - Normal to the circle.
+          * - :py:attr:`~first_derivative`
+            - First derivative of the evaluation.
+          * - :py:attr:`~second_derivative`
+            - Second derivative of the evaluation.
+          * - :py:attr:`~curvature`
+            - Curvature of the circle.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~circle`
+            - Circle being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.circle import CircleEvaluation
+
+
+Property detail
+---------------
+.. py:property:: circle
+   :canonical: ansys.geometry.core.primitives.circle.CircleEvaluation.circle
+   :type: Circle
+
+
+   
+   Circle being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :canonical: ansys.geometry.core.primitives.circle.CircleEvaluation.parameter
+   :type: Real
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+
+   
+   Position of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Point that lies on the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: tangent() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Tangent of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Tangent unit vector to the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: normal() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Normal to the circle.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Normal unit vector to the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: first_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative of the evaluation.
+
+   The first derivative is in the direction of the tangent and has a
+   magnitude equal to the velocity (rate of change of position) at that
+   point.
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: second_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Curvature of the circle.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Curvature of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
