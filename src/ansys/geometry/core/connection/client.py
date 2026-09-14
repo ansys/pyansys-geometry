@@ -297,6 +297,8 @@ class GrpcClient:
     ):
         """Initialize the ``GrpcClient`` object."""
         self._closed = False
+        self._host = host
+        self._port = int(port)
         self._remote_instance = remote_instance
         self._docker_instance = docker_instance
         self._product_instance = product_instance
@@ -321,6 +323,8 @@ class GrpcClient:
             # the actual socket file being used.
             if transport_mode == "uds":
                 self._target = self._channel._channel.target().decode()
+                self._host = "localhost"
+                self._port = -1
 
         # Initialize the gRPC services
         self._services = _GRPCServices(self._channel, version=proto_version)
@@ -338,6 +342,7 @@ class GrpcClient:
         try:
             response = self._services.admin.get_backend()
         except GeometryExitedError as exc:
+            self.close()
             raise GeometryRuntimeError(
                 "Failed to retrieve backend information. Check server logs for licensing and "
                 "connectivity.\nDefault server logs path is "
@@ -380,6 +385,16 @@ class GrpcClient:
             Backend version.
         """
         return self._backend_version
+
+    @property
+    def host(self) -> str:
+        """Host of the client connection."""
+        return self._host
+
+    @property
+    def port(self) -> int:
+        """Port of the client connection."""
+        return self._port
 
     @property
     def channel(self) -> grpc.Channel:
