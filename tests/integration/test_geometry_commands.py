@@ -2627,7 +2627,11 @@ def test_sweep_edges_design_curve_trajectory(modeler: Modeler):
 
     # Surface body near the arc start; edge[3] is the 0.5 m top edge at y = 0.25
     surface = design.create_surface("surf", Sketch().box(Point2D([1, 0]), 0.5, 0.5))
-    edge = surface.edges[3]
+    edge = (
+        surface.edges[2]
+        if modeler._grpc_client.backend_version >= (27, 1, 0)
+        else surface.edges[3]
+    )
     assert edge.length.m == pytest.approx(0.5, rel=1e-4)
 
     bodies = modeler.geometry_commands.sweep_edges(
