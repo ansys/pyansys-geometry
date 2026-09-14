@@ -709,9 +709,6 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
-    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-        pytest.skip("See issue 3043 when tracker updates are disabled")
-
     design = modeler.create_design("TestBooleanOperations")
     backend_version = modeler.client.backend_version
 

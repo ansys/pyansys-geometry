@@ -2507,7 +2507,7 @@ class Body(IBody):
             parent_design._update_design_inplace()
 
             # When tracker is off, we don't know whether the body was fully deleted.
-            self.is_alive = response.get("body_is_deleted", True)
+            self._is_alive = response.get("body_is_deleted", True)
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.
