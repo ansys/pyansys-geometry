@@ -39,6 +39,7 @@ from ansys.geometry.core.connection.product_instance import prepare_and_start_ba
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
+    deprecated_argument,
     kwargs_passed_not_accepted,
 )
 
@@ -672,6 +673,7 @@ def launch_modeler_with_geometry_service(
 
 
 @kwargs_passed_not_accepted
+@deprecated_argument(arg="manifest_path", info="")
 def launch_modeler_with_discovery(
     version: str | int | None = None,
     host: str = "localhost",
