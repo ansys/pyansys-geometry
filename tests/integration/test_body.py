@@ -281,7 +281,6 @@ def test_body_shell_and_remove_faces(modeler: Modeler):
 
 def test_body_tracker_update_paths(modeler: Modeler):
     """Test USE_TRACKER_TO_UPDATE_DESIGN=True branches and detach_faces failure path."""
-    import ansys.geometry.core as pyansys_geo
 
     design = modeler.create_design("TrackerPaths")
     sketch = Sketch()
@@ -709,9 +708,6 @@ def test_boolean_body_operations(modeler: Modeler):
                 x) identity
                 y) transform
     """
-    if not pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
-        pytest.skip("See issue 3043 when tracker updates are disabled")
-
     design = modeler.create_design("TestBooleanOperations")
     backend_version = modeler.client.backend_version
 
