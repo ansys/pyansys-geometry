@@ -44,14 +44,14 @@ optional-dependencies.all = [
   "ansys-tools-visualization-interface[usd]>=0.14.0",
   "docker>=6.0.1,<8",
   "pygltflib>=1.16,<2",
-  "pyvista[jupyter]>=0.38.1,<1",
+  "pyvista[jupyter]<1,>=0.38.1",
   "usd-core>=24.0",
   "vtk>=9,<10",
 ]
 optional-dependencies.graphics = [
   "ansys-tools-visualization-interface>=0.2.6",
   "pygltflib>=1.16,<2",
-  "pyvista[jupyter]>=0.38.1,<1",
+  "pyvista[jupyter]<1,>=0.38.1",
   "vtk>=9,<10",
 ]
 optional-dependencies.usd = [
@@ -108,7 +108,7 @@ general-all = [
   "protobuf==7.36.1",
   "pydantic==2.13.5",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.48.4",
+  "pyvista[jupyter]==0.49.0",
   "requests==2.34.2",
   "scipy==1.18.1",
   "semver==3.0.4",

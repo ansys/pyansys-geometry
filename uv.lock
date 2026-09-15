@@ -458,7 +458,7 @@ dev = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.48.4" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "quarto-cli", specifier = "==1.10.18" },
     { name = "requests", specifier = "==2.34.2" },
@@ -498,7 +498,7 @@ doc = [
     { name = "protobuf", specifier = "==7.36.1" },
     { name = "pydantic", specifier = "==2.13.5" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.48.4" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
     { name = "quarto-cli", specifier = "==1.10.18" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -526,7 +526,7 @@ general-all = [
     { name = "protobuf", specifier = "==7.36.1" },
     { name = "pydantic", specifier = "==2.13.5" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.48.4" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
     { name = "semver", specifier = "==3.0.4" },
@@ -552,7 +552,7 @@ tests = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.48.4" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -2072,22 +2072,6 @@ wheels = [
 ]
 
 [[package]]
-name = "jupyter-server-proxy"
-version = "4.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "aiohttp" },
-    { name = "jupyter-server" },
-    { name = "simpervisor" },
-    { name = "tornado" },
-    { name = "traitlets" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/d7/d9/04955fbf1362960d4e9be98995a070c882f2ff1901954239dd80aad45d07/jupyter_server_proxy-4.5.0.tar.gz", hash = "sha256:40835ed475fe30bea6e8f2e493fd8dfc700a7f37d86d6e97bc5298034521ac1c", size = 164414, upload-time = "2026-04-01T17:08:09.943Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/36/0a64c735dd19d4bf1b53139b24d4eaab875b39bb0551af6e3d6c1c7c8c17/jupyter_server_proxy-4.5.0-py3-none-any.whl", hash = "sha256:3e3376f8de62aa86623e61d84076feafcaa731b5caf6deb5f0dd5f7a6e74fd24", size = 45061, upload-time = "2026-04-01T17:08:08.529Z" },
-]
-
-[[package]]
 name = "jupyter-server-terminals"
 version = "0.5.4"
 source = { registry = "https://pypi.org/simple" }
@@ -3409,6 +3393,39 @@ wheels = [
 ]
 
 [[package]]
+name = "pyobjc-core"
+version = "12.2.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/a5/78/abc4ce5920305780aeb36b4067a86253378b36e29ba96673a3deb02eb03a/pyobjc_core-12.2.2.tar.gz", hash = "sha256:3906452339cd06a3bb07df103c2511d4cb0f7a22d8771c0b802eba15d9a642b6", size = 1067701, upload-time = "2026-08-11T19:43:39.059Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/86/b2/bbf7f049880ab40d110e66f25122342a1f6c98d6fe3c59bb98985503c660/pyobjc_core-12.2.2-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:122e6ad302a2abf5d4d4adb0156db751600ddf2768441696cba17b31323085e7", size = 6427637, upload-time = "2026-08-11T14:51:36.038Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/ed/a8bf040caf3704023d74086b7fb96cf4ed2e844e24bd94e5248ba214b700/pyobjc_core-12.2.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:950bd2d9c74634398c4e3d24ef2f213d4e23d705083697464fa67afedc53c1ad", size = 6427113, upload-time = "2026-08-11T15:04:39.424Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/5a/760f8b9e116edd43c57e33844dc17619158fbdd311250d4209910192d72d/pyobjc_core-12.2.2-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:3772b406edb3ff78171530a17cda1c4a7817f87b87ded0d8715b3fa664df16db", size = 6666817, upload-time = "2026-08-11T19:30:17.01Z" },
+    { url = "https://files.pythonhosted.org/packages/13/37/486d38a173b0b8dce973a3e13c74cf402ed1b8621586b5963bc9efd49a48/pyobjc_core-12.2.2-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:2062e8ad30a310441cd022544a897553408bebeaa7820d5edba3c96fd7fd693b", size = 6421184, upload-time = "2026-08-11T19:30:21.081Z" },
+    { url = "https://files.pythonhosted.org/packages/04/f1/d138fd9b9a66ea8db56a8138b77d3413b85da3defe13363a19f364f85529/pyobjc_core-12.2.2-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:2c7ef3d2f865b4b3ebb14ec3556f7a3e8abb6d130c67275cd9daa08dbd6e4e4e", size = 6671824, upload-time = "2026-08-11T19:30:25.005Z" },
+    { url = "https://files.pythonhosted.org/packages/d5/85/577e2265cccf59daf48c460f0a8deeaf7dbe2991227a8859ab1eeab4945e/pyobjc_core-12.2.2-cp315-cp315-macosx_10_15_universal2.whl", hash = "sha256:89acc6bc13aaa6e3f52b0ce652ede7e201edb6bf062741b246b0c5a44582f25f", size = 6477694, upload-time = "2026-08-11T19:30:28.821Z" },
+    { url = "https://files.pythonhosted.org/packages/77/0a/bd9f830c64c6f334530831e75c01bfe0a770a3fbb00fddc70329223118b3/pyobjc_core-12.2.2-cp315-cp315t-macosx_10_15_universal2.whl", hash = "sha256:59a77038ebe0ab1240f61c341e7fb67b8674f2b4cd41bc71a6472511a12b50f7", size = 6712233, upload-time = "2026-08-11T19:30:33.032Z" },
+]
+
+[[package]]
+name = "pyobjc-framework-cocoa"
+version = "12.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyobjc-core" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/75/76/49c6da2c6a831020b4854ba20079d5a1030474bffc776b7b73c2eeff8c15/pyobjc_framework_cocoa-12.2.2.tar.gz", hash = "sha256:c96c0ef69a71afbbb0e6a7d594b455c5fe47d62e0db376ee7a2b4b828c16ace9", size = 3132831, upload-time = "2026-08-11T19:44:02.288Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fd/2f/b67e73d8bc367e03fe7861cd9c49fff9dcfa6db83bc0630c0adcfb25b7fa/pyobjc_framework_cocoa-12.2.2-cp312-cp312-macosx_10_13_universal2.whl", hash = "sha256:e106f395531e67694376b0f1184612cbeea3ec8b9bf56b55ef41d026171d2a2d", size = 388117, upload-time = "2026-08-11T19:32:43.161Z" },
+    { url = "https://files.pythonhosted.org/packages/db/e1/5d9b04ebb60042b9cb49adc2d33115e2f2c2e4ff7d548017bfaff8b7f536/pyobjc_framework_cocoa-12.2.2-cp313-cp313-macosx_10_13_universal2.whl", hash = "sha256:600b1723184ca094931330e79355274949965460e23de38628d601b5a967baf9", size = 388181, upload-time = "2026-08-11T19:32:44.537Z" },
+    { url = "https://files.pythonhosted.org/packages/b4/25/2a343357d5fe09bbe9c0e294dc03450866a0d6c1792fad36b6bcc00174c0/pyobjc_framework_cocoa-12.2.2-cp313-cp313t-macosx_10_13_universal2.whl", hash = "sha256:875f2aad73963faa81a6b36ae674fd494a4658d6d999e1075e0e2aca3d2391df", size = 392275, upload-time = "2026-08-11T19:32:45.631Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/1a/b99521999b9f54b89aad928ddff0faad507abfe33bc46599454bfa48a4b2/pyobjc_framework_cocoa-12.2.2-cp314-cp314-macosx_10_15_universal2.whl", hash = "sha256:889d7bbd4ba2d4941078bfbbfb882138e51dbead27df006abfe0f2e0d49b5b2e", size = 388368, upload-time = "2026-08-11T19:32:46.781Z" },
+    { url = "https://files.pythonhosted.org/packages/6d/26/0c697dbc73dcc76bc0f68ea5aeed25bf7b05217df5102659e878501b2d5f/pyobjc_framework_cocoa-12.2.2-cp314-cp314t-macosx_10_15_universal2.whl", hash = "sha256:de69c5933750f3a4599ed962eccd92b6a71914c7e4318dacc7895738a8ae60d7", size = 392404, upload-time = "2026-08-11T19:32:47.918Z" },
+    { url = "https://files.pythonhosted.org/packages/df/82/502f740fd8f4e9ef741c9d40ba67467ab2c8196f2c09dcba12936d28a4fd/pyobjc_framework_cocoa-12.2.2-cp315-cp315-macosx_10_15_universal2.whl", hash = "sha256:0e8ace0d44a00d281281a723d17fcd05eea7544a38a6a512e1fd018ddb7aece2", size = 388585, upload-time = "2026-08-11T19:32:49.171Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/3b/07ce3c0ab8d1e9e1bed74fea1bf1cce73527a365a7a23c755051d3be9865/pyobjc_framework_cocoa-12.2.2-cp315-cp315t-macosx_10_15_universal2.whl", hash = "sha256:8fe5b2e79c9530f667b4e58a87a3a15ea62f86a5d19eec405517ecbd4f454868", size = 392693, upload-time = "2026-08-11T19:32:50.283Z" },
+]
+
+[[package]]
 name = "pyparsing"
 version = "3.3.2"
 source = { registry = "https://pypi.org/simple" }
@@ -3494,7 +3511,7 @@ wheels = [
 
 [[package]]
 name = "pyvista"
-version = "0.48.4"
+version = "0.49.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cyclopts" },
@@ -3502,25 +3519,42 @@ dependencies = [
     { name = "numpy" },
     { name = "pillow" },
     { name = "pooch" },
+    { name = "pyobjc-framework-cocoa", marker = "sys_platform == 'darwin'" },
+    { name = "pyvista-validation" },
     { name = "scooby" },
     { name = "typing-extensions" },
     { name = "vtk" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a6/11/554ae45f79d45039c733d93acb36a433b71e8c63a79bbf2f414b3685de18/pyvista-0.48.4.tar.gz", hash = "sha256:c639dad1bddff5e366d77371f66f783f6e6a0581446810a66439902222d8db07", size = 2581423, upload-time = "2026-05-18T02:25:51.828Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/8f/fc7f2662d989d489d4b9048fdc030f6960ad5a0d09dd00016abc64ffa02d/pyvista-0.49.0.tar.gz", hash = "sha256:5bc914769dfa9baeedb3b761c81e3326bd4c7a3aeed475c25f164c798806dba2", size = 2704091, upload-time = "2026-09-08T03:50:50.682Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/91/696d869e4df2e25a5b201a69ce69a2204d37fad3e90c2b731f7b3f1d7c68/pyvista-0.48.4-py3-none-any.whl", hash = "sha256:a46eda178e10e279afda550c341676a82dcee607c86db74565fa455ac0bd23e2", size = 2629373, upload-time = "2026-05-18T02:25:49.919Z" },
+    { url = "https://files.pythonhosted.org/packages/13/28/10413555dd9cbd410c2762c8e6172ce9bd88c8c7997f7290f173969614dc/pyvista-0.49.0-py3-none-any.whl", hash = "sha256:8528b753baf9a32dd7a44f4e88912fe5c8771f7d921c813e1cbac35fc5a37996", size = 2732156, upload-time = "2026-09-08T03:50:48.933Z" },
 ]
 
 [package.optional-dependencies]
 jupyter = [
     { name = "ipywidgets" },
-    { name = "jupyter-server-proxy" },
     { name = "nest-asyncio2" },
-    { name = "trame" },
-    { name = "trame-client" },
-    { name = "trame-server" },
-    { name = "trame-vtk" },
-    { name = "trame-vuetify" },
+    { name = "trame-pyvista" },
+]
+
+[[package]]
+name = "pyvista-validation"
+version = "0.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b5/c5/d800d91bae144a71fbae31fcb6b3279c55179acf93639e3443ae87373782/pyvista_validation-0.2.2.tar.gz", hash = "sha256:af234130a3b34b3e1af49584d75b41fafc694752b2958b36e9dbfd9f188e6a0c", size = 554920, upload-time = "2026-09-06T08:42:14.076Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4c/9f/6371ab13987d3655f11e1feef0fd3f8729dd3c1322a814e40e81e4a03d76/pyvista_validation-0.2.2-cp310-abi3-macosx_10_9_x86_64.whl", hash = "sha256:4ae9af24e888e4ffc941fc01529cc3a4668bd0de7066f98e41aa1d02a5e23d58", size = 83841, upload-time = "2026-09-06T08:42:03.68Z" },
+    { url = "https://files.pythonhosted.org/packages/17/a0/a71388af7e416ff100b3e6498e71b9c6d8f0b1f0576536e8ea27158bffc9/pyvista_validation-0.2.2-cp310-abi3-macosx_11_0_arm64.whl", hash = "sha256:8b7156dec1699d65501df65578d759dbab6ddfccd803213fc837fff0c2e41a92", size = 87934, upload-time = "2026-09-06T08:42:04.954Z" },
+    { url = "https://files.pythonhosted.org/packages/9e/38/84e7eba0dace65cc68edb0e2c18f7bd8363cf9de449290dc6e4420eebf22/pyvista_validation-0.2.2-cp310-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:1be12fb7dbc05035a58a3245a0fac018a6be41837be9ec90a0796db700bd7dfa", size = 293409, upload-time = "2026-09-06T08:42:06.153Z" },
+    { url = "https://files.pythonhosted.org/packages/75/e7/24d49960620aa770fc1fb527a019ec5a860e27c73bcd69c4bdfcc510c7a7/pyvista_validation-0.2.2-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a45b633b89d843329db1608ba2bbed75d075ab63c5a7427c8dfa9ad9c23eadb4", size = 261436, upload-time = "2026-09-06T08:42:07.546Z" },
+    { url = "https://files.pythonhosted.org/packages/81/b8/c6d1c79a293a7c6927995ed77af01a1c77d16ad1b71bfbfd47922104ec6b/pyvista_validation-0.2.2-cp310-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:aba7a1fc01ba9c762f14d1418329b2a462c881aa7a42b65b2088b6ab9fe8e530", size = 291065, upload-time = "2026-09-06T08:42:08.876Z" },
+    { url = "https://files.pythonhosted.org/packages/51/c9/1dd3831f373dfc0b3ba8fe3a8de0b17f4b8610df9f262f6904f20f7d507b/pyvista_validation-0.2.2-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:672991acf11588de5ce4042cf4f1cc59d0f2b0e84bca792c3358fac6b07e2b38", size = 259212, upload-time = "2026-09-06T08:42:10.297Z" },
+    { url = "https://files.pythonhosted.org/packages/5b/8a/fe3dd14c804dc8bfade2d247f33fedaa3ebebf916f12cdd002203440b82b/pyvista_validation-0.2.2-cp310-abi3-win32.whl", hash = "sha256:6ba8b5f39a9c4e1f75c4dd9adc037cfeb5a50be9fdb93d787a34e98245bba51a", size = 68929, upload-time = "2026-09-06T08:42:11.649Z" },
+    { url = "https://files.pythonhosted.org/packages/21/fc/b98d6dbbd458eeb197b63486c64eb8ed3ef1216d4bf17c353d1153edca97/pyvista_validation-0.2.2-cp310-abi3-win_amd64.whl", hash = "sha256:9ee46b4177e6b8fcc5d750d9c471d30fa05f1384668a67cef0b19a700a797659", size = 74885, upload-time = "2026-09-06T08:42:12.861Z" },
 ]
 
 [[package]]
@@ -3957,15 +3991,6 @@ wheels = [
 ]
 
 [[package]]
-name = "simpervisor"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/dd/fc/9182a4049036c5de29f84a16c5a33304ffc4dbb06d76d569ded8ad527574/simpervisor-1.0.0.tar.gz", hash = "sha256:7eb87ca86d5e276976f5bb0290975a05d452c6a7b7f58062daea7d8369c823c1", size = 14637, upload-time = "2023-05-18T14:01:27.069Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9e/65/be223a02df814a3dbd84d8a0c446d21d4860a4f23ec4d81aabea34e7e994/simpervisor-1.0.0-py3-none-any.whl", hash = "sha256:3e313318264559beea3f475ead202bc1cd58a2f1288363abb5657d306c5b8388", size = 8342, upload-time = "2023-05-18T14:01:25.92Z" },
-]
-
-[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4223,23 +4248,42 @@ wheels = [
 
 [[package]]
 name = "trame-client"
-version = "3.13.6"
+version = "3.13.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "trame-common" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/91/a5/15eba4898effd6d74e356c6e508ba290f3efffb48c8e95ec2940996fd3a1/trame_client-3.13.6.tar.gz", hash = "sha256:1ba7d1528ad082195c03b29c876db07817da741e2c9a50a32914534b24f31332", size = 456658, upload-time = "2026-08-08T21:56:23.531Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e7/47/20e38ade8731472b5b0a3908598e702ced65e9bb2b79ce149dc178133350/trame_client-3.13.2.tar.gz", hash = "sha256:f4809038e783f6e2dedebb772159f6fcc501e8540688854d6262657db87f9a02", size = 247188, upload-time = "2026-06-10T20:49:59.01Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/05/9b/8eea3b98d84300e3fe104ec179246b29f993e6a0da53c7e2549284d99cbb/trame_client-3.13.6-py3-none-any.whl", hash = "sha256:b4acf325d037a3d118c00a89ebbb32418dea9064844cc23e45c9deddea0628a4", size = 468618, upload-time = "2026-08-08T21:56:21.643Z" },
+    { url = "https://files.pythonhosted.org/packages/a2/d7/b3416db96ac9dfcb21e19c9bee5194d1c32d7cc73c6eef65cd2d92314c12/trame_client-3.13.2-py3-none-any.whl", hash = "sha256:a22f118522ad8c0a8063186a8b1c77e06dc0e577e1f32d879710ca0344a124d9", size = 251659, upload-time = "2026-06-10T20:49:57.305Z" },
 ]
 
 [[package]]
 name = "trame-common"
-version = "1.2.7"
+version = "1.2.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/75/70/2ed0995946cf18213bc7b944cc41800e0384192f18bdefae1b4cbe48a1b5/trame_common-1.2.7.tar.gz", hash = "sha256:bf31b565f78fb4628e5d2f4cca99041e34f0e31ebe44781c7d015589826e4e0d", size = 20352, upload-time = "2026-08-07T00:08:52.346Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b6/71/27ec821917e619ff52315d892899756d58879d9b34800f720341b1d0e539/trame_common-1.2.4.tar.gz", hash = "sha256:75caf6c53ff28ba8450652ca3079baa4744f1c533044e4ed6534623a43974c08", size = 20274, upload-time = "2026-06-10T15:28:39.796Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f2/ce/ffe6e768887536aff8dcddf5da3080a51243fe933c95dd8958c8bfda6a27/trame_common-1.2.7-py3-none-any.whl", hash = "sha256:14d50c651505c41f9144261b67bc0c7b3524bf72893d56ad544e255cfa1c1ba1", size = 23924, upload-time = "2026-08-07T00:08:51.026Z" },
+    { url = "https://files.pythonhosted.org/packages/59/1f/1df4ac52479326b4c23661b5f1b0c703af4f3efb2d850e24e344f46af355/trame_common-1.2.4-py3-none-any.whl", hash = "sha256:479d956c9e5bbc7261085f09936ccff3614f10d6a83e55c1bbb8f24526f11aef", size = 23826, upload-time = "2026-06-10T15:28:38.541Z" },
+]
+
+[[package]]
+name = "trame-pyvista"
+version = "0.1.7"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "pyvista" },
+    { name = "trame" },
+    { name = "trame-client" },
+    { name = "trame-common" },
+    { name = "trame-server" },
+    { name = "trame-vtk" },
+    { name = "trame-vuetify" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b8/75/0cab7683efdc93d1e0d652727a6c847af9169276a8c77317819ea786096b/trame_pyvista-0.1.7.tar.gz", hash = "sha256:13d2c5d6fb58562891372a3638f40ea88f39d4e4414de927ee797e7907244233", size = 79605, upload-time = "2026-08-14T19:13:06.106Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/f1/7e/14338648aaca4598437f62438b802727af9781824d120c47ca70d6cae96b/trame_pyvista-0.1.7-py3-none-any.whl", hash = "sha256:c728d85732bc6e0eb69cef11205e55c9b921e8e587d9590d86dc29a65ad65202", size = 29050, upload-time = "2026-08-14T19:13:04.612Z" },
 ]
 
 [[package]]
@@ -4256,16 +4300,16 @@ wheels = [
 
 [[package]]
 name = "trame-server"
-version = "3.15.0"
+version = "3.12.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "more-itertools" },
     { name = "trame-common" },
     { name = "wslink" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/13/62/5120c93cf606e0ba7c172e2808db1a8f2649bcbef42f2c77fb573108574c/trame_server-3.15.0.tar.gz", hash = "sha256:eadf8a9153cb2ba79d8dd5f747247aa52eb77a3afc024fd63ba49d657c1e01fd", size = 39175, upload-time = "2026-09-04T22:13:25.552Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/02/f3c1741595e4ee65778dd385e2e55c8c5dfedbff180896acdbe4277e3dfc/trame_server-3.12.5.tar.gz", hash = "sha256:e2c5245843806553376b587f9bd392b1223bfb86b55c683b5f8ca62c3be35519", size = 37906, upload-time = "2026-06-10T20:42:32.932Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/aa/5b/ed8ee40a4285c62ac0b5171de8eaee0644588ef3d089357ab45f0f535fda/trame_server-3.15.0-py3-none-any.whl", hash = "sha256:b0acb06f1124995409adcbc8fa17775e8bfd9bdea8b72dccfa80abec695db135", size = 45646, upload-time = "2026-09-04T22:13:23.705Z" },
+    { url = "https://files.pythonhosted.org/packages/12/8e/7ddb610d22f79e1537795cb8a8ca7d49b679b61398083b82e7cd048c1e8d/trame_server-3.12.5-py3-none-any.whl", hash = "sha256:d1420b8f6639b8faeb27e5a34777545b786662160fb64996ea779dbbcff57453", size = 44414, upload-time = "2026-06-10T20:42:31.58Z" },
 ]
 
 [[package]]
