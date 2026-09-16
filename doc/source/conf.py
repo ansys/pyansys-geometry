@@ -416,7 +416,8 @@ linkcheck_exclude_documents = [
 ]
 linkcheck_ignore = [
     r"https://github.com/ansys/pyansys-geometry-binaries",
-    r"https://developer.ansys.com/",
+    r"https://developerforum.synopsys.com/"
+    r"https://developer.synopsys.com/",
     r"https://innovation.ansys.com/",
     r"https://download.ansys.com/",
     r"https://stackoverflow.com/",  # Requires human authentication

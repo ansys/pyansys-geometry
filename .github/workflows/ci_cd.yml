@@ -59,7 +59,7 @@ jobs:
     name: Actions Security
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@main
+      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -228,7 +228,8 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
@@ -570,7 +571,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Install minimum requirements
         run: uv sync --extra all --group tests-minimal
@@ -909,7 +911,8 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@b0bf9f57d62d2b3fee9f1c0e0c7e390f05e97a4e # v5.0.0
