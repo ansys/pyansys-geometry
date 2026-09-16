@@ -196,7 +196,8 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
         uses: pyvista/setup-headless-display-action@b0bf9f57d62d2b3fee9f1c0e0c7e390f05e97a4e # v5.0.0
