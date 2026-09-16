@@ -36,6 +36,7 @@ from ansys.geometry.core.math import (
     Point3D,
 )
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
+from ansys.geometry.core.plotting.plotter import GeometryPlotter
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.line import Line
@@ -427,8 +428,8 @@ def test_create_surface_from_nurbs_sketch(modeler: Modeler):
         tag="nurbs_sketch",
     )
     sketch.segment(
-        start=Point2D([0, -1]),
-        end=Point2D([0, 2]),
+        start=Point2D([0, 1]),
+        end=Point2D([0, 0]),
         tag="segment_1",
     )
 
