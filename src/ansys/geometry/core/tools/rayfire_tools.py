@@ -134,7 +134,7 @@ class RayfireTools:
         self._modeler = modeler
         self._grpc_client = grpc_client
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def rayfire(
         self,
         body: "Body",
@@ -177,7 +177,7 @@ class RayfireTools:
 
         return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def rayfire_faces(
         self,
         body: "Body",
@@ -216,7 +216,7 @@ class RayfireTools:
             for impact in face_impact.get("impacts", [])
         ]
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def rayfire_ordered(
         self,
         body: "Body",
@@ -271,7 +271,7 @@ class RayfireTools:
             for ordered_impact in response.get("ordered_impacts", [])
         ]
 
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def rayfire_ordered_uv(
         self,
         body: "Body",
