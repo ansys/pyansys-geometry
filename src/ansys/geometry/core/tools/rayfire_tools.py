@@ -210,7 +210,11 @@ class RayfireTools:
             options=options,
         )
 
-        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
+        return [
+            create_impact_from_response(impact)
+            for face_impact in response.get("face_impacts", [])
+            for impact in face_impact.get("impacts", [])
+        ]
 
     @min_backend_version(26, 1, 0)
     def rayfire_ordered(

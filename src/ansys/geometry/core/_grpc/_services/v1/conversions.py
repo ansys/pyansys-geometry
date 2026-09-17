@@ -1932,7 +1932,7 @@ def from_enclosure_options_to_grpc_enclosure_options(
     )
 
 
-def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> None:
+def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> GRPCRayFireOptions:
     """Convert a ``RayFireOptions`` class to a gRPC RayFireOptions message.
 
     Parameters
@@ -1945,13 +1945,11 @@ def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> N
     GRPCRayFireOptions
         Geometry service gRPC RayFireOptions message.
     """
-    from ansys.geometry.core.misc.measurements import DEFAULT_UNITS
-
     return GRPCRayFireOptions(
-        radius=options.radius.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        radius=from_length_to_grpc_quantity(options.radius),
         direction=from_unit_vector_to_grpc_direction(options.direction),
-        max_distance=options.max_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
-        min_distance=options.min_distance.m_as(DEFAULT_UNITS.SERVER_LENGTH),
+        max_distance=from_length_to_grpc_quantity(options.max_distance),
+        min_distance=from_length_to_grpc_quantity(options.min_distance),
         tight_tolerance=options.tight_tolerance,
         pick_back_faces=options.pick_back_faces,
         max_hits=options.max_hits,

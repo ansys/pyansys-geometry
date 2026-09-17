@@ -23,6 +23,8 @@
 """Testing of rayfire tools."""
 
 from ansys.geometry.core.math import Point2D, Point3D, UnitVector3D
+from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
+from ansys.geometry.core.misc.options import RayfireOptions
 from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
@@ -32,16 +34,26 @@ def test_rayfire_simple_case(modeler: Modeler):
     """Test the rayfire operation with a simple case."""
     design = modeler.create_design("rayfire_simple_case")
 
-    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    face = box.faces[1]
-    direction = UnitVector3D([1, 0, 0])
-    points = [Point3D([-2, 0, 1])]
-
-    result = modeler.rayfire_tools.rayfire(
-        body=box, faces=[face], direction=direction, points=points, max_distance=10.0
+    # Create a box from (0, 0, 0) to (1, 1, 1) and a point centered below it
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    points = [Point3D([0.5, 0.5, -1])]
+    options = RayfireOptions(
+        radius=2e-8,
+        direction=UNITVECTOR3D_Z,
+        max_distance=10,
+        min_distance=0,
+        tight_tolerance=True,
+        pick_back_faces=True,
+        max_hits=16,
+        request_params=True,
+        request_secondary=True,
     )
 
-    assert len(result) == 10
+    result = modeler.rayfire_tools.rayfire_faces(
+        body=box, faces=box.faces, points=points, options=options
+    )
+
+    assert len(result) == 2
 
 
 def test_rayfire_faces(modeler: Modeler):
