@@ -22,6 +22,8 @@
 
 """Testing of rayfire tools."""
 
+import pytest
+
 from ansys.geometry.core.math import Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Z
 from ansys.geometry.core.misc.options import RayfireOptions
@@ -29,10 +31,35 @@ from ansys.geometry.core.modeler import Modeler
 from ansys.geometry.core.sketch import Sketch
 
 
-# @pytest.mark.skip(reason="Extract impacts returned by rayfire")
+def test_rayfire_constructor_error_raised(modeler: Modeler):
+    """Test that the RayfireTools constructor raises an error when instantiated directly."""
+    from ansys.geometry.core.tools.rayfire_tools import GeometryRuntimeError, RayfireTools
+
+    with pytest.raises(GeometryRuntimeError, match="RayfireTools should not be instantiated"):
+        RayfireTools(grpc_client=modeler._grpc_client, modeler=modeler)
+
+
 def test_rayfire_simple_case(modeler: Modeler):
     """Test the rayfire operation with a simple case."""
     design = modeler.create_design("rayfire_simple_case")
+
+    # Create a box from (0, 0, 0) to (1, 1, 1) and a point centered below it
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    points = [Point3D([0.5, 0.5, -1])]
+
+    result = modeler.rayfire_tools.rayfire(box, [], UNITVECTOR3D_Z, points, 2e-8)
+
+    # Take the distinct points from the result
+    distinct_points = []
+    for impact in result:
+        if impact.point not in distinct_points:
+            distinct_points.append(impact.point)
+    assert len(distinct_points) == 2
+
+
+def test_rayfire_faces(modeler: Modeler):
+    """Test the rayfire faces operation with a simple case."""
+    design = modeler.create_design("rayfire_faces_simple_case")
 
     # Create a box from (0, 0, 0) to (1, 1, 1) and a point centered below it
     box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
@@ -54,55 +81,52 @@ def test_rayfire_simple_case(modeler: Modeler):
     )
 
     assert len(result) == 2
-
-
-def test_rayfire_faces(modeler: Modeler):
-    """Test the rayfire faces operation."""
-    design = modeler.create_design("rayfire_simple_case")
-
-    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    face = box.faces[1]
-    points = [Point3D([-2, 0, 1])]
-
-    result = modeler.rayfire_tools.rayfire_faces(
-        body=box,
-        faces=[face],
-        points=points,
-    )
-
-    assert result is not None
-    assert len(result) == 12
+    assert result[0].face_id == box.faces[0].id
+    assert result[0].point == Point3D([0.5, 0.5, 0])
+    assert result[1].face_id == box.faces[1].id
+    assert result[1].point == Point3D([0.5, 0.5, 1])
 
 
 def test_rayfire_ordered(modeler: Modeler):
     """Test the rayfire ordered operation."""
     design = modeler.create_design("rayfire_simple_case")
 
-    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    face = box.faces[1]
-    direction = UnitVector3D([1, 0, 0])
-    points = [Point3D([-2, 0, 1])]
+    # Create a box from (0, 0, 0) to (1, 1, 1) and a point centered below it
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    points = [Point3D([0.25, 0.25, -1]), Point3D([0.75, 0.6, -1]), Point3D([5, 5, -1])]
 
-    result = modeler.rayfire_tools.rayfire_ordered(
-        body=box, faces=[face], direction=direction, ray_radius=2, points=points, max_distance=10.0
-    )
+    result = modeler.rayfire_tools.rayfire_ordered(box, box.faces, UNITVECTOR3D_Z, 2e-8, points, 10)
+    assert len(result) == 3
 
-    assert result is not None
-    assert len(result) == 2
+    # Check that point 0/1 hits twice and point 2 hits zero times
+    assert len(result[0]) == 2
+    assert len(result[1]) == 2
+    assert len(result[2]) == 0
+
+    # Check that the impacts belong to the box body
+    assert result[0][0].body_id == box.id
+    assert result[1][0].body_id == box.id
 
 
 def test_rayfire_ordered_uv(modeler: Modeler):
     """Test the rayfire ordered uv operation."""
     design = modeler.create_design("rayfire_simple_case")
 
-    box = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 2, 2), 2)
-    face = box.faces[1]
-    direction = UnitVector3D([1, 0, 0])
-    points = [Point3D([-2, 0, 1])]
+    # Create a box from (0, 0, 0) to (1, 1, 1) and a point centered below it
+    box = design.extrude_sketch("box", Sketch().box(Point2D([0.5, 0.5]), 1, 1), 1)
+    points = [Point3D([0.25, 0.25, -1]), Point3D([0.75, 0.6, -1]), Point3D([5, 5, -1])]
 
     result = modeler.rayfire_tools.rayfire_ordered_uv(
-        body=box, faces=[face], direction=direction, ray_radius=2, points=points, max_distance=10.0
+        box, box.faces, UNITVECTOR3D_Z, 2e-8, points, 10.0
     )
 
-    assert result is not None
-    assert len(result) == 2
+    # Check that point 0/1 hits twice and point 2 hits zero times
+    assert len(result[0]) == 2
+    assert len(result[1]) == 2
+    assert len(result[2]) == 0
+
+    # Check that the uv impacts are correct
+    assert result[0][0].u == 0.25
+    assert result[0][0].v == 0.25
+    assert result[0][1].u == 0.75
+    assert result[0][1].v == 0.6

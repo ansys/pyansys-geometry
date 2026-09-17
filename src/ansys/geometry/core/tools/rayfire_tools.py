@@ -226,7 +226,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> list[RayfireImpact]:
+    ) -> list[list[RayfireImpact]]:
         """Perform a rayfire ordered operation.
 
         Parameters
@@ -248,8 +248,8 @@ class RayfireTools:
 
         Returns
         -------
-        list[RayfireImpact]
-            Rayfire results.
+        list[list[RayfireImpact]]
+            Rayfire results, with one list of impacts per input point.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
         max_distance = (
@@ -266,7 +266,10 @@ class RayfireTools:
             tight_tolerance=tight_tolerance,
         )
 
-        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
+        return [
+            [create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
+            for ordered_impact in response.get("ordered_impacts", [])
+        ]
 
     @min_backend_version(26, 1, 0)
     def rayfire_ordered_uv(
@@ -278,7 +281,7 @@ class RayfireTools:
         points: list["Point3D"],
         max_distance: Distance | Quantity | Real,
         tight_tolerance: bool = False,
-    ) -> list[RayfireImpact]:
+    ) -> list[list[RayfireImpact]]:
         """Perform a rayfire ordered operation.
 
         Parameters
@@ -300,8 +303,8 @@ class RayfireTools:
 
         Returns
         -------
-        list[RayfireImpact]
-            Rayfire results.
+        list[list[RayfireImpact]]
+            Rayfire results, with one list of impacts per input point.
         """
         ray_radius = ray_radius if isinstance(ray_radius, Distance) else Distance(ray_radius)
         max_distance = (
@@ -318,7 +321,10 @@ class RayfireTools:
             tight_tolerance=tight_tolerance,
         )
 
-        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
+        return [
+            [create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
+            for ordered_impact in response.get("ordered_impacts", [])
+        ]
 
 
 def create_impact_from_response(response: dict) -> "RayfireImpact":

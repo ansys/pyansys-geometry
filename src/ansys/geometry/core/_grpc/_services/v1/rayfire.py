@@ -204,8 +204,8 @@ class GRPCRayfireServiceV1(GRPCRayfireService):
                         {
                             "body_id": impact.body.id,
                             "point": from_grpc_point_to_point3d(impact.point),
-                            "u": impact.u,
-                            "v": impact.v,
+                            "u": impact.u.value_in_geometry_units,
+                            "v": impact.v.value_in_geometry_units,
                         }
                         for impact in ordered_impact.impacts
                     ]
