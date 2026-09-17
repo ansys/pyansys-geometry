@@ -24,7 +24,7 @@ classifiers = [
   "Topic :: Scientific/Engineering :: Information Analysis",
 ]
 dependencies = [
-  "ansys-api-discovery==1.2.15",
+  "ansys-api-discovery==1.2.16",
   "ansys-tools-common<1,>=0.3",
   "beartype>=0.11.0,<0.23",
   "geomdl>=5,<6",
