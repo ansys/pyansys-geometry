@@ -63,6 +63,7 @@ from ansys.api.discovery.v1.design.designmessages_pb2 import (
     PartEntity as GRPCPartEntity,
     PMDBExportOptions as GRPCPMDBExportOptions,
     Surface as GRPCSurface,
+    SurfaceEvaluation as GRPCSurfaceEvaluation,
     Tessellation as GRPCTessellation,
     TessellationOptions as GRPCTessellationOptions,
     TrackedChanges as GRPCTrackedChanges,
@@ -77,11 +78,20 @@ from ansys.api.discovery.v1.design.selections.bodyselection_pb2 import (
     BodyGroupResponse as GRPCBodyGroupResponse,
     BodySelectionQueryResponse as GRPCBodySelectionResponse,
 )
+from ansys.api.discovery.v1.design.selections.edgeselection_pb2 import (
+    EdgeGroupResponse as GRPCEdgeGroupResponse,
+    EdgeSelectionQueryResponse as GRPCEdgeSelectionResponse,
+)
+from ansys.api.discovery.v1.design.selections.faceselection_pb2 import (
+    FaceGroupResponse as GRPCFaceGroupResponse,
+    FaceSelectionQueryResponse as GRPCFaceSelectionResponse,
+)
 from ansys.api.discovery.v1.geometryenums_pb2 import (
     SurfaceType as GRPCSurfaceType,
 )
 from ansys.api.discovery.v1.operations.prepare_pb2 import (
     EnclosureOptions as GRPCEnclosureOptions,
+    VolumeExtractOptions as GRPCVolumeExtractOptions,
 )
 from ansys.api.discovery.v1.operations.rayfire_pb2 import (
     FireAdditionalOptions as GRPCRayFireOptions,
@@ -118,6 +128,7 @@ if TYPE_CHECKING:  # pragma: no cover
         PMDBExportOptions,
         RayfireOptions,
         TessellationOptions,
+        VolumeExtractOptions,
     )
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
@@ -127,7 +138,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.shapes.curves.line import Line
     from ansys.geometry.core.shapes.curves.nurbs import NURBSCurve
     from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
-    from ansys.geometry.core.shapes.surfaces.surface import Surface
+    from ansys.geometry.core.shapes.surfaces.surface import Surface, SurfaceEvaluation
     from ansys.geometry.core.shapes.surfaces.trimmed_surface import TrimmedSurface
     from ansys.geometry.core.sketch.arc import Arc
     from ansys.geometry.core.sketch.circle import SketchCircle
@@ -1411,6 +1422,34 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     return result
 
 
+def from_surface_evaluation_to_grpc_surface_evaluation(
+    surface_evaluation: "SurfaceEvaluation",
+) -> GRPCSurfaceEvaluation:
+    """Convert a v1 ``SurfaceEvaluation`` class to a surface evaluation gRPC message.
+
+    Parameters
+    ----------
+    surface_evaluation : SurfaceEvaluation
+        Source surface evaluation data.
+
+    Returns
+    -------
+    GRPCSurfaceEvaluation
+        Geometry service gRPC surface evaluation message.
+    """
+    return GRPCSurfaceEvaluation(
+        point=from_point3d_to_grpc_point(surface_evaluation.position),
+        param_u=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.u),
+        param_v=GRPCQuantity(value_in_geometry_units=surface_evaluation.parameter.v),
+        normal=from_unit_vector_to_grpc_direction(surface_evaluation.normal),
+        derivative_u=from_unit_vector_to_grpc_direction(surface_evaluation.u_derivative),
+        derivative_v=from_unit_vector_to_grpc_direction(surface_evaluation.v_derivative),
+        derivative_uu=from_unit_vector_to_grpc_direction(surface_evaluation.uu_derivative),
+        derivative_vv=from_unit_vector_to_grpc_direction(surface_evaluation.vv_derivative),
+        derivative_uv=from_unit_vector_to_grpc_direction(surface_evaluation.uv_derivative),
+    )
+
+
 def from_grpc_driving_dimension_to_driving_dimension(
     driving_dimension: GRPCDrivingDimension,
 ) -> "Parameter":
@@ -1921,6 +1960,40 @@ def from_rayfire_options_to_grpc_rayfire_options(options: "RayfireOptions") -> N
     )
 
 
+def from_volume_extract_options_to_grpc_volume_extract_options(
+    volume_extract_options: "VolumeExtractOptions",
+) -> GRPCVolumeExtractOptions:
+    """Convert volume_extract_options to grpc definition.
+
+    Parameters
+    ----------
+    volume_extract_options : VolumeExtractOptions
+        Definition of the volume extract options.
+
+    Returns
+    -------
+    GRPCVolumeExtractOptions
+        Grpc converted definition.
+    """
+    return GRPCVolumeExtractOptions(
+        create_shared_topology=volume_extract_options.create_shared_topology,
+        imprint_capping_edges=volume_extract_options.imprint_capping_edges,
+        merge_created_volume=volume_extract_options.merge_created_volume,
+        seed_point=(
+            from_surface_evaluation_to_grpc_surface_evaluation(volume_extract_options.seed_point)
+            if volume_extract_options.seed_point is not None
+            else None
+        ),
+        tolerance=(
+            from_length_to_grpc_quantity(volume_extract_options.tolerance)
+            if volume_extract_options.tolerance is not None
+            else None
+        ),
+        create_capping_surfaces=volume_extract_options.create_capping_surfaces,
+        detect_leaks=volume_extract_options.detect_leaks,
+    )
+
+
 def serialize_body(body: GRPCBodyEntity) -> dict:
     """Serialize a GRPCBodyEntity object into a dictionary.
 
@@ -2247,6 +2320,77 @@ def serialize_repair_command_response(response: GRPCRepairToolResponse) -> dict:
     }
 
 
+def serialize_face_selection_response(response: GRPCFaceSelectionResponse) -> dict:
+    """Serialize a FaceSelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCFaceSelectionResponse
+        The gRPC FaceSelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the FaceSelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "faces": [
+                    {
+                        "id": face.id.id,
+                        "surface_type": face.surface_type,
+                        "is_reversed": face.is_reversed,
+                        "body_id": face.parent.id.id,
+                    }
+                    for face in rd.faces
+                ],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_face_group_response(response: GRPCFaceGroupResponse) -> dict:
+    """Serialize a FaceGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCFaceGroupResponse
+        The gRPC FaceGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the FaceGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [
+                    {
+                        "faces": [
+                            {
+                                "id": face.id.id,
+                                "surface_type": face.surface_type,
+                                "is_reversed": face.is_reversed,
+                                "body_id": face.parent.id.id,
+                            }
+                            for face in group.faces
+                        ],
+                    }
+                    for group in rd.groups
+                ],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
 def serialize_body_selection_response(response: GRPCBodySelectionResponse) -> dict:
     """Serialize a BodySelectionResponse object into a dictionary.
 
@@ -2289,6 +2433,56 @@ def serialize_body_group_response(response: GRPCBodyGroupResponse) -> dict:
         "response_data": [
             {
                 "groups": [[body.id.id for body in group.bodies] for group in rd.groups],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_edge_selection_response(response: GRPCEdgeSelectionResponse) -> dict:
+    """Serialize an EdgeSelectionResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEdgeSelectionResponse
+        The gRPC EdgeSelectionResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EdgeSelectionResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "edges": [edge.id.id for edge in rd.edges],
+                "success": rd.command_response.success,
+                "message": rd.command_response.message,
+            }
+            for rd in response.response_data
+        ]
+    }
+
+
+def serialize_edge_group_response(response: GRPCEdgeGroupResponse) -> dict:
+    """Serialize an EdgeGroupResponse object into a dictionary.
+
+    Parameters
+    ----------
+    response : GRPCEdgeGroupResponse
+        The gRPC EdgeGroupResponse object to serialize.
+
+    Returns
+    -------
+    dict
+        A dictionary representation of the EdgeGroupResponse object.
+    """
+    return {
+        "response_data": [
+            {
+                "groups": [[edge.id.id for edge in group.edges] for group in rd.groups],
                 "success": rd.command_response.success,
                 "message": rd.command_response.message,
             }

@@ -6,6 +6,7 @@ backends:
   - version: "24.1"
     incompatible_tests:
       # Model used is too new for this version
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
       - tests/integration/test_design.py::test_design_parameters
       - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
@@ -75,6 +76,9 @@ backends:
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
+      - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
+      - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -161,6 +165,7 @@ backends:
   - version: "24.2"
     incompatible_tests:
       # Model used is too new for this version
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
       - tests/integration/test_design.py::test_design_parameters
       - tests/integration/test_design.py::test_unitless_design_parameters
       - tests/integration/test_design.py::test_old_backend_version
@@ -229,6 +234,9 @@ backends:
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
+      - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
+      - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -313,6 +321,7 @@ backends:
   - version: "25.1"
     incompatible_tests:
       # Model used is too new for this version
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_design.py::test_component_make_independent
       - tests/integration/test_prepare_tools.py::test_detect_sweepable_bodies
@@ -330,7 +339,10 @@ backends:
       - tests/integration/test_design.py::test_datum_planes
       - tests/integration/test_design.py::test_remove_member_from_imported_named_selection
       - tests/integration/test_body_selection.py::*
+      - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
+      - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards
@@ -433,9 +445,13 @@ backends:
   - version: "25.2"
     incompatible_tests:
       # Model used is too new for this version
+      - tests/integration/test_plotter.py::test_plot_highlight_bracket_face_selection
       - tests/integration/test_design.py::test_import_component_named_selections
       - tests/integration/test_body_selection.py::*
+      - tests/integration/test_face_selection.py::*
+      - tests/integration/test_edge_selection.py::*
       - tests/integration/test_repair_tools.py::test_find_bad_faces
+      - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Components and vertex only available on 26.1 onwards
       - tests/integration/test_design.py::test_named_selection_contents
       - tests/integration/test_design.py::test_named_selections_components
@@ -525,3 +541,5 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # Datum lines not supported until 27.1
+      - tests/integration/test_datum_lines.py::test_import_datum_lines

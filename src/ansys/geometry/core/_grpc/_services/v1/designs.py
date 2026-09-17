@@ -504,6 +504,14 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
                 "parent_id": datum_point.parent_id.id,
             }
 
+        def serialize_datum_line(datum_line):
+            return {
+                "id": datum_line.id.id,
+                "name": datum_line.name,
+                "line": from_grpc_curve_to_curve(datum_line.line),
+                "parent_id": datum_line.parent_id.id,
+            }
+
         parts = getattr(response, "parts", [])
         transformed_parts = getattr(response, "transformed_parts", [])
         bodies = getattr(response, "bodies", [])
@@ -525,6 +533,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             if dc.length.value_in_geometry_units != 0
         ]
         datum_points = getattr(response, "datum_points", [])
+        datum_lines = getattr(response, "datum_lines", [])
         return {
             "parts": [serialize_part(part) for part in parts] if len(parts) > 0 else [],
             "transformed_parts": [serialize_transformed_part(tp) for tp in transformed_parts],
@@ -543,4 +552,5 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             "datum_planes": [serialize_datum_plane(dp) for dp in datum_planes],
             "design_curves": [serialize_design_curve(dc) for dc in design_curves],
             "datum_points": [serialize_datum_point(dp) for dp in datum_points],
+            "datum_lines": [serialize_datum_line(dl) for dl in datum_lines],
         }

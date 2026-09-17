@@ -152,6 +152,9 @@ WARN = logging.WARN
 ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
+# Default level for the global LOG instance
+LOG_DEFAULT_LEVEL = logging.ERROR
+
 ## Formatting
 
 STDOUT_MSG_FORMAT = "%(levelname)s - %(instance_name)s -  %(module)s - %(funcName)s - %(message)s"
@@ -651,7 +654,7 @@ def add_stdout_handler(logger, level=LOG_LEVEL, write_headers=False):
 # Finally define logger
 # ===============================================================
 
-LOG = Logger(level=logging.WARNING, to_file=False, to_stdout=True)
+LOG = Logger(level=LOG_DEFAULT_LEVEL, to_file=False, to_stdout=True)
 LOG.debug("Loaded logging module as LOG")
 
 # For documentation build

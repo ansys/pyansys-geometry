@@ -42,6 +42,7 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
 from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
@@ -64,6 +65,7 @@ from ansys.geometry.core.misc.checks import (
     deprecated_method,
     ensure_design_is_active,
     min_backend_version,
+    usd_required,
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
@@ -787,6 +789,134 @@ class Design(Component):
 
         # Return the file location
         return file_location
+
+    @ensure_design_is_active
+    @usd_required
+    def export_to_usd(
+        self,
+        location: Path | str | None = None,
+        tess_options: TessellationOptions | None = None,
+        file_format: str = "usda",
+    ) -> Path:
+        """Export the design tessellation to a USD file.
+
+        Tessellates all bodies in the design and writes them to a Universal Scene
+        Description (USD) file. The export preserves the full component/body hierarchy,
+        mesh geometry, and per-body color as a ``UsdPreviewSurface`` material.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str | None, default: None
+            Output directory. If ``None``, the file is saved in the current working
+            directory using the design name as the filename.
+        tess_options : TessellationOptions | None, default: None
+            Tessellation quality options. If ``None``, the server default is used.
+        file_format : str, default: ``"usda"``
+            USD file format. One of:
+
+            - ``"usda"`` — USD ASCII (human-readable)
+            - ``"usdc"`` — USD binary crate (compact)
+            - ``"usdz"`` — USD zip archive (self-contained)
+            - ``"usd"`` — auto-detect (usd-core chooses binary or ASCII)
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the saved USD file.
+
+        Raises
+        ------
+        ImportError
+            If ``usd-core`` is not installed.
+            Install with: ``pip install ansys-geometry-core[usd]``.
+        ~ansys.geometry.core.errors.GeometryRuntimeError
+            If ``file_format`` is not one of the valid values.
+
+        Examples
+        --------
+        Export to binary USD in a specific directory:
+
+        >>> path = design.export_to_usd("output/", file_format="usdc")
+        """
+        from ansys.geometry.core.plotting.usd_export import (
+            _validate_usd_format as _usd_validate_format,
+            export_design_to_usd as _export_to_usd_impl,
+        )
+
+        _usd_validate_format(file_format)
+        file_location = self.__build_export_file_location(location, file_format)
+        _export_to_usd_impl(self, file_location, tess_options)
+        return file_location
+
+    @ensure_design_is_active
+    @usd_required
+    def export_to_html(
+        self,
+        location: Path | str | None = None,
+        tess_options: TessellationOptions | None = None,
+        show_mesh_lines: bool = True,
+        line_color: str = "#ffffff",
+        line_opacity: float = 0.9,
+    ) -> Path:
+        """Export the design directly to a self-contained HTML viewer.
+
+        Tessellates all bodies in the design, builds an in-memory USD stage, and
+        converts it to a Three.js HTML viewer in a single step — no intermediate
+        USD file is written to disk.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str | None, default: None
+            Output directory. If ``None``, the file is saved in the current working
+            directory using the design name as the filename.
+        tess_options : TessellationOptions | None, default: None
+            Tessellation quality options. If ``None``, the server default is used.
+        show_mesh_lines : bool, default: True
+            When ``True``, injects a wireframe overlay over each mesh in the viewer.
+        line_color : str, default: ``"#ffffff"``
+            CSS hex color for the mesh-edge overlay.
+        line_opacity : float, default: ``0.9``
+            Opacity of the mesh-edge overlay (``0.0``–``1.0``).
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the saved HTML file.
+
+        Raises
+        ------
+        ImportError
+            If ``usd-core`` or ``ansys-tools-visualization-interface[usd]`` is not installed.
+            Install both with: ``pip install ansys-geometry-core[usd]``.
+
+        Examples
+        --------
+        Export to a specific directory without the wireframe overlay:
+
+        >>> html_path = design.export_to_html("output/", show_mesh_lines=False)
+        """
+        from ansys.geometry.core.plotting.usd_export import _build_stage
+
+        stage = _build_stage(self, tess_options)
+
+        try:
+            from ansys.tools.visualization_interface import export_usd_to_html
+        except ImportError as e:
+            raise ImportError(
+                "The 'ansys-tools-visualization-interface' package with the 'usd' extra "
+                "is required for HTML export. "
+                "Install it with: pip install ansys-geometry-core[usd]"
+            ) from e
+
+        html_location = self.__build_export_file_location(location, "html")
+        html_location.parent.mkdir(parents=True, exist_ok=True)
+        return export_usd_to_html(
+            stage,
+            html_location,
+            show_mesh_lines=show_mesh_lines,
+            line_color=line_color,
+            line_opacity=line_opacity,
+        )
 
     @check_input_types
     @ensure_design_is_active
@@ -1599,6 +1729,19 @@ class Design(Component):
             # Append the datum point to the component to which it belongs
             created_dp.parent_component._datum_points.append(created_dp)
 
+        # Create Datum Lines - only available for 27r1 and later
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            for dl in response.get("datum_lines", []):
+                created_dl = DatumLine(
+                    dl.get("id"),
+                    dl.get("name"),
+                    dl.get("line"),
+                    created_components.get(dl.get("parent_id"), self),
+                )
+
+                # Append the datum line to the component to which it belongs
+                created_dl.parent_component._datum_lines.append(created_dl)
+
         end = time.time()
 
         # Set SharedTopology
@@ -1651,6 +1794,7 @@ class Design(Component):
         self._coordinate_systems = []
         self._datum_planes = []
         self._datum_points = []
+        self._datum_lines = []
         self._design_curves = []
         self._design_points = []
         self._beam_profiles = {}

@@ -172,7 +172,7 @@ development version or previously released versions.
 
 On the `PyAnsys Geometry Issues <https://github.com/ansys/pyansys-geometry/issues>`_ page,
 you can create issues to report bugs and request new features. On the `PyAnsys Geometry Discussions
-<https://github.com/ansys/pyansys-geometry/discussions>`_ page or the `Discussions <https://discuss.ansys.com/>`_
+<https://github.com/ansys/pyansys-geometry/discussions>`_ page or the `Discussions <https://developerforum.synopsys.com/>`_
 page on the Ansys Developer portal, you can post questions, share ideas, and get community feedback.
 
 To reach the project support team, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_.

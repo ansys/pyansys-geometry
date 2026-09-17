@@ -32,6 +32,7 @@ import socket
 # the input is controlled by the library. Excluding bandit check.
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
+import uuid
 
 from ansys.tools.common.cyberchannel import verify_transport_mode, verify_uds_socket
 from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
@@ -185,7 +186,7 @@ class ProductInstance:
 
 def prepare_and_start_backend(
     backend_type: BackendType,
-    version: str | int = None,
+    version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
     enable_trace: bool = False,
@@ -681,9 +682,12 @@ def _manifest_path_provider(
                 "Specified manifest file's path does not exist. Taking install default path."
             )
 
-    # Default manifest path
+    # Starting with 2027 R1, Discovery's add-ins are installed under its product folder.
+    def_addins_folder = (
+        Path(DISCOVERY_FOLDER, ADDINS_SUBFOLDER) if version >= 271 else Path(ADDINS_SUBFOLDER)
+    )
     def_manifest_path = Path(
-        available_installations[version], ADDINS_SUBFOLDER, BACKEND_SUBFOLDER, MANIFEST_FILENAME
+        available_installations[version], def_addins_folder, BACKEND_SUBFOLDER, MANIFEST_FILENAME
     )
 
     if def_manifest_path.exists():
@@ -909,6 +913,10 @@ def _handle_transport_mode(
         # If the folder does not exist, create it
         uds_dir.mkdir(parents=True, exist_ok=True)
 
+        # Assign a unique id if none was provided
+        if uds_id is None:
+            uds_id = str(uuid.uuid4())
+
         # Verify that the UDS file doesn't already exist
         if verify_uds_socket("aposdas_socket", uds_dir, uds_id) is True:
             raise RuntimeError("UDS socket file already exists.")
@@ -916,8 +924,7 @@ def _handle_transport_mode(
         # Determine args to be passed to the backend
         exe_args.append(f"--transport-mode={transport_mode}")
         exe_args.append(f"--uds-dir={uds_dir.resolve().as_posix()}")
-        if uds_id is not None:
-            exe_args.append(f"--uds-id={uds_id}")
+        exe_args.append(f"--uds-id={uds_id}")
 
     elif transport_mode == "wnua":
         # WNUA is only available on Windows for localhost connections

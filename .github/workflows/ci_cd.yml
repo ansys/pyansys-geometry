@@ -38,7 +38,7 @@ jobs:
       contents: write # Required to create the changelog on the release branch
       pull-requests: write # Required to create on main the associated PR with the changelog
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+      - uses: ansys/actions/doc-deploy-changelog@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -48,7 +48,7 @@ jobs:
     name: Vulnerabilities
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-vulnerabilities@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+      - uses: ansys/actions/check-vulnerabilities@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           python-package-name: ${{ env.PACKAGE_NAME }}
@@ -59,7 +59,7 @@ jobs:
     name: Actions Security
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/check-actions-security@main
+      - uses: ansys/actions/check-actions-security@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           generate-summary: true
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check commit name
-        uses: ansys/actions/check-pr-title@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/check-pr-title@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/doc-style@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/doc-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,7 +100,7 @@ jobs:
             os: macos-latest
     steps:
       - name: Build wheelhouse and perform smoke test
-        uses: ansys/actions/build-wheelhouse@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/build-wheelhouse@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           operating-system: ${{ matrix.os }}
@@ -112,7 +112,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PyAnsys documentation style checks
-        uses: ansys/actions/docker-style@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/docker-style@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           directory: docker
           recursive: true
@@ -136,7 +136,7 @@ jobs:
             service-name: "Linux Core Service"
     steps:
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -217,30 +217,44 @@ jobs:
           Write-Output "SKIP_UNSTABLE=$Result" | Out-File -FilePath $env:GITHUB_ENV -Append
           Write-Output "SKIP_UNSTABLE will be: $Result"
 
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         if: env.SKIP_UNSTABLE == 'false'
         with:
           persist-credentials: false
 
       - name: Setup UV
         if: env.SKIP_UNSTABLE == 'false'
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Install packages for testing
         if: env.SKIP_UNSTABLE == 'false'
         run: uv sync --group tests
 
+      - name: Ensure Docker service is running
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          $maxRetries = 6
+          for ($i = 1; $i -le $maxRetries; $i++) {
+            Start-Service docker -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 10
+            if ((docker info 2>&1 | Out-String) -notmatch 'error') { break }
+            if ($i -eq $maxRetries) { Write-Error "Docker failed to start after $maxRetries attempts"; exit 1 }
+            Write-Host "Docker not ready yet (attempt $i/$maxRetries), retrying..."
+          }
+          Write-Host "Docker is ready"
+
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -282,7 +296,6 @@ jobs:
 
       - name: Testing
         if: env.SKIP_UNSTABLE == 'false'
-        timeout-minutes: 20 # Sometimes hangs...
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: uv run pytest -v --use-tracker=$env:USE_TRACKER
@@ -336,10 +349,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -353,10 +366,10 @@ jobs:
           docker run --detach --name ${GEO_CONT_NAME} -e LICENSE_SERVER=${ANSRV_GEO_LICENSE_SERVER} -p ${ANSRV_GEO_PORT}:50051 ${ANSRV_GEO_IMAGE_DOCS_TAG} ${TRANSPORT_MODE_SELECTION}
 
       - name: Run Ansys documentation building action
-        uses: ansys/actions/doc-build@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/doc-build@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-          add-pdf-html-docs-as-assets: true
+          add-pdf-html-docs-as-assets: false
           needs-quarto: false
           dependencies: 'pandoc texlive-xetex texlive-fonts-recommended texlive-fonts-extra texlive-latex-extra texlive-science
             texlive-luatex lmodern latexmk'
@@ -379,7 +392,7 @@ jobs:
       contents: write # Needed to update files on the gh-pages branch
       pull-requests: write # Needed to create deployment comments on PRs
     steps:
-      - uses: ansys/actions/doc-deploy-pr@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+      - uses: ansys/actions/doc-deploy-pr@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
@@ -440,11 +453,11 @@ jobs:
 
       - name: Set up headless display
         if: env.SKIP_UNSTABLE == 'false'
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Login in Github Container registry
         if: env.SKIP_UNSTABLE == 'false'
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -462,7 +475,7 @@ jobs:
 
       - name: Checkout repository
         if: env.SKIP_UNSTABLE == 'false'
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -483,7 +496,7 @@ jobs:
 
       - name: Run pytest
         if: env.SKIP_UNSTABLE == 'false'
-        uses: ansys/actions/tests-pytest@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/tests-pytest@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
           ALLOW_PLOTTING: true
         with:
@@ -539,26 +552,27 @@ jobs:
         python-version: ['3.12', '3.13', '3.14']
     steps:
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Login in Github Container registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup UV
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ matrix.python-version }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Install minimum requirements
         run: uv sync --extra all --group tests-minimal
@@ -598,19 +612,19 @@ jobs:
         python-version: ['3.12', '3.14']
     steps:
       - name: Login in Github Container registry
-        uses: docker/login-action@af1e73f918a031802d376d3c8bbc3fe56130a9b0 # v4.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -656,7 +670,7 @@ jobs:
       id-token: write # Required for OIDC authentication to upload provenance attestations
     steps:
       - name: Build library source and wheel artifacts
-        uses: ansys/actions/build-library@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/build-library@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           library-name: ${{ env.PACKAGE_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -678,7 +692,7 @@ jobs:
 
     steps:
       - name: Check out repository pyansys-geometry-binaries
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: 'ansys/pyansys-geometry-binaries'
           token: ${{ secrets.BINARIES_TOKEN }}
@@ -757,15 +771,15 @@ jobs:
             zip-file: "windows-core-binaries.zip"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -780,7 +794,7 @@ jobs:
         env:
           BUILD_MODE: ${{ matrix.mode }}
         run: |
-          docker build -f windows/$env:BUILD_MODE/Dockerfile -t ghcr.io/ansys/geometry:windows-tmp .
+          docker build -f windows/$env:BUILD_MODE/Dockerfile.net10 -t ghcr.io/ansys/geometry:windows-tmp .
 
       - name: Check location of self-hosted runner and define license server accordingly
         if: runner.name == 'pygeometry-ci-2'
@@ -821,15 +835,32 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
+        id: pytest
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs on cleanup after all tests pass
+        continue-on-error: true
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v --use-existing-service=yes
+          pytest -v --use-existing-service=yes --junit-xml=test-results.xml
+
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          if (-not (Test-Path test-results.xml)) {
+            Write-Error "No test results found - pytest was killed before writing results"
+            exit 1
+          }
+          $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          if (($failures + $errors) -gt 0) {
+            Write-Error "$failures failures and $errors errors found"
+            exit 1
+          }
+          Write-Output "No test failures found - step likely timed out during cleanup"
 
       - name: "Compressing Windows Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
-          files: docker/windows/${{ matrix.mode }}/Dockerfile
+          files: docker/windows/${{ matrix.mode }}/Dockerfile.net10
           dest: ${{ matrix.docker-file }}
 
       - name: Upload Windows Dockerfile
@@ -871,19 +902,20 @@ jobs:
     needs: [fetch-release-artifacts]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup UV
-        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Download Linux binaries
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -894,7 +926,7 @@ jobs:
       - name: Build Docker image
         working-directory: docker
         run: |
-          docker build -f linux/coreservice/Dockerfile -t ghcr.io/ansys/geometry:linux-tmp .
+          docker build -f linux/coreservice/Dockerfile.net10 -t ghcr.io/ansys/geometry:linux-tmp .
 
       - name: Install test dependencies
         run: uv sync --group tests
@@ -920,7 +952,7 @@ jobs:
           lookup-only: false # zizmor: ignore[cache-poisoning]
 
       - name: Run pytest
-        uses: ansys/actions/tests-pytest@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/tests-pytest@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         env:
           ALLOW_PLOTTING: true
         with:
@@ -928,12 +960,13 @@ jobs:
           pytest-extra-args: "--use-existing-service=yes"
           checkout: false
           randomize: true
+          group-dependencies-name: "tests"
           skip-install: true
 
       - name: "Compressing Linux Dockerfile"
         uses: vimtor/action-zip@5407800dfb2b1b37d48df912330cb22f4ab6f422 # v1.3
         with:
-          files: docker/linux/coreservice/Dockerfile
+          files: docker/linux/coreservice/Dockerfile.net10
           dest: linux-core-dockerfile.zip
 
       - name: Upload Linux Dockerfile
@@ -962,7 +995,7 @@ jobs:
       contents: write # Required for GitHub release
     steps:
       - name: Release to GitHub
-        uses: ansys/actions/release-github@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/release-github@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           library-name: ${{ env.PACKAGE_NAME }}
@@ -988,7 +1021,7 @@ jobs:
           path: ${{ env.PACKAGE_NAME }}-artifacts
 
       - name: "Upload artifacts to PyPI using trusted publisher"
-        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
           repository-url: "https://upload.pypi.org/legacy/"
           print-hash: true
@@ -1004,7 +1037,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the latest documentation
-        uses: ansys/actions/doc-deploy-dev@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/doc-deploy-dev@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -1020,7 +1053,7 @@ jobs:
       contents: write # Required to push to the documentation branch (gh-pages)
     steps:
       - name: Deploy the stable documentation
-        uses: ansys/actions/doc-deploy-stable@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/doc-deploy-stable@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
@@ -1037,7 +1070,7 @@ jobs:
       pull-requests: write # Required to allow automerge
     steps:
       - name: Automerge PRs
-        uses: ansys/actions/hk-automerge-prs@84b6533ae76f5dde69a1df26c18682160a8121cf # v10.3.5
+        uses: ansys/actions/hk-automerge-prs@7410037bfb276c79ae91eb3617b9f5d2876f0c94 # v11.0.8
         with:
           approver: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
           approver-token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}

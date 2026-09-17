@@ -92,6 +92,16 @@ class Edge:
         self._is_reversed = is_reversed
         self._shape = None
 
+    def __eq__(self, other: "Edge") -> bool:
+        """Return ``True`` when both edges share the same ID."""
+        if not isinstance(other, Edge):
+            return NotImplemented
+        return self._id == other._id
+
+    def __hash__(self) -> int:
+        """Hash based on the edge ID."""
+        return hash(self._id)
+
     @property
     def id(self) -> str:
         """ID of the edge."""
