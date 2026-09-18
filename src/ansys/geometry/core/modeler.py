@@ -636,29 +636,6 @@ class Modeler:
         else:
             return response.get("values"), None
 
-    @deprecated_method(
-        alternative="run_script_file",
-        version="0.15.2",
-        remove="0.17.0",
-    )
-    def run_discovery_script_file(
-        self,
-        file_path: str | Path,
-        script_args: dict[str, str] | None = None,
-        import_design: bool = False,
-        api_version: int | str | ApiVersions | None = None,
-    ) -> tuple[dict[str, str], Optional["Design"]]:
-        """Run a script file.
-
-        This is a deprecated method. Use ``run_script_file()`` instead.
-        """
-        return self.run_script_file(
-            file_path=file_path,
-            script_args=script_args,
-            import_design=import_design,
-            api_version=api_version,
-        )
-
     @property
     def repair_tools(self) -> RepairTools:
         """Access to repair tools."""
