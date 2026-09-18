@@ -40,6 +40,7 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
     deprecated_argument,
+    deprecated_method,
     kwargs_passed_not_accepted,
 )
 
@@ -522,7 +523,154 @@ def launch_modeler_with_spaceclaim_and_pimlight(
 
 
 @kwargs_passed_not_accepted
+@deprecated_method(
+    "launch_modeler_with_dms",
+    "use launch_modeler_with_dms instead",
+    "0.17.2",
+    "0.19.0"
+)
 def launch_modeler_with_geometry_service(
+    version: str | int | None = None,
+    host: str = "localhost",
+    port: int = None,
+    enable_trace: bool = False,
+    timeout: int = 60,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
+    proto_version: str = None,
+    **kwargs: dict | None,
+) -> "Modeler":
+    """Start the Geometry service locally using the ``ProductInstance`` class.
+    
+    When calling this method, a standalone Geometry service is started.
+    By default, if an endpoint is specified (by defining `host` and `port` parameters)
+    but the endpoint is not available, the startup will fail. Otherwise, it will try to
+    launch its own service.
+    
+    Parameters
+    ----------
+    version: str | int, optional
+        The product version to be started. Goes from v24.1 to
+        the latest. Default is ``None``.
+        If a specific product version is requested but not installed locally,
+        a SystemError will be raised.
+    
+        **Ansys products versions and their corresponding int values:**
+    
+        * ``241`` : Ansys 24R1
+        * ``242`` : Ansys 24R2
+    host: str, optional
+        IP address at which the Geometry service will be deployed. By default,
+        its value will be ``localhost``.
+    port : int, optional
+        Port at which the Geometry service will be deployed. By default, its
+        value will be ``None``.
+    enable_trace : bool, optional
+        Boolean enabling the logs trace on the Geometry service console window.
+        By default its value is ``False``.
+    timeout : int, optional
+        Timeout for starting the backend startup process. The default is 60.
+    server_log_level : int, optional
+        Backend's log level from 0 to 3:
+            0: Chatterbox
+            1: Debug
+            2: Warning
+            3: Error
+    
+        The default is ``2`` (Warning).
+    client_log_level : int, optional
+        Logging level to apply to the client. By default, INFO level is used.
+        Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+    server_logs_folder : str, optional
+        Sets the backend's logs folder path. If nothing is defined,
+        the backend will use its default path.
+    client_log_file : str, optional
+        Sets the client's log file path. If nothing is defined,
+        the client will log to the console.
+    server_working_dir : str | Path, optional
+        Sets the working directory for the product instance. If nothing is defined,
+        the working directory will be inherited from the parent process.
+    transport_mode : str | None
+        Transport mode selected, by default `None` and thus it will be selected
+        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
+    uds_dir : Path | str | None
+        Directory to use for Unix Domain Sockets (UDS) transport mode.
+        By default `None` and thus it will use the "~/.conn" folder.
+    uds_id : str | None
+        Optional ID to use for the UDS socket filename.
+        By default `None` and thus it will use "aposdas_socket.sock".
+        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
+    certs_dir : Path | str | None
+        Directory to use for TLS certificates.
+        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
+        If not found, it will use the "certs" folder assuming it is in the current working
+        directory.
+    proto_version : str, default: None
+        The version of the gRPC API protocol to use. If None, the latest
+        version supported by the server will be used. Options are "v0" and "v1".
+    **kwargs : dict, default: None
+        Placeholder to prevent errors when passing additional arguments that
+        are not compatible with this method.
+    
+    Returns
+    -------
+    Modeler
+        Instance of the Geometry service.
+    
+    Raises
+    ------
+    ConnectionError
+        If the specified endpoint is already in use, a connection
+        error will be raised.
+    SystemError
+        If there is not an Ansys product 24.1 version or later installed
+        a SystemError will be raised.
+    
+    Examples
+    --------
+    Starting a geometry service with the default parameters and getting back a ``Modeler``
+    object:
+    
+    >>> from ansys.geometry.core import launch_modeler_with_geometry_service
+    >>> modeler = launch_modeler_with_geometry_service()
+    
+    Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
+    logs, traces enabled and a ``300`` seconds timeout:
+    
+    >>> from ansys.geometry.core import launch_modeler_with_geometry_service
+    >>> modeler = launch_modeler_with_geometry_service(host="10.171.22.44",
+        port=5001,
+        enable_trace= True,
+        timeout=300,
+        server_log_level=0)
+    """
+    return launch_modeler_with_dms(
+        version=version,
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        timeout=timeout,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
+        proto_version=proto_version,
+        **kwargs,
+    )
+
+def launch_modeler_with_dms(
     version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
