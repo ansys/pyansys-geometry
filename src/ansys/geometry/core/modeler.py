@@ -34,7 +34,7 @@ from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
-from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools

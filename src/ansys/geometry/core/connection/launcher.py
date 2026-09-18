@@ -524,10 +524,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(
 
 @kwargs_passed_not_accepted
 @deprecated_method(
-    "launch_modeler_with_dms",
-    "use launch_modeler_with_dms instead",
-    "0.17.2",
-    "0.19.0"
+    "launch_modeler_with_dms", "use launch_modeler_with_dms instead", "0.17.2", "0.19.0"
 )
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
@@ -548,7 +545,7 @@ def launch_modeler_with_geometry_service(
     **kwargs: dict | None,
 ) -> "Modeler":
     """Start the Geometry service locally using the ``ProductInstance`` class.
-    
+
     This is a deprecated method. Use ``launch_modeler_with_dms()`` instead.
     """
     return launch_modeler_with_dms(
@@ -569,6 +566,7 @@ def launch_modeler_with_geometry_service(
         proto_version=proto_version,
         **kwargs,
     )
+
 
 def launch_modeler_with_dms(
     version: str | int | None = None,

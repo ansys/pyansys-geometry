@@ -62,7 +62,6 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
     check_input_types,
-    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
     usd_required,
