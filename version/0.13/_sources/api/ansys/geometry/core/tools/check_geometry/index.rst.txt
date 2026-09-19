@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``check_geometry.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.tools.check_geometry
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: check_geometry
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.check_geometry.GeometryIssue`
+            - Provides return message for the repair tool methods.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.check_geometry.InspectResult`
+            - Provides the result of the inspect geometry operation.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GeometryIssue</api/ansys/geometry/core/tools/check_geometry/GeometryIssue>
+    <span class="nf nf-cod-symbol_class"></span> InspectResult</api/ansys/geometry/core/tools/check_geometry/InspectResult>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for repair tool message.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

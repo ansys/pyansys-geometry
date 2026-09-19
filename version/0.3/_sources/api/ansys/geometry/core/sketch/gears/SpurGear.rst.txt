@@ -1,0 +1,341 @@
+
+
+
+
+SpurGear
+========
+
+.. py:class:: SpurGear(origin: ansys.geometry.core.math.point.Point2D, module: ansys.geometry.core.typing.Real, pressure_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real], n_teeth: int)
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear
+
+
+
+Bases: :py:obj:`Gear`
+
+Provides the class for sketching spur gears.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: SpurGear
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the spur gear.
+          * - :py:attr:`~module`
+            - Module of the spur gear.
+          * - :py:attr:`~pressure_angle`
+            - Pressure angle of the spur gear.
+          * - :py:attr:`~n_teeth`
+            - Number of teeth of the spur gear.
+          * - :py:attr:`~ref_diameter`
+            - Reference diameter of the spur gear.
+          * - :py:attr:`~base_diameter`
+            - Base diameter of the spur gear.
+          * - :py:attr:`~addendum`
+            - Addendum of the spur gear.
+          * - :py:attr:`~dedendum`
+            - Dedendum of the spur gear.
+          * - :py:attr:`~tip_diameter`
+            - Tip diameter of the spur gear.
+          * - :py:attr:`~root_diameter`
+            - Root diameter of the spur gear.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.gears import SpurGear
+
+
+Property detail
+---------------
+.. py:property:: origin
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.origin
+   :type: Point2D
+
+
+   
+   Origin of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: module
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.module
+   :type: Real
+
+
+   
+   Module of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: pressure_angle
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.pressure_angle
+   :type: pint.Quantity
+
+
+   
+   Pressure angle of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: n_teeth
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.n_teeth
+   :type: int
+
+
+   
+   Number of teeth of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: ref_diameter
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.ref_diameter
+   :type: Real
+
+
+   
+   Reference diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: base_diameter
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.base_diameter
+   :type: Real
+
+
+   
+   Base diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: addendum
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.addendum
+   :type: Real
+
+
+   
+   Addendum of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dedendum
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.dedendum
+   :type: Real
+
+
+   
+   Dedendum of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: tip_diameter
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.tip_diameter
+   :type: Real
+
+
+   
+   Tip diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: root_diameter
+   :canonical: ansys.geometry.core.sketch.gears.SpurGear.root_diameter
+   :type: Real
+
+
+   
+   Root diameter of the spur gear.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

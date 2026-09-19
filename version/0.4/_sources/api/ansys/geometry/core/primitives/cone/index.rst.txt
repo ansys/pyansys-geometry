@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``cone.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.primitives.cone
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: cone
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Cone`
+            - Provides 3D cone representation.
+
+
+          * - :py:attr:`~ConeEvaluation`
+            - Evaluate the cone at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Cone<Cone>
+    🝆 ConeEvaluation<ConeEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a cone.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

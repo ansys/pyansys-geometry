@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`ParamType`
+==================
+
+
+.. py:class:: ansys.geometry.core.shapes.parameterization.ParamType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   ParamType enum class that defines the type of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ParamType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~LINEAR`
+            - 
+          * - :py:attr:`~CIRCULAR`
+            - 
+          * - :py:attr:`~OTHER`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.parameterization import ParamType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: LINEAR
+   :value: 1
+
+
+.. py:attribute:: CIRCULAR
+   :value: 2
+
+
+.. py:attribute:: OTHER
+   :value: 3
+
+
+
+
+
+

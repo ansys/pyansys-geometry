@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``circle.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.shapes.curves.circle
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: circle
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.circle.Circle`
+            - Provides 3D circle representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.circle.CircleEvaluation`
+            - Provides evaluation of a circle at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Circle</api/ansys/geometry/core/shapes/curves/circle/Circle>
+    <span class="nf nf-cod-symbol_class"></span> CircleEvaluation</api/ansys/geometry/core/shapes/curves/circle/CircleEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a circle.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

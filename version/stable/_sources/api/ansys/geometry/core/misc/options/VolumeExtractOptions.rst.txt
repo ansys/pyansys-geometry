@@ -1,0 +1,291 @@
+
+
+
+
+
+
+:class:`VolumeExtractOptions`
+=============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.VolumeExtractOptions(create_shared_topology: bool | None = None, imprint_capping_edges: bool | None = None, merge_created_volume: bool | None = None, seed_point: ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation | None = None, tolerance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real | None = None, create_capping_surfaces: bool | None = None, detect_leaks: bool | None = None)
+
+   
+   Provides options for volume extraction.
+
+
+   :Parameters:
+
+       **create_shared_topology** : :ref:`bool <python:bltin-boolean-values>` | :data:`python:None`, default: :data:`python:None`
+           Create shared topology between capping surfaces and the seed body.
+
+       **imprint_capping_edges** : :ref:`bool <python:bltin-boolean-values>` | :data:`python:None`, default: :data:`python:None`
+           Imprint capping edges onto the seed body.
+
+       **merge_created_volume** : :ref:`bool <python:bltin-boolean-values>` | :data:`python:None`, default: :data:`python:None`
+           Merge the created volume into the existing model.
+
+       **seed_point** : :obj:`SurfaceEvaluation` | :data:`python:None`, default: :data:`python:None`
+           Seed point on the surface from which to extract the volume.
+
+       **tolerance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real` | :data:`python:None`, default: :data:`python:None`
+           Tolerance for volume extraction.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **create_capping_surfaces** : :ref:`bool <python:bltin-boolean-values>` | :data:`python:None`, default: :data:`python:None`
+           Create capping surfaces to close open regions.
+
+       **detect_leaks** : :ref:`bool <python:bltin-boolean-values>` | :data:`python:None`, default: :data:`python:None`
+           Detect leaks in the model before extraction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: VolumeExtractOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_shared_topology`
+            - Create shared topology.
+          * - :py:attr:`~imprint_capping_edges`
+            - Imprint capping edges.
+          * - :py:attr:`~merge_created_volume`
+            - Merge created volume.
+          * - :py:attr:`~seed_point`
+            - Seed point.
+          * - :py:attr:`~tolerance`
+            - Tolerance.
+          * - :py:attr:`~create_capping_surfaces`
+            - Create capping surfaces.
+          * - :py:attr:`~detect_leaks`
+            - Detect leaks.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import VolumeExtractOptions
+
+Property detail
+---------------
+
+.. py:property:: create_shared_topology
+   :type: bool | None
+
+
+   
+   Create shared topology.
+
+   Create shared topology between capping surfaces and the seed body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: imprint_capping_edges
+   :type: bool | None
+
+
+   
+   Imprint capping edges.
+
+   Imprint capping edges onto the seed body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: merge_created_volume
+   :type: bool | None
+
+
+   
+   Merge created volume.
+
+   Merge the created volume into the existing model.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: seed_point
+   :type: ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation | None
+
+
+   
+   Seed point.
+
+   Seed point on the surface from which to extract the volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: tolerance
+   :type: ansys.geometry.core.misc.measurements.Distance | None
+
+
+   
+   Tolerance.
+
+   Tolerance for volume extraction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: create_capping_surfaces
+   :type: bool | None
+
+
+   
+   Create capping surfaces.
+
+   Create capping surfaces to close open regions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: detect_leaks
+   :type: bool | None
+
+
+   
+   Detect leaks.
+
+   Detect leaks in the model before extraction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

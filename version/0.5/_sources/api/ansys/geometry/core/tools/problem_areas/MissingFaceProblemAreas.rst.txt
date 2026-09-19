@@ -1,0 +1,143 @@
+
+
+:class:`MissingFaceProblemAreas`
+================================
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.MissingFaceProblemAreas(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient, edges: beartype.typing.List[ansys.geometry.core.designer.edge.Edge])
+
+   Bases: :py:obj:`ProblemArea`
+
+
+   
+   Provides missing face problem area definition.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **edges** : :obj:`List`\[:obj:`Edge`]
+           List of edges associated with the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MissingFaceProblemAreas
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix the problem area.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~edges`
+            - The list of the edges connected to this problem area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import MissingFaceProblemAreas
+
+Property detail
+---------------
+.. py:property:: edges
+   :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+   
+   The list of the edges connected to this problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+    
+
+Method detail
+-------------
+.. py:method:: fix() -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Fix the problem area.
+
+
+
+   :Returns:
+
+       message: :obj:`RepairToolMessage`
+           Message containing created and/or modified bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

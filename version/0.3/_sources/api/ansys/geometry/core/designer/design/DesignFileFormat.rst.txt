@@ -1,0 +1,116 @@
+
+
+
+
+DesignFileFormat
+================
+
+.. py:class:: DesignFileFormat
+   :canonical: ansys.geometry.core.designer.design.DesignFileFormat
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides supported file formats that can be downloaded for designs.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: DesignFileFormat
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~SCDOCX`
+            - 
+          * - :py:attr:`~PARASOLID_TEXT`
+            - 
+          * - :py:attr:`~PARASOLID_BIN`
+            - 
+          * - :py:attr:`~FMD`
+            - 
+          * - :py:attr:`~STEP`
+            - 
+          * - :py:attr:`~IGES`
+            - 
+          * - :py:attr:`~PMDB`
+            - 
+          * - :py:attr:`~INVALID`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.design import DesignFileFormat
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: SCDOCX
+   :value: ('SCDOCX', None)
+
+   
+
+.. py:attribute:: PARASOLID_TEXT
+   :value: ('PARASOLID_TEXT',)
+
+   
+
+.. py:attribute:: PARASOLID_BIN
+   :value: ('PARASOLID_BIN',)
+
+   
+
+.. py:attribute:: FMD
+   :value: ('FMD',)
+
+   
+
+.. py:attribute:: STEP
+   :value: ('STEP',)
+
+   
+
+.. py:attribute:: IGES
+   :value: ('IGES',)
+
+   
+
+.. py:attribute:: PMDB
+   :value: ('PMDB',)
+
+   
+
+.. py:attribute:: INVALID
+   :value: ('INVALID', None)
+
+   
+
+
+

@@ -1,0 +1,706 @@
+
+
+
+
+Plotter
+=======
+
+.. py:class:: Plotter(scene: beartype.typing.Optional[pyvista.Plotter] = None, color_opts: beartype.typing.Optional[beartype.typing.Dict] = None, num_points: int = 100, enable_widgets: bool = True)
+   :canonical: ansys.geometry.core.plotting.plotter.Plotter
+
+
+
+
+Provides for plotting sketches and bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Plotter
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~view_xy`
+            - View the scene from the XY plane.
+          * - :py:attr:`~view_xz`
+            - View the scene from the XZ plane.
+          * - :py:attr:`~view_yx`
+            - View the scene from the YX plane.
+          * - :py:attr:`~view_yz`
+            - View the scene from the YZ plane.
+          * - :py:attr:`~view_zx`
+            - View the scene from the ZX plane.
+          * - :py:attr:`~view_zy`
+            - View the scene from the ZY plane.
+          * - :py:attr:`~plot_frame`
+            - Plot a frame in the scene.
+          * - :py:attr:`~plot_plane`
+            - Plot a plane in the scene.
+          * - :py:attr:`~plot_sketch`
+            - Plot a sketch in the scene.
+          * - :py:attr:`~add_body_edges`
+            - Add the outer edges of a body to the plot.
+          * - :py:attr:`~add_body`
+            - Add a body to the scene.
+          * - :py:attr:`~add_component`
+            - Add a component to the scene.
+          * - :py:attr:`~add_sketch_polydata`
+            - Add sketches to the scene from PyVista polydata.
+          * - :py:attr:`~add`
+            - Add any type of object to the scene.
+          * - :py:attr:`~add_list`
+            - Add a list of any type of object to the scene.
+          * - :py:attr:`~show`
+            - Show the rendered scene on the screen.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~scene`
+            - Rendered scene object.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.plotter import Plotter
+
+
+Property detail
+---------------
+.. py:property:: scene
+   :canonical: ansys.geometry.core.plotting.plotter.Plotter.scene
+   :type: pyvista.plotting.plotter.Plotter
+
+
+   
+   Rendered scene object.
+
+
+
+   :Returns:
+
+       :obj:`~pyvista.Plotter`
+           Rendered scene object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: view_xy() -> None
+
+   
+   View the scene from the XY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: view_xz() -> None
+
+   
+   View the scene from the XZ plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: view_yx() -> None
+
+   
+   View the scene from the YX plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: view_yz() -> None
+
+   
+   View the scene from the YZ plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: view_zx() -> None
+
+   
+   View the scene from the ZX plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: view_zy() -> None
+
+   
+   View the scene from the ZY plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: plot_frame(frame: ansys.geometry.core.math.frame.Frame, plotting_options: beartype.typing.Optional[beartype.typing.Dict] = None) -> None
+
+   
+   Plot a frame in the scene.
+
+
+   :Parameters:
+
+       **frame** : :obj:`Frame`
+           Frame to render in the scene.
+
+       **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Dictionary containing parameters accepted by the
+           :func:`pyvista.create_axes_marker` class for customizing
+           the frame rendering in the scene.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: plot_plane(plane: ansys.geometry.core.math.plane.Plane, plane_options: beartype.typing.Optional[beartype.typing.Dict] = None, plotting_options: beartype.typing.Optional[beartype.typing.Dict] = None) -> None
+
+   
+   Plot a plane in the scene.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Plane to render in the scene.
+
+       **plane_options** : :class:`python:dict`, default: :data:`python:None`
+           Dictionary containing parameters accepted by the
+           :func:`pyvista.Plane  <pyvista.Plane>` function for customizing the mesh
+           representing the plane.
+
+       **plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Dictionary containing parameters accepted by the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method for
+           customizing the mesh rendering of the plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: plot_sketch(sketch: ansys.geometry.core.sketch.sketch.Sketch, show_plane: bool = False, show_frame: bool = False, **plotting_options: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+   
+   Plot a sketch in the scene.
+
+
+   :Parameters:
+
+       **sketch** : :obj:`Sketch`
+           Sketch to render in the scene.
+
+       **show_plane** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to render the sketch plane in the scene.
+
+       **show_frame** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to show the frame in the scene.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_body_edges(body_plot: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot, **plotting_options: beartype.typing.Optional[dict]) -> None
+
+   
+   Add the outer edges of a body to the plot.
+
+   This method has the side effect of adding the edges to the GeomObject that
+   you pass through the parameters.
+
+   :Parameters:
+
+       **body** : :obj:`GeomObjectPlot`
+           Body of which to add the edges.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_body(body: ansys.geometry.core.designer.body.Body, merge: beartype.typing.Optional[bool] = False, **plotting_options: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+   
+   Add a body to the scene.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to add.
+
+       **merge** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the body into a single mesh. When ``True``, the
+           individual faces of the tessellation are merged. This
+           preserves the number of triangles and only merges the topology.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments,
+           see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_component(component: ansys.geometry.core.designer.component.Component, merge_component: bool = False, merge_bodies: bool = False, **plotting_options) -> str
+
+   
+   Add a component to the scene.
+
+
+   :Parameters:
+
+       **component** : :obj:`Component`
+           Component to add.
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the component into a single dataset. When
+           ``True``, all the individual bodies are effectively combined
+           into a single dataset without any hierarchy.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge each body into a single dataset. When ``True``,
+           all the faces of each individual body are effectively combined
+           into a single dataset without separating faces.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+   :Returns:
+
+       :class:`python:str`
+           Name of the added PyVista actor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_sketch_polydata(polydata_entries: beartype.typing.List[pyvista.PolyData], **plotting_options) -> None
+
+   
+   Add sketches to the scene from PyVista polydata.
+
+
+   :Parameters:
+
+       **polydata** : :obj:`pyvista.PolyData`
+           Polydata to add.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add(object: beartype.typing.Any, merge_bodies: bool = False, merge_components: bool = False, filter: str = None, **plotting_options) -> beartype.typing.Dict[pyvista.Actor, ansys.geometry.core.plotting.plotting_types.GeomObjectPlot]
+
+   
+   Add any type of object to the scene.
+
+   These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+   ``pv.MultiBlock``, and ``Sketch``.
+
+   :Parameters:
+
+       **plotting_list** : :obj:`List`\[:obj:`Any`]
+           List of objects that you want to plot.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge each body into a single dataset. When ``True``,
+           all the faces of each individual body are effectively combined
+           into a single dataset without separating faces.
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the component into a single dataset. When
+           ``True``, all the individual bodies are effectively combined
+           into a single dataset without any hierarchy.
+
+       **filter** : :class:`python:str`, default: :data:`python:None`
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+   :Returns:
+
+       :obj:`Dict`\[:obj:`~pyvista.Actor`, :obj:`GeomObjectPlot`]
+           Mapping between the ~pyvista.Actor and the PyAnsys Geometry object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: add_list(plotting_list: beartype.typing.List[beartype.typing.Any], merge_bodies: bool = False, merge_components: bool = False, filter: str = None, **plotting_options) -> beartype.typing.Dict[pyvista.Actor, ansys.geometry.core.plotting.plotting_types.GeomObjectPlot]
+
+   
+   Add a list of any type of object to the scene.
+
+   These types of objects are supported: ``Body``, ``Component``, ``List[pv.PolyData]``,
+   ``pv.MultiBlock``, and ``Sketch``.
+
+   :Parameters:
+
+       **plotting_list** : :obj:`List`\[:obj:`Any`]
+           List of objects you want to plot.
+
+       **merge_component** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge the component into a single dataset. When
+           ``True``, all the individual bodies are effectively combined
+           into a single dataset without any hierarchy.
+
+       **merge_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to merge each body into a single dataset. When ``True``,
+           all the faces of each individual body are effectively combined
+           into a single dataset without separating faces.
+
+       **filter** : :class:`python:str`, default: :data:`python:None`
+           Regular expression with the desired name or names you want to include in the plotter.
+
+       **\*\*plotting_options** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
+
+   :Returns:
+
+       :obj:`Dict`\[:obj:`~pyvista.Actor`, :obj:`GeomObjectPlot`]
+           Mapping between the ~pyvista.Actor and the PyAnsys Geometry objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: show(show_axes_at_origin: bool = True, show_plane: bool = True, jupyter_backend: beartype.typing.Optional[str] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> None
+
+   
+   Show the rendered scene on the screen.
+
+
+   :Parameters:
+
+       **jupyter_backend** : :class:`python:str`, default: :data:`python:None`
+           PyVista Jupyter backend.
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Plotting keyword arguments. For allowable keyword arguments, see the
+           :meth:`Plotter.show <pyvista.Plotter.show>` method.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   For more information on supported Jupyter backends, see
+   `Jupyter Notebook Plotting <https://docs.pyvista.org/user-guide/jupyter/index.html>`_
+   in the PyVista documentation.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

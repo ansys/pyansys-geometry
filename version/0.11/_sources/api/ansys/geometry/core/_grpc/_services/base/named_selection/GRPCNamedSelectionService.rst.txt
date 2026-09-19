@@ -1,0 +1,163 @@
+
+
+
+
+
+
+:class:`GRPCNamedSelectionService`
+==================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.named_selection.GRPCNamedSelectionService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Named Selection service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: GRPCNamedSelectionService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_named_selection`
+            - Get the named selection by its id.
+          * - :py:attr:`~create_named_selection`
+            - Create a named selection.
+          * - :py:attr:`~delete_named_selection`
+            - Delete a named selection by id.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.named_selection import GRPCNamedSelectionService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_named_selection(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the named selection by its id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_named_selection(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_named_selection(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Delete a named selection by id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

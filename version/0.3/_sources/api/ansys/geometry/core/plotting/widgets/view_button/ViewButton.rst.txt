@@ -1,0 +1,97 @@
+
+
+
+
+ViewButton
+==========
+
+.. py:class:: ViewButton(plotter: pyvista.Plotter, direction: tuple)
+   :canonical: ansys.geometry.core.plotting.widgets.view_button.ViewButton
+
+
+
+Bases: :py:obj:`ansys.geometry.core.plotting.widgets.button.Button`
+
+Provides for changing the view.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ViewButton
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - Change the view depending on button interaction.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.view_button import ViewButton
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: callback(state: bool) -> None
+
+   
+   Change the view depending on button interaction.
+
+
+   :Parameters:
+
+       **state** : :ref:`bool <python:bltin-boolean-values>`
+           State of the button, which is inherited from PyVista. The value is ``True``
+           if the button is active.
+
+
+
+
+
+   :Raises:
+
+       :obj:`NotImplementedError`
+           Raised if the specified direction is not implemented.
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

@@ -1,0 +1,172 @@
+
+
+
+
+
+
+:class:`GRPCPlanesServiceV1`
+============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.planes.GRPCPlanesServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.planes.GRPCPlanesService`
+
+
+   
+   Planes service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   planes service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCPlanesServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create`
+            - Create a datum plane.
+          * - :py:attr:`~get_all`
+            - Get all datum planes.
+          * - :py:attr:`~delete`
+            - Delete a datum plane.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.planes import GRPCPlanesServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create(**kwargs) -> dict
+
+   
+   Create a datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all(**kwargs) -> dict
+
+   
+   Get all datum planes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete(**kwargs) -> dict
+
+   
+   Delete a datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

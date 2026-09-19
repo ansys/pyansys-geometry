@@ -1,0 +1,256 @@
+
+
+
+
+
+
+:class:`Slot`
+=============
+
+
+.. py:class:: ansys.geometry.core.sketch.slot.Slot(center: ansys.geometry.core.math.point.Point2D, width: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, height: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real = 0)
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+
+   
+   Provides for modeling a 2D slot.
+
+
+   :Parameters:
+
+       **center: :class:`Point2D <ansys.geometry.core.math.point.Point2D>`**
+           Center point of the slot.
+
+       **width** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Width of the slot main body.
+
+       **height** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Height of the slot.
+
+       **angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real`, default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Slot
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center of the slot.
+          * - :py:attr:`~width`
+            - Width of the slot.
+          * - :py:attr:`~height`
+            - Height of the slot.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the slot.
+          * - :py:attr:`~area`
+            - Area of the slot.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.slot import Slot
+
+Property detail
+---------------
+
+.. py:property:: center
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Center of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: width
+   :type: pint.Quantity
+
+
+   
+   Width of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :type: pint.Quantity
+
+
+   
+   Height of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :type: pint.Quantity
+
+
+   
+   Area of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

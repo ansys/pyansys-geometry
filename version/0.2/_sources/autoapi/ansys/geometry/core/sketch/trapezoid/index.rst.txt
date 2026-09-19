@@ -1,0 +1,179 @@
+:py:mod:`ansys.geometry.core.sketch.trapezoid`
+==============================================
+
+.. py:module:: ansys.geometry.core.sketch.trapezoid
+
+.. autoapi-nested-parse::
+
+   Provides the ``Trapezoid`` class .
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.sketch.trapezoid.Trapezoid
+
+
+
+
+.. py:class:: Trapezoid(width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], slant_angle: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real], nonsymmetrical_slant_angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = None, center: beartype.typing.Optional[ansys.geometry.core.math.Point2D] = ZERO_POINT2D, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Angle, ansys.geometry.core.typing.Real]] = 0)
+
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+   
+   Provides for modeling 2D trapezoids.
+
+
+   :Parameters:
+
+       **width** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Width of the trapezoid.
+
+       **height** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Height of the trapezoid.
+
+       **slant_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`]
+           Angle for trapezoid generation.
+
+       **nonsymmetrical_slant_angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: :data:`python:None`
+           Asymmetrical slant angles on each side of the trapezoid.
+           By default, the trapezoid is symmetrical.
+
+       **center: Point2D, default: ZERO_POINT2D**
+           Point representing the center of the trapezoid.
+
+       **angle** : :obj:`Union`\[:obj:`Quantity`, :obj:`Angle`, :obj:`Real`], default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   If a nonsymmetrical slant angle is defined, the slant angle is
+   applied to the left-most angle and the nonsymmetrical slant angle
+   is applied to the right-most angle.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: center
+      :type: ansys.geometry.core.math.Point2D
+
+      
+      Center of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: width
+      :type: pint.Quantity
+
+      
+      Width of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: height
+      :type: pint.Quantity
+
+      
+      Height of the trapezoid.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: visualization_polydata
+      :type: pyvista.PolyData
+
+      
+      VTK polydata representation for PyVista visualization.
+
+      The representation lies in the X/Y plane within
+      the standard global Cartesian coordinate system.
+
+
+      :Returns:
+
+          :obj:`pyvista.PolyData`
+              VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

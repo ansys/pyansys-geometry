@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``bodies.py`` module
+========================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.bodies
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: bodies
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.bodies.GRPCBodyServiceV0`
+            - Body service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCBodyServiceV0</api/ansys/geometry/core/_grpc/_services/v0/bodies/GRPCBodyServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the bodies service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,235 @@
+
+
+
+
+Box
+===
+
+.. py:class:: Box(center: ansys.geometry.core.math.point.Point2D, width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = 0)
+   :canonical: ansys.geometry.core.sketch.box.Box
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+Provides for modeling a box.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Box
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center point of the box.
+          * - :py:attr:`~width`
+            - Width of the box.
+          * - :py:attr:`~height`
+            - Height of the box.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the box.
+          * - :py:attr:`~area`
+            - Area of the box.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.box import Box
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.box.Box.center
+   :type: Point2D
+
+
+   
+   Center point of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: width
+   :canonical: ansys.geometry.core.sketch.box.Box.width
+   :type: pint.Quantity
+
+
+   
+   Width of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :canonical: ansys.geometry.core.sketch.box.Box.height
+   :type: pint.Quantity
+
+
+   
+   Height of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.sketch.box.Box.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.sketch.box.Box.area
+   :type: pint.Quantity
+
+
+   
+   Area of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.box.Box.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
