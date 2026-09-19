@@ -27,9 +27,10 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core.errors import GeometryRuntimeError
-from ansys.geometry.core.math import Point3D
+from ansys.geometry.core.math import Point3D, UnitVector3D
 from ansys.geometry.core.misc import (
     UNITS,
+    RayfireOptions,
     TessellationOptions,
     auxiliary,
     check_is_float_int,
@@ -652,6 +653,48 @@ def test_kwargs_passed_not_accepted_decorator_order():
         "method 'my_method_diff_order': arg3.",
     ):
         my_method_diff_order(arg1=1, arg2=2, arg3=3)
+
+
+def test_rayfire_options():
+    """Test the RayfireOptions class."""
+    rayfire_options = RayfireOptions(
+        radius=1.0,
+        direction=UnitVector3D([1, 3, 5]),
+        max_distance=15,
+        min_distance=2,
+        tight_tolerance=True,
+        pick_back_faces=False,
+        max_hits=15,
+        request_params=True,
+        request_secondary=False,
+    )
+
+    assert rayfire_options.radius == Distance(1.0)
+    assert rayfire_options.direction == UnitVector3D([1, 3, 5])
+    assert rayfire_options.max_distance == Distance(15)
+    assert rayfire_options.min_distance == Distance(2)
+    assert rayfire_options.tight_tolerance is True
+    assert rayfire_options.pick_back_faces is False
+    assert rayfire_options.max_hits == 15
+    assert rayfire_options.request_params is True
+    assert rayfire_options.request_secondary is False
+
+    # Quantity and Distance inputs are accepted as-is
+    rayfire_options = RayfireOptions(
+        radius=Distance(2, UNITS.mm),
+        direction=UnitVector3D([0, 0, 1]),
+        max_distance=Quantity(1, UNITS.m),
+        min_distance=Distance(0),
+    )
+
+    assert rayfire_options.radius == Distance(2, UNITS.mm)
+    assert rayfire_options.max_distance == Distance(Quantity(1, UNITS.m))
+    assert rayfire_options.min_distance == Distance(0)
+    assert rayfire_options.tight_tolerance is False
+    assert rayfire_options.pick_back_faces is False
+    assert rayfire_options.max_hits == 0
+    assert rayfire_options.request_params is False
+    assert rayfire_options.request_secondary is False
 
 
 def test_pmdb_export_options_defaults():
