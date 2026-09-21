@@ -31,7 +31,6 @@ from ansys.api.dbu.v0.dbumodels_pb2 import (
     PartExportFormat as GRPCPartExportFormat,
 )
 from ansys.api.dbu.v0.drivingdimensions_pb2 import UpdateStatus as GRPCUpdateStatus
-from ansys.api.geometry.v0.commands_pb2 import RayFireAddtionalOptions as GRPCRayFireOptions
 from ansys.api.geometry.v0.models_pb2 import (
     Arc as GRPCArc,
     Circle as GRPCCircle,
@@ -80,7 +79,7 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.plane import Plane
     from ansys.geometry.core.math.point import Point2D, Point3D
     from ansys.geometry.core.math.vector import UnitVector3D
-    from ansys.geometry.core.misc.options import RayfireOptions, TessellationOptions
+    from ansys.geometry.core.misc.options import TessellationOptions
     from ansys.geometry.core.parameters.parameter import (
         Parameter,
         ParameterUpdateStatus,
