@@ -22,18 +22,9 @@
 
 """Module containing the rayfire service implementation for v0."""
 
-import grpc
-
 from ansys.geometry.core.errors import protect_grpc
 
-from ..base.conversions import from_measurement_to_server_length
 from ..base.rayfire import GRPCRayfireService
-from .conversions import (
-    build_grpc_id,
-    from_grpc_point_to_point3d,
-    from_point3d_to_grpc_point,
-    from_unit_vector_to_grpc_direction,
-)
 
 
 class GRPCRayfireServiceV0(GRPCRayfireService):
@@ -52,8 +43,7 @@ class GRPCRayfireServiceV0(GRPCRayfireService):
     @protect_grpc
     def fire(self, **kwargs) -> dict:  # noqa: D102
         raise NotImplementedError(
-            f"Method '{self.__class__.__name__}.fire' is not "
-            "implemented in this protofile version."
+            f"Method '{self.__class__.__name__}.fire' is not implemented in this protofile version."
         )
 
     @protect_grpc
