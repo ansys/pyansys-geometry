@@ -62,7 +62,6 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
     check_input_types,
-    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
     usd_required,
@@ -268,36 +267,6 @@ class Design(Component):
         for mat in material:
             self._materials.remove(mat)
             self._grpc_client.log.debug(f"Material {mat.name} is successfully removed from design.")
-
-    @check_input_types
-    @ensure_design_is_active
-    @deprecated_method(
-        "export_to_*",
-        "use the export_to_* or download methods instead",
-        "0.15.2",
-        "0.17.0",
-    )
-    def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
-        """Save a design to disk on the active Geometry server instance.
-
-        Parameters
-        ----------
-        file_location : ~pathlib.Path | str
-            Location on disk to save the file to.
-        write_body_facets : bool, default: False
-            Option to write body facets into the saved file. 26R1 and later.
-        """
-        # Sanity checks on inputs
-        if isinstance(file_location, Path):
-            file_location = str(file_location)
-
-        self._grpc_client.services.designs.save_as(
-            filepath=file_location,
-            write_body_facets=write_body_facets,
-            backend_version=self._grpc_client.backend_version,
-            format=DesignFileFormat.SCDOCX,
-        )
-        self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @check_input_types
     @ensure_design_is_active
