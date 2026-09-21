@@ -42,11 +42,9 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     """
 
     def __init__(self, channel: grpc.Channel):  # noqa: D102
-        from ansys.api.geometry.v0.commands_pb2_grpc import CommandsStub
         from ansys.api.geometry.v0.unsupported_pb2_grpc import UnsupportedStub
 
         self.stub = UnsupportedStub(channel)
-        self.commands_stub = CommandsStub(channel)
 
     @protect_grpc
     def get_import_id_map(self, **kwargs) -> dict:  # noqa: D102
