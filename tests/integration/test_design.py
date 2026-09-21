@@ -2056,13 +2056,13 @@ def test_download_file(modeler: Modeler, tmp_path_factory: pytest.TempPathFactor
     # Check that the file exists
     assert file.exists()
 
-    # Check that we can also save it (even if it is not accessible on the server)
+    # Check that we can also export it with body facets enabled
     if BackendType.is_linux_service(modeler.client.backend_type):
         file_save = "/tmp/cylinder-temp.scdocx"
     else:
         file_save = tmp_path_factory.mktemp("scdoc_files_save") / "cylinder.scdocx"
 
-    design.save(file_location=file_save, write_body_facets=True)
+    design.download(file_location=file_save, write_body_facets=True)
 
     # Check for other exports - Windows backend...
     if not BackendType.is_core_service(modeler.client.backend_type):
