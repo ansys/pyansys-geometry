@@ -128,5 +128,5 @@ def test_rayfire_ordered_uv(modeler: Modeler):
     # Check that the uv impacts are correct
     assert result[0][0].u == 0.25
     assert result[0][0].v == 0.25
-    assert result[0][1].u == 0.75
-    assert result[0][1].v == 0.6
+    assert result[1][0].u == 0.75
+    assert result[1][1].v == 0.6
