@@ -175,7 +175,7 @@ class RayfireTools:
             max_distance=max_distance,
         )
 
-        return [create_impact_from_response(impact) for impact in response.get("impacts", [])]
+        return [_create_impact_from_response(impact) for impact in response.get("impacts", [])]
 
     @min_backend_version(27, 1, 0)
     def rayfire_faces(
@@ -211,7 +211,7 @@ class RayfireTools:
         )
 
         return [
-            create_impact_from_response(impact)
+            _create_impact_from_response(impact)
             for face_impact in response.get("face_impacts", [])
             for impact in face_impact.get("impacts", [])
         ]
@@ -267,7 +267,7 @@ class RayfireTools:
         )
 
         return [
-            [create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
+            [_create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
             for ordered_impact in response.get("ordered_impacts", [])
         ]
 
@@ -322,12 +322,12 @@ class RayfireTools:
         )
 
         return [
-            [create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
+            [_create_impact_from_response(impact) for impact in ordered_impact.get("impacts", [])]
             for ordered_impact in response.get("ordered_impacts", [])
         ]
 
 
-def create_impact_from_response(response: dict) -> "RayfireImpact":
+def _create_impact_from_response(response: dict) -> "RayfireImpact":
     """Create a RayfireImpact from a serialized response.
 
     Parameters

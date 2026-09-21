@@ -670,7 +670,7 @@ class Modeler:
         return self._unsupported
 
     @property
-    @min_backend_version(26, 1, 0)
+    @min_backend_version(27, 1, 0)
     def rayfire_tools(self) -> "RayfireTools":
         """Access to rayfire tools.
 
