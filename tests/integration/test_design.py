@@ -5280,7 +5280,7 @@ def test_load_small_units(modeler: Modeler):
 
 
 def test_load_large_units(modeler: Modeler):
-    """Test that the server length unit is set correctly for small units."""
+    """Test that the server length unit is set correctly for large units."""
     input_file = Path(FILES_DIR, "LargeUnits.dsco")
     design = modeler.open_file(input_file)
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.km
@@ -5295,11 +5295,17 @@ def test_set_length_scale(modeler: Modeler):
     # Test on a new design
     design = modeler.create_design("LengthScaleTest")
 
-    # Assert that length scale is correctly set on empty design
+    # Test that length scale small is correctly set on empty design
     result = modeler.set_length_scale(LengthScale.SMALL)
     assert result
-    assert modeler._length_scale == LengthScale.SMALL
+    assert modeler.length_scale == LengthScale.SMALL
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.mm
+
+    # Test that length scale large is correctly set on empty design
+    result = modeler.set_length_scale(LengthScale.LARGE)
+    assert result
+    assert modeler.length_scale == LengthScale.LARGE
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.km
 
     # Attempting to set length scale on a non-empty design should raise an error
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 0.001, 0.001), 0.001)
