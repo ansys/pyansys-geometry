@@ -327,9 +327,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         from ansys.api.discovery.v1.design.designdoc_pb2 import GetGeometryUnitsRequest
 
         # Create the request - assumes all inputs are valid and of the proper type
-        request = GetGeometryUnitsRequest(
-            design_id=build_grpc_id(kwargs["design_id"])
-        )
+        request = GetGeometryUnitsRequest(design_id=build_grpc_id(kwargs["design_id"]))
 
         # Call the gRPC service
         response = self.designdoc_stub.GetGeometryUnits(request)

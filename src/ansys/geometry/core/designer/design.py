@@ -94,6 +94,7 @@ class LengthScale(Enum):
         """Represent object in string format."""
         return self.value
 
+
 @unique
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
