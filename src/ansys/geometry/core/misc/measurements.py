@@ -122,6 +122,11 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         """
         return self._server_length
 
+    @SERVER_LENGTH.setter
+    def SERVER_LENGTH(self, value: Unit) -> None:  # noqa: N802
+        check_pint_unit_compatibility(value, self._server_length)
+        self._server_length = value
+
     @property
     def SERVER_AREA(self) -> Unit:  # noqa: N802
         """Default area unit for gRPC messages.

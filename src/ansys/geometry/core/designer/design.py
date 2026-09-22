@@ -82,6 +82,19 @@ from ansys.geometry.core.typing import Real, RealSequence
 
 
 @unique
+class LengthScale(Enum):
+    """Provides supported length scales for designs."""
+
+    UNSPECIFIED = "UNSPECIFIED"
+    SMALL = "SMALL"
+    STANDARD = "STANDARD"
+    LARGE = "LARGE"
+
+    def __str__(self):
+        """Represent object in string format."""
+        return self.value
+
+@unique
 class DesignFileFormat(Enum):
     """Provides supported file formats that can be downloaded for designs."""
 

@@ -44,6 +44,9 @@ from ansys.api.discovery.v1.commonmessages_pb2 import (
     Polygon as GRPCPolygon,
     Quantity as GRPCQuantity,
 )
+from ansys.api.discovery.v1.design.designdoc_pb2 import (
+    GeometryUnits as GRPCScale,
+)
 from ansys.api.discovery.v1.design.designmessages_pb2 import (
     BodyEntity as GRPCBodyEntity,
     ComponentEntity as GRPCComponentEntity,
@@ -112,7 +115,7 @@ if TYPE_CHECKING:  # pragma: no cover
     import semver
 
     from ansys.geometry.core.connection.backend import BackendType
-    from ansys.geometry.core.designer.design import DesignFileFormat
+    from ansys.geometry.core.designer.design import DesignFileFormat, LengthScale
     from ansys.geometry.core.designer.face import FaceLoop, SurfaceType
     from ansys.geometry.core.materials.material import Material
     from ansys.geometry.core.materials.property import MaterialProperty
@@ -1990,6 +1993,58 @@ def from_volume_extract_options_to_grpc_volume_extract_options(
         create_capping_surfaces=volume_extract_options.create_capping_surfaces,
         detect_leaks=volume_extract_options.detect_leaks,
     )
+
+
+def from_scale_to_grpc_scale(scale: "LengthScale") -> GRPCScale:
+    """Convert scale to grpc definition.
+
+    Parameters
+    ----------
+    scale : Scale
+        Definition of the scale.
+
+    Returns
+    -------
+    GRPCScale
+        Grpc converted definition.
+    """
+    if scale == LengthScale.UNSPECIFIED:
+        return GRPCScale.GEOMETRYUNITS_UNSPECIFIED
+    elif scale == LengthScale.SMALL:
+        return GRPCScale.GEOMETRYUNITS_SMALL
+    elif scale == LengthScale.STANDARD:
+        return GRPCScale.GEOMETRYUNITS_STANDARD
+    elif scale == LengthScale.LARGE:
+        return GRPCScale.GEOMETRYUNITS_LARGE
+    else:
+        raise ValueError(f"Unsupported LengthScale value: {scale}")
+
+
+def from_grpc_scale_to_scale(scale: GRPCScale) -> "LengthScale":
+    """Convert grpc scale to LengthScale definition.
+
+    Parameters
+    ----------
+    scale : GRPCScale
+        The gRPC scale to convert.
+
+    Returns
+    -------
+    LengthScale
+        The corresponding LengthScale value.
+    """
+    from ansys.geometry.core.designer.design import LengthScale
+
+    if scale == GRPCScale.GEOMETRYUNITS_UNSPECIFIED:
+        return LengthScale.UNSPECIFIED
+    elif scale == GRPCScale.GEOMETRYUNITS_SMALL:
+        return LengthScale.SMALL
+    elif scale == GRPCScale.GEOMETRYUNITS_STANDARD:
+        return LengthScale.STANDARD
+    elif scale == GRPCScale.GEOMETRYUNITS_LARGE:
+        return LengthScale.LARGE
+    else:
+        raise ValueError(f"Unsupported GRPCScale value: {scale}")
 
 
 def serialize_body(body: GRPCBodyEntity) -> dict:

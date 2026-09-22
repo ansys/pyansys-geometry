@@ -160,7 +160,7 @@ class Edge:
         except GeometryRuntimeError:  # pragma: no cover
             # Only for versions earlier than 24.2.0 (before the introduction of the shape property)
             self._grpc_client.log.debug("Requesting edge length from server.")
-            return self._grpc_client.services.edges.get_length(id=self._id).get("length").value
+            return self._grpc_client.services.edges.get_length(id=self._id).get("length")
 
     @property
     def curve_type(self) -> CurveType:

@@ -5265,3 +5265,25 @@ def test_search_coordinate_system(modeler: Modeler):
 
     # Unknown id returns None
     assert design.search_coordinate_system("non_existent_id") is None
+
+
+def test_load_small_units(modeler: Modeler):
+    """Test that the server length unit is set correctly for small units."""
+    input_file = Path(FILES_DIR, "SmallUnits.dsco")
+    design = modeler.open_file(input_file)
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.mm
+
+    edge_length = design.bodies[0].edges[0].length
+    assert edge_length.units == UNITS.mm
+    assert edge_length.magnitude == pytest.approx(20.045878)
+
+
+def test_load_large_units(modeler: Modeler):
+    """Test that the server length unit is set correctly for small units."""
+    input_file = Path(FILES_DIR, "LargeUnits.dsco")
+    design = modeler.open_file(input_file)
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.km
+
+    edge_length = design.bodies[0].edges[0].length
+    assert edge_length.units == UNITS.km
+    assert edge_length.magnitude == 20

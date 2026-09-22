@@ -38,7 +38,9 @@ from .conversions import (
     from_grpc_plane_to_plane,
     from_grpc_point_to_point3d,
     from_grpc_quantity_to_distance,
+    from_grpc_scale_to_scale,
     from_pmdb_options_to_grpc_pmdb_options,
+    from_scale_to_grpc_scale,
 )
 
 
@@ -319,6 +321,41 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
             f"Method '{self.__class__.__name__}.download_file' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def get_length_scale(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.designdoc_pb2 import GetGeometryUnitsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = GetGeometryUnitsRequest(
+            design_id=build_grpc_id(kwargs["design_id"])
+        )
+
+        # Call the gRPC service
+        response = self.designdoc_stub.GetGeometryUnits(request)
+
+        # Return the response - formatted as dictionary
+        return {
+            "scale": from_grpc_scale_to_scale(response.units),
+        }
+
+    @protect_grpc
+    def set_length_scale(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.designdoc_pb2 import SetGeometryUnitsRequest
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SetGeometryUnitsRequest(
+            design_id=build_grpc_id(kwargs["design_id"]),
+            units=from_scale_to_grpc_scale(kwargs["units"])
+        )
+
+        # Call the gRPC service
+        response = self.designdoc_stub.SetGeometryUnits(request)
+
+        # Return the response - formatted as dictionary
+        return {
+            "success": response.command_response.success,
+        }
 
     def _serialize_assembly_response(self, response):
         def serialize_body(body):
