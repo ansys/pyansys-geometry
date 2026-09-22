@@ -2008,6 +2008,8 @@ def from_scale_to_grpc_scale(scale: "LengthScale") -> GRPCScale:
     GRPCScale
         Grpc converted definition.
     """
+    from ansys.geometry.core.designer.design import LengthScale
+
     if scale == LengthScale.UNSPECIFIED:
         return GRPCScale.GEOMETRYUNITS_UNSPECIFIED
     elif scale == LengthScale.SMALL:

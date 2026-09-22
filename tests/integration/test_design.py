@@ -45,6 +45,7 @@ from ansys.geometry.core.designer import (
     SurfaceType,
 )
 from ansys.geometry.core.designer.body import CollisionType, FillStyle, MasterBody
+from ansys.geometry.core.designer.design import LengthScale
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.face import FaceLoopType
 from ansys.geometry.core.designer.part import MasterComponent, Part
@@ -5287,3 +5288,20 @@ def test_load_large_units(modeler: Modeler):
     edge_length = design.bodies[0].edges[0].length
     assert edge_length.units == UNITS.km
     assert edge_length.magnitude == 20
+
+
+def test_set_length_scale(modeler: Modeler):
+    """Test setting the length scale."""
+    # Test on a new design
+    design = modeler.create_design("LengthScaleTest")
+
+    # Assert that length scale is correctly set on empty design
+    result = modeler.set_length_scale(LengthScale.SMALL)
+    assert result is True
+    assert modeler._length_scale == LengthScale.SMALL
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.mm
+
+    # Attempting to set length scale on a non-empty design should raise an error
+    design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), .001, .001), .001)
+    with pytest.raises(GeometryRuntimeError, match="Failed to set length scale: "):
+        modeler.set_length_scale(LengthScale.LARGE)

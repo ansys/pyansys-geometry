@@ -346,7 +346,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetGeometryUnitsRequest(
             design_id=build_grpc_id(kwargs["design_id"]),
-            units=from_scale_to_grpc_scale(kwargs["units"])
+            units=from_scale_to_grpc_scale(kwargs["length_scale"])
         )
 
         # Call the gRPC service
@@ -355,6 +355,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         # Return the response - formatted as dictionary
         return {
             "success": response.command_response.success,
+            "message": response.command_response.message,
         }
 
     def _serialize_assembly_response(self, response):

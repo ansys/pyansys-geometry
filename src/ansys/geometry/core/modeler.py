@@ -767,3 +767,38 @@ class Modeler:
             )
 
         return SelectionBuilder(self._design, self._grpc_client)
+
+    @min_backend_version(27, 1, 0)
+    def set_length_scale(self, length_scale: "LengthScale") -> bool:
+        """Set the length scale. This can only be done if the design is empty.
+
+        Parameters
+        ----------
+        length_scale : LengthScale
+            The length scale to set for the design.
+
+        Returns
+        -------
+        bool
+            True if the length scale was successfully set, False otherwise.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.design import LengthScale
+
+        self._length_scale = length_scale
+        response = self.client.services.designs.set_length_scale(
+            design_id=self.design.design_id, length_scale=length_scale
+        )
+
+        if response.get("success"):
+            if self._length_scale == LengthScale.SMALL:
+                DEFAULT_UNITS.SERVER_LENGTH = UNITS.mm
+            if self._length_scale == LengthScale.LARGE:
+                DEFAULT_UNITS.SERVER_LENGTH = UNITS.km
+        else:
+            raise GeometryRuntimeError("Failed to set length scale: " + response.get("message"))
+
+        return response.get("success")
