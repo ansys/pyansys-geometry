@@ -344,7 +344,7 @@ class GRPCDesignsServiceV1(GRPCDesignsService):
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetGeometryUnitsRequest(
             design_id=build_grpc_id(kwargs["design_id"]),
-            units=from_scale_to_grpc_scale(kwargs["length_scale"])
+            units=from_scale_to_grpc_scale(kwargs["length_scale"]),
         )
 
         # Call the gRPC service

@@ -5302,7 +5302,7 @@ def test_set_length_scale(modeler: Modeler):
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.mm
 
     # Attempting to set length scale on a non-empty design should raise an error
-    design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), .001, .001), .001)
+    design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 0.001, 0.001), 0.001)
     with pytest.raises(GeometryRuntimeError, match="Failed to set length scale: "):
         modeler.set_length_scale(LengthScale.LARGE)
 
