@@ -519,15 +519,16 @@ class Modeler:
         design = self.read_existing_design()
 
         # Handle length scale
-        from ansys.geometry.core.designer.design import LengthScale
+        if self.client.services.version == GeometryApiProtos.V1:
+            from ansys.geometry.core.designer.design import LengthScale
 
-        self._length_scale = self.client.services.designs.get_length_scale(
-            design_id=design.design_id
-        ).get("scale")
-        if self._length_scale == LengthScale.SMALL:
-            DEFAULT_UNITS.SERVER_LENGTH = UNITS.mm
-        if self._length_scale == LengthScale.LARGE:
-            DEFAULT_UNITS.SERVER_LENGTH = UNITS.km
+            self._length_scale = self.client.services.designs.get_length_scale(
+                design_id=design.design_id
+            ).get("scale")
+            if self._length_scale == LengthScale.SMALL:
+                DEFAULT_UNITS.SERVER_LENGTH = UNITS.mm
+            if self._length_scale == LengthScale.LARGE:
+                DEFAULT_UNITS.SERVER_LENGTH = UNITS.km
 
         return design
 
