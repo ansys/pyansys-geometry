@@ -72,7 +72,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.6.2",
-  "ty==0.0.81",
+  "ty==0.0.82",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
