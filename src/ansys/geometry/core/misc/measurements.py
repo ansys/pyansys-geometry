@@ -177,6 +177,8 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
             self.SERVER_LENGTH = UNITS.m
         elif length_scale == LengthScale.LARGE:
             self.SERVER_LENGTH = UNITS.km
+        else:
+            self.SERVER_LENGTH = UNITS.m
 
 
 DEFAULT_UNITS = DefaultUnitsClass()

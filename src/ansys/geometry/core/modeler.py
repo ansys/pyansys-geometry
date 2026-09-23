@@ -508,10 +508,8 @@ class Modeler:
                 if temp_zip_path.exists():
                     temp_zip_path.unlink()
 
-        design = self.read_existing_design()
-
-        return design
-
+        return self.read_existing_design()
+    
     def __repr__(self) -> str:
         """Represent the modeler as a string."""
         lines = []
