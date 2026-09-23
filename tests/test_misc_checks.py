@@ -141,7 +141,8 @@ def test_tessellation_options():
         < 1e-9
     )
     assert (
-        abs(tessellation_options_with_conversions.curve_deviation.value.m_as(UNITS.m) - 0.002) < 1e-9
+        abs(tessellation_options_with_conversions.curve_deviation.value.m_as(UNITS.m) - 0.002)
+        < 1e-9
     )
     assert (
         abs(tessellation_options_with_conversions.max_edge_length.value.m_as(UNITS.m) - 0.05) < 1e-9
@@ -178,7 +179,7 @@ def test_tessellation_options():
         < 1e-9
     )
 
-    
+
 def test_fmd_export_options():
     """Test FMDExportOptions properties with Real, Distance/Angle, and Quantity inputs."""
     import math
