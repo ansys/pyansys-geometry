@@ -191,7 +191,6 @@ class Modeler:
 
         # Create the new design
         design = Design(name, self)
-        design._refresh_length_scale()
 
         # Update the design stored in the modeler
         self._design = design
@@ -510,10 +509,6 @@ class Modeler:
                     temp_zip_path.unlink()
 
         design = self.read_existing_design()
-
-        # Handle length scale
-        if self.client.services.version == GeometryApiProtos.V1:
-            design._refresh_length_scale()
 
         return design
 

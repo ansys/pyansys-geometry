@@ -178,6 +178,13 @@ class Design(Component):
         self._design_tess = None
         self._length_scale = LengthScale.STANDARD
 
+        # Set length scale if the backend version supports it.
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            self._length_scale = self._grpc_client.services.designs.get_length_scale(
+                design_id=self._design_id
+            ).get("scale")
+            DEFAULT_UNITS.apply_length_scale(self._length_scale)
+
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
             self._grpc_client.log.debug("Reading Design object from service.")
@@ -228,13 +235,6 @@ class Design(Component):
     def length_scale(self) -> LengthScale:
         """Length scale of the design."""
         return self._length_scale
-
-    def _refresh_length_scale(self) -> None:
-        """Read the length scale from the server and apply the matching server units."""
-        self._length_scale = self._grpc_client.services.designs.get_length_scale(
-            design_id=self._design_id
-        ).get("scale")
-        DEFAULT_UNITS.apply_length_scale(self._length_scale)
 
     @min_backend_version(27, 1, 0)
     def set_length_scale(self, length_scale: LengthScale) -> bool:
