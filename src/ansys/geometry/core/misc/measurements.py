@@ -23,6 +23,7 @@
 """Provides various measurement-related classes."""
 
 from threading import Lock
+from typing import TYPE_CHECKING
 
 from pint import Quantity, Unit
 
@@ -33,6 +34,9 @@ from ansys.geometry.core.misc.checks import (
 )
 from ansys.geometry.core.misc.units import UNITS, PhysicalQuantity
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.designer.design import LengthScale
 
 
 class SingletonMeta(type):
@@ -156,6 +160,23 @@ class DefaultUnitsClass(metaclass=SingletonMeta):
         The default units on the server side are not modifiable yet.
         """
         return self._server_angle
+
+    def apply_length_scale(self, length_scale: "LengthScale") -> None:
+        """Align the default server length unit with a design length scale.
+
+        Parameters
+        ----------
+        length_scale : LengthScale
+            Length scale of the design.
+        """
+        from ansys.geometry.core.designer.design import LengthScale
+
+        if length_scale == LengthScale.SMALL:
+            self.SERVER_LENGTH = UNITS.mm
+        elif length_scale == LengthScale.STANDARD:
+            self.SERVER_LENGTH = UNITS.m
+        elif length_scale == LengthScale.LARGE:
+            self.SERVER_LENGTH = UNITS.km
 
 
 DEFAULT_UNITS = DefaultUnitsClass()

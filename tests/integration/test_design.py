@@ -5294,23 +5294,30 @@ def test_set_length_scale(modeler: Modeler):
     """Test setting the length scale."""
     # Test on a new design
     design = modeler.create_design("LengthScaleTest")
+    assert design.length_scale == LengthScale.STANDARD
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.m
 
     # Test that length scale small is correctly set on empty design
-    result = modeler.set_length_scale(LengthScale.SMALL)
+    result = design.set_length_scale(LengthScale.SMALL)
     assert result
-    assert modeler.length_scale == LengthScale.SMALL
+    assert design.length_scale == LengthScale.SMALL
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.mm
 
     # Test that length scale large is correctly set on empty design
-    result = modeler.set_length_scale(LengthScale.LARGE)
+    result = design.set_length_scale(LengthScale.LARGE)
     assert result
-    assert modeler.length_scale == LengthScale.LARGE
+    assert design.length_scale == LengthScale.LARGE
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.km
 
     # Attempting to set length scale on a non-empty design should raise an error
     design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 0.001, 0.001), 0.001)
     with pytest.raises(GeometryRuntimeError, match="Failed to set length scale: "):
-        modeler.set_length_scale(LengthScale.LARGE)
+        design.set_length_scale(LengthScale.LARGE)
+
+    # Test creating a new design resets length scale to standard
+    new_design = modeler.create_design("NewLengthScaleTest")
+    assert new_design.length_scale == LengthScale.STANDARD
+    assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.m
 
     # Reset length scale
     DEFAULT_UNITS.SERVER_LENGTH = UNITS.m

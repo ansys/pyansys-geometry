@@ -35,7 +35,6 @@ import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
@@ -50,7 +49,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
     from ansys.geometry.core.connection.docker_instance import LocalDockerInstance
     from ansys.geometry.core.connection.product_instance import ProductInstance
-    from ansys.geometry.core.designer.design import Design, LengthScale
+    from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.geometry_commands import GeometryCommands
 
 
@@ -127,7 +126,6 @@ class Modeler:
         certs_dir: Path | str | None = None,
     ):
         """Initialize the ``Modeler`` class."""
-        from ansys.geometry.core.designer.design import LengthScale
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
 
         self._grpc_client = GrpcClient(
@@ -149,7 +147,6 @@ class Modeler:
 
         # Single design for the Modeler
         self._design: Optional["Design"] = None
-        self._length_scale: "LengthScale" = LengthScale.STANDARD
 
         # Enabling tools/commands for all: repair and prepare tools, geometry commands
         self._measurement_tools = MeasurementTools(self._grpc_client, _internal_use=True)
@@ -168,11 +165,6 @@ class Modeler:
     def design(self) -> "Design":
         """Retrieve the design within the modeler workspace."""
         return self._design
-
-    @property
-    def length_scale(self) -> "LengthScale":
-        """Length scale of the active design."""
-        return self._length_scale
 
     def create_design(self, name: str) -> "Design":
         """Initialize a new design with the connected client.
@@ -199,6 +191,7 @@ class Modeler:
 
         # Create the new design
         design = Design(name, self)
+        design._refresh_length_scale()
 
         # Update the design stored in the modeler
         self._design = design
@@ -520,15 +513,7 @@ class Modeler:
 
         # Handle length scale
         if self.client.services.version == GeometryApiProtos.V1:
-            from ansys.geometry.core.designer.design import LengthScale
-
-            self._length_scale = self.client.services.designs.get_length_scale(
-                design_id=design.design_id
-            ).get("scale")
-            if self._length_scale == LengthScale.SMALL:
-                DEFAULT_UNITS.SERVER_LENGTH = UNITS.mm
-            if self._length_scale == LengthScale.LARGE:
-                DEFAULT_UNITS.SERVER_LENGTH = UNITS.km
+            design._refresh_length_scale()
 
         return design
 
@@ -767,38 +752,3 @@ class Modeler:
             )
 
         return SelectionBuilder(self._design, self._grpc_client)
-
-    @min_backend_version(27, 1, 0)
-    def set_length_scale(self, length_scale: "LengthScale") -> bool:
-        """Set the length scale. This can only be done if the design is empty.
-
-        Parameters
-        ----------
-        length_scale : LengthScale
-            The length scale to set for the design.
-
-        Returns
-        -------
-        bool
-            True if the length scale was successfully set, False otherwise.
-
-        Notes
-        -----
-        This method is only available starting on Ansys release 27R1.
-        """
-        from ansys.geometry.core.designer.design import LengthScale
-
-        self._length_scale = length_scale
-        response = self.client.services.designs.set_length_scale(
-            design_id=self.design.design_id, length_scale=length_scale
-        )
-
-        if response.get("success"):
-            if self._length_scale == LengthScale.SMALL:
-                DEFAULT_UNITS.SERVER_LENGTH = UNITS.mm
-            if self._length_scale == LengthScale.LARGE:
-                DEFAULT_UNITS.SERVER_LENGTH = UNITS.km
-        else:
-            raise GeometryRuntimeError("Failed to set length scale: " + response.get("message"))
-
-        return response.get("success")
