@@ -47,13 +47,13 @@ optional-dependencies.all = [
   "pygltflib>=1.16,<2",
   "pyvista[jupyter]<1,>=0.38.1",
   "usd-core>=24.0",
-  "vtk>=9,<10",
+  "vtk<10,>=9",
 ]
 optional-dependencies.graphics = [
   "ansys-tools-visualization-interface>=0.2.6",
   "pygltflib>=1.16,<2",
   "pyvista[jupyter]<1,>=0.38.1",
-  "vtk>=9,<10",
+  "vtk<10,>=9",
 ]
 optional-dependencies.usd = [
   "ansys-tools-visualization-interface[usd]>=0.14.0",
@@ -114,8 +114,7 @@ general-all = [
   "scipy==1.18.1",
   "semver==3.1.0",
   "six==1.17.0",
-  "trame-vtk==2.10.2",
-  "vtk==9.6.2",
+  "vtk==9.7.0",
 ]
 tests = [
   { include-group = "general-all" },
