@@ -5318,6 +5318,3 @@ def test_set_length_scale(modeler: Modeler):
     new_design = modeler.create_design("NewLengthScaleTest")
     assert new_design.length_scale == LengthScale.STANDARD
     assert DEFAULT_UNITS.SERVER_LENGTH == UNITS.m
-
-    # Reset length scale
-    DEFAULT_UNITS.SERVER_LENGTH = UNITS.m
