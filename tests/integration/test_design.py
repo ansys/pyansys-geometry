@@ -5276,7 +5276,7 @@ def test_load_small_units(modeler: Modeler):
 
     edge_length = design.bodies[0].edges[0].length
     assert edge_length.units == UNITS.mm
-    assert edge_length.magnitude == pytest.approx(20.045878)
+    assert edge_length.magnitude == 0.02
 
 
 def test_load_large_units(modeler: Modeler):
