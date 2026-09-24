@@ -22,6 +22,8 @@
 
 """Provides for creating and managing a sketch."""
 
+import json
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from pint import Quantity
@@ -39,7 +41,7 @@ from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.sketch.ellipse import SketchEllipse
 from ansys.geometry.core.sketch.face import SketchFace
 from ansys.geometry.core.sketch.gears import DummyGear, SpurGear
-from ansys.geometry.core.sketch.nurbs import SketchNurbs
+from ansys.geometry.core.sketch.nurbs import SketchNurbs, SketchNurbsModel
 from ansys.geometry.core.sketch.polygon import Polygon
 from ansys.geometry.core.sketch.segment import SketchSegment
 from ansys.geometry.core.sketch.slot import Slot
@@ -923,6 +925,54 @@ class Sketch:
         """
         gear = SpurGear(origin, module, pressure_angle, n_teeth)
         return self.face(gear, tag)
+
+    @check_input_types
+    def nurbs_from_json_file(
+        self,
+        source: str | Path,
+        elements: list[str] | None = None,
+    ) -> "Sketch":
+        """Create NURBS sketch curve(s) from a JSON file or JSON string.
+
+        Parameters
+        ----------
+        source : Union[str, Path]
+            JSON file path, or a raw JSON string.
+        elements : list[str], optional
+            Names of the elements to build. If omitted, every element
+            found in the JSON is built.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+
+        Raises
+        ------
+        ValueError
+            If any requested element is missing from the JSON data.
+        """
+        path = Path(source)
+        json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+
+        raw = json.loads(json_str)
+
+        names_to_build = elements if elements is not None else list(raw.keys())
+
+        missing = [name for name in names_to_build if name not in raw]
+        if missing:
+            raise ValueError(f"Element(s) {missing} were not found in JSON payload.")
+
+        built = {
+            name: SketchNurbs._curve_from_model(SketchNurbsModel._validate_or_explain(name, raw[name]))
+            for name in names_to_build
+        }
+
+        # Add each built curve to the sketch and tag it accordingly.
+        for name, curve in built.items():
+            self.edge(curve, tag=name)
+
+        return self
 
     @check_input_types
     def tag(self, tag: str) -> None:

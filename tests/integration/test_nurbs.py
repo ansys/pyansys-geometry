@@ -468,14 +468,14 @@ def test_from_json_invalid_nurbs():
         ValueError,
         match="looks like a 3D NURBS surface",
     ):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "valid_surface.json"),
             elements=["sample_surface"],
         )
 
     # Test raise on invalid payload for SketchNurbs
     with pytest.raises(ValueError, match="looks like a 3D NURBS curve"):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "valid_curve_3d.json"),
             elements=["curve_main"],
         )
@@ -514,14 +514,14 @@ def test_incorrect_nurbs_objects():
 
     # Test that passing a NURBS surface JSON to SketchNurbs raises ValueError
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "valid_surface.json"),
             elements=["invalid-knot-vector"],
         )
 
     # Test that passing a NURBS curve JSON to SketchNurbs raises ValueError
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "valid_curve_3d.json"),
             elements=["invalid-knot-vector"],
         )
@@ -531,7 +531,7 @@ def test_nurbs_non_decreasing_knot_vector():
     """Test that NURBS objects with decreasing order knot vectors raise ValueError."""
 
     with pytest.raises(ValueError, match="knots must be a non-decreasing sequence"):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["decreasing-order"],
         )
@@ -560,7 +560,7 @@ def test_nurbs_knots_length_mismatch():
 
     # Test that missing knot vectors raise ValueError
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["invalid-knot-vector"],
         )
@@ -581,14 +581,14 @@ def test_nurbs_knots_length_mismatch():
 
         # Test that missing knot vectors raise ValueError
     with pytest.raises(ValueError, match="Knot vector length mismatch: expected"):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["missing_knot"],
         )
 
     # Test that extra knot vectors raise ValueError
     with pytest.raises(ValueError, match="Knot vector length mismatch: expected"):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"), elements=["extra_knot"]
         )
 
@@ -631,7 +631,7 @@ def test_nurbs_mismatch_weights_length():
     """Test that NURBS objects with mismatched weights length raise ValueError."""
 
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["mismatch-weights"],
         )
@@ -729,10 +729,10 @@ def test_successful_nurbs_creation_from_json():
     assert len(curve.weights) == 4
 
     # Test creating a SketchNurbs from valid JSON
-    sketches = SketchNurbs.from_json_file(
+    sketches = Sketch().nurbs_from_json_file(
         str(JSON_NURBS_SAMPLES_DIR / "valid_sketch_curve_2d.json"), elements=["sketch_arc"]
     )
-    sketch_nurbs = sketches["sketch_arc"]
+    sketch_nurbs = sketches.get("sketch_arc")[0]
     assert isinstance(sketch_nurbs, SketchNurbs)
     assert sketch_nurbs.degree == 2
     assert len(sketch_nurbs.control_points) == 3
@@ -810,21 +810,21 @@ def test_nurbs_curve_from_json_element_name_not_found_raises():
 
     # Test missing list entry on json
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["missing-list-entry"],
         )
 
     # Test missing "elements"
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["non-existent-element"],
         )
 
     # Test mismatched weights length raises ValueError
     with pytest.raises(ValueError):
-        SketchNurbs.from_json_file(
+        Sketch().nurbs_from_json_file(
             str(JSON_NURBS_SAMPLES_DIR / "invalid_sketch_nurbs_cases.json"),
             elements=["mismatch-weights"],
         )
