@@ -115,6 +115,9 @@ class TessellationOptions:
     angle_deviation : Angle | Quantity | Real
         The maximum deviation from the true surface normal.
         If a Real is provided, it is assumed to be in radians.
+    curve_deviation : Distance | Quantity | Real, default=0.0
+        The maximum deviation from the true curve position.
+        If a Real is provided, it is assumed to be in the default length unit.
     max_aspect_ratio : Real, default=0.0
         The maximum aspect ratio of facets.
     max_edge_length : Distance | Quantity | Real, default=0.0
@@ -128,6 +131,7 @@ class TessellationOptions:
         self,
         surface_deviation: Distance | Quantity | Real,
         angle_deviation: Angle | Quantity | Real,
+        curve_deviation: Distance | Quantity | Real = 0.0,
         max_aspect_ratio: Real = 0.0,
         max_edge_length: Distance | Quantity | Real = 0.0,
         watertight: bool = False,
@@ -141,6 +145,9 @@ class TessellationOptions:
         )
         self._angle_deviation = (
             angle_deviation if isinstance(angle_deviation, Angle) else Angle(angle_deviation)
+        )
+        self._curve_deviation = (
+            curve_deviation if isinstance(curve_deviation, Distance) else Distance(curve_deviation)
         )
         self._max_aspect_ratio = max_aspect_ratio
         self._max_edge_length = (
@@ -163,6 +170,14 @@ class TessellationOptions:
         The maximum deviation from the true surface normal.
         """
         return self._angle_deviation
+
+    @property
+    def curve_deviation(self) -> Distance:
+        """Curve deviation.
+
+        The maximum deviation from the true curve position.
+        """
+        return self._curve_deviation
 
     @property
     def max_aspect_ratio(self) -> Real:
