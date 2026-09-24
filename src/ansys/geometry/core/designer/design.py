@@ -42,7 +42,9 @@ from ansys.geometry.core.designer.beam import (
 from ansys.geometry.core.designer.body import Body, MasterBody, MidSurfaceOffsetType
 from ansys.geometry.core.designer.component import Component, SharedTopologyType
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.edge import Edge
@@ -60,9 +62,9 @@ from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
     check_input_types,
-    deprecated_method,
     ensure_design_is_active,
     min_backend_version,
+    usd_required,
 )
 from ansys.geometry.core.misc.measurements import Distance
 from ansys.geometry.core.misc.options import (
@@ -265,36 +267,6 @@ class Design(Component):
         for mat in material:
             self._materials.remove(mat)
             self._grpc_client.log.debug(f"Material {mat.name} is successfully removed from design.")
-
-    @check_input_types
-    @ensure_design_is_active
-    @deprecated_method(
-        "export_to_*",
-        "use the export_to_* or download methods instead",
-        "0.15.2",
-        "0.17.0",
-    )
-    def save(self, file_location: Path | str, write_body_facets: bool = False) -> None:
-        """Save a design to disk on the active Geometry server instance.
-
-        Parameters
-        ----------
-        file_location : ~pathlib.Path | str
-            Location on disk to save the file to.
-        write_body_facets : bool, default: False
-            Option to write body facets into the saved file. 26R1 and later.
-        """
-        # Sanity checks on inputs
-        if isinstance(file_location, Path):
-            file_location = str(file_location)
-
-        self._grpc_client.services.designs.save_as(
-            filepath=file_location,
-            write_body_facets=write_body_facets,
-            backend_version=self._grpc_client.backend_version,
-            format=DesignFileFormat.SCDOCX,
-        )
-        self._grpc_client.log.debug(f"Design successfully saved at location {file_location}.")
 
     @check_input_types
     @ensure_design_is_active
@@ -787,6 +759,134 @@ class Design(Component):
         # Return the file location
         return file_location
 
+    @ensure_design_is_active
+    @usd_required
+    def export_to_usd(
+        self,
+        location: Path | str | None = None,
+        tess_options: TessellationOptions | None = None,
+        file_format: str = "usda",
+    ) -> Path:
+        """Export the design tessellation to a USD file.
+
+        Tessellates all bodies in the design and writes them to a Universal Scene
+        Description (USD) file. The export preserves the full component/body hierarchy,
+        mesh geometry, and per-body color as a ``UsdPreviewSurface`` material.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str | None, default: None
+            Output directory. If ``None``, the file is saved in the current working
+            directory using the design name as the filename.
+        tess_options : TessellationOptions | None, default: None
+            Tessellation quality options. If ``None``, the server default is used.
+        file_format : str, default: ``"usda"``
+            USD file format. One of:
+
+            - ``"usda"`` — USD ASCII (human-readable)
+            - ``"usdc"`` — USD binary crate (compact)
+            - ``"usdz"`` — USD zip archive (self-contained)
+            - ``"usd"`` — auto-detect (usd-core chooses binary or ASCII)
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the saved USD file.
+
+        Raises
+        ------
+        ImportError
+            If ``usd-core`` is not installed.
+            Install with: ``pip install ansys-geometry-core[usd]``.
+        ~ansys.geometry.core.errors.GeometryRuntimeError
+            If ``file_format`` is not one of the valid values.
+
+        Examples
+        --------
+        Export to binary USD in a specific directory:
+
+        >>> path = design.export_to_usd("output/", file_format="usdc")
+        """
+        from ansys.geometry.core.plotting.usd_export import (
+            _validate_usd_format as _usd_validate_format,
+            export_design_to_usd as _export_to_usd_impl,
+        )
+
+        _usd_validate_format(file_format)
+        file_location = self.__build_export_file_location(location, file_format)
+        _export_to_usd_impl(self, file_location, tess_options)
+        return file_location
+
+    @ensure_design_is_active
+    @usd_required
+    def export_to_html(
+        self,
+        location: Path | str | None = None,
+        tess_options: TessellationOptions | None = None,
+        show_mesh_lines: bool = True,
+        line_color: str = "#ffffff",
+        line_opacity: float = 0.9,
+    ) -> Path:
+        """Export the design directly to a self-contained HTML viewer.
+
+        Tessellates all bodies in the design, builds an in-memory USD stage, and
+        converts it to a Three.js HTML viewer in a single step — no intermediate
+        USD file is written to disk.
+
+        Parameters
+        ----------
+        location : ~pathlib.Path | str | None, default: None
+            Output directory. If ``None``, the file is saved in the current working
+            directory using the design name as the filename.
+        tess_options : TessellationOptions | None, default: None
+            Tessellation quality options. If ``None``, the server default is used.
+        show_mesh_lines : bool, default: True
+            When ``True``, injects a wireframe overlay over each mesh in the viewer.
+        line_color : str, default: ``"#ffffff"``
+            CSS hex color for the mesh-edge overlay.
+        line_opacity : float, default: ``0.9``
+            Opacity of the mesh-edge overlay (``0.0``–``1.0``).
+
+        Returns
+        -------
+        ~pathlib.Path
+            Path to the saved HTML file.
+
+        Raises
+        ------
+        ImportError
+            If ``usd-core`` or ``ansys-tools-visualization-interface[usd]`` is not installed.
+            Install both with: ``pip install ansys-geometry-core[usd]``.
+
+        Examples
+        --------
+        Export to a specific directory without the wireframe overlay:
+
+        >>> html_path = design.export_to_html("output/", show_mesh_lines=False)
+        """
+        from ansys.geometry.core.plotting.usd_export import _build_stage
+
+        stage = _build_stage(self, tess_options)
+
+        try:
+            from ansys.tools.visualization_interface import export_usd_to_html
+        except ImportError as e:
+            raise ImportError(
+                "The 'ansys-tools-visualization-interface' package with the 'usd' extra "
+                "is required for HTML export. "
+                "Install it with: pip install ansys-geometry-core[usd]"
+            ) from e
+
+        html_location = self.__build_export_file_location(location, "html")
+        html_location.parent.mkdir(parents=True, exist_ok=True)
+        return export_usd_to_html(
+            stage,
+            html_location,
+            show_mesh_lines=show_mesh_lines,
+            line_color=line_color,
+            line_opacity=line_opacity,
+        )
+
     @check_input_types
     @ensure_design_is_active
     def create_named_selection(
@@ -800,6 +900,9 @@ class Design(Component):
         components: list[Component] | None = None,
         vertices: list[Vertex] | None = None,
         design_curves: list[DesignCurve] | None = None,
+        datum_planes: list[DatumPlane] | None = None,
+        coordinate_systems: list[CoordinateSystem] | None = None,
+        datum_points: list[DatumPoint] | None = None,
     ) -> NamedSelection:
         """Create a named selection on the active Geometry server instance.
 
@@ -823,6 +926,12 @@ class Design(Component):
             All vertices to include in the named selection.
         design_curves : list[DesignCurve], default: None
             All design curves to include in the named selection.
+        datum_planes : list[DatumPlane], default: None
+            All datum planes to include in the named selection.
+        coordinate_systems : list[CoordinateSystem], default: None
+            All coordinate systems to include in the named selection.
+        datum_points : list[DatumPoint], default: None
+            All datum points to include in the named selection.
 
         Returns
         -------
@@ -837,12 +946,24 @@ class Design(Component):
         """
         # Verify that at least one entity is provided
         if not any(
-            [bodies, faces, edges, beams, design_points, components, vertices, design_curves]
+            [
+                bodies,
+                faces,
+                edges,
+                beams,
+                design_points,
+                components,
+                vertices,
+                design_curves,
+                datum_planes,
+                coordinate_systems,
+                datum_points,
+            ]
         ):
             raise ValueError(
                 "At least one of the following must be provided: "
                 "bodies, faces, edges, beams, design_points, components, vertices, "
-                "or design_curves."
+                "design_curves, datum_planes, coordinate_systems, or datum_points."
             )
 
         named_selection = NamedSelection(
@@ -857,6 +978,9 @@ class Design(Component):
             components=components,
             vertices=vertices,
             design_curves=design_curves,
+            datum_planes=datum_planes,
+            coordinate_systems=coordinate_systems,
+            datum_points=datum_points,
         )
 
         self._named_selections[named_selection.name] = named_selection
@@ -1261,9 +1385,11 @@ class Design(Component):
         lines.append(f"  N Coordinate Systems : {len(self.coordinate_systems)}")
         lines.append(f"  N Named Selections   : {len(self.named_selections)}")
         lines.append(f"  N Materials          : {len(self.materials)}")
+        lines.append(f"  N Beams              : {len(self.beams)}")
         lines.append(f"  N Beam Profiles      : {len(self.beam_profiles)}")
-        lines.append(f"  N Design Points      : {len(self.design_points)}")
+        lines.append(f"  N Datum Points       : {len(self.datum_points)}")
         lines.append(f"  N Datum Planes       : {len(self.datum_planes)}")
+        lines.append(f"  N Design Points      : {len(self.design_points)}")
         lines.append(f"  N Design Curves      : {len(self.design_curves)}")
         return "\n".join(lines)
 
@@ -1282,7 +1408,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [X] SharedTopology
         #
@@ -1293,7 +1419,7 @@ class Design(Component):
         # - [X] Materials
         # - [X] NamedSelections
         # - [ ] BeamProfiles
-        # - [ ] Beams
+        # - [X] Beams
         # - [X] CoordinateSystems
         # - [ ] SharedTopology
         #
@@ -1357,6 +1483,7 @@ class Design(Component):
                 body.get("name"),
                 self._grpc_client,
                 is_surface=body.get("is_surface"),
+                is_lightweight=body.get("is_lightweight", False),
             )
             part.bodies.append(tb)
             created_bodies[body.get("id")] = tb
@@ -1529,8 +1656,23 @@ class Design(Component):
             # Append the datum plane to the component to which it belongs
             created_dp.parent_component._datum_planes.append(created_dp)
 
-        # Create DesignCurves
-        for dc in response.get("design_curves"):
+        # Create DesignCurves - different retrieval methods based on backends for best compatibility
+        curves = []
+        if self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.debug(
+                "Backend version does not support design curves. Skipping design curve creation."
+            )
+        elif (
+            self._grpc_client.backend_version < (27, 1, 0)
+            or self._grpc_client.services.version == GeometryApiProtos.V0
+        ):
+            curves = self._grpc_client.services.curves.get_all(parent_id="parts/" + self.id).get(
+                "curves", []
+            )
+        else:
+            curves = response.get("design_curves", [])
+
+        for dc in curves:
             created_dc = DesignCurve(
                 dc.get("id"),
                 dc.get("name"),
@@ -1543,6 +1685,31 @@ class Design(Component):
 
             # Append the design curve to the component to which it belongs
             created_dc.parent_component._design_curves.append(created_dc)
+
+        # Create Datum Points
+        for dp in response.get("datum_points"):
+            created_dp = DatumPoint(
+                dp.get("id"),
+                dp.get("name"),
+                dp.get("point"),
+                created_components.get(dp.get("parent_id"), self),
+            )
+
+            # Append the datum point to the component to which it belongs
+            created_dp.parent_component._datum_points.append(created_dp)
+
+        # Create Datum Lines - only available for 27r1 and later
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            for dl in response.get("datum_lines", []):
+                created_dl = DatumLine(
+                    dl.get("id"),
+                    dl.get("name"),
+                    dl.get("line"),
+                    created_components.get(dl.get("parent_id"), self),
+                )
+
+                # Append the datum line to the component to which it belongs
+                created_dl.parent_component._datum_lines.append(created_dl)
 
         end = time.time()
 
@@ -1593,7 +1760,13 @@ class Design(Component):
         self._clear_cached_bodies()
         self._materials = []
         self._named_selections = {}
-        self._coordinate_systems = {}
+        self._coordinate_systems = []
+        self._datum_planes = []
+        self._datum_points = []
+        self._datum_lines = []
+        self._design_curves = []
+        self._design_points = []
+        self._beam_profiles = {}
 
         # Read the existing design
         self.__read_existing_design()
@@ -1742,6 +1915,7 @@ class Design(Component):
             body_id = created_body_info["id"]
             body_name = created_body_info["name"]
             is_surface = created_body_info.get("is_surface", False)
+            is_lightweight = created_body_info.get("is_lightweight", False)
             self._grpc_client.log.debug(
                 f"Processing created body: ID={body_id}, Name='{body_name}'"
             )
@@ -1757,7 +1931,13 @@ class Design(Component):
             )
 
             if not new_body:
-                new_body = MasterBody(body_id, body_name, self._grpc_client, is_surface=is_surface)
+                new_body = MasterBody(
+                    body_id,
+                    body_name,
+                    self._grpc_client,
+                    is_surface=is_surface,
+                    is_lightweight=is_lightweight,
+                )
                 self._master_component.part.bodies.append(new_body)
                 self._clear_cached_bodies()
                 self._grpc_client.log.debug(
@@ -2029,6 +2209,7 @@ class Design(Component):
         )
         existing_body.name = body_info["name"]
         existing_body._template._is_surface = body_info.get("is_surface", False)
+        existing_body._template._is_lightweight = body_info.get("is_lightweight", False)
 
     def _find_and_add_body(
         self,
@@ -2066,6 +2247,7 @@ class Design(Component):
                     tracked_body_info["name"],
                     self._grpc_client,
                     is_surface=tracked_body_info.get("is_surface", False),
+                    is_lightweight=tracked_body_info.get("is_lightweight", False),
                 )
 
                 component._master_component.part.bodies.append(new_master_body)

@@ -179,3 +179,8 @@ class GRPCRepairToolsService(ABC):  # pragma: no cover
     def fix_interference(self, **kwargs) -> dict:  # noqa: D102
         """Fix interferences in the geometry."""
         pass
+
+    @abstractmethod
+    def find_bad_faces(self, **kwargs) -> dict:  # noqa: D102
+        """Identify bad faces in the geometry."""
+        pass

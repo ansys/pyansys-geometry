@@ -29,6 +29,9 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.beam import Beam
     from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
+    from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+    from ansys.geometry.core.designer.datumplane import DatumPlane
+    from ansys.geometry.core.designer.datumpoint import DatumPoint
     from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.designcurve import DesignCurve
     from ansys.geometry.core.designer.designpoint import DesignPoint
@@ -156,6 +159,11 @@ def __traverse_all_design_curves(comp: Union["Design", "Component"]) -> list["De
     return __traverse_component_elem("design_curves", comp)
 
 
+def __traverse_all_datum_points(comp: Union["Design", "Component"]) -> list["DatumPoint"]:
+    """Traverse all datum points in a design/component and all its subcomponents."""
+    return __traverse_component_elem("datum_points", comp)
+
+
 def get_all_bodies_from_design(design: "Design") -> list["Body"]:
     """Find all the ``Body`` objects inside a ``Design``.
 
@@ -195,7 +203,8 @@ def get_bodies_from_ids(design: "Design", body_ids: list[str]) -> list["Body"]:
     -----
     This method takes a design and body ids, and gets their corresponding ``Body`` object.
     """
-    return [body for body in __traverse_all_bodies(design) if body.id in body_ids]
+    body_map = {body.id: body for body in __traverse_all_bodies(design)}
+    return [body_map[bid] for bid in body_ids if bid in body_map]
 
 
 def get_components_from_ids(design: "Design", component_ids: list[str]) -> list["Component"]:
@@ -246,6 +255,40 @@ def get_faces_from_ids(design: "Design", face_ids: list[str]) -> list["Face"]:
     ]  # noqa: E501
 
 
+def get_faces_from_metadata(design: "Design", metadata: dict) -> list["Face"]:
+    """Construct ``Face`` objects from their metadata.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the faces.
+    metadata : dict
+        Metadata containing face information.
+
+    Returns
+    -------
+    list[Face]
+        List of Face objects.
+
+    Notes
+    -----
+    This method takes a design and face metadata, and gets their corresponding ``Face`` objects.
+    """
+    from ansys.geometry.core.designer.face import Face, SurfaceType
+
+    body_map = {body._template.id: body for body in __traverse_all_bodies(design)}
+    return [
+        Face(
+            face.get("id"),
+            SurfaceType(face.get("surface_type")),
+            body_map[face.get("body_id")],
+            body_map[face.get("body_id")]._grpc_client,
+            face.get("is_reversed"),
+        )
+        for face in metadata.get("faces")
+    ]
+
+
 def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     """Find the ``Edge`` objects inside a ``Design`` from its ids.
 
@@ -265,9 +308,8 @@ def get_edges_from_ids(design: "Design", edge_ids: list[str]) -> list["Edge"]:
     -----
     This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
     """
-    return [
-        edge for body in __traverse_all_bodies(design) for edge in body.edges if edge.id in edge_ids
-    ]  # noqa: E501
+    edge_map = {edge.id: edge for body in __traverse_all_bodies(design) for edge in body.edges}
+    return [edge_map[eid] for eid in edge_ids if eid in edge_map]
 
 
 def build_edge_id_map(design: "Design") -> "dict[str, Edge]":
@@ -390,6 +432,77 @@ def get_design_curves_from_ids(
     objects.
     """
     return [dc for dc in __traverse_all_design_curves(design) if dc.id in design_curve_ids]
+
+
+def get_datum_planes_from_ids(design: "Design", datum_plane_ids: list[str]) -> list["DatumPlane"]:
+    """Find the ``DatumPlane`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the datum planes.
+    datum_plane_ids : list[str]
+        List of datum plane ids.
+
+    Returns
+    -------
+    list[DatumPlane]
+        List of DatumPlane objects.
+
+    Notes
+    -----
+    This method takes a design and datum plane ids, and gets their corresponding ``DatumPlane``
+    objects.
+    """
+    return [dp for dp in design.datum_planes if dp.id in datum_plane_ids]
+
+
+def get_coordinate_systems_from_ids(
+    design: "Design", coordinate_system_ids: list[str]
+) -> list["CoordinateSystem"]:
+    """Find the ``CoordinateSystem`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the coordinate systems.
+    coordinate_system_ids : list[str]
+        List of coordinate system ids.
+
+    Returns
+    -------
+    list[CoordinateSystem]
+        List of CoordinateSystem objects.
+
+    Notes
+    -----
+    This method takes a design and coordinate system ids, and gets their corresponding
+    ``CoordinateSystem`` objects.
+    """
+    return [cs for cs in design.coordinate_systems if cs.id in coordinate_system_ids]
+
+
+def get_datum_points_from_ids(design: "Design", datum_point_ids: list[str]) -> list["DatumPoint"]:
+    """Find the ``DatumPoint`` objects inside a ``Design`` from its ids.
+
+    Parameters
+    ----------
+    design : Design
+        Parent design for the datum points.
+    datum_point_ids : list[str]
+        List of datum point ids.
+
+    Returns
+    -------
+    list[DatumPoint]
+        List of DatumPoint objects.
+
+    Notes
+    -----
+    This method takes a design and datum point ids, and gets their corresponding ``DatumPoint``
+    objects.
+    """
+    return [dp for dp in __traverse_all_datum_points(design) if dp.id in datum_point_ids]
 
 
 def convert_color_to_hex(

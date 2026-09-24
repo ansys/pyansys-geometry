@@ -572,10 +572,13 @@ ERROR_GRAPHICS_REQUIRED = (
 __GRAPHICS_AVAILABLE = None
 """Global variable to store the result of the graphics imports."""
 
+__GRAPHICS_IMPORT_ERROR = None
+"""Global variable to store the original import error for graphics, if any."""
+
 
 def run_if_graphics_required():
     """Check if graphics are available."""
-    global __GRAPHICS_AVAILABLE
+    global __GRAPHICS_AVAILABLE, __GRAPHICS_IMPORT_ERROR
     if __GRAPHICS_AVAILABLE is None:
         try:
             # Attempt to perform the imports
@@ -586,11 +589,12 @@ def run_if_graphics_required():
             import vtk  # noqa: F401
 
             __GRAPHICS_AVAILABLE = True
-        except (ModuleNotFoundError, ImportError):
+        except (ModuleNotFoundError, ImportError) as e:
             __GRAPHICS_AVAILABLE = False
+            __GRAPHICS_IMPORT_ERROR = e
 
     if __GRAPHICS_AVAILABLE is False:
-        raise ImportError(ERROR_GRAPHICS_REQUIRED)
+        raise ImportError(ERROR_GRAPHICS_REQUIRED) from __GRAPHICS_IMPORT_ERROR
 
 
 def graphics_required(method: _F) -> _F:
@@ -610,6 +614,63 @@ def graphics_required(method: _F) -> _F:
     @functools.wraps(method)
     def wrapper(*args, **kwargs):
         run_if_graphics_required()
+        return method(*args, **kwargs)
+
+    return wrapper  # type: ignore[return-value]
+
+
+ERROR_USD_REQUIRED = (
+    "The 'usd-core' package is required for USD export. "
+    "Install it with: pip install ansys-geometry-core[usd] or pip install ansys-geometry-core[all]"
+)
+"""Message to display when usd-core is required for a method."""
+
+__USD_AVAILABLE = None
+"""Global variable to store the result of the usd-core imports."""
+
+__USD_IMPORT_ERROR = None
+"""Global variable to store the original import error for usd-core, if any."""
+
+
+def run_if_usd_required():
+    """Check if usd-core is available.
+
+    Raises
+    ------
+    ImportError
+        If ``usd-core`` is not installed.
+    """
+    global __USD_AVAILABLE, __USD_IMPORT_ERROR
+    if __USD_AVAILABLE is None:
+        try:
+            from pxr import Usd  # noqa: F401
+
+            __USD_AVAILABLE = True
+        except (ModuleNotFoundError, ImportError) as e:
+            __USD_AVAILABLE = False
+            __USD_IMPORT_ERROR = e
+
+    if __USD_AVAILABLE is False:
+        raise ImportError(ERROR_USD_REQUIRED) from __USD_IMPORT_ERROR
+
+
+def usd_required(method: _F) -> _F:
+    """Decorate a method as requiring usd-core.
+
+    Parameters
+    ----------
+    method : callable
+        Method to decorate.
+
+    Returns
+    -------
+    callable
+        Decorated method that raises ``ImportError`` if ``usd-core`` is not installed.
+    """
+
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        run_if_usd_required()
         return method(*args, **kwargs)
 
     return wrapper  # type: ignore[return-value]

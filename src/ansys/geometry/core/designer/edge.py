@@ -53,6 +53,8 @@ class CurveType(Enum):
     CURVETYPE_ELLIPSE = 3
     CURVETYPE_NURBS = 4
     CURVETYPE_PROCEDURAL = 5
+    CURVETYPE_HELIX = 6
+    CURVETYPE_SPLINECURVE = 7
 
 
 class Edge:
@@ -89,6 +91,16 @@ class Edge:
         self._grpc_client = grpc_client
         self._is_reversed = is_reversed
         self._shape = None
+
+    def __eq__(self, other: "Edge") -> bool:
+        """Return ``True`` when both edges share the same ID."""
+        if not isinstance(other, Edge):
+            return NotImplemented
+        return self._id == other._id
+
+    def __hash__(self) -> int:
+        """Hash based on the edge ID."""
+        return hash(self._id)
 
     @property
     def id(self) -> str:

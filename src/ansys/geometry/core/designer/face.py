@@ -78,6 +78,7 @@ class SurfaceType(Enum):
     SURFACETYPE_SPHERE = 5
     SURFACETYPE_NURBS = 6
     SURFACETYPE_PROCEDURAL = 7
+    SURFACETYPE_SPLINESURFACE = 8
 
 
 @unique
@@ -184,6 +185,16 @@ class Face:
         self._is_reversed = is_reversed
         self._shape = None
         self._color = None
+
+    def __eq__(self, other: "Face") -> bool:
+        """Return ``True`` when both faces share the same ID."""
+        if not isinstance(other, Face):
+            return NotImplemented
+        return self._id == other._id
+
+    def __hash__(self) -> int:
+        """Hash based on the face ID."""
+        return hash(self._id)
 
     @property
     def id(self) -> str:

@@ -43,17 +43,17 @@ jobs:
             backend-version: "25.1"
 
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
 
       - name: Create Python venv
         run: |
@@ -68,7 +68,7 @@ jobs:
           pip install . --group tests
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -119,16 +119,33 @@ jobs:
           python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Testing
-        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs...
+        id: pytest
+        timeout-minutes: 20 # On Windows self-hosted runners, sometimes hangs on cleanup after all tests pass
+        continue-on-error: true
         env:
           BACKEND_VERSION: ${{ matrix.backend-version }}
         run: |
           .\.venv\Scripts\Activate.ps1
           # These older images only support proto v0, so no need to loop over proto versions here
-          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf
+          pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=v0 -rf --junit-xml=test-results.xml
+
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          if (-not (Test-Path test-results.xml)) {
+            Write-Error "No test results found - pytest was killed before writing results"
+            exit 1
+          }
+          $failures = (Select-Xml -Path test-results.xml -XPath '//testsuite/@failures' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          $errors = (Select-Xml -Path test-results.xml -XPath '//testsuite/@errors' | ForEach-Object { [int]$_.Node.Value } | Measure-Object -Sum).Sum
+          if (($failures + $errors) -gt 0) {
+            Write-Error "$failures failures and $errors errors found"
+            exit 1
+          }
+          Write-Output "No test failures found - step likely timed out during cleanup"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -170,22 +187,35 @@ jobs:
             windows-runner: "windows-2025"
             proto-version: "v1"
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
       - name: Setup UV
-        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39 # v8.2.0
+        uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
-          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }}
+          # Cache poisoning prevention is already active - zizmor is not capturing it properly
+          enable-cache: ${{ !startsWith(github.ref, 'refs/tags/') }} # zizmor: ignore[cache-poisoning]
 
       - name: Set up headless display
-        uses: pyvista/setup-headless-display-action@5bc8de3bc71fcda7a96439571287a554901541a0 # v4.3
+        uses: pyvista/setup-headless-display-action@c103a2ff45650d38cb71684b5dc6cdfeb9442c79 # v5.1.0
+
+      - name: Ensure Docker service is running
+        run: |
+          $maxRetries = 6
+          for ($i = 1; $i -le $maxRetries; $i++) {
+            Start-Service docker -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 10
+            if ((docker info 2>&1 | Out-String) -notmatch 'error') { break }
+            if ($i -eq $maxRetries) { Write-Error "Docker failed to start after $maxRetries attempts"; exit 1 }
+            Write-Host "Docker not ready yet (attempt $i/$maxRetries), retrying..."
+          }
+          Write-Host "Docker is ready"
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@c99871dec2022cc055c062a10cc1a1310835ceb4 # v4.3.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -224,7 +254,7 @@ jobs:
           uv run pytest -v --backwards-compatibility=yes --backend-version=$env:BACKEND_VERSION --proto-version=$env:PROTO_VERSION -rf
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:

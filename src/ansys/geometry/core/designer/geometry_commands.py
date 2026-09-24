@@ -626,6 +626,7 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import FaceLoop
 
         loops: list[FaceLoop] = loops if isinstance(loops, list) else [loops]
+        design = get_design_from_edge(loops[0].edges[0])
         check_type_all_elements_in_iterable(loops, FaceLoop)
 
         for loop in loops:
@@ -637,7 +638,6 @@ class GeometryCommands:
         )
 
         if result.get("success"):
-            design = get_design_from_edge(loops[0].edges[0])
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
                 design._update_from_tracker(result.get("tracked_response"))
             else:
@@ -2682,6 +2682,42 @@ class GeometryCommands:
             design = get_design_from_face(target_faces[0])
             if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
                 design._update_from_tracker(result.get("tracked_response"))
+            else:
+                design._update_design_inplace()
+        return result.get("success")
+
+    @min_backend_version(25, 2, 0)
+    def fill(self, faces: Union["Face", list["Face"]]) -> bool:
+        """Fill the specified faces.
+
+        This method is used to close holes or gaps in the geometry by filling the specified faces.
+
+        Parameters
+        ----------
+        faces : Face | list[Face]
+            Face(s) to fill.
+
+        Returns
+        -------
+        bool
+            ``True`` when successful, ``False`` when failed.
+        """
+        from ansys.geometry.core.designer.face import Face
+
+        faces: list[Face] = faces if isinstance(faces, list) else [faces]
+        check_type_all_elements_in_iterable(faces, Face)
+
+        design = get_design_from_face(faces[0])
+
+        # Using the remove_rounds backend as it performs the same operation
+        result = self._grpc_client._services.prepare_tools.remove_rounds(
+            rounds=[face.id for face in faces],
+            auto_shrink=False,
+        )
+
+        if result.get("success"):
+            if pyansys_geo.USE_TRACKER_TO_UPDATE_DESIGN:
+                design._update_from_tracker(result.get("tracker_response"))
             else:
                 design._update_design_inplace()
         return result.get("success")

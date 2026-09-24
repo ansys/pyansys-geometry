@@ -63,3 +63,13 @@ class GRPCCurvesService(ABC):  # pragma: no cover
     def get_interval(self, **kwargs) -> dict:
         """Get the parametric interval (start and end parameter values) of a curve."""
         pass
+
+    @abstractmethod
+    def get_all(self, **kwargs) -> dict:
+        """Get all design curves belonging to a parent component."""
+        pass
+
+    @abstractmethod
+    def delete(self, **kwargs) -> dict:
+        """Delete a curve from the design."""
+        pass

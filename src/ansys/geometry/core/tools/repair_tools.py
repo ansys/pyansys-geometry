@@ -62,6 +62,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.face import Face
     from ansys.geometry.core.modeler import Modeler
 
 
@@ -405,6 +406,29 @@ class RepairTools:
             )
             for res in response.get("problems")
         ]
+
+    @min_backend_version(27, 1, 0)
+    def find_bad_faces(self, bodies: list["Body"]) -> list["Face"]:
+        """Find bad faces in the given list of bodies.
+
+        Parameters
+        ----------
+        bodies : list[Body]
+            List of bodies where bad faces are searched.
+
+        Returns
+        -------
+        list[Face]
+            List of bad faces found in the provided bodies.
+        """
+        if not bodies:
+            return []
+
+        body_ids = [body.id for body in bodies]
+        response = self._grpc_client.services.repair_tools.find_bad_faces(body_ids=body_ids)
+
+        parent_design = get_design_from_body(bodies[0])
+        return get_faces_from_ids(parent_design, response.get("face_ids", []))
 
     def find_stitch_faces(
         self,

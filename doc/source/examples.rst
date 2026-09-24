@@ -68,6 +68,8 @@ applications.
     examples/04_applied/02_naca_fluent.mystnb
     examples/04_applied/03_ahmed_body_fluent.mystnb
     examples/04_applied/04_mechanical_named_selections.mystnb
+    examples/04_applied/05_pmdb_export_options.mystnb
+    examples/04_applied/06_solder_ball.mystnb
 
 Tools examples
 --------------
@@ -81,6 +83,7 @@ the ``MeasurementTools`` class for measuring distances between geometric objects
 .. nbgallery::
     :caption: Tools examples
 
+    examples/05_tools/selection_highlight.mystnb
     examples/05_tools/repair_tools.mystnb
     examples/05_tools/prepare_tools.mystnb
     examples/05_tools/measurement_tools.mystnb

@@ -27,6 +27,9 @@ import grpc
 from ansys.geometry.core.errors import protect_grpc
 
 from ..base.unsupported import GRPCUnsupportedService
+from .conversions import (
+    build_grpc_id,
+)
 
 
 class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
@@ -63,8 +66,6 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
     def set_export_ids(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest, SetExportIdsRequest
 
-        from .conversions import build_grpc_id
-
         # Create the request - assumes all inputs are valid and of the proper type
         request = SetExportIdsRequest(
             export_data=[
@@ -95,11 +96,15 @@ class GRPCUnsupportedServiceV0(GRPCUnsupportedService):
             "implemented in this protofile version."
         )
 
+    def convert_to_heavyweight(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.convert_to_heavyweight' is not "
+            "implemented in this protofile version."
+        )
+
     @protect_grpc
     def set_single_export_id(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.unsupported_pb2 import ExportIdRequest
-
-        from .conversions import build_grpc_id
 
         # Create the request - assumes all inputs are valid and of the proper type
         request = ExportIdRequest(

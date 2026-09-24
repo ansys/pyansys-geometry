@@ -30,6 +30,7 @@ import uuid
 
 from pint import Quantity
 
+from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.client import GrpcClient
 from ansys.geometry.core.designer.beam import (
     Beam,
@@ -40,7 +41,9 @@ from ansys.geometry.core.designer.beam import (
 )
 from ansys.geometry.core.designer.body import Body, CollisionType, MasterBody
 from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
+from ansys.geometry.core.designer.datumline import DatumLine
 from ansys.geometry.core.designer.datumplane import DatumPlane
+from ansys.geometry.core.designer.datumpoint import DatumPoint
 from ansys.geometry.core.designer.designcurve import DesignCurve
 from ansys.geometry.core.designer.designpoint import DesignPoint
 from ansys.geometry.core.designer.face import Face
@@ -62,6 +65,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import TessellationOptions
 from ansys.geometry.core.shapes.curves.circle import Circle
+from ansys.geometry.core.shapes.curves.line import Line
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval
 from ansys.geometry.core.shapes.surfaces import TrimmedSurface
@@ -183,8 +187,10 @@ class Component:
     _beams: list[Beam]
     _coordinate_systems: list[CoordinateSystem]
     _design_points: list[DesignPoint]
-    _datum_planes: list[DatumPlane]
     _design_curves: list[DesignCurve]
+    _datum_planes: list[DatumPlane]
+    _datum_points: list[DatumPoint]
+    _datum_lines: list[DatumLine]
 
     @check_input_types
     def __init__(
@@ -242,8 +248,10 @@ class Component:
         self._beams = []
         self._coordinate_systems = []
         self._design_points = []
-        self._datum_planes = []
         self._design_curves = []
+        self._datum_planes = []
+        self._datum_points = []
+        self._datum_lines = []
         self._parent_component = parent_component
         self._is_alive = True
         self._shared_topology = None
@@ -357,14 +365,24 @@ class Component:
         return self._design_points
 
     @property
+    def design_curves(self) -> list[DesignCurve]:
+        """List of ``DesignCurve`` objects inside of the component."""
+        return self._design_curves
+
+    @property
     def datum_planes(self) -> list[DatumPlane]:
         """List of ``DatumPlane`` objects inside of the component."""
         return self._datum_planes
 
     @property
-    def design_curves(self) -> list[DesignCurve]:
-        """List of ``DesignCurve`` objects inside of the component."""
-        return self._design_curves
+    def datum_points(self) -> list[DatumPoint]:
+        """List of ``DatumPoint`` objects inside of the component."""
+        return self._datum_points
+
+    @property
+    def datum_lines(self) -> list[DatumLine]:
+        """List of ``DatumLine`` objects inside of the component."""
+        return self._datum_lines
 
     @property
     def coordinate_systems(self) -> list[CoordinateSystem]:
@@ -1042,7 +1060,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
-    def create_surface(self, name: str, sketch: Sketch) -> Body:
+    def create_surface(self, name: str, sketch: Sketch, merge_inner_loops: bool = False) -> Body:
         """Create a surface body with a sketch profile.
 
         The newly created body is placed under this component within the design assembly.
@@ -1053,6 +1071,13 @@ class Component:
             User-defined label for the new surface body.
         sketch : Sketch
             Two-dimensional sketch source for the surface definition.
+        merge_inner_loops : bool, default: False
+            Whether the inner closed profiles of the sketch are treated as holes of the
+            outer profile instead of independent faces. By default, each closed profile
+            of the sketch becomes its own face, so a sketch such as a rectangle
+            containing a circle results in a body with two faces. When ``True``, a single
+            face with inner loops is created. On backends older than 25R2, this option is
+            ignored and a warning is issued.
 
         Returns
         -------
@@ -1062,8 +1087,17 @@ class Component:
         Warnings
         --------
         Creating a surface from a NURBS sketch requires a minimum Ansys release version of 26R1.
+        Using ``merge_inner_loops`` requires a minimum Ansys release version of 25R2.
         """
         check_nurbs_compatibility(self._grpc_client.backend_version, sketch=sketch)
+
+        if merge_inner_loops and self._grpc_client.backend_version < (25, 2, 0):
+            self._grpc_client.log.warning(
+                "The 'merge_inner_loops' option requires a minimum Ansys release version of "
+                f"25.2.0, but the current version used is {self._grpc_client.backend_version}. "
+                "Ignoring the option."
+            )
+            merge_inner_loops = False
 
         self._grpc_client.log.debug(
             f"Creating planar surface from sketch provided on {self.id}. Creating body..."
@@ -1075,7 +1109,18 @@ class Component:
             backend_version=self._grpc_client.backend_version,
         )
 
-        return self.__build_body_from_response(response)
+        body = self.__build_body_from_response(response)
+
+        if merge_inner_loops and len(body.faces) > 1:
+            # The service keeps the inner regions of the sketch as independent faces. Rebuilding
+            # the body from its own edges makes the service interpret them as a single profile.
+            merged_body = self.create_surface_from_trimmed_curves(
+                name, [edge.shape for edge in body.edges]
+            )
+            self.delete_body(body)
+            return merged_body
+
+        return body
 
     @check_input_types
     @ensure_design_is_active
@@ -1522,9 +1567,22 @@ class Component:
         """
         # Create DesignPoint objects server-side
         self._grpc_client.log.debug(f"Creating design points on {self.id}...")
-        response = self._grpc_client.services.points.create_design_points(
-            points=points, parent_id=self.id
-        )
+
+        if (
+            self._grpc_client.backend_version < (27, 1, 0)
+            and self._grpc_client.services.version == GeometryApiProtos.V1
+        ):
+            response = self._grpc_client.services.points.create_datum_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
+        else:
+            response = self._grpc_client.services.points.create_design_points(
+                points=points,
+                parent_id=self.id,
+                name=name,
+            )
         self._grpc_client.log.debug("Design points successfully created.")
 
         # Once created on the server, create them client side
@@ -1572,6 +1630,7 @@ class Component:
 
     @check_input_types
     @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
     def delete_datum_plane(self, plane: DatumPlane | str) -> None:
         """Delete a datum plane from this component.
 
@@ -1604,6 +1663,177 @@ class Component:
         else:
             self._grpc_client.log.warning(
                 f"DatumPlane {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_coordinate_system(self, coordinate_system: CoordinateSystem | str) -> None:
+        """Delete a coordinate system from this component.
+
+        Parameters
+        ----------
+        coordinate_system : CoordinateSystem | str
+            ID of the coordinate system or instance to delete.
+
+        Notes
+        -----
+        If the coordinate system belongs to this component's children, it is deleted.
+        If the coordinate system does not belong to this component, it is not deleted.
+        """
+        id = coordinate_system if isinstance(coordinate_system, str) else coordinate_system.id
+        cs_requested = self.search_coordinate_system(id)
+
+        if cs_requested:
+            # If the coordinate system belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.coordinate_systems.delete(id=cs_requested.id)
+
+            # If the coordinate system was deleted from the server side... "kill" it
+            # on the client side
+            cs_requested._is_alive = False
+            self._grpc_client.log.debug(f"CoordinateSystem {cs_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"CoordinateSystem {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def create_datum_point(self, name: str, point: Point3D) -> DatumPoint:
+        """Create a datum point on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum point.
+        point : Point3D
+            3D point constituting the datum point.
+
+        Returns
+        -------
+        DatumPoint
+            Created datum point object.
+        """
+        self._grpc_client.log.debug(f"Creating datum point on {self.id}...")
+        response = self._grpc_client.services.points.create_datum_points(
+            parent_id=self.id,
+            points=[point],
+            name=name,
+        )
+        self._grpc_client.log.debug("Datum point successfully created.")
+        datum_point = DatumPoint(response.get("point_ids")[0], name, point, self)
+        self._datum_points.append(datum_point)
+        return datum_point
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_datum_point(self, datum_point: DatumPoint | str) -> None:
+        """Delete a datum point from this component.
+
+        Parameters
+        ----------
+        datum_point : DatumPoint | str
+            ID of the datum point or instance to delete.
+
+        Notes
+        -----
+        If the datum point belongs to this component's children, it is deleted.
+        If the datum point does not belong to this component, it is not deleted.
+        """
+        id = datum_point if isinstance(datum_point, str) else datum_point.id
+        dp_requested = self.search_datum_point(id)
+
+        if dp_requested:
+            # If the datum point belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.points.delete_datum_points(ids=[dp_requested.id])
+
+            # If the datum point was deleted from the server side... "kill" it
+            # on the client side
+            dp_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumPoint {dp_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumPoint {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @min_backend_version(27, 1, 0)
+    @check_input_types
+    @ensure_design_is_active
+    def create_datum_line(self, name: str, line: Line) -> DatumLine:
+        """Create a datum line on this component.
+
+        Parameters
+        ----------
+        name : str
+            User-defined label for the datum line.
+        line : Line
+            Line object defining the datum line's geometry.
+
+        Returns
+        -------
+        DatumLine
+            Created datum line object.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._grpc_client.log.debug(f"Creating datum line on {self.id}...")
+        response = self._grpc_client.services.datum_lines.create(
+            name=name,
+            parent_id=self.id,
+            line=line,
+        )
+        self._grpc_client.log.debug("Datum line successfully created.")
+        datum_line = DatumLine(response.get("id"), name, line, self)
+        self._datum_lines.append(datum_line)
+        return datum_line
+
+    @check_input_types
+    @ensure_design_is_active
+    @min_backend_version(27, 1, 0)
+    def delete_datum_line(self, datum_line: DatumLine | str) -> None:
+        """Delete a datum line from this component.
+
+        Parameters
+        ----------
+        datum_line : DatumLine | str
+            ID of the datum line or instance to delete.
+
+        Notes
+        -----
+        If the datum line belongs to this component's children, it is deleted.
+        If the datum line does not belong to this component, it is not deleted.
+        """
+        id = datum_line if isinstance(datum_line, str) else datum_line.id
+        dl_requested = self.search_datum_line(id)
+
+        if dl_requested:
+            # If the datum line belongs to this component (or nested components)
+            # call the server deletion mechanism
+            self._grpc_client.services.datum_lines.delete(ids=[dl_requested.id])
+
+            # If the datum line was deleted from the server side... "kill" it
+            # on the client side
+            dl_requested._is_alive = False
+            self._grpc_client.log.debug(f"DatumLine {dl_requested.id} has been deleted.")
+        else:
+            self._grpc_client.log.warning(
+                f"DatumLine {id} not found in this component (or subcomponents)."
                 + " Ignoring deletion request."
             )
             pass
@@ -1643,6 +1873,48 @@ class Component:
         else:
             self._grpc_client.log.warning(
                 f"Beam {id} not found in this component (or subcomponents)."
+                + " Ignoring deletion request."
+            )
+            pass
+
+    @check_input_types
+    @ensure_design_is_active
+    def delete_design_curve(self, design_curve: DesignCurve | str) -> None:
+        """Delete an existing design curve belonging to this component's scope.
+
+        Parameters
+        ----------
+        design_curve : DesignCurve | str
+            ID of the design curve or instance to delete.
+
+        Notes
+        -----
+        If the design curve belongs to this component's children, it is deleted.
+        If the design curve does not belong to this component (or its children), it
+        is not deleted.
+        """
+        id = design_curve if isinstance(design_curve, str) else design_curve.id
+
+        design_curve_requested = self.search_design_curve(id)
+
+        if design_curve_requested:
+            # If the design curve belongs to this component (or nested components)
+            # call the server deletion mechanism
+            #
+            # Server-side, the same deletion request has to be performed
+            # as for deleting a Body
+            #
+            self._grpc_client.services.curves.delete(curve_id=id)
+
+            # If the design curve was deleted from the server side... "kill" it
+            # on the client side
+            design_curve_requested._is_alive = False
+            self._grpc_client.log.debug(
+                f"DesignCurve {design_curve_requested.id} has been deleted."
+            )
+        else:
+            self._grpc_client.log.warning(
+                f"DesignCurve {id} not found in this component (or subcomponents)."
                 + " Ignoring deletion request."
             )
             pass
@@ -1802,6 +2074,142 @@ class Component:
                 return result
 
         # If you reached this point... this means that no plane was found!
+        return None
+
+    @check_input_types
+    def search_design_curve(self, id: str) -> DesignCurve | None:
+        """Search design curves in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the design curve to search for.
+
+        Returns
+        -------
+        DesignCurve | None
+            DesignCurve with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for design curves in the component and nested components
+        recursively.
+        """
+        # Search in component's design curves
+        for design_curve in self.design_curves:
+            if design_curve.id == id and design_curve.is_alive:
+                return design_curve
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_design_curve(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no design curve was found!
+        return None
+
+    @check_input_types
+    def search_coordinate_system(self, id: str) -> CoordinateSystem | None:
+        """Search coordinate systems in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the coordinate system to search for.
+
+        Returns
+        -------
+        CoordinateSystem | None
+            CoordinateSystem with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for coordinate systems in the component and nested components
+        recursively.
+        """
+        # Search in component's coordinate systems
+        for cs in self.coordinate_systems:
+            if cs.id == id and cs.is_alive:
+                return cs
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_coordinate_system(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no coordinate system was found!
+        return None
+
+    @check_input_types
+    def search_datum_point(self, id: str) -> DatumPoint | None:
+        """Search datum points in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum point to search for.
+
+        Returns
+        -------
+        DatumPoint | None
+            DatumPoint with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum points in the component and nested components
+        recursively.
+        """
+        # Search in component's datum points
+        for dp in self.datum_points:
+            if dp.id == id and dp.is_alive:
+                return dp
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_point(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum point was found!
+        return None
+
+    @check_input_types
+    def search_datum_line(self, id: str) -> DatumLine | None:
+        """Search datum lines in the component's scope.
+
+        Parameters
+        ----------
+        id : str
+            ID of the datum line to search for.
+
+        Returns
+        -------
+        DatumLine | None
+            DatumLine with the requested ID. If the ID is not found, ``None`` is returned.
+
+        Notes
+        -----
+        This method searches for datum lines in the component and nested components
+        recursively.
+        """
+        # Search in component's datum lines
+        for dl in self.datum_lines:
+            if dl.id == id and dl.is_alive:
+                return dl
+
+        # If no luck, search on nested components
+        result = None
+        for component in self.components:
+            result = component.search_datum_line(id)
+            if result:
+                return result
+
+        # If you reached this point... this means that no datum line was found!
         return None
 
     @check_input_types

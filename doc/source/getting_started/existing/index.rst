@@ -31,6 +31,15 @@ From Python, establish a connection to the existing client session by creating a
 If no error messages are received, your connection is established successfully.
 Note that your local port number might differ from the one shown in the preceding code.
 
+.. warning::
+    When running a Windows Docker container, certain high-value ports might be restricted
+    from its use. This means that the port exposed by the container has to be set
+    to lower values. You should change the value of ``ANSRV_GEO_PORT``
+    to use a port such as ``700``, instead of ``50051``.
+
+    You can check the restricted port ranges with ``netsh int ipv4 show excludedportrange protocol=tcp``
+    in a Windows command prompt.
+
 .. note::
 
     Starting from PyAnsys Geometry 0.14, the ``transport_mode`` parameter is required.

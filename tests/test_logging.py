@@ -169,8 +169,8 @@ def test_global_logger_level_mode():
     """Checking that the Logger levels are stored as integer values and that
     the default value (unless changed) is ERROR.
     """
-    assert isinstance(LOG.logger.level, int)
-    assert LOG.logger.level == logger.ERROR
+    assert isinstance(logger.LOG_DEFAULT_LEVEL, int)
+    assert logger.LOG_DEFAULT_LEVEL == logger.ERROR
 
 
 def test_global_logger_exception_handling(caplog: pytest.LogCaptureFixture):
@@ -301,8 +301,8 @@ def test_global_methods(caplog: pytest.LogCaptureFixture):
     assert msg in caplog.text
 
     # Setting back to original level
-    LOG.logger.setLevel("INFO")
-    LOG.std_out_handler.setLevel("INFO")
+    LOG.logger.setLevel("ERROR")
+    LOG.std_out_handler.setLevel("ERROR")
 
 
 def test_log_to_file(tmp_path_factory: pytest.TempPathFactory):
