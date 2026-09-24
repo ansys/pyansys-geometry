@@ -66,7 +66,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
     usd_required,
 )
-from ansys.geometry.core.misc.measurements import Distance
+from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Distance
 from ansys.geometry.core.misc.options import (
     FMDExportOptions,
     ImportOptions,
@@ -79,6 +79,20 @@ from ansys.geometry.core.parameters.parameter import Parameter, ParameterUpdateS
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.shapes.parameterization import Interval, ParamUV
 from ansys.geometry.core.typing import Real, RealSequence
+
+
+@unique
+class LengthScale(Enum):
+    """Provides supported length scales for designs."""
+
+    UNSPECIFIED = "UNSPECIFIED"
+    SMALL = "SMALL"
+    STANDARD = "STANDARD"
+    LARGE = "LARGE"
+
+    def __str__(self):
+        """Represent object in string format."""
+        return self.value
 
 
 @unique
@@ -162,6 +176,7 @@ class Design(Component):
         self._is_active = False
         self._modeler = modeler
         self._design_tess = None
+        self._length_scale = LengthScale.STANDARD
 
         # Check whether we want to process an existing design or create a new one.
         if read_existing_design:
@@ -173,6 +188,13 @@ class Design(Component):
             self._id = response.get("main_part_id")
             self._activate(called_after_design_creation=True)
             self._grpc_client.log.debug("Design object instantiated successfully.")
+
+        # Set length scale if the backend version supports it.
+        if self._grpc_client.backend_version >= (27, 1, 0):
+            self._length_scale = self._grpc_client.services.designs.get_length_scale(
+                design_id=self._design_id
+            ).get("scale")
+            DEFAULT_UNITS.apply_length_scale(self._length_scale)
 
     @property
     def design_id(self) -> str:
@@ -208,6 +230,41 @@ class Design(Component):
     def is_closed(self) -> bool:
         """Whether the design is closed (i.e. not active)."""
         return not self._is_active
+
+    @property
+    def length_scale(self) -> LengthScale:
+        """Length scale of the design."""
+        return self._length_scale
+
+    @min_backend_version(27, 1, 0)
+    def set_length_scale(self, length_scale: LengthScale) -> bool:
+        """Set the length scale. This can only be done if the design is empty.
+
+        Parameters
+        ----------
+        length_scale : LengthScale
+            The length scale to set for the design.
+
+        Returns
+        -------
+        bool
+            True if the length scale was successfully set, False otherwise.
+
+        Notes
+        -----
+        This method is only available starting on Ansys release 27R1.
+        """
+        self._length_scale = length_scale
+        response = self._grpc_client.services.designs.set_length_scale(
+            design_id=self._design_id, length_scale=length_scale
+        )
+
+        if response.get("success"):
+            DEFAULT_UNITS.apply_length_scale(self._length_scale)
+        else:
+            raise GeometryRuntimeError("Failed to set length scale: " + response.get("message"))
+
+        return response.get("success")
 
     def close(self) -> None:
         """Close the design."""
