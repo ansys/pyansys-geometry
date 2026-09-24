@@ -34,11 +34,12 @@ from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
-from ansys.geometry.core.misc.checks import check_type, deprecated_method, min_backend_version
+from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
 from ansys.geometry.core.selection_builder.selection_builder import SelectionBuilder
 from ansys.geometry.core.tools.measurement_tools import MeasurementTools
 from ansys.geometry.core.tools.prepare_tools import PrepareTools
+from ansys.geometry.core.tools.rayfire_tools import RayfireTools
 from ansys.geometry.core.tools.repair_tools import RepairTools
 from ansys.geometry.core.tools.unsupported import UnsupportedCommands
 from ansys.geometry.core.typing import Real
@@ -153,6 +154,7 @@ class Modeler:
         self._prepare_tools = PrepareTools(self._grpc_client, _internal_use=True)
         self._geometry_commands = GeometryCommands(self._grpc_client, _internal_use=True)
         self._unsupported = UnsupportedCommands(self._grpc_client, self, _internal_use=True)
+        self._rayfire_tools = RayfireTools(self._grpc_client, self, _internal_use=True)
 
     @property
     def client(self) -> GrpcClient:
@@ -636,29 +638,6 @@ class Modeler:
         else:
             return response.get("values"), None
 
-    @deprecated_method(
-        alternative="run_script_file",
-        version="0.15.2",
-        remove="0.17.0",
-    )
-    def run_discovery_script_file(
-        self,
-        file_path: str | Path,
-        script_args: dict[str, str] | None = None,
-        import_design: bool = False,
-        api_version: int | str | ApiVersions | None = None,
-    ) -> tuple[dict[str, str], Optional["Design"]]:
-        """Run a script file.
-
-        This is a deprecated method. Use ``run_script_file()`` instead.
-        """
-        return self.run_script_file(
-            file_path=file_path,
-            script_args=script_args,
-            import_design=import_design,
-            api_version=api_version,
-        )
-
     @property
     def repair_tools(self) -> RepairTools:
         """Access to repair tools."""
@@ -689,6 +668,17 @@ class Modeler:
     def unsupported(self) -> "UnsupportedCommands":
         """Access to unsupported commands."""
         return self._unsupported
+
+    @property
+    @min_backend_version(27, 1, 0)
+    def rayfire_tools(self) -> "RayfireTools":
+        """Access to rayfire tools.
+
+        Notes
+        -----
+        This property is only available starting on Ansys release 26R1.
+        """
+        return self._rayfire_tools
 
     @min_backend_version(25, 1, 0)
     def get_service_logs(

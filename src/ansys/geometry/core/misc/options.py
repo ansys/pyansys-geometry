@@ -25,6 +25,7 @@
 from dataclasses import asdict, dataclass
 from enum import Enum, unique
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from pint import Quantity
 
@@ -32,6 +33,9 @@ from ansys.geometry.core.misc.checks import check_input_types
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.shapes.surfaces.surface_evaluation import SurfaceEvaluation
 from ansys.geometry.core.typing import Real
+
+if TYPE_CHECKING:  # pragma: no cover
+    from ansys.geometry.core.math.vector import UnitVector3D
 
 
 @dataclass
@@ -122,6 +126,9 @@ class TessellationOptions:
     angle_deviation : Angle | Quantity | Real
         The maximum deviation from the true surface normal.
         If a Real is provided, it is assumed to be in radians.
+    curve_deviation : Distance | Quantity | Real, default=0.0
+        The maximum deviation from the true curve position.
+        If a Real is provided, it is assumed to be in the default length unit.
     max_aspect_ratio : Real, default=0.0
         The maximum aspect ratio of facets.
     max_edge_length : Distance | Quantity | Real, default=0.0
@@ -135,6 +142,7 @@ class TessellationOptions:
         self,
         surface_deviation: Distance | Quantity | Real,
         angle_deviation: Angle | Quantity | Real,
+        curve_deviation: Distance | Quantity | Real = 0.0,
         max_aspect_ratio: Real = 0.0,
         max_edge_length: Distance | Quantity | Real = 0.0,
         watertight: bool = False,
@@ -148,6 +156,9 @@ class TessellationOptions:
         )
         self._angle_deviation = (
             angle_deviation if isinstance(angle_deviation, Angle) else Angle(angle_deviation)
+        )
+        self._curve_deviation = (
+            curve_deviation if isinstance(curve_deviation, Distance) else Distance(curve_deviation)
         )
         self._max_aspect_ratio = max_aspect_ratio
         self._max_edge_length = (
@@ -172,6 +183,14 @@ class TessellationOptions:
         return self._angle_deviation
 
     @property
+    def curve_deviation(self) -> Distance:
+        """Curve deviation.
+
+        The maximum deviation from the true curve position.
+        """
+        return self._curve_deviation
+
+    @property
     def max_aspect_ratio(self) -> Real:
         """Maximum aspect ratio.
 
@@ -194,6 +213,136 @@ class TessellationOptions:
         Whether triangles on opposite sides of an edge should match.
         """
         return self._watertight
+
+
+class RayfireOptions:
+    """Additional options for ray fire operations.
+
+    Parameters
+    ----------
+    radius : Distance | Quantity | Real
+        The radius of the ray.
+        If a Real is provided, it is assumed to be in the default length unit.
+    direction : UnitVector3D
+        The direction for the ray to be fired in.
+    max_distance : Distance | Quantity | Real
+        The maximum distance the ray should travel.
+        If a Real is provided, it is assumed to be in the default length unit.
+    min_distance : Distance | Quantity | Real
+        The minimum distance the ray should travel.
+        If a Real is provided, it is assumed to be in the default length unit.
+    tight_tolerance : bool, default=False
+        Whether to use a tight tolerance for the ray fire operation.
+    pick_back_faces : bool, default=False
+        Whether to pick back faces during the ray fire operation.
+    max_hits : int, default=0
+        The maximum number of hits the ray should register.
+    request_params : bool, default=False
+        Whether to request additional parameters for the ray fire operation.
+    request_secondary : bool, default=False
+        Whether to request secondary hits for the ray fire operation.
+    """
+
+    @check_input_types
+    def __init__(
+        self,
+        radius: Distance | Quantity | Real,
+        direction: "UnitVector3D",
+        max_distance: Distance | Quantity | Real,
+        min_distance: Distance | Quantity | Real,
+        tight_tolerance: bool = False,
+        pick_back_faces: bool = False,
+        max_hits: int = 0,
+        request_params: bool = False,
+        request_secondary: bool = False,
+    ):
+        """Initialize ``RayfireOptions`` class."""
+        # Convert inputs to Distance objects
+        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
+        self._direction = direction
+        self._max_distance = (
+            max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
+        )
+        self._min_distance = (
+            min_distance if isinstance(min_distance, Distance) else Distance(min_distance)
+        )
+        self._tight_tolerance = tight_tolerance
+        self._pick_back_faces = pick_back_faces
+        self._max_hits = max_hits
+        self._request_params = request_params
+        self._request_secondary = request_secondary
+
+    @property
+    def radius(self) -> Distance:
+        """Radius.
+
+        The radius of the ray.
+        """
+        return self._radius
+
+    @property
+    def direction(self) -> "UnitVector3D":
+        """Direction.
+
+        The direction for the ray to be fired in.
+        """
+        return self._direction
+
+    @property
+    def max_distance(self) -> Distance:
+        """Maximum distance.
+
+        The maximum distance the ray should travel.
+        """
+        return self._max_distance
+
+    @property
+    def min_distance(self) -> Distance:
+        """Minimum distance.
+
+        The minimum distance the ray should travel.
+        """
+        return self._min_distance
+
+    @property
+    def tight_tolerance(self) -> bool:
+        """Tight tolerance.
+
+        Whether to use a tight tolerance for the ray fire operation.
+        """
+        return self._tight_tolerance
+
+    @property
+    def pick_back_faces(self) -> bool:
+        """Pick back faces.
+
+        Whether to pick back faces during the ray fire operation.
+        """
+        return self._pick_back_faces
+
+    @property
+    def max_hits(self) -> int:
+        """Maximum hits.
+
+        The maximum number of hits the ray should register.
+        """
+        return self._max_hits
+
+    @property
+    def request_params(self) -> bool:
+        """Request parameters.
+
+        Whether to request additional parameters for the ray fire operation.
+        """
+        return self._request_params
+
+    @property
+    def request_secondary(self) -> bool:
+        """Request secondary.
+
+        Whether to request secondary hits for the ray fire operation.
+        """
+        return self._request_secondary
 
 
 class FMDExportOptions:

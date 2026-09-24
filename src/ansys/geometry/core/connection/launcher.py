@@ -39,6 +39,8 @@ from ansys.geometry.core.connection.product_instance import prepare_and_start_ba
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
+    deprecated_argument,
+    deprecated_method,
     kwargs_passed_not_accepted,
 )
 
@@ -521,7 +523,52 @@ def launch_modeler_with_spaceclaim_and_pimlight(
 
 
 @kwargs_passed_not_accepted
+@deprecated_method(
+    "launch_modeler_with_dms", "use launch_modeler_with_dms instead", "0.17.2", "0.19.0"
+)
 def launch_modeler_with_geometry_service(
+    version: str | int | None = None,
+    host: str = "localhost",
+    port: int = None,
+    enable_trace: bool = False,
+    timeout: int = 60,
+    server_log_level: int = 2,
+    client_log_level: int = logging.INFO,
+    server_logs_folder: str = None,
+    client_log_file: str = None,
+    server_working_dir: str | Path | None = None,
+    transport_mode: str | None = None,
+    uds_dir: Path | str | None = None,
+    uds_id: str | None = None,
+    certs_dir: Path | str | None = None,
+    proto_version: str = None,
+    **kwargs: dict | None,
+) -> "Modeler":
+    """Start the Geometry service locally using the ``ProductInstance`` class.
+
+    This is a deprecated method. Use ``launch_modeler_with_dms()`` instead.
+    """
+    return launch_modeler_with_dms(
+        version=version,
+        host=host,
+        port=port,
+        enable_trace=enable_trace,
+        timeout=timeout,
+        server_log_level=server_log_level,
+        client_log_level=client_log_level,
+        server_logs_folder=server_logs_folder,
+        client_log_file=client_log_file,
+        server_working_dir=server_working_dir,
+        transport_mode=transport_mode,
+        uds_dir=uds_dir,
+        uds_id=uds_id,
+        certs_dir=certs_dir,
+        proto_version=proto_version,
+        **kwargs,
+    )
+
+
+def launch_modeler_with_dms(
     version: str | int | None = None,
     host: str = "localhost",
     port: int = None,
@@ -672,6 +719,7 @@ def launch_modeler_with_geometry_service(
 
 
 @kwargs_passed_not_accepted
+@deprecated_argument(arg="manifest_path", info="")
 def launch_modeler_with_discovery(
     version: str | int | None = None,
     host: str = "localhost",
