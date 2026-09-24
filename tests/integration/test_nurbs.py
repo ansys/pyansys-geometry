@@ -732,6 +732,8 @@ def test_successful_nurbs_creation_from_json():
     sketches = Sketch().nurbs_from_json_file(
         str(JSON_NURBS_SAMPLES_DIR / "valid_sketch_curve_2d.json"), elements=["sketch_arc"]
     )
+    assert len(sketches.edges) == 1
+
     sketch_nurbs = sketches.get("sketch_arc")[0]
     assert isinstance(sketch_nurbs, SketchNurbs)
     assert sketch_nurbs.degree == 2

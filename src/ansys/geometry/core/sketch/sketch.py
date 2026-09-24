@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING
 
 from pint import Quantity
 
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.constants import ZERO_POINT2D
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point2D, Point3D
@@ -952,8 +953,13 @@ class Sketch:
         ValueError
             If any requested element is missing from the JSON data.
         """
-        path = Path(source)
-        json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+        # Attempt to load from a file path first, fallback to raw JSON string.
+        try:
+            path = Path(source)
+            json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+        except OSError:
+            LOG.debug("Failed to read JSON from file, falling back to raw JSON string.")
+            json_str = str(source)
 
         raw = json.loads(json_str)
 
