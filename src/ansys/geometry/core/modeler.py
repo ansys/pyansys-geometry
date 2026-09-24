@@ -509,7 +509,7 @@ class Modeler:
                     temp_zip_path.unlink()
 
         return self.read_existing_design()
-    
+
     def __repr__(self) -> str:
         """Represent the modeler as a string."""
         lines = []
