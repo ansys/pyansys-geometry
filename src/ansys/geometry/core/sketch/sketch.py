@@ -964,7 +964,9 @@ class Sketch:
             raise ValueError(f"Element(s) {missing} were not found in JSON payload.")
 
         built = {
-            name: SketchNurbs._curve_from_model(SketchNurbsModel._validate_or_explain(name, raw[name]))
+            name: SketchNurbs._curve_from_model(
+                SketchNurbsModel._validate_or_explain(name, raw[name])
+            )
             for name in names_to_build
         }
 
