@@ -531,6 +531,39 @@ def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
             logger.info(f"Converted {count} notebooks to scripts")
 
 
+def escape_widget_state_html(app: sphinx.application.Sphinx, exception):
+    """Protect embedded widget HTML from documentation deployment post-processing."""
+    if exception is not None or app.builder.format != "html":
+        return
+
+    script_start = '<script type="application/vnd.jupyter.widget-state+json">'
+    script_end = "</script>"
+
+    for html_file in Path(app.outdir).glob("**/*.html"):
+        content = html_file.read_text(encoding="utf-8")
+        updated_content = content
+        search_start = 0
+
+        while (script_position := updated_content.find(script_start, search_start)) != -1:
+            payload_start = script_position + len(script_start)
+            payload_end = updated_content.find(script_end, payload_start)
+            if payload_end == -1:
+                break
+
+            payload = updated_content[payload_start:payload_end]
+            # The deployment action inserts noindex tags before every literal </head>.
+            # Escaping the slash keeps the JSON value unchanged while hiding nested
+            # iframe head tags from that text-based post-processing.
+            escaped_payload = payload.replace("</head>", r"<\/head>")
+            updated_content = (
+                updated_content[:payload_start] + escaped_payload + updated_content[payload_end:]
+            )
+            search_start = payload_start + len(escaped_payload) + len(script_end)
+
+        if updated_content != content:
+            html_file.write_text(updated_content, encoding="utf-8")
+
+
 def fix_autoapi_currentmodule(app: sphinx.application.Sphinx, exception):
     """Fix py:currentmodule directives in autoapi-generated RST files.
 
@@ -614,3 +647,4 @@ def setup(app: sphinx.application.Sphinx):
         # Run at the end of the build process
         logger.info("Connecting build-finished hook for converting notebooks to scripts...")
         app.connect("build-finished", convert_notebooks_to_scripts)
+        app.connect("build-finished", escape_widget_state_html)
