@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
@@ -341,7 +342,7 @@ class SketchNurbs(SketchEdge):
     @check_input_types
     def from_json_file(
         cls, source: Union[str, Path], elements: Optional[list[str]] = None
-    ) -> Union["SketchNurbs", dict[str, "SketchNurbs"]]:
+    ) -> dict[str, "SketchNurbs"]:
         """Create NURBS sketch curve(s) from a JSON file or JSON string.
 
         Parameters
@@ -354,17 +355,23 @@ class SketchNurbs(SketchEdge):
 
         Returns
         -------
-        Union[SketchNurbs, dict[str, SketchNurbs]]
-            A single SketchNurbs if one element is requested, or a dictionary of
-            SketchNurbs keyed by element name if multiple elements are requested.
+        dict[str, SketchNurbs]
+            A dictionary of SketchNurbs keyed by element name.
 
         Raises
         ------
         ValueError
             If any requested element is missing from the JSON data.
         """
-        path = Path(source)
-        json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+        # Attempt to load from a file path first, fallback to raw JSON string.
+        try:
+            path = Path(source)
+            source_is_path = path.exists()
+        except OSError:
+            LOG.debug("Source is not a valid filesystem path; falling back to raw JSON string.")
+            source_is_path = False
+
+        json_str = path.read_text(encoding="utf-8") if source_is_path else str(source)
 
         raw = json.loads(json_str)
 

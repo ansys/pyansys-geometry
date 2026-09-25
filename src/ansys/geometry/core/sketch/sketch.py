@@ -22,6 +22,7 @@
 
 """Provides for creating and managing a sketch."""
 
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from pint import Quantity
@@ -923,6 +924,40 @@ class Sketch:
         """
         gear = SpurGear(origin, module, pressure_angle, n_teeth)
         return self.face(gear, tag)
+
+    @check_input_types
+    def nurbs_from_json_file(
+        self,
+        source: str | Path,
+        elements: list[str] | None = None,
+    ) -> "Sketch":
+        """Create NURBS sketch curve(s) from a JSON file or JSON string.
+
+        Parameters
+        ----------
+        source : Union[str, Path]
+            JSON file path, or a raw JSON string.
+        elements : list[str], optional
+            Names of the elements to build. If omitted, every element
+            found in the JSON is built.
+
+        Returns
+        -------
+        Sketch
+            Revised sketch state ready for further sketch actions.
+
+        Raises
+        ------
+        ValueError
+            If any requested element is missing from the JSON data.
+        """
+        nurbs = SketchNurbs.from_json_file(source, elements)
+
+        # Add each built curve to the sketch and tag it accordingly.
+        for name, curve in nurbs.items():
+            self.edge(curve, tag=name)
+
+        return self
 
     @check_input_types
     def tag(self, tag: str) -> None:
