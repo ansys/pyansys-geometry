@@ -366,10 +366,12 @@ class SketchNurbs(SketchEdge):
         # Attempt to load from a file path first, fallback to raw JSON string.
         try:
             path = Path(source)
-            json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+            source_is_path = path.exists()
         except OSError:
-            LOG.debug("Failed to read JSON from file, falling back to raw JSON string.")
-            json_str = str(source)
+            LOG.debug("Source is not a valid filesystem path; falling back to raw JSON string.")
+            source_is_path = False
+
+        json_str = path.read_text(encoding="utf-8") if source_is_path else str(source)
 
         raw = json.loads(json_str)
 
