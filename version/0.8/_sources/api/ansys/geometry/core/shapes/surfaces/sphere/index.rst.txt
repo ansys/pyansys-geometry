@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``sphere.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.sphere
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: sphere
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.sphere.Sphere`
+            - Provides 3D sphere representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.sphere.SphereEvaluation`
+            - Evaluate a sphere at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Sphere</api/ansys/geometry/core/shapes/surfaces/sphere/Sphere>
+    <span class="nf nf-cod-symbol_class"></span> SphereEvaluation</api/ansys/geometry/core/shapes/surfaces/sphere/SphereEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a sphere.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

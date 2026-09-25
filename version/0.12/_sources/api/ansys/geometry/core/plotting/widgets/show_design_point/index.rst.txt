@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``show_design_point.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.show_design_point
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: show_design_point
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.show_design_point.ShowDesignPoints`
+            - Provides the a button to hide/show DesignPoint objects in the plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ShowDesignPoints</api/ansys/geometry/core/plotting/widgets/show_design_point/ShowDesignPoints>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ruler widget for the PyAnsys Geometry plotter.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

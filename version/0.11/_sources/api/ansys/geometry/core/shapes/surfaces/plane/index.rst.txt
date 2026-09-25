@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``plane.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.plane
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plane
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.plane.PlaneSurface`
+            - Provides 3D plane surface representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.plane.PlaneEvaluation`
+            - Provides evaluation of a plane at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PlaneSurface</api/ansys/geometry/core/shapes/surfaces/plane/PlaneSurface>
+    <span class="nf nf-cod-symbol_class"></span> PlaneEvaluation</api/ansys/geometry/core/shapes/surfaces/plane/PlaneEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a plane.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

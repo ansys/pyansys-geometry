@@ -1,0 +1,411 @@
+
+
+
+
+
+
+:class:`PMDBExportOptions`
+==========================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBExportOptions
+
+   
+   Provides options for PMDB export.
+
+
+   :Parameters:
+
+       **parameter_prefixes** : :class:`python:str`, default: ""
+           Prefixes used to filter parameters for export.
+
+       **cad_attribute_prefixes** : :class:`python:str`, default: ""
+           Prefixes used to filter CAD attributes for export.
+
+       **named_selection_prefixes** : :class:`python:str`, default: ""
+           Prefixes used to filter named selections for export.
+
+       **analysis_type** : :obj:`AnalysisType`, default: :obj:`AnalysisType.THREE_D`
+           The analysis type (2D or 3D).
+
+       **mixed_part_export_type** : :obj:`PMDBMixedPartExportType`, default: :obj:`PMDBMixedPartExportType.NONE`
+           The type of mixed parts to export.
+
+       **attach_flattened_assembly** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to attach the assembly in a flattened structure.
+
+       **use_cad_mass_properties** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to use CAD mass properties.
+
+       **plane_prefixes** : :class:`python:str`, default: ""
+           Prefixes used to filter planes for export.
+
+       **coordinate_system_prefixes** : :class:`python:str`, default: ""
+           Prefixes used to filter coordinate systems for export.
+
+       **advanced_geom_processing** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to enable advanced geometry processing.
+
+       **angular_deviation** : :class:`python:float`, default: 0.0
+           Angular deviation for faceting (in degrees).
+
+       **attach_weight_class** : :obj:`PMDBAttachWeightClass`, default: :obj:`PMDBAttachWeightClass.HEAVYWEIGHT`
+           The weight class for the attachment.
+
+       **cad_associativity** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to enable CAD associativity.
+
+       **cad_attribute_transfer** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to transfer CAD attributes.
+
+       **do_smart_update** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to perform a smart update.
+
+       **geometry_deviation** : :class:`python:float`, default: 0.0
+           Geometry deviation for faceting (in meters).
+
+       **process_coordinate_sys** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process coordinate systems.
+
+       **process_planes** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process planes.
+
+       **import_using_instances** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to import using instances.
+
+       **process_work_points** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process work points.
+
+       **is_selective_update** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to perform a selective update.
+
+       **material_properties** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to include material properties.
+
+       **granta_material_properties** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to include Granta material properties.
+
+       **max_facet_size** : :class:`python:float`, default: 0.0
+           Maximum facet size (in meters). Zero means no limit.
+
+       **named_selection** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to export named selections.
+
+       **parameter_processing_type** : :obj:`PMDBImportParameterType`, default: :obj:`PMDBImportParameterType.NONE`
+           The type of parameters to process.
+
+       **plug_in_facet_quality** : :obj:`PMDBPlugInFacetQuality`, default: :obj:`PMDBPlugInFacetQuality.NONE`
+           The facet quality setting for plug-in readers.
+
+       **process_enclosure_and_symmetry** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process enclosure and symmetry.
+
+       **reader_save_part** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the reader should save the part.
+
+       **target_application** : :obj:`PMDBTargetApplication`, default: :obj:`PMDBTargetApplication.PARTMGR`
+           The target application for the exported PMDB.
+
+       **temp_directory** : :class:`python:str`, default: ""
+           Temporary directory path used during export.
+
+       **process_physics_definition** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process physics definitions.
+
+       **process_solid_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process solid bodies.
+
+       **process_surface_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process surface bodies.
+
+       **process_line_bodies** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to process line bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBExportOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~parameter_prefixes`
+            - 
+          * - :py:attr:`~cad_attribute_prefixes`
+            - 
+          * - :py:attr:`~named_selection_prefixes`
+            - 
+          * - :py:attr:`~analysis_type`
+            - 
+          * - :py:attr:`~mixed_part_export_type`
+            - 
+          * - :py:attr:`~attach_flattened_assembly`
+            - 
+          * - :py:attr:`~use_cad_mass_properties`
+            - 
+          * - :py:attr:`~plane_prefixes`
+            - 
+          * - :py:attr:`~coordinate_system_prefixes`
+            - 
+          * - :py:attr:`~advanced_geom_processing`
+            - 
+          * - :py:attr:`~angular_deviation`
+            - 
+          * - :py:attr:`~attach_weight_class`
+            - 
+          * - :py:attr:`~cad_associativity`
+            - 
+          * - :py:attr:`~cad_attribute_transfer`
+            - 
+          * - :py:attr:`~do_smart_update`
+            - 
+          * - :py:attr:`~geometry_deviation`
+            - 
+          * - :py:attr:`~process_coordinate_sys`
+            - 
+          * - :py:attr:`~process_planes`
+            - 
+          * - :py:attr:`~import_using_instances`
+            - 
+          * - :py:attr:`~process_work_points`
+            - 
+          * - :py:attr:`~is_selective_update`
+            - 
+          * - :py:attr:`~material_properties`
+            - 
+          * - :py:attr:`~granta_material_properties`
+            - 
+          * - :py:attr:`~max_facet_size`
+            - 
+          * - :py:attr:`~named_selection`
+            - 
+          * - :py:attr:`~parameter_processing_type`
+            - 
+          * - :py:attr:`~plug_in_facet_quality`
+            - 
+          * - :py:attr:`~process_enclosure_and_symmetry`
+            - 
+          * - :py:attr:`~reader_save_part`
+            - 
+          * - :py:attr:`~target_application`
+            - 
+          * - :py:attr:`~temp_directory`
+            - 
+          * - :py:attr:`~process_physics_definition`
+            - 
+          * - :py:attr:`~process_solid_bodies`
+            - 
+          * - :py:attr:`~process_surface_bodies`
+            - 
+          * - :py:attr:`~process_line_bodies`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBExportOptions
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: parameter_prefixes
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: cad_attribute_prefixes
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: named_selection_prefixes
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: analysis_type
+   :type:  AnalysisType
+
+.. py:attribute:: mixed_part_export_type
+   :type:  PMDBMixedPartExportType
+
+.. py:attribute:: attach_flattened_assembly
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: use_cad_mass_properties
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: plane_prefixes
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: coordinate_system_prefixes
+   :type:  str
+   :value: ''
+
+
+.. py:attribute:: advanced_geom_processing
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: angular_deviation
+   :type:  float
+   :value: 0.0
+
+
+.. py:attribute:: attach_weight_class
+   :type:  PMDBAttachWeightClass
+
+.. py:attribute:: cad_associativity
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: cad_attribute_transfer
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: do_smart_update
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: geometry_deviation
+   :type:  float
+   :value: 0.0
+
+
+.. py:attribute:: process_coordinate_sys
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: process_planes
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: import_using_instances
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: process_work_points
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: is_selective_update
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: material_properties
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: granta_material_properties
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: max_facet_size
+   :type:  float
+   :value: 0.0
+
+
+.. py:attribute:: named_selection
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: parameter_processing_type
+   :type:  PMDBImportParameterType
+
+.. py:attribute:: plug_in_facet_quality
+   :type:  PMDBPlugInFacetQuality
+
+.. py:attribute:: process_enclosure_and_symmetry
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: reader_save_part
+   :type:  bool
+   :value: False
+
+
+.. py:attribute:: target_application
+   :type:  PMDBTargetApplication
+
+.. py:attribute:: temp_directory
+   :type:  str | pathlib.Path | None
+   :value: None
+
+
+.. py:attribute:: process_physics_definition
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: process_solid_bodies
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: process_surface_bodies
+   :type:  bool
+   :value: True
+
+
+.. py:attribute:: process_line_bodies
+   :type:  bool
+   :value: True
+
+
+
+
+
+

@@ -1,0 +1,84 @@
+
+
+
+
+
+
+The ``repair_tools.py`` module
+==============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.repair_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: repair_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.repair_tools.GRPCRepairToolsServiceV0`
+            - Repair tools service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCRepairToolsServiceV0</api/ansys/geometry/core/_grpc/_services/v0/repair_tools/GRPCRepairToolsServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the repair tools service implementation for v0.
+
+This module defines an abstract base class for a gRPC-based repair tools service.
+The class provides a set of abstract methods for identifying and repairing various
+geometry issues, such as split edges, extra edges, duplicate faces etc.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,219 @@
+
+
+
+
+
+
+:class:`GRPCDatumLinesService`
+==============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.datum_lines.GRPCDatumLinesService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Datum lines service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCDatumLinesService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create`
+            - Create datum lines.
+          * - :py:attr:`~delete`
+            - Delete datum lines.
+          * - :py:attr:`~get`
+            - Get a datum line.
+          * - :py:attr:`~get_all`
+            - Get all datum lines.
+          * - :py:attr:`~get_is_deleted`
+            - Get whether datum lines are deleted.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.datum_lines import GRPCDatumLinesService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Delete datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get a datum line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get all datum lines.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_is_deleted(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get whether datum lines are deleted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

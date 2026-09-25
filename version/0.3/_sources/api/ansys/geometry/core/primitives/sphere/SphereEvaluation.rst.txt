@@ -1,0 +1,478 @@
+
+
+
+
+SphereEvaluation
+================
+
+.. py:class:: SphereEvaluation(sphere: Sphere, parameter: ansys.geometry.core.primitives.parameterization.ParamUV)
+   :canonical: ansys.geometry.core.primitives.sphere.SphereEvaluation
+
+
+
+Bases: :py:obj:`ansys.geometry.core.primitives.surface_evaluation.SurfaceEvaluation`
+
+Evaluate a sphere at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: SphereEvaluation
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Position of the evaluation.
+          * - :py:attr:`~normal`
+            - The normal to the surface.
+          * - :py:attr:`~u_derivative`
+            - First derivative with respect to the U parameter.
+          * - :py:attr:`~v_derivative`
+            - First derivative with respect to the V parameter.
+          * - :py:attr:`~uu_derivative`
+            - Second derivative with respect to the U parameter.
+          * - :py:attr:`~uv_derivative`
+            - Second derivative with respect to the U and V parameters.
+          * - :py:attr:`~vv_derivative`
+            - Second derivative with respect to the V parameter.
+          * - :py:attr:`~min_curvature`
+            - Minimum curvature of the sphere.
+          * - :py:attr:`~min_curvature_direction`
+            - Minimum curvature direction.
+          * - :py:attr:`~max_curvature`
+            - Maximum curvature of the sphere.
+          * - :py:attr:`~max_curvature_direction`
+            - Maximum curvature direction.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~sphere`
+            - Sphere being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.sphere import SphereEvaluation
+
+
+Property detail
+---------------
+.. py:property:: sphere
+   :canonical: ansys.geometry.core.primitives.sphere.SphereEvaluation.sphere
+   :type: Sphere
+
+
+   
+   Sphere being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :canonical: ansys.geometry.core.primitives.sphere.SphereEvaluation.parameter
+   :type: ParamUV
+
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+
+   
+   Position of the evaluation.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           Point that lies on the sphere at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: normal() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   The normal to the surface.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Normal unit vector to the sphere at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: u_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative with respect to the U parameter.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: v_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative with respect to the V parameter.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           First derivative with respect to the V parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: uu_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to the U parameter.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           Second derivative with respect to the U parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: uv_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to the U and V parameters.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           The second derivative with respect to the U and V parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: vv_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to the V parameter.
+
+
+
+   :Returns:
+
+       :obj:`Vector3D`
+           The second derivative with respect to the V parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: min_curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Minimum curvature of the sphere.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Minimum curvature of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: min_curvature_direction() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Minimum curvature direction.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: max_curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Maximum curvature of the sphere.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           Maximum curvature of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: max_curvature_direction() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Maximum curvature direction.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           Maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

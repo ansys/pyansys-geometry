@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``box.py`` module
+=====================
+
+.. py:module:: ansys.geometry.core.sketch.box
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: box
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.box.Box`
+            - Provides for modeling a box.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Box</api/ansys/geometry/core/sketch/box/Box>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a box (quadrilateral).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

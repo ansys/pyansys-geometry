@@ -1,0 +1,371 @@
+
+
+
+
+Point3D
+=======
+
+.. py:class:: Point3D(input: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence] = DEFAULT_POINT3D_VALUES, unit: beartype.typing.Optional[pint.Unit] = None)
+   :canonical: ansys.geometry.core.math.point.Point3D
+
+
+
+Bases: :py:obj:`numpy.ndarray`, :py:obj:`ansys.geometry.core.misc.units.PhysicalQuantity`
+
+Provides geometry primitive representation for a 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Point3D
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~unit`
+            - Get the unit of the object.
+          * - :py:attr:`~base_unit`
+            - Get the base unit of the object.
+          * - :py:attr:`~transform`
+            - Transform the 3D point with a transformation matrix.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~x`
+            - X plane component value.
+          * - :py:attr:`~y`
+            - Y plane component value.
+          * - :py:attr:`~z`
+            - Z plane component value.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Point3D`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Point3D`` class.
+          * - :py:attr:`~__add__`
+            - Add operation for the ``Point3D`` class.
+          * - :py:attr:`~__sub__`
+            - Subtraction operation for the ``Point3D`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.point import Point3D
+
+
+Property detail
+---------------
+.. py:property:: x
+   :canonical: ansys.geometry.core.math.point.Point3D.x
+   :type: pint.Quantity
+
+
+   
+   X plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: y
+   :canonical: ansys.geometry.core.math.point.Point3D.y
+   :type: pint.Quantity
+
+
+   
+   Y plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: z
+   :canonical: ansys.geometry.core.math.point.Point3D.z
+   :type: pint.Quantity
+
+
+   
+   Z plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __eq__(other: Point3D) -> bool
+
+   
+   Equals operator for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __ne__(other: Point3D) -> bool
+
+   
+   Not equals operator for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __add__(other: beartype.typing.Union[Point3D, ansys.geometry.core.math.vector.Vector3D]) -> Point3D
+
+   
+   Add operation for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: __sub__(other: beartype.typing.Union[Point3D, ansys.geometry.core.math.vector.Vector3D]) -> Point3D
+
+   
+   Subtraction operation for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: unit() -> pint.Unit
+
+   
+   Get the unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: base_unit() -> pint.Unit
+
+   
+   Get the base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: transform(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Point3D
+
+   
+   Transform the 3D point with a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4x4 transformation matrix to apply to the point.
+
+   :Returns:
+
+       :obj:`Point3D`
+           New 3D point that is the transformed copy of the original 3D point after applying
+           the transformation matrix.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Transform the ``Point3D`` object by applying the specified 4x4
+   transformation matrix and return a new ``Point3D`` object representing the
+   transformed point.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

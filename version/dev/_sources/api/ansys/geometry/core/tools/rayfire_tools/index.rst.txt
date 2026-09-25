@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``rayfire_tools.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core.tools.rayfire_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.tools.rayfire_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.rayfire_tools.RayfireImpact`
+            - Class representing rayfire impacts.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.rayfire_tools.RayfireTools`
+            - Rayfire tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> RayfireImpact</api/ansys/geometry/core/tools/rayfire_tools/RayfireImpact>
+    <span class="nf nf-cod-symbol_class"></span> RayfireTools</api/ansys/geometry/core/tools/rayfire_tools/RayfireTools>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for interacting with rayfire.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

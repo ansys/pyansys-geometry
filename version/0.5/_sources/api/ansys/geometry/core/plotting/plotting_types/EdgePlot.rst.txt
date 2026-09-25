@@ -1,0 +1,196 @@
+
+
+:class:`EdgePlot`
+=================
+
+.. py:class:: ansys.geometry.core.plotting.plotting_types.EdgePlot(actor: pyvista.Actor, edge_object: ansys.geometry.core.designer.edge.Edge, parent: GeomObjectPlot = None)
+
+   
+   Mapper class to relate PyAnsys Geometry edges with its PyVista actor.
+
+
+   :Parameters:
+
+       **actor** : :obj:`~pyvista.Actor`
+           PyVista actor that represents the edge.
+
+       **edge_object** : :obj:`Edge`
+           PyAnsys Geometry edge that is represented by the PyVista actor.
+
+       **parent** : :obj:`GeomObjectPlot`, :obj:`optional`
+           Parent PyAnsys Geometry object of this edge, by default ``None``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: EdgePlot
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~actor`
+            - Return PyVista actor of the object.
+          * - :py:attr:`~edge_object`
+            - Return the PyAnsys Geometry edge.
+          * - :py:attr:`~parent`
+            - Parent PyAnsys Geometry object of this edge.
+          * - :py:attr:`~name`
+            - Return the name of the edge.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.plotting_types import EdgePlot
+
+Property detail
+---------------
+.. py:property:: actor
+   :type: pyvista.Actor
+
+   
+   Return PyVista actor of the object.
+
+
+
+   :Returns:
+
+       :obj:`~pyvista.Actor`
+           PyVista actor.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edge_object
+   :type: ansys.geometry.core.designer.edge.Edge
+
+   
+   Return the PyAnsys Geometry edge.
+
+
+
+   :Returns:
+
+       :obj:`Edge`
+           PyAnsys Geometry edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent
+   :type: beartype.typing.Any
+
+   
+   Parent PyAnsys Geometry object of this edge.
+
+
+
+   :Returns:
+
+       :obj:`Any`
+           PyAnsys Geometry object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+   
+   Return the name of the edge.
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           Name of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+    
+
+

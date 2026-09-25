@@ -1,0 +1,93 @@
+
+
+
+
+
+The ``beam.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.beam
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: beam
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~BeamProfile`
+            - Represents a single beam profile organized within the design assembly.
+
+
+          * - :py:attr:`~BeamCircularProfile`
+            - Represents a single circular beam profile organized within the design assembly.
+
+
+          * - :py:attr:`~Beam`
+            - Represents a simplified solid body with an assigned 2D cross-section.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 BeamProfile<BeamProfile>
+    🝆 BeamCircularProfile<BeamCircularProfile>
+    🝆 Beam<Beam>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a beam.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,101 @@
+
+
+
+
+
+The ``tools`` package 
+=========================
+
+.. py:module:: ansys.geometry.core.tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: tools
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.tools.problem_areas`
+            - The problem area definition.
+
+
+          * - :py:attr:`~ansys.geometry.core.tools.repair_tool_message`
+            - Module for repair tool message.
+
+
+          * - :py:attr:`~ansys.geometry.core.tools.repair_tools`
+            - Provides tools for repairing bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 problem_areas<problem_areas/index.rst>
+    🗎 repair_tool_message<repair_tool_message/index.rst>
+    🗎 repair_tools<repair_tools/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry tools subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
