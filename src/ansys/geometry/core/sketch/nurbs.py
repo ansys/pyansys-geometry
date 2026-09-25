@@ -342,7 +342,7 @@ class SketchNurbs(SketchEdge):
     @check_input_types
     def from_json_file(
         cls, source: Union[str, Path], elements: Optional[list[str]] = None
-    ) -> Union["SketchNurbs", dict[str, "SketchNurbs"]]:
+    ) -> dict[str, "SketchNurbs"]:
         """Create NURBS sketch curve(s) from a JSON file or JSON string.
 
         Parameters
@@ -355,9 +355,8 @@ class SketchNurbs(SketchEdge):
 
         Returns
         -------
-        Union[SketchNurbs, dict[str, SketchNurbs]]
-            A single SketchNurbs if one element is requested, or a dictionary of
-            SketchNurbs keyed by element name if multiple elements are requested.
+        dict[str, SketchNurbs]
+            A dictionary of SketchNurbs keyed by element name.
 
         Raises
         ------
