@@ -7,6 +7,5 @@
 *       @ansys/pyansys-geometry-maintainers
 
 # Documentation review required from Docs team (as well) on the following set of files:
-*.rst      @PipKat @ansys/pyansys-geometry-maintainers
-examples/*.py       @PipKat @ansys/pyansys-geometry-maintainers
-examples/**/*.py    @PipKat @ansys/pyansys-geometry-maintainers
+*.rst                   @PipKat @ansys/pyansys-geometry-maintainers
+/examples/*.py           @PipKat @ansys/pyansys-geometry-maintainers
