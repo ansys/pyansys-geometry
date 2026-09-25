@@ -164,9 +164,9 @@ https://github.com/ansys/pyansys-geometry/pull/1454/commits/7fcf02f86f05e0e5ce1c
 To add a new example, follow these steps:
 
 1. Create a Python script in the appropriate folder under the root ``examples`` directory.
-2. Use the ``examples\99_misc\template.py`` file as a reference. The module docstring
-   provides the example title and introduction, and comment blocks separated by lines of
-   ``#`` characters provide the narrative sections.
+2. Use the ``examples\99_misc\template.py`` file as a reference. The module documentation
+   string provides the example title and introduction, and comment blocks separated by
+   lines of ``#`` characters provide the narrative sections.
 3. Store a thumbnail image in the ``doc/source/_static/thumbnails`` directory.
 4. Set ``sphinx_gallery_thumbnail_path`` at the end of the example script. The path is
    relative to ``doc/source``. For example::
