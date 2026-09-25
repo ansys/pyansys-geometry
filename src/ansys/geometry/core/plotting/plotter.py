@@ -683,11 +683,11 @@ class GeometryPlotter(PlotterInterface):
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
         theme = self._backend.pv_interface.scene.theme
-        original_edge_opacity = theme.edge_opacity
+        original_edge_color = theme.edge_color
         if self._backend._pl._show_plane:
-            theme.edge_opacity = 0.50
+            theme.edge_color = "gray"
         picked_objs = self._backend.show(screenshot=screenshot, **plotting_options)
-        theme.edge_opacity = original_edge_opacity
+        theme.edge_color = original_edge_color
 
         # Return the picked objects if picking is enabled... but as the actual PyAnsys
         # Geometry objects (or PyVista objects if not)
