@@ -161,6 +161,11 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 26.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
 
   - version: "24.2"
     incompatible_tests:
@@ -320,6 +325,11 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 26.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
 
   - version: "25.1"
     incompatible_tests:
@@ -446,6 +456,11 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 26.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
 
   - version: "25.2"
     incompatible_tests:
@@ -523,9 +538,15 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 26.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_with_publications
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_catia_named_selections
+      - tests/integration/test_design_import.py::test_design_import_cat5_2024_with_publications_to_groups
 
   - version: "26.1"
     incompatible_tests:
+      # CATIA geometric-set mapping is not available in 26.1
       # Fix for pattern introduced in 27.1
       - tests/integration/test_design.py::test_unitless_design_parameters
       # NURBS Curves and surfaces for intersection was introduced in 27.1
@@ -548,6 +569,8 @@ backends:
       - tests/integration/test_design_import.py::test_importing_with_sc_colors
       # Root part CS not loaded until 27.1
       - tests/integration/test_design.py::test_coordinate_systems_on_design_refresh
+      # CATIA named selections mapping only available from 27.1 onwards
+      - tests/integration/test_design_import.py::test_design_import_catia_named_selections_file
       # Datum lines not supported until 27.1
       - tests/integration/test_datum_lines.py::test_import_datum_lines
       # Length scale not supported until 27.1
