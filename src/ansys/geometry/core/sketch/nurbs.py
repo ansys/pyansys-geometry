@@ -30,6 +30,7 @@ import numpy as np
 from pint import Quantity
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
@@ -363,8 +364,13 @@ class SketchNurbs(SketchEdge):
         ValueError
             If any requested element is missing from the JSON data.
         """
-        path = Path(source)
-        json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+        # Attempt to load from a file path first, fallback to raw JSON string.
+        try:
+            path = Path(source)
+            json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
+        except OSError:
+            LOG.debug("Failed to read JSON from file, falling back to raw JSON string.")
+            json_str = str(source)
 
         raw = json.loads(json_str)
 

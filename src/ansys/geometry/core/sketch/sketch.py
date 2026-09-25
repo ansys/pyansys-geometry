@@ -953,31 +953,10 @@ class Sketch:
         ValueError
             If any requested element is missing from the JSON data.
         """
-        # Attempt to load from a file path first, fallback to raw JSON string.
-        try:
-            path = Path(source)
-            json_str = path.read_text(encoding="utf-8") if path.exists() else str(source)
-        except OSError:
-            LOG.debug("Failed to read JSON from file, falling back to raw JSON string.")
-            json_str = str(source)
-
-        raw = json.loads(json_str)
-
-        names_to_build = elements if elements is not None else list(raw.keys())
-
-        missing = [name for name in names_to_build if name not in raw]
-        if missing:
-            raise ValueError(f"Element(s) {missing} were not found in JSON payload.")
-
-        built = {
-            name: SketchNurbs._curve_from_model(
-                SketchNurbsModel._validate_or_explain(name, raw[name])
-            )
-            for name in names_to_build
-        }
+        nurbs = SketchNurbs.from_json_file(source, elements)
 
         # Add each built curve to the sketch and tag it accordingly.
-        for name, curve in built.items():
+        for name, curve in nurbs.items():
             self.edge(curve, tag=name)
 
         return self
