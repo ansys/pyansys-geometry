@@ -198,20 +198,24 @@ pl.show()
 # PyAnsys Geometry’s plotter supports interactive object selection within
 # the scene. This enables you to pick objects for subsequent script
 # manipulation.
-
-plotter = GeometryPlotter(allow_picking=True)
-
-# Plotter returns picked bodies
-picked_list = plotter.show(plot_list)
-print(picked_list)
+#
+# .. code-block:: python
+#
+#    plotter = GeometryPlotter(allow_picking=True)
+#
+#    # Plotter returns picked bodies
+#    picked_list = plotter.show(plot_list)
+#    print(picked_list)
 
 ###############################################################################
 # It is also possible to enable picking directly for a specific ``design``
 # or ``component`` object alone. In the following cell, picking is enabled
 # for the ``design`` object.
-
-picked_list = design.plot(allow_picking=True)
-print(picked_list)
+#
+# .. code-block:: python
+#
+#    picked_list = design.plot(allow_picking=True)
+#    print(picked_list)
 
 ###############################################################################
 # Render in different colors
