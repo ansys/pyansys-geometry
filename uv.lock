@@ -429,7 +429,7 @@ dev = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.11.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
-    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
+    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
     { name = "geomdl", specifier = "==5.4.0" },
@@ -472,7 +472,7 @@ doc = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.11.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
-    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
+    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
     { name = "geomdl", specifier = "==5.4.0" },
@@ -508,7 +508,7 @@ doc = [
 general-all = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
-    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
+    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
     { name = "geomdl", specifier = "==5.4.0" },
@@ -530,7 +530,7 @@ general-all = [
 tests = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
-    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.0" },
+    { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.22.9" },
     { name = "docker", specifier = "==7.2.0" },
     { name = "geomdl", specifier = "==5.4.0" },
@@ -616,16 +616,16 @@ wheels = [
 
 [[package]]
 name = "ansys-tools-visualization-interface"
-version = "0.14.0"
+version = "0.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pyvista", extra = ["jupyter"] },
     { name = "trame-router" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/27/6c/b9d9bb75ff7b8f822cf920a23c952e1f3d7f083a7c522a240a75d752cf81/ansys_tools_visualization_interface-0.14.0.tar.gz", hash = "sha256:b419f6c4aa04c583f606d6950729841a09cb338ff62c4012335b729000dd3b41", size = 379094, upload-time = "2026-07-22T09:21:13.923Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0f/c7/8b3b485b17267990e2e9b0c490fdf910a1def16b7320dcc22c5cf0bcb6fe/ansys_tools_visualization_interface-0.14.1.tar.gz", hash = "sha256:106a152d0a5bc50de810a80c1ba6365b680e806d1905f7368e2da0d8edf776ae", size = 379068, upload-time = "2026-09-25T15:27:35.264Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/79/3a/c1856dfd50c3ab4a55c5b5fdd0e68b2596da00ec911e9c824e5ed4ee6a2c/ansys_tools_visualization_interface-0.14.0-py3-none-any.whl", hash = "sha256:a7634ec951e03107486c1e38ad0bfd67a0ea41a0fa592efd9db54c4db9738f79", size = 464810, upload-time = "2026-07-22T09:21:11.81Z" },
+    { url = "https://files.pythonhosted.org/packages/35/17/ddf798d0d9ff4e6e2aec625b490b7ef805fde341e86098426fceb7a9f9af/ansys_tools_visualization_interface-0.14.1-py3-none-any.whl", hash = "sha256:7c768781ac86b338822c62cc69c78ae083c3234466c53c6fb2a7ddde7ce0f885", size = 464825, upload-time = "2026-09-25T15:27:33.344Z" },
 ]
 
 [package.optional-dependencies]
