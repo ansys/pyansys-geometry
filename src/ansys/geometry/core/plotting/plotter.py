@@ -685,7 +685,7 @@ class GeometryPlotter(PlotterInterface):
         theme = self._backend.pv_interface.scene.theme
         original_edge_color = theme.edge_color
         if self._backend._pl._show_plane:
-            theme.edge_color = "gray"
+            theme.edge_color = "silver"
         picked_objs = self._backend.show(screenshot=screenshot, **plotting_options)
         theme.edge_color = original_edge_color
 
