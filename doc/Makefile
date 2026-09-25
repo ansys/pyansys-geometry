@@ -22,6 +22,8 @@ help:
 # Customized clean due to examples gallery
 clean:
 	rm -rf $(BUILDDIR)/*
+	rm -rf $(SOURCEDIR)/examples
+	rm -f $(SOURCEDIR)/sg_execution_times.rst
 	find . -type d -name $(APIDIR) -exec rm -rf {} +
 
 # Create PDF
@@ -30,7 +32,7 @@ pdf:
 	cd $(BUILDDIR)/latex && for file in *.tex; do lualatex --interaction=nonstopmode "$$file"; done
 	(test -f $(BUILDDIR)/latex/ansys-geometry-core.pdf && echo pdf exists) || exit 1
 
-# Build HTML files and generate examples as .py files
+# Build HTML files and execute the examples gallery
 html:
 	@$(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
@@ -42,11 +44,11 @@ linkcheck:
 single-example:
 	@if [ -z "$(example)" ]; then \
 		echo "No example specified."; \
-		echo "Usage --> make single-example example=examples/01_getting_started/01_math.mystnb"; \
+		echo "Usage --> make single-example example=01_math.py"; \
 		exit 1; \
 	fi
 	@echo "Building single example --> $(example)"
-	@BUILD_API=false BUILD_CHEATSHEET=false $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" -j 1 $(O) -D "include_patterns=index.rst,examples.rst,$(example)"
+	@BUILD_API=false BUILD_CHEATSHEET=false EXAMPLE_PATTERN="$(notdir $(example))" $(SPHINXBUILD) -M html "$(SOURCEDIR)" "$(BUILDDIR)" -j 1 $(O)
 
 # Basic docs target (skip examples and cheatsheet)
 basic-docs:

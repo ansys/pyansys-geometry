@@ -38,7 +38,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service. You 
 
         {% if build_examples %}
         .. grid-item-card:: Examples :fa:`scroll`
-            :link: examples
+            :link: examples/index
             :link-type: doc
 
             Explore examples that show how to use PyAnsys Geometry to
@@ -71,7 +71,7 @@ PyAnsys Geometry is a Python client library for the Ansys Geometry service. You 
        api/index
        {% endif %}
        {% if build_examples %}
-       examples
+       examples/index
        {% endif %}
        contributing
        assets

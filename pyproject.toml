@@ -80,10 +80,8 @@ doc = [
   "ansys-sphinx-theme[autoapi]==1.11.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.19.5",
   "myst-parser==5.1.0",
   "nbconvert==7.17.1",
-  "nbsphinx==0.9.8",
   "notebook==7.6.2",
   "numpydoc==1.11.0",
   "pdf2image==1.17.0",
@@ -91,6 +89,7 @@ doc = [
   "sphinx==9.1.0",
   "sphinx-autodoc-typehints==3.13.7",
   "sphinx-copybutton==0.5.2",
+  "sphinx-gallery==0.22.1",
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
 ]
@@ -159,6 +158,8 @@ lint.ignore = [
 lint.per-file-ignores."!src/**.py" = [ "D" ]
 # Ignore `F401` (import violations) in all `__init__.py` files.
 lint.per-file-ignores."__init__.py" = [ "F401" ]
+# Gallery examples intentionally introduce imports alongside their narrative sections.
+lint.per-file-ignores."examples/**/*.py" = [ "E402" ]
 # Ignore `E402` (module level import not at top of file) in `src/ansys/geometry/core/__init__.py`.
 lint.per-file-ignores."src/ansys/geometry/core/__init__.py" = [ "E402" ]
 lint.isort.combine-as-imports = true

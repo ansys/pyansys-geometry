@@ -61,19 +61,22 @@ goto end
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
 rmdir /s /q %APIDIR% > /NUL 2>&1
+rmdir /s /q %SOURCEDIR%\examples > /NUL 2>&1
+del /q %SOURCEDIR%\sg_execution_times.rst > /NUL 2>&1
 goto end
 
 :single-example
 if "%2" == "" (
 	echo. No example specified.
-	echo. Example: ./make.bat single-example examples/01_getting_started/01_math.mystnb
+	echo. Example: ./make.bat single-example 01_math.py
 	exit /b 1
 )
 echo Building single example: %2
 set BUILD_API=false
 set BUILD_CHEATSHEET=false
+set EXAMPLE_PATTERN=%~nx2
 set SPHINXOPTS=-j auto
-%SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O% -D "include_patterns=index.rst,examples.rst,%2"
+%SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 goto end
 
 :basic-docs

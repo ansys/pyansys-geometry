@@ -163,14 +163,18 @@ https://github.com/ansys/pyansys-geometry/pull/1454/commits/7fcf02f86f05e0e5ce1c
 
 To add a new example, follow these steps:
 
-1. Create a new notebook in the ``doc/source/examples`` directory, under the appropriate
-   folder for your example.
-2. Use the ``doc\source\examples\99_misc\template.mystnb`` file as a reference for creating
-   your example notebook. It contains the necessary metadata and structure for a
-   PyAnsys Geometry example.
-3. Add the new notebook to the ``doc/source/examples.rst`` file.
-4. Store a thumbnail image of the example in the ``doc/source/_static/thumbnails`` directory.
-5. Link the thumbnail image to your example file in the ``doc/source/conf.py`` file as shown in the reference commit.
+1. Create a Python script in the appropriate folder under the root ``examples`` directory.
+2. Use the ``examples\99_misc\template.py`` file as a reference. The module docstring
+   provides the example title and introduction, and comment blocks separated by lines of
+   ``#`` characters provide the narrative sections.
+3. Store a thumbnail image in the ``doc/source/_static/thumbnails`` directory.
+4. Set ``sphinx_gallery_thumbnail_path`` at the end of the example script. The path is
+   relative to ``doc/source``. For example::
+
+     # sphinx_gallery_thumbnail_path = "_static/thumbnails/my_example.png"
+
+Sphinx-Gallery automatically adds the example to the appropriate gallery and generates
+downloadable Python and Jupyter Notebook files.
 
 You can also test the correct build process of a new example by performing the following steps:
 
@@ -185,17 +189,17 @@ You can also test the correct build process of a new example by performing the f
 2. Navigate to the ``doc`` directory and run the following command::
 
     # On Linux or macOS
-    make single-example examples/01_getting_started/01_math.mystnb
+    make single-example example=01_math.py
 
     # On Windows
-    ./make.bat single-example examples/01_getting_started/01_math.mystnb
+    ./make.bat single-example 01_math.py
 
 .. note::
 
-  The example name must be the same as the notebook name, with its path
-  starting at the ``examples`` directory.
+  Pass the Python filename to the ``single-example`` target. The filename must uniquely
+  identify one example in the gallery.
 
-3. Check the ``doc/source/_build/html`` directory for the generated documentation
+3. Check the ``doc/_build/html`` directory for the generated documentation
    and open the ``index.html`` file in your browser.
 
 Run tests

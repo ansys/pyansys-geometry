@@ -4,7 +4,7 @@
 - PyAnsys Geometry provides a Pythonic gRPC interface to the Ansys GeometryService as well as Discovery and SpaceClaim.
 - Core source: src/ansys/geometry/core/
 - Tests: tests/ (unit and integration tests)
-- Examples: doc/source/examples/
+- Examples: examples/
 - Documentation: doc/source/
 
 ## Installation
@@ -23,7 +23,7 @@
 
 ## Examples & References
 - See `doc/source/contributing.rst` for detailed contribution guidelines.
-- Notebooks: `doc/source/examples/`
+- Sphinx-Gallery examples: `examples/`
 - API reference: https://geometry.docs.pyansys.com/version/stable/api/index.html
 
 ## Skills

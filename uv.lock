@@ -268,11 +268,9 @@ dev = [
     { name = "grpcio-health-checking" },
     { name = "ipyvtklink" },
     { name = "jupyter-sphinx" },
-    { name = "jupytext" },
     { name = "matplotlib" },
     { name = "myst-parser" },
     { name = "nbconvert" },
-    { name = "nbsphinx" },
     { name = "notebook" },
     { name = "numpy" },
     { name = "numpydoc" },
@@ -295,6 +293,7 @@ dev = [
     { name = "sphinx" },
     { name = "sphinx-autodoc-typehints" },
     { name = "sphinx-copybutton" },
+    { name = "sphinx-gallery" },
     { name = "sphinx-jinja" },
     { name = "ty" },
     { name = "vtk" },
@@ -311,11 +310,9 @@ doc = [
     { name = "grpcio-health-checking" },
     { name = "ipyvtklink" },
     { name = "jupyter-sphinx" },
-    { name = "jupytext" },
     { name = "matplotlib" },
     { name = "myst-parser" },
     { name = "nbconvert" },
-    { name = "nbsphinx" },
     { name = "notebook" },
     { name = "numpy" },
     { name = "numpydoc" },
@@ -333,6 +330,7 @@ doc = [
     { name = "sphinx" },
     { name = "sphinx-autodoc-typehints" },
     { name = "sphinx-copybutton" },
+    { name = "sphinx-gallery" },
     { name = "sphinx-jinja" },
     { name = "vtk" },
 ]
@@ -437,11 +435,9 @@ dev = [
     { name = "grpcio-health-checking", specifier = "==1.84.0" },
     { name = "ipyvtklink", specifier = "==0.2.3" },
     { name = "jupyter-sphinx", specifier = "==0.5.3" },
-    { name = "jupytext", specifier = "==1.19.5" },
     { name = "matplotlib", specifier = "==3.11.2" },
     { name = "myst-parser", specifier = "==5.1.0" },
     { name = "nbconvert", specifier = "==7.17.1" },
-    { name = "nbsphinx", specifier = "==0.9.8" },
     { name = "notebook", specifier = "==7.6.2" },
     { name = "numpy", specifier = "==2.5.3" },
     { name = "numpydoc", specifier = "==1.11.0" },
@@ -464,6 +460,7 @@ dev = [
     { name = "sphinx", specifier = "==9.1.0" },
     { name = "sphinx-autodoc-typehints", specifier = "==3.13.7" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
+    { name = "sphinx-gallery", specifier = "==0.22.1" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "ty", specifier = "==0.0.82" },
     { name = "vtk", specifier = "==9.7.0" },
@@ -480,11 +477,9 @@ doc = [
     { name = "grpcio-health-checking", specifier = "==1.84.0" },
     { name = "ipyvtklink", specifier = "==0.2.3" },
     { name = "jupyter-sphinx", specifier = "==0.5.3" },
-    { name = "jupytext", specifier = "==1.19.5" },
     { name = "matplotlib", specifier = "==3.11.2" },
     { name = "myst-parser", specifier = "==5.1.0" },
     { name = "nbconvert", specifier = "==7.17.1" },
-    { name = "nbsphinx", specifier = "==0.9.8" },
     { name = "notebook", specifier = "==7.6.2" },
     { name = "numpy", specifier = "==2.5.3" },
     { name = "numpydoc", specifier = "==1.11.0" },
@@ -502,6 +497,7 @@ doc = [
     { name = "sphinx", specifier = "==9.1.0" },
     { name = "sphinx-autodoc-typehints", specifier = "==3.13.7" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
+    { name = "sphinx-gallery", specifier = "==0.22.1" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "vtk", specifier = "==9.7.0" },
 ]
@@ -2182,22 +2178,6 @@ wheels = [
 ]
 
 [[package]]
-name = "jupytext"
-version = "1.19.5"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "markdown-it-py" },
-    { name = "mdit-py-plugins" },
-    { name = "nbformat" },
-    { name = "packaging" },
-    { name = "pyyaml" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/a1/ca/473f8ebb101553fb2ea6ab1d34324d6677844c968947ac050c759d539f2c/jupytext-1.19.5.tar.gz", hash = "sha256:605026446d605aa54fd7f7fc69df6ae51c7a46053d4cebf05afdc64d66de3df0", size = 4600916, upload-time = "2026-07-21T22:00:29.198Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/c6/76ee9dacedcd8c67d8fa53dd975613733bdd28242a4c41518ff1c8aeaa64/jupytext-1.19.5-py3-none-any.whl", hash = "sha256:af22351202171116b986fe1f4f9233a13ca4a85d5eec57a87900ed48521dbae4", size = 229246, upload-time = "2026-07-21T22:00:27.218Z" },
-]
-
-[[package]]
 name = "kiwisolver"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2806,23 +2786,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/31/72/b3446efab8756e7df4b8ec587f8e611cb5a7249e4323db480802f1d3be04/nbformat-5.11.1.tar.gz", hash = "sha256:32d4521c68c6e7d5b29c76defaeed9f42ea733142b9b19f88277ce10390b9c4d", size = 147775, upload-time = "2026-08-17T08:10:51.942Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1a/69/ee613f74085ca7103f79cd08d579c4f3177d1d26e5d3d9528d2d6536a707/nbformat-5.11.1-py3-none-any.whl", hash = "sha256:cc6698fa75f4fab8755ead786317815f13a6fee3b53311c0abb1a8b51d52f7ec", size = 79849, upload-time = "2026-08-17T08:10:50.18Z" },
-]
-
-[[package]]
-name = "nbsphinx"
-version = "0.9.8"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "docutils" },
-    { name = "jinja2" },
-    { name = "nbconvert" },
-    { name = "nbformat" },
-    { name = "sphinx" },
-    { name = "traitlets" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e7/d1/82081750f8a78ad0399c6ed831d42623b891904e8e7b8a75878225cf1dce/nbsphinx-0.9.8.tar.gz", hash = "sha256:d0765908399a8ee2b57be7ae881cf2ea58d66db3af7bbf33e6eb48f83bea5495", size = 417469, upload-time = "2025-11-28T17:41:02.336Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/03/78/843bcf0cf31f88d2f8a9a063d2d80817b1901657d83d65b89b3aa835732e/nbsphinx-0.9.8-py3-none-any.whl", hash = "sha256:92d95ee91784e56bc633b60b767a6b6f23a0445f891e24641ce3c3f004759ccf", size = 31961, upload-time = "2025-11-28T17:41:00.796Z" },
 ]
 
 [[package]]
@@ -4177,6 +4140,19 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/13/7b/804f311da4663a4aecc6cf7abd83443f3d4ded970826d0c958edc77d4527/sphinx_design-0.7.0.tar.gz", hash = "sha256:d2a3f5b19c24b916adb52f97c5f00efab4009ca337812001109084a740ec9b7a", size = 2203582, upload-time = "2026-01-19T13:12:53.297Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/cf/45dd359f6ca0c3762ce0490f681da242f0530c49c81050c035c016bfdd3a/sphinx_design-0.7.0-py3-none-any.whl", hash = "sha256:f82bf179951d58f55dca78ab3706aeafa496b741a91b1911d371441127d64282", size = 2220350, upload-time = "2026-01-19T13:12:51.077Z" },
+]
+
+[[package]]
+name = "sphinx-gallery"
+version = "0.22.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pillow" },
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/73/64/5f1e9b7780d387c6804d0f9d6f2f2dd89ac70e3bee73f61ffbfcc38defde/sphinx_gallery-0.22.1.tar.gz", hash = "sha256:15560a4c2dc0b4a4924c64e3bcb8c6dba7ddad6dcb77c50e255615e645eb18aa", size = 509262, upload-time = "2026-09-18T19:38:54.518Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/64/fb/bbaef2395227fd4053184383a32fc43d6d42aa7c49097d9518103ffb6615/sphinx_gallery-0.22.1-py3-none-any.whl", hash = "sha256:5a5ef17bd1d1d127845b09f2cf33a4d4295033a0ef00e1f2623fabcc9365aff3", size = 487224, upload-time = "2026-09-18T19:38:52.964Z" },
 ]
 
 [[package]]

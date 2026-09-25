@@ -36,6 +36,8 @@ from ansys_sphinx_theme import (
     latex,
     watermark,
 )
+import pyvista
+from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 import requests
 import sphinx
 from sphinx.builders.latex import LaTeXBuilder
@@ -43,7 +45,6 @@ from sphinx.util import logging
 
 from ansys.geometry.core import __version__
 
-# Convert notebooks into Python scripts and include them in the output files
 logger = logging.getLogger(__name__)
 
 ############################################################################
@@ -56,9 +57,12 @@ logger = logging.getLogger(__name__)
 # Using env var instead
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 os.environ["PYANSYS_VISUALIZER_HTML_BACKEND"] = "true"
+pyvista.BUILDING_GALLERY = True
+pyvista.OFF_SCREEN = True
 BUILD_API = True if os.environ.get("BUILD_API", "true") == "true" else False
 BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "true") == "true" else False
 BUILD_CHEATSHEET = True if os.environ.get("BUILD_CHEATSHEET", "true") == "true" else False
+EXAMPLE_PATTERN = os.environ.get("EXAMPLE_PATTERN", r"\.py$")
 
 # Make sure it gets defined.. to skip warnings in docs build
 if BUILD_EXAMPLES:
@@ -226,9 +230,10 @@ if not BUILD_CHEATSHEET:
 extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
-    "nbsphinx",
     "myst_parser",
     "jupyter_sphinx",
+    "pyvista.ext.viewer_directive",
+    "sphinx_gallery.gen_gallery",
     "sphinx_design",
     "sphinx_jinja",
     "ansys_sphinx_theme.extension.autoapi",
@@ -310,7 +315,6 @@ templates_path = ["_templates"]
 # The suffix(es) of source filenames.
 source_suffix = {
     ".rst": "restructuredtext",
-    ".mystnb": "jupyter_notebook",
     ".md": "markdown",
 }
 
@@ -327,76 +331,16 @@ suppress_warnings = [
 ]
 
 # Examples gallery customization
-nbsphinx_execute = "always"
-nbsphinx_custom_formats = {
-    ".mystnb": ["jupytext.reads", {"fmt": "mystnb"}],
+sphinx_gallery_conf = {
+    "examples_dirs": "../../examples",
+    "gallery_dirs": "examples",
+    "filename_pattern": EXAMPLE_PATTERN,
+    "image_scrapers": (DynamicScraper(), "matplotlib"),
+    "plot_gallery": BUILD_EXAMPLES,
+    "abort_on_example_error": True,
+    "remove_config_comments": True,
+    "download_all_examples": False,
 }
-nbsphinx_thumbnails = {
-    "examples/01_getting_started/01_math": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/02_units": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/03_sketching": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/04_modeling": "_static/thumbnails/101_getting_started.png",
-    "examples/01_getting_started/05_plotter_picker": "_static/thumbnails/101_getting_started.png",  # noqa: E501
-    "examples/01_getting_started/06_curve_surface_plotting": "_static/thumbnails/101_getting_started.png",  # noqa: E501
-    "examples/01_getting_started/07_master_bodies": "_static/thumbnails/101_getting_started.png",
-    "examples/02_sketching/basic_usage": "_static/thumbnails/basic_usage.png",
-    "examples/02_sketching/dynamic_sketch_plane": "_static/thumbnails/dynamic_sketch_plane.png",
-    "examples/02_sketching/advanced_sketching_gears": "_static/thumbnails/advanced_sketching_gears.png",  # noqa: E501
-    "examples/03_modeling/add_design_material": "_static/thumbnails/add_design_material.png",
-    "examples/03_modeling/plate_with_hole": "_static/thumbnails/plate_with_hole.png",
-    "examples/03_modeling/cut_operation_on_extrude": "_static/thumbnails/cut_operation_on_extrude.png",  # noqa: E501
-    "examples/03_modeling/tessellation_usage": "_static/thumbnails/tessellation_usage.png",
-    "examples/03_modeling/design_organization": "_static/thumbnails/design_organization.png",
-    "examples/03_modeling/boolean_operations": "_static/thumbnails/boolean_operations.png",
-    "examples/03_modeling/scale_map_mirror_bodies": "_static/thumbnails/scale_map_mirror_bodies.png",  # noqa: E501
-    "examples/03_modeling/sweep_chain_profile": "_static/thumbnails/sweep_chain_profile.png",
-    "examples/03_modeling/revolving": "_static/thumbnails/revolving.png",
-    "examples/03_modeling/export_design": "_static/thumbnails/export_design.png",
-    "examples/03_modeling/design_tree": "_static/thumbnails/design_tree.png",
-    "examples/03_modeling/service_colors": "_static/thumbnails/service_colors.png",
-    "examples/03_modeling/surface_bodies": "_static/thumbnails/quarter_sphere.png",
-    "examples/03_modeling/design_parameters": "_static/thumbnails/block_with_parameters.png",
-    "examples/03_modeling/chamfer": "_static/thumbnails/chamfer.png",
-    "examples/03_modeling/detach_faces": "_static/thumbnails/detach_faces.png",
-    "examples/04_applied/01_naca_airfoils": "_static/thumbnails/naca_airfoils.png",
-    "examples/04_applied/02_naca_fluent": "_static/thumbnails/naca_fluent.png",
-    "examples/04_applied/03_ahmed_body_fluent": "_static/thumbnails/ahmed_body.png",
-    "examples/04_applied/04_mechanical_named_selections": "_static/thumbnails/mechanical_ns.png",
-    "examples/04_applied/05_pmdb_export_options": "_static/thumbnails/pmdb_export_options.png",
-    "examples/04_applied/06_solder_ball": "_static/thumbnails/solder_ball.png",
-    "examples/05_tools/selection_highlight": "_static/thumbnails/face_selection.png",
-    "examples/05_tools/repair_tools": "_static/thumbnails/repair_tools.png",
-    "examples/05_tools/prepare_tools": "_static/thumbnails/prepare_tools.png",
-    "examples/05_tools/measurement_tools": "_static/thumbnails/measurement_tools.png",
-    "examples/99_misc/template": "_static/thumbnails/101_getting_started.png",
-}
-nbsphinx_epilog = """
-----
-
-.. admonition:: Download this example
-
-    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
-
-""".format(
-    cname_pref=f"https://{cname}/version/{switcher_version}",
-    ipynb_file_loc="{{ env.docname }}.ipynb",
-    py_file_loc="{{ env.docname }}.py",
-)
-
-nbsphinx_prolog = """
-
-.. admonition:: Download this example
-
-    Download this example as a `Jupyter Notebook <{cname_pref}/{ipynb_file_loc}>`_
-    or as a `Python script <{cname_pref}/{py_file_loc}>`_.
-
-----
-""".format(
-    cname_pref=f"https://{cname}/version/{switcher_version}",
-    ipynb_file_loc="{{ env.docname }}.ipynb",
-    py_file_loc="{{ env.docname }}.py",
-)
 
 typehints_defaults = "comma"
 simplify_optional_unions = False
@@ -484,53 +428,6 @@ nitpick_ignore_regex = [
 ]
 
 
-def convert_notebooks_to_scripts(app: sphinx.application.Sphinx, exception):
-    """Convert notebooks to scripts.
-
-    Parameters
-    ----------
-    app : sphinx.application.Sphinx
-        Sphinx instance containing all the configuration for the documentation build.
-    exception : Exception
-        Exception raised during the build process.
-    """
-    if exception is None:
-        # Get the examples output directory and retrieve all the notebooks
-        import subprocess
-
-        examples_output_dir = Path(app.outdir) / "examples"
-        if not examples_output_dir.exists():
-            logger.info("No examples directory found, skipping conversion...")
-            return
-
-        notebooks = examples_output_dir.glob("**/*.ipynb")
-        count = 0
-        for notebook in notebooks:
-            count += 1
-            logger.info(f"Converting {notebook}")  # using jupytext
-            output = subprocess.run(
-                [
-                    "jupytext",
-                    "--to",
-                    "py",
-                    str(notebook),
-                    "--output",
-                    str(notebook.with_suffix(".py")),
-                ],
-                env=os.environ,
-                capture_output=True,
-            )
-
-            if output.returncode != 0:
-                logger.error(f"Error converting {notebook} to script")
-                logger.error(output.stderr)
-
-        if count == 0:
-            logger.warning("No notebooks found to convert to scripts")
-        else:
-            logger.info(f"Converted {count} notebooks to scripts")
-
-
 def fix_autoapi_currentmodule(app: sphinx.application.Sphinx, exception):
     """Fix py:currentmodule directives in autoapi-generated RST files.
 
@@ -609,8 +506,3 @@ def setup(app: sphinx.application.Sphinx):
         "env-before-read-docs",
         lambda app, env, docnames: fix_autoapi_currentmodule(app, None),
     )
-
-    if BUILD_EXAMPLES:
-        # Run at the end of the build process
-        logger.info("Connecting build-finished hook for converting notebooks to scripts...")
-        app.connect("build-finished", convert_notebooks_to_scripts)
