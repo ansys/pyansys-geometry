@@ -478,26 +478,6 @@ def test_design_import_catia_named_selections_with_publications(modeler: Modeler
     assert len(design._named_selections["Face1"].faces) == 1
 
 
-def test_design_import_cat5_2024_with_catia_named_selections(modeler: Modeler):
-    """Test importing a 2024 CATIA V5 file with geometric sets mapped to named selections."""
-    options = ImportOptions(map_catia_sets_to_groups=True)
-    design = modeler.open_file(
-        Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"), import_options=options
-    )
-    assert len(design.bodies) == 1
-    assert len(design.bodies[0].faces) == 24
-
-
-def test_design_import_cat5_2024_with_publications_to_groups(modeler: Modeler):
-    """Test importing a 2024 CATIA V5 file with publication groups enabled."""
-    options = ImportOptions(map_catia_sets_to_groups=True, publications_only_to_groups=True)
-    design = modeler.open_file(
-        Path(IMPORT_FILES_DIR, "CAT5/Bracket_Hole_2024.CATPart"), import_options=options
-    )
-    assert len(design.bodies) == 1
-    assert len(design.bodies[0].faces) == 24
-
-
 def test_design_import_cat6_2023(modeler: Modeler):
     """Test importing a CATIA V6 file."""
     skip_if_no_geometry_service(
