@@ -9,6 +9,167 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.18.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.0>`_ - September 28, 2026
+===============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Implement RayFire tools
+          - `#2552 <https://github.com/ansys/pyansys-geometry/pull/2552>`_
+
+        * - Merging inner loops
+          - `#3103 <https://github.com/ansys/pyansys-geometry/pull/3103>`_
+
+        * - Length scale implementation
+          - `#3128 <https://github.com/ansys/pyansys-geometry/pull/3128>`_
+
+        * - Add v272 version
+          - `#3134 <https://github.com/ansys/pyansys-geometry/pull/3134>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Subtract bug fix
+          - `#3106 <https://github.com/ansys/pyansys-geometry/pull/3106>`_
+
+        * - Broken links, zizmor reports and pinning action version
+          - `#3112 <https://github.com/ansys/pyansys-geometry/pull/3112>`_
+
+        * - Add curve_deviation tessellation option
+          - `#3133 <https://github.com/ansys/pyansys-geometry/pull/3133>`_
+
+        * - NURBS sketch refactoring
+          - `#3135 <https://github.com/ansys/pyansys-geometry/pull/3135>`_
+
+        * - Interactive plots not showing up after VTK upgrade on documentation
+          - `#3137 <https://github.com/ansys/pyansys-geometry/pull/3137>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-sphinx-theme[autoapi] from 1.10.0 to 1.11.0 in the docs-deps group
+          - `#3099 <https://github.com/ansys/pyansys-geometry/pull/3099>`_
+
+        * - Bump numpy from 2.5.2 to 2.5.3
+          - `#3100 <https://github.com/ansys/pyansys-geometry/pull/3100>`_
+
+        * - Bump ty from 0.0.78 to 0.0.79
+          - `#3105 <https://github.com/ansys/pyansys-geometry/pull/3105>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.13.5 to 3.13.6 in the docs-deps group across 1 directory
+          - `#3107 <https://github.com/ansys/pyansys-geometry/pull/3107>`_
+
+        * - Bump ty from 0.0.79 to 0.0.80
+          - `#3108 <https://github.com/ansys/pyansys-geometry/pull/3108>`_
+
+        * - Bump ansys-api-discovery from 1.2.13 to 1.2.15
+          - `#3109 <https://github.com/ansys/pyansys-geometry/pull/3109>`_
+
+        * - Bump pyvista[jupyter] from 0.48.4 to 0.49.0
+          - `#3110 <https://github.com/ansys/pyansys-geometry/pull/3110>`_
+
+        * - Bump matplotlib from 3.11.1 to 3.11.2
+          - `#3111 <https://github.com/ansys/pyansys-geometry/pull/3111>`_
+
+        * - Bump ansys-api-discovery from 1.2.15 to 1.2.16
+          - `#3114 <https://github.com/ansys/pyansys-geometry/pull/3114>`_
+
+        * - Bump vtk from 9.6.2 to 9.7.0
+          - `#3115 <https://github.com/ansys/pyansys-geometry/pull/3115>`_
+
+        * - Bump pint from 0.25.3 to 0.26.1
+          - `#3120 <https://github.com/ansys/pyansys-geometry/pull/3120>`_
+
+        * - Bump ty from 0.0.80 to 0.0.81
+          - `#3121 <https://github.com/ansys/pyansys-geometry/pull/3121>`_
+
+        * - Bump the grpc-deps group with 3 updates
+          - `#3123 <https://github.com/ansys/pyansys-geometry/pull/3123>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.13.6 to 3.13.7 in the docs-deps group across 1 directory
+          - `#3124 <https://github.com/ansys/pyansys-geometry/pull/3124>`_
+
+        * - Bump semver from 3.0.4 to 3.1.0
+          - `#3125 <https://github.com/ansys/pyansys-geometry/pull/3125>`_
+
+        * - Bump ty from 0.0.81 to 0.0.82
+          - `#3126 <https://github.com/ansys/pyansys-geometry/pull/3126>`_
+
+        * - Bump numpydoc from 1.10.0 to 1.11.0 in the docs-deps group
+          - `#3129 <https://github.com/ansys/pyansys-geometry/pull/3129>`_
+
+        * - Bump notebook from 7.6.2 to 7.6.3 in the docs-deps group across 1 directory
+          - `#3138 <https://github.com/ansys/pyansys-geometry/pull/3138>`_
+
+        * - Bump ty from 0.0.82 to 0.0.84
+          - `#3139 <https://github.com/ansys/pyansys-geometry/pull/3139>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.17.2
+          - `#3098 <https://github.com/ansys/pyansys-geometry/pull/3098>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.5 to 0.16.6 in the pre-commit-hooks group
+          - `#3101 <https://github.com/ansys/pyansys-geometry/pull/3101>`_
+
+        * - Bump https://github.com/tox-dev/pyproject-fmt from v2.29.3 to 2.29.4 in the pre-commit-hooks group
+          - `#3113 <https://github.com/ansys/pyansys-geometry/pull/3113>`_
+
+        * - Bump the actions group with 4 updates
+          - `#3116 <https://github.com/ansys/pyansys-geometry/pull/3116>`_
+
+        * - Bump astral-sh/setup-uv from 10.0.1 to 10.1.0 in the actions group
+          - `#3117 <https://github.com/ansys/pyansys-geometry/pull/3117>`_
+
+        * - Deprecate manifest argument and remove deprecated methods
+          - `#3118 <https://github.com/ansys/pyansys-geometry/pull/3118>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.6 to 0.16.7 in the pre-commit-hooks group
+          - `#3119 <https://github.com/ansys/pyansys-geometry/pull/3119>`_
+
+        * - Bump the actions group with 2 updates
+          - `#3127 <https://github.com/ansys/pyansys-geometry/pull/3127>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.7 to 0.16.8 in the pre-commit-hooks group
+          - `#3131 <https://github.com/ansys/pyansys-geometry/pull/3131>`_
+
+        * - Bump codecov/codecov-action from 7.1.0 to 7.1.1 in the actions group
+          - `#3132 <https://github.com/ansys/pyansys-geometry/pull/3132>`_
+
+        * - Bump the actions group across 1 directory with 3 updates
+          - `#3140 <https://github.com/ansys/pyansys-geometry/pull/3140>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Re-enable part of extrusion failures test
+          - `#2523 <https://github.com/ansys/pyansys-geometry/pull/2523>`_
+
+
 `0.17.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.17.2>`_ - September 09, 2026
 ===============================================================================================
 
