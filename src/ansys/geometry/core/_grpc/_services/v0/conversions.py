@@ -483,6 +483,7 @@ def from_tess_options_to_grpc_tess_options(
     return GRPCTessellationOptions(
         surface_deviation=options.surface_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         angle_deviation=options.angle_deviation.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
+        curve_deviation=options.curve_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         maximum_aspect_ratio=options.max_aspect_ratio,
         maximum_edge_length=options.max_edge_length.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         watertight=options.watertight,
