@@ -84,6 +84,8 @@ class GeometryContainers(Enum):
     CORE_LINUX_26_1 = 11, "linux", "core-linux-26.1"
     CORE_WINDOWS_27_1 = 12, "windows", "core-windows-27.1"
     CORE_LINUX_27_1 = 13, "linux", "core-linux-27.1"
+    CORE_WINDOWS_27_2 = 14, "windows", "core-windows-27.2"
+    CORE_LINUX_27_2 = 15, "linux", "core-linux-27.2"
 
 
 class LocalDockerInstance:

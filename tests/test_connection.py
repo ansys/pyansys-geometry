@@ -189,6 +189,7 @@ def test_manifest_path_exists(tmp_path):
     [
         (261, ("Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
         (271, ("Discovery", "Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
+        (272, ("Discovery", "Addins", "ApiServer", "Presentation.ApiServerAddIn.Manifest.xml")),
     ],
 )
 def test_default_manifest_path(version, relative_manifest_path, tmp_path):
