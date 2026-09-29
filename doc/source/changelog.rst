@@ -9,6 +9,51 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.18.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.1>`_ - September 29, 2026
+===============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add tessellation conversion to grpc
+          - `#3144 <https://github.com/ansys/pyansys-geometry/pull/3144>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump ansys-api-discovery from 1.2.16 to 1.2.17
+          - `#3145 <https://github.com/ansys/pyansys-geometry/pull/3145>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.18.0
+          - `#3142 <https://github.com/ansys/pyansys-geometry/pull/3142>`_
+
+        * - Bump dev version
+          - `#3143 <https://github.com/ansys/pyansys-geometry/pull/3143>`_
+
+        * - Bump astral-sh/setup-uv from 10.1.0 to 10.2.0 in the actions group
+          - `#3146 <https://github.com/ansys/pyansys-geometry/pull/3146>`_
+
+        * - Comment out assertion
+          - `#3148 <https://github.com/ansys/pyansys-geometry/pull/3148>`_
+
+
 `0.18.0 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.0>`_ - September 28, 2026
 ===============================================================================================
 
