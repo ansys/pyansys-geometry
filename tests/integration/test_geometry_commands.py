@@ -1677,7 +1677,7 @@ def test_failures_to_extrude(modeler: Modeler):
             True,
         )
 
-        # TODO: issue with assertion.. to be investigated. Random failures between 1 and 4 for len(...)
+        # TODO: issue with assertion.. to be investigated. Random failures between 1 and 4 for len
         # https://github.com/ansys/pyansys-geometry/issues/3147
         # assert len(design.bodies[1].faces) == 4
 
