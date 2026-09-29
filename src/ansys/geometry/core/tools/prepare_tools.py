@@ -945,3 +945,42 @@ class PrepareTools:
         )
 
         return created_bodies
+
+    @min_backend_version(27, 1, 0)
+    def suppress_topology(self, selection: list["Edge"], suppress: bool = True) -> bool:
+        """Suppress or unsuppress the given topologies.
+
+        Parameters
+        ----------
+        selection : list[Edge]
+            List of edges to suppress or unsuppress.
+        suppress : bool, default: True
+            Whether to suppress (``True``) or unsuppress (``False``) the edges.
+
+        Returns
+        -------
+        bool
+            ``True`` if successful, ``False`` if failed.
+
+        Warnings
+        --------
+        This method is only available starting on Ansys release 27R1.
+        """
+        from ansys.geometry.core.designer.edge import Edge
+
+        if not selection:
+            self._grpc_client.log.info("No topologies provided...")
+            return False
+
+        # Verify inputs
+        check_type_all_elements_in_iterable(selection, Edge)
+
+        response = self._grpc_client._services.prepare_tools.suppress_topology(
+            selection_ids=[item.id for item in selection],
+            suppress=suppress,
+        )
+
+        if not response.get("success"):
+            self._grpc_client.log.info("Failed to suppress topology...")
+
+        return response.get("success")

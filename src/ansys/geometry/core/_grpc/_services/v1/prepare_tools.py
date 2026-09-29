@@ -469,3 +469,28 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
                 for item in response.response_data
             ]
         }
+
+    @protect_grpc
+    def suppress_topology(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import (
+            SuppressTopologiesRequest,
+            SuppressTopologiesRequestData,
+        )
+
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = SuppressTopologiesRequest(
+            request_data=[
+                SuppressTopologiesRequestData(
+                    selection_ids=[build_grpc_id(id) for id in kwargs["selection_ids"]],
+                    suppress=kwargs["suppress"],
+                )
+            ]
+        )
+
+        # Call the gRPC service
+        response = self.stub.SuppressTopologies(request).response_data[0]
+
+        # Return the response - formatted as a dictionary
+        return {
+            "success": response.success
+        }
