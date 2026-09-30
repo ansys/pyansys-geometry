@@ -307,7 +307,8 @@ def prepare_and_start_backend(
         )
 
     port = _check_port_or_get_one(port)
-    installations = get_available_ansys_installations()
+    # Initialize an empty dictionary to store available Ansys installations.
+    installations: dict[int, str] = {}
     if version is not None:
         # Sanitize the version input to ensure it's an integer.
         try:
@@ -327,6 +328,9 @@ def prepare_and_start_backend(
         # we will use it as the root folder for the Geometry Service.
         pass
     else:
+        # We only read the available Ansys installations from the system if the user
+        # has not set the ANSYS_GEOMETRY_SERVICE_ROOT environment variable.
+        installations = get_available_ansys_installations()
         if version is not None:
             try:
                 _check_version_is_available(version, installations)
