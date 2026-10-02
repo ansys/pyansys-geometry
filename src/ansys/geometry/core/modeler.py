@@ -23,9 +23,12 @@
 """Provides for interacting with the Geometry service."""
 
 import logging
+import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
+import uuid
 
+from ansys.tools.common.cyberchannel import verify_transport_mode, verify_uds_socket
 from grpc import Channel
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
@@ -33,6 +36,7 @@ from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.errors import GeometryRuntimeError
+from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
 from ansys.geometry.core.misc.options import ImportOptions, ImportOptionsDefinitions
@@ -127,6 +131,82 @@ class Modeler:
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
+        # Check transport mode and set default (ie. connect to existing service scenario)
+        loopback_localhosts = ("localhost", "127.0.0.1")
+
+        # If the transport mode is selected, simply use it... with caution.
+        if transport_mode is not None:
+            verify_transport_mode(transport_mode)
+        else:
+            # Select the transport mode based on the connection criteria.
+            # 1. if host is localhost.. either wnua or uds depending on the OS
+            if host in loopback_localhosts:
+                transport_mode = "wnua" if os.name == "nt" else "uds"
+            else:
+                # 2. if host is not localhost.. always default to mtls
+                transport_mode = "mtls"
+
+            LOG.info(
+                f"Transport mode not specified. Selected '{transport_mode}'"
+                " based on connection criteria."
+            )
+
+        # If mtls is selected -- verify certs_dir
+        if transport_mode == "mtls":
+            # Share the certificates directory if needed
+            if certs_dir is None:
+                certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
+                if certs_dir_env is not None:
+                    certs_dir = Path(certs_dir_env)
+                else:
+                    certs_dir = Path.cwd() / "certs"
+            else:
+                # Make sure it's a Path object
+                certs_dir = Path(certs_dir)
+
+            if not certs_dir.is_dir():  # pragma: no cover
+                raise RuntimeError(
+                    "Transport mode 'mtls' was selected, but the expected"
+                    f" certificates directory does not exist: {certs_dir}"
+                )
+            certs_dir = certs_dir.resolve().as_posix()
+            LOG.info(f"Using certificates directory: {certs_dir}")
+        elif transport_mode == "uds":
+            # UDS is only available for localhost connections
+            if host not in loopback_localhosts:
+                raise RuntimeError(
+                    "Transport mode 'uds' is only available for localhost connections."
+                )
+            # Share the uds_dir if needed
+            if uds_dir is None:
+                uds_dir = Path.home() / ".conn"
+            else:
+                # Make sure it's a Path object
+                uds_dir = Path(uds_dir)
+
+            # If the folder does not exist, create it
+            uds_dir.mkdir(parents=True, exist_ok=True)
+
+            # Assign a unique id if none was provided
+            if uds_id is None:
+                uds_id = str(uuid.uuid4())
+
+            # Verify that the UDS file doesn't already exist
+            if verify_uds_socket("aposdas_socket", uds_dir, uds_id) is True:
+                raise RuntimeError("UDS socket file already exists.")
+        elif transport_mode == "wnua":
+            # WNUA is only available on Windows for localhost connections
+            if os.name != "nt":  # pragma: no cover
+                raise RuntimeError("Transport mode 'wnua' is only available on Windows.")
+            if host not in loopback_localhosts:  # pragma: no cover
+                raise RuntimeError(
+                    "Transport mode 'wnua' is only available for localhost connections."
+                )
+        elif transport_mode == "insecure":
+            pass
+        else:  # pragma: no cover
+            raise RuntimeError(f"Transport mode '{transport_mode}' is not recognized.")
 
         self._grpc_client = GrpcClient(
             host=host,
