@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``property.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.materials.property
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: property
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~MaterialProperty`
+            - Provides the data structure for a material property.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~MaterialPropertyType`
+            - Provides an enum holding the possible values for ``MaterialProperty`` objects.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 MaterialProperty<MaterialProperty>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ MaterialPropertyType<MaterialPropertyType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ``MaterialProperty`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

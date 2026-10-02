@@ -1,0 +1,56 @@
+
+
+
+
+
+
+:class:`Volume`
+===============
+
+
+.. py:class:: ansys.geometry.core.misc.measurements.Volume(value: ansys.geometry.core.typing.Real | pint.Quantity, unit: pint.Unit | None = None)
+
+   Bases: :py:obj:`Measurement`
+
+
+   
+   Provides the ``Measurement`` subclass for holding a volume.
+
+
+   :Parameters:
+
+       **value** : :obj:`Real` | :obj:`~pint.Quantity`
+           Value of the volume.
+
+       **unit** : :obj:`~pint.Unit`, default: :obj:`DEFAULT_UNITS.VOLUME`
+           Units for the volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import Volume
+
+
+
+
+

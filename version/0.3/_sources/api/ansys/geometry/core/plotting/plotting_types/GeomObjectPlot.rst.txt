@@ -1,0 +1,220 @@
+
+
+
+
+GeomObjectPlot
+==============
+
+.. py:class:: GeomObjectPlot(actor: pyvista.Actor, object: beartype.typing.Any, edges: beartype.typing.List[EdgePlot] = None, add_body_edges: bool = True)
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot
+
+
+
+
+Mapper class to relate PyAnsys Geometry objects with its PyVista actor.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: GeomObjectPlot
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~actor`
+            - Return the PyVista actor of the PyAnsys Geometry object.
+          * - :py:attr:`~object`
+            - Return the PyAnsys Geometry object.
+          * - :py:attr:`~edges`
+            - Return the list of edges associated to this PyAnsys Geometry object.
+          * - :py:attr:`~name`
+            - Return the name of this object.
+          * - :py:attr:`~add_body_edges`
+            - Return whether you want to be able to add edges.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.plotting_types import GeomObjectPlot
+
+
+Property detail
+---------------
+.. py:property:: actor
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot.actor
+   :type: pyvista.Actor
+
+
+   
+   Return the PyVista actor of the PyAnsys Geometry object.
+
+
+
+   :Returns:
+
+       :obj:`~pyvista.Actor`
+           Actor of the PyAnsys Geometry object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: object
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot.object
+   :type: beartype.typing.Any
+
+
+   
+   Return the PyAnsys Geometry object.
+
+
+
+   :Returns:
+
+       :obj:`Any`
+           PyAnsys Geometry object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edges
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot.edges
+   :type: beartype.typing.List[EdgePlot]
+
+
+   
+   Return the list of edges associated to this PyAnsys Geometry object.
+
+
+
+   :Returns:
+
+       :obj:`List`\[:obj:`EdgePlot`]
+           List of the edges of this object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot.name
+   :type: str
+
+
+   
+   Return the name of this object.
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           Name of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: add_body_edges
+   :canonical: ansys.geometry.core.plotting.plotting_types.GeomObjectPlot.add_body_edges
+   :type: bool
+
+
+   
+   Return whether you want to be able to add edges.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           Flag to add edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

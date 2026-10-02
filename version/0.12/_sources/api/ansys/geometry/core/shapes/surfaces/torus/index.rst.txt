@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``torus.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.torus
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: torus
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.torus.Torus`
+            - Provides 3D torus representation.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.torus.TorusEvaluation`
+            - Evaluate the torus`` at given parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Torus</api/ansys/geometry/core/shapes/surfaces/torus/Torus>
+    <span class="nf nf-cod-symbol_class"></span> TorusEvaluation</api/ansys/geometry/core/shapes/surfaces/torus/TorusEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a torus.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

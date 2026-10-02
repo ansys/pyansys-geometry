@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``designcurve.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core.designer.designcurve
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.designer.designcurve
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.designcurve.DesignCurve`
+            - Represents a standalone curve within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> DesignCurve</api/ansys/geometry/core/designer/designcurve/DesignCurve>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for managing standalone design curves.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

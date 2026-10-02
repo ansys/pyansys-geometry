@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``beams.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.beams
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: beams
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.beams.GRPCBeamsService`
+            - Beams service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCBeamsService</api/ansys/geometry/core/_grpc/_services/base/beams/GRPCBeamsService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the beams service implementation (abstraction layer).
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

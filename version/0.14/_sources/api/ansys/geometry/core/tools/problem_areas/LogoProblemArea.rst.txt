@@ -1,0 +1,152 @@
+
+
+
+
+
+
+:class:`LogoProblemArea`
+========================
+
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.LogoProblemArea(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient, face_ids: list[str])
+
+   Bases: :py:obj:`ProblemArea`
+
+
+   
+   Represents a logo problem area defined by a list of faces.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the problem area.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **faces** : :class:`python:list`\[:class:`python:str`]
+           List of faces defining the logo problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: LogoProblemArea
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix the problem area by deleting the logos.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~face_ids`
+            - The ids of the faces defining the logos.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import LogoProblemArea
+
+Property detail
+---------------
+
+.. py:property:: face_ids
+   :type: list[str]
+
+
+   
+   The ids of the faces defining the logos.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: fix() -> bool
+
+   
+   Fix the problem area by deleting the logos.
+
+
+
+
+
+   :Returns:
+
+       message: :ref:`bool <python:bltin-boolean-values>`
+           Message that return whether the operation was successful.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

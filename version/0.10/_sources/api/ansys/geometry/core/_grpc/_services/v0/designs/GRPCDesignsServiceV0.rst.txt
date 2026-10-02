@@ -1,0 +1,322 @@
+
+
+
+
+
+
+:class:`GRPCDesignsServiceV0`
+=============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.designs.GRPCDesignsServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.designs.GRPCDesignsService`
+
+
+   
+   Designs service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   designs service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCDesignsServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~open`
+            - Open a design on the service.
+          * - :py:attr:`~new`
+            - Create a new design.
+          * - :py:attr:`~close`
+            - Close the currently open design.
+          * - :py:attr:`~put_active`
+            - Activate an already opened design on the service.
+          * - :py:attr:`~save_as`
+            - Create a new design.
+          * - :py:attr:`~download_export`
+            - Download and export a design into a certain format.
+          * - :py:attr:`~stream_download_export`
+            - Download and export a design into a certain format.
+          * - :py:attr:`~insert`
+            - Insert a part/component/design into an existing design.
+          * - :py:attr:`~get_active`
+            - Get the active design on the service.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.designs import GRPCDesignsServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: open(**kwargs) -> dict
+
+   
+   Open a design on the service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: new(**kwargs) -> dict
+
+   
+   Create a new design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: close(**kwargs) -> dict
+
+   
+   Close the currently open design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: put_active(**kwargs) -> dict
+
+   
+   Activate an already opened design on the service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: save_as(**kwargs) -> dict
+
+   
+   Create a new design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: download_export(**kwargs) -> dict
+
+   
+   Download and export a design into a certain format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: stream_download_export(**kwargs) -> dict
+
+   
+   Download and export a design into a certain format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: insert(**kwargs) -> dict
+
+   
+   Insert a part/component/design into an existing design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_active(**kwargs) -> dict
+
+   
+   Get the active design on the service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

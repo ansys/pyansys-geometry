@@ -1,0 +1,556 @@
+
+
+
+
+
+
+:class:`Arc`
+============
+
+
+.. py:class:: ansys.geometry.core.sketch.arc.Arc(start: ansys.geometry.core.math.point.Point2D, end: ansys.geometry.core.math.point.Point2D, center: ansys.geometry.core.math.point.Point2D, clockwise: bool = False)
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.edge.SketchEdge`
+
+
+   
+   Provides for modeling an arc.
+
+
+   :Parameters:
+
+       **start** : :obj:`Point2D`
+           Starting point of the arc.
+
+       **end** : :obj:`Point2D`
+           Ending point of the arc.
+
+       **center** : :obj:`Point2D`
+           Center point of the arc.
+
+       **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the arc spans the clockwise angle between the start and end points.
+           When ``False`` (default), the arc spans the counter-clockwise angle. When
+           ``True``, the arc spands the clockwise angle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+.. py:currentmodule:: Arc
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_three_points`
+            - Create an arc from three given points.
+          * - :py:attr:`~from_start_end_and_radius`
+            - Create an arc from a starting point, an ending point, and a radius.
+          * - :py:attr:`~from_start_center_and_angle`
+            - Create an arc from a starting point, a center point, and an angle.
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start`
+            - Starting point of the arc line.
+          * - :py:attr:`~end`
+            - Ending point of the arc line.
+          * - :py:attr:`~center`
+            - Center point of the arc.
+          * - :py:attr:`~length`
+            - Length of the arc.
+          * - :py:attr:`~radius`
+            - Radius of the arc.
+          * - :py:attr:`~angle`
+            - Angle of the arc.
+          * - :py:attr:`~is_clockwise`
+            - Flag indicating whether the rotation of the angle is clockwise.
+          * - :py:attr:`~sector_area`
+            - Area of the sector of the arc.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Arc`` class.
+          * - :py:attr:`~__ne__`
+            - Not equals operator for the ``Arc`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.arc import Arc
+
+Property detail
+---------------
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Starting point of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Ending point of the arc line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: center
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Center point of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: pint.Quantity
+
+
+   
+   Length of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle
+   :type: pint.Quantity
+
+
+   
+   Angle of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_clockwise
+   :type: bool
+
+
+   
+   Flag indicating whether the rotation of the angle is clockwise.
+
+
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if the sense of rotation is clockwise.
+           ``False`` if the sense of rotation is counter-clockwise.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: sector_area
+   :type: pint.Quantity
+
+
+   
+   Area of the sector of the arc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: Arc) -> bool
+
+   
+   Equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __ne__(other: Arc) -> bool
+
+   
+   Not equals operator for the ``Arc`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: from_three_points(start: ansys.geometry.core.math.point.Point2D, inter: ansys.geometry.core.math.point.Point2D, end: ansys.geometry.core.math.point.Point2D)
+   :classmethod:
+
+
+   
+   Create an arc from three given points.
+
+
+   :Parameters:
+
+       **start** : :obj:`Point2D`
+           Starting point of the arc.
+
+       **inter** : :obj:`Point2D`
+           Intermediate point (location) of the arc.
+
+       **end** : :obj:`Point2D`
+           Ending point of the arc.
+
+
+
+   :Returns:
+
+       :obj:`Arc`
+           Arc generated from the three points.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: from_start_end_and_radius(start: ansys.geometry.core.math.point.Point2D, end: ansys.geometry.core.math.point.Point2D, radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, convex_arc: bool = False, clockwise: bool = False)
+   :classmethod:
+
+
+   
+   Create an arc from a starting point, an ending point, and a radius.
+
+
+   :Parameters:
+
+       **start** : :obj:`Point2D`
+           Starting point of the arc.
+
+       **end** : :obj:`Point2D`
+           Ending point of the arc.
+
+       **radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Radius of the arc.
+
+       **convex_arc** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the arc is convex. The default is ``False``.
+           When ``False``, the arc is concave. When ``True``, the arc is convex.
+
+       **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the arc spans the clockwise angle between the start and end points.
+           When ``False``, the arc spans the counter-clockwise angle.
+           When ``True``, the arc spands the clockwise angle.
+
+
+
+   :Returns:
+
+       :obj:`Arc`
+           Arc generated from the three points.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: from_start_center_and_angle(start: ansys.geometry.core.math.point.Point2D, center: ansys.geometry.core.math.point.Point2D, angle: ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real, clockwise: bool = False)
+   :classmethod:
+
+
+   
+   Create an arc from a starting point, a center point, and an angle.
+
+
+   :Parameters:
+
+       **start** : :obj:`Point2D`
+           Starting point of the arc.
+
+       **center** : :obj:`Point2D`
+           Center point of the arc.
+
+       **angle** : :obj:`Angle` | :obj:`~pint.Quantity` | :obj:`Real`
+           Angle of the arc.
+
+       **clockwise** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the provided angle should be considered clockwise.
+           When ``False``, the angle is considered counter-clockwise.
+           When ``True``, the angle is considered clockwise.
+
+
+
+   :Returns:
+
+       :obj:`Arc`
+           Arc generated from the three points.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

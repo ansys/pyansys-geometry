@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`SplitFaceType`
+======================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.SplitFaceType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for types of face splits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SplitFaceType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~BY_PARAMETER`
+            - 
+          * - :py:attr:`~BY_TWO_POINTS`
+            - 
+          * - :py:attr:`~BY_CURVES`
+            - 
+          * - :py:attr:`~BY_CUTTER`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import SplitFaceType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: BY_PARAMETER
+   :value: 0
+
+
+.. py:attribute:: BY_TWO_POINTS
+   :value: 1
+
+
+.. py:attribute:: BY_CURVES
+   :value: 2
+
+
+.. py:attribute:: BY_CUTTER
+   :value: 3
+
+
+
+
+
+

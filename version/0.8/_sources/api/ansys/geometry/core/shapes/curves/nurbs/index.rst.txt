@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``nurbs.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.curves.nurbs
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: nurbs
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.nurbs.NURBSCurve`
+            - Represents a NURBS curve.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves.nurbs.NURBSCurveEvaluation`
+            - Provides evaluation of a NURBS curve at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> NURBSCurve</api/ansys/geometry/core/shapes/curves/nurbs/NURBSCurve>
+    <span class="nf nf-cod-symbol_class"></span> NURBSCurveEvaluation</api/ansys/geometry/core/shapes/curves/nurbs/NURBSCurveEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a NURBS curve.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

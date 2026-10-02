@@ -1,0 +1,27 @@
+[
+  {
+    "name": "dev",
+    "version": "dev",
+    "url": "https://geometry.docs.pyansys.com/version/dev/"
+  },
+  {
+    "name": "0.18 (stable)",
+    "version": "0.18",
+    "url": "https://geometry.docs.pyansys.com/version/stable/"
+  },
+  {
+    "name": "0.17",
+    "version": "0.17",
+    "url": "https://geometry.docs.pyansys.com/version/0.17/"
+  },
+  {
+    "name": "0.16",
+    "version": "0.16",
+    "url": "https://geometry.docs.pyansys.com/version/0.16/"
+  },
+  {
+    "name": "Older version",
+    "version": "N/A",
+    "url": "https://geometry.docs.pyansys.com/version/"
+  }
+]

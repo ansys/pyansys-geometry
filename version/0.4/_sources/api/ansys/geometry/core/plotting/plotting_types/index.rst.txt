@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``plotting_types.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.plotting.plotting_types
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotting_types
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~EdgePlot`
+            - Mapper class to relate PyAnsys Geometry edges with its PyVista actor.
+
+
+          * - :py:attr:`~GeomObjectPlot`
+            - Mapper class to relate PyAnsys Geometry objects with its PyVista actor.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 EdgePlot<EdgePlot>
+    🝆 GeomObjectPlot<GeomObjectPlot>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Data types for plotting.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

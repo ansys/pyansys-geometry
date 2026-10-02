@@ -1,0 +1,153 @@
+
+
+
+
+Button
+======
+
+.. py:class:: Button(plotter: pyvista.Plotter, button_config: tuple)
+   :canonical: ansys.geometry.core.plotting.widgets.button.Button
+
+
+
+Bases: :py:obj:`ansys.geometry.core.plotting.widgets.widget.PlotterWidget`
+
+
+   Provides the abstract class for implementing buttons in PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`Plotter`
+           Plotter to draw the buttons on.
+
+       **button_config** : :class:`python:tuple`
+           Tuple containing the position and the path to the icon of the button.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class wraps the PyVista ``add_checkbox_button_widget()`` method.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Button
+.. tab-set::
+
+    .. tab-item:: Abstract methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - Get the functionality of the button, which is implemented by subclasses.
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~update`
+            - Assign the image that represents the button.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.button import Button
+
+
+
+
+Method detail
+-------------
+.. py:method:: callback(state: bool) -> None
+   :abstractmethod:
+
+   
+   Get the functionality of the button, which is implemented by subclasses.
+
+
+   :Parameters:
+
+       **state** : :ref:`bool <python:bltin-boolean-values>`
+           Whether the button is active.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update() -> None
+
+   
+   Assign the image that represents the button.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

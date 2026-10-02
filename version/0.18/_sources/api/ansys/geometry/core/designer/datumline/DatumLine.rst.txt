@@ -1,0 +1,257 @@
+
+
+
+
+
+
+:class:`DatumLine`
+==================
+
+
+.. py:class:: ansys.geometry.core.designer.datumline.DatumLine(id: str, name: str, line: ansys.geometry.core.shapes.curves.line.Line, parent_component: ansys.geometry.core.designer.component.Component)
+
+   
+   Provides for creating datum lines in components.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the datum line.
+
+       **name** : :class:`python:str`
+           User-defined label for the datum line.
+
+       **line** : :obj:`Line`
+           3D line constituting the datum line.
+
+       **parent_component** : :obj:`Component`
+           Parent component to place the new datum line under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DatumLine
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the datum line.
+          * - :py:attr:`~name`
+            - Name of the datum line.
+          * - :py:attr:`~line`
+            - Line of the datum line.
+          * - :py:attr:`~parent_component`
+            - Component node that the datum line is under.
+          * - :py:attr:`~is_alive`
+            - Check if the datum line is still present on the server.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the datum line as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.datumline import DatumLine
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the datum line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the datum line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: line
+   :type: ansys.geometry.core.shapes.curves.line.Line
+
+
+   
+   Line of the datum line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Component node that the datum line is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Check if the datum line is still present on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the datum line as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

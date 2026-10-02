@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`SplitEdgeReference`
+===========================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.SplitEdgeReference
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for references when splitting edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SplitEdgeReference
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~START`
+            - 
+          * - :py:attr:`~END`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import SplitEdgeReference
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: START
+   :value: 0
+
+
+.. py:attribute:: END
+   :value: 1
+
+
+
+
+
+

@@ -1,0 +1,169 @@
+
+
+
+
+
+
+:class:`GRPCUnsupportedServiceV1`
+=================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.unsupported.GRPCUnsupportedServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.unsupported.GRPCUnsupportedService`
+
+
+   
+   Unsupported service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCUnsupportedServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_import_id_map`
+            - Get the import ID map.
+          * - :py:attr:`~set_export_ids`
+            - Set the export IDs for the entities.
+          * - :py:attr:`~set_single_export_id`
+            - Set a single export ID for an entity.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.unsupported import GRPCUnsupportedServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_import_id_map(**kwargs) -> dict
+
+   
+   Get the import ID map.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_export_ids(**kwargs) -> dict
+
+   
+   Set the export IDs for the entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_single_export_id(**kwargs) -> dict
+
+   
+   Set a single export ID for an entity.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
