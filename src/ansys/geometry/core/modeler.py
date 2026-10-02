@@ -203,6 +203,8 @@ class Modeler:
                 raise RuntimeError(
                     "Transport mode 'wnua' is only available for localhost connections."
                 )
+        elif transport_mode == "insecure":
+            pass
         else:  # pragma: no cover
             raise RuntimeError(f"Transport mode '{transport_mode}' is not recognized.")
 
