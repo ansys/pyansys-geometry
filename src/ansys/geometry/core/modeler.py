@@ -134,7 +134,7 @@ class Modeler:
 
         # Check transport mode and set default (ie. connect to existing service scenario)
         loopback_localhosts = ("localhost", "127.0.0.1")
-        
+
         # If the transport mode is selected, simply use it... with caution.
         if transport_mode is not None:
             verify_transport_mode(transport_mode)
@@ -146,12 +146,12 @@ class Modeler:
             else:
                 # 2. if host is not localhost.. always default to mtls
                 transport_mode = "mtls"
-        
+
             LOG.info(
                 f"Transport mode not specified. Selected '{transport_mode}'"
                 " based on connection criteria."
             )
-        
+
         # If mtls is selected -- verify certs_dir
         if transport_mode == "mtls":
             # Share the certificates directory if needed
@@ -164,7 +164,7 @@ class Modeler:
             else:
                 # Make sure it's a Path object
                 certs_dir = Path(certs_dir)
-        
+
             if not certs_dir.is_dir():  # pragma: no cover
                 raise RuntimeError(
                     "Transport mode 'mtls' was selected, but the expected"
@@ -184,14 +184,14 @@ class Modeler:
             else:
                 # Make sure it's a Path object
                 uds_dir = Path(uds_dir)
-        
+
             # If the folder does not exist, create it
             uds_dir.mkdir(parents=True, exist_ok=True)
-        
+
             # Assign a unique id if none was provided
             if uds_id is None:
                 uds_id = str(uuid.uuid4())
-        
+
             # Verify that the UDS file doesn't already exist
             if verify_uds_socket("aposdas_socket", uds_dir, uds_id) is True:
                 raise RuntimeError("UDS socket file already exists.")
