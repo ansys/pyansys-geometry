@@ -186,7 +186,7 @@ jobs:
           docker rm $env:GEO_CONT_NAME
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@2cf0b0df520f148c192026ebfdc25fdfa85c1687 # v1.3.2
+        uses: skitionek/notify-microsoft-teams@78b3f572ad77dd4f53f9f97ba97957e4abac31fa # v1.3.3
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
@@ -276,7 +276,7 @@ jobs:
           docker rm ${GEO_CONT_NAME}
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@2cf0b0df520f148c192026ebfdc25fdfa85c1687 # v1.3.2
+        uses: skitionek/notify-microsoft-teams@78b3f572ad77dd4f53f9f97ba97957e4abac31fa # v1.3.3
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
