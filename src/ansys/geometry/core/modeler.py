@@ -125,11 +125,12 @@ class Modeler:
         uds_dir: Path | str | None = None,
         uds_id: str | None = None,
         certs_dir: Path | str | None = None,
+        _skip_transport_check: bool = False,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
 
-        if channel is None:
+        if channel is None or not _skip_transport_check:
             _, transport_values = _handle_transport_mode(
                 host=host,
                 transport_mode=transport_mode,

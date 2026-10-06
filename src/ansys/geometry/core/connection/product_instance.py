@@ -599,6 +599,7 @@ def prepare_and_start_backend(
         uds_id=transport_values["uds_id"],
         uds_dir=transport_values["uds_dir"],
         certs_dir=transport_values["certs_dir"],
+        _skip_transport_check=True,
     )
 
 
