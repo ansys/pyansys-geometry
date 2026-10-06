@@ -32,12 +32,12 @@ import socket
 # the input is controlled by the library. Excluding bandit check.
 import subprocess  # nosec B404
 from typing import TYPE_CHECKING
-import uuid
 
-from ansys.tools.common.cyberchannel import verify_transport_mode, verify_uds_socket
+from ansys.tools.common.cyberchannel import verify_uds_socket
 from ansys.tools.common.path import get_available_ansys_installations, get_latest_ansys_installation
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
+from ansys.geometry.core.connection.transport import _handle_transport_mode
 from ansys.geometry.core.logger import LOG
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -551,6 +551,7 @@ def prepare_and_start_backend(
         uds_dir=uds_dir,
         uds_id=uds_id,
         certs_dir=certs_dir,
+        launch_backend=True,
     )
     # HACK: This is a temporary hack to pass in the certs dir consistently.
     # Versions 252 and before were not handling the --certs-dir argument properly,
@@ -817,142 +818,6 @@ def _get_common_env(
             env_copy[BACKEND_LOG_LEVEL_VARIABLE] = "0"
 
     return env_copy
-
-
-def _handle_transport_mode(
-    host: str,
-    transport_mode: str | None = None,
-    uds_dir: Path | str | None = None,
-    uds_id: str | None = None,
-    certs_dir: Path | str | None = None,
-) -> tuple[list[str], dict[str, str | None]]:
-    """Handle transport mode conditions.
-
-    Parameters
-    ----------
-    host : str
-        The backend's ip address.
-    transport_mode : str | None
-        Transport mode selected, by default `None` and thus it will be selected
-        for you based on the connection criteria. Options are: "insecure", "uds", "wnua", "mtls"
-    uds_dir : Path | str | None
-        Directory to use for Unix Domain Sockets (UDS) transport mode.
-        By default `None` and thus it will use the "~/.conn" folder.
-    uds_id : str | None
-        Optional ID to use for the UDS socket filename.
-        By default `None` and thus it will use "aposdas_socket.sock".
-        Otherwise, the socket filename will be "aposdas_socket-<uds_id>.sock".
-    certs_dir : Path | str | None
-        Directory to use for TLS certificates.
-        By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
-        If not found, it will use the "certs" folder assuming it is in the current working
-        directory.
-
-    Returns
-    -------
-    tuple[list[str], dict[str, str | None]]
-
-    """
-    # Localhost addresses
-    loopback_localhosts = ("localhost", "127.0.0.1")
-
-    # Command line arguments to be passed to the backend
-    exe_args: list[str] = []
-
-    # If the transport mode is selected, simply use it... with caution.
-    if transport_mode is not None:
-        verify_transport_mode(transport_mode)
-    else:
-        # Select the transport mode based on the connection criteria.
-        # 1. if host is localhost.. either wnua or uds depending on the OS
-        if host in loopback_localhosts:
-            transport_mode = "wnua" if os.name == "nt" else "uds"
-        else:
-            # 2. if host is not localhost.. always default to mtls
-            transport_mode = "mtls"
-
-        LOG.info(
-            f"Transport mode not specified. Selected '{transport_mode}'"
-            " based on connection criteria."
-        )
-
-    # If mtls is selected -- verify certs_dir
-    if transport_mode == "mtls":
-        # Share the certificates directory if needed
-        if certs_dir is None:
-            certs_dir_env = os.getenv("ANSYS_GRPC_CERTIFICATES", None)
-            if certs_dir_env is not None:
-                certs_dir = Path(certs_dir_env)
-            else:
-                certs_dir = Path.cwd() / "certs"
-        else:
-            # Make sure it's a Path object
-            certs_dir = Path(certs_dir)
-
-        if not certs_dir.is_dir():  # pragma: no cover
-            raise RuntimeError(
-                "Transport mode 'mtls' was selected, but the expected"
-                f" certificates directory does not exist: {certs_dir}"
-            )
-        LOG.info(f"Using certificates directory: {certs_dir.resolve().as_posix()}")
-
-        # Determine args to be passed to the backend
-        exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--certs-dir={certs_dir.resolve().as_posix()}")
-    elif transport_mode == "uds":
-        # UDS is only available for localhost connections
-        if host not in loopback_localhosts:
-            raise RuntimeError("Transport mode 'uds' is only available for localhost connections.")
-        # Share the uds_dir if needed
-        if uds_dir is None:
-            uds_dir = Path.home() / ".conn"
-        else:
-            # Make sure it's a Path object
-            uds_dir = Path(uds_dir)
-
-        # If the folder does not exist, create it
-        uds_dir.mkdir(parents=True, exist_ok=True)
-
-        # Assign a unique id if none was provided
-        if uds_id is None:
-            uds_id = str(uuid.uuid4())
-
-        # Verify that the UDS file doesn't already exist
-        if verify_uds_socket("aposdas_socket", uds_dir, uds_id) is True:
-            raise RuntimeError("UDS socket file already exists.")
-
-        # Determine args to be passed to the backend
-        exe_args.append(f"--transport-mode={transport_mode}")
-        exe_args.append(f"--uds-dir={uds_dir.resolve().as_posix()}")
-        exe_args.append(f"--uds-id={uds_id}")
-
-    elif transport_mode == "wnua":
-        # WNUA is only available on Windows for localhost connections
-        if os.name != "nt":  # pragma: no cover
-            raise RuntimeError("Transport mode 'wnua' is only available on Windows.")
-        if host not in loopback_localhosts:
-            raise RuntimeError("Transport mode 'wnua' is only available for localhost connections.")
-
-        # Determine args to be passed to the backend
-        exe_args.append(f"--transport-mode={transport_mode}")
-
-    elif transport_mode == "insecure":
-        # Determine args to be passed to the backend
-        exe_args.append(f"--transport-mode={transport_mode}")
-
-    else:  # pragma: no cover
-        raise RuntimeError(f"Transport mode '{transport_mode}' is not recognized.")
-
-    # Store the final transport values
-    transport_values = {
-        "transport_mode": transport_mode,
-        "uds_dir": str(uds_dir) if transport_mode == "uds" else None,
-        "uds_id": uds_id,
-        "certs_dir": str(certs_dir) if transport_mode == "mtls" else None,
-    }
-
-    # Return the args to be passed to the backend, and the transport values
-    return exe_args, transport_values
 
 
 def _determine_proto_version(
