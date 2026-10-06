@@ -301,6 +301,7 @@ class PrepareTools:
         bodies: list["Body"],
         tol: Distance | Quantity | Real = 0.0,
         preserve_instances: bool = False,
+        geometry_imprint: bool = False,
     ) -> bool:
         """Share topology between the chosen bodies.
 
@@ -312,6 +313,10 @@ class PrepareTools:
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
+        geometry_imprint : bool, default: False
+            Enable geometry-based (Parasolid) imprinting instead of facet-based imprinting.
+            This can improve performance for models with many bodies, especially spheres
+            and cylinders. The default preserves the existing facet-based workflow.
 
         Returns
         -------
@@ -335,6 +340,7 @@ class PrepareTools:
             bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
         )
 
         parent_design = get_design_from_body(bodies[0])
@@ -351,6 +357,7 @@ class PrepareTools:
         bodies: list["Body"],
         tol: Distance | Quantity | Real = 0.0,
         preserve_instances: bool = False,
+        geometry_imprint: bool = False,
     ) -> RepairToolMessage:
         """Share topology between the chosen bodies.
 
@@ -362,6 +369,10 @@ class PrepareTools:
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
+        geometry_imprint : bool, default: False
+            Enable geometry-based (Parasolid) imprinting instead of facet-based imprinting.
+            This can improve performance for models with many bodies, especially spheres
+            and cylinders. The default preserves the existing facet-based workflow.
 
         Returns
         -------
@@ -387,6 +398,7 @@ class PrepareTools:
             bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
         )
 
         parent_design = get_design_from_body(bodies[0])
