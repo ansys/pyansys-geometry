@@ -107,6 +107,8 @@ class Modeler:
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    _skip_transport_check : bool, default: False
+        Whether to skip the transport mode check. Skip when calling from launcher.
     """
 
     def __init__(
