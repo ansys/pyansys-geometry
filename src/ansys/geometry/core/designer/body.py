@@ -176,6 +176,11 @@ class IBody(ABC):  # pragma: no cover
         return
 
     @abstractmethod
+    def is_visible(self) -> bool:
+        """Get the visibility of the body."""
+        return
+
+    @abstractmethod
     def color(self) -> str:
         """Get the color of the body."""
         return
@@ -1084,6 +1089,15 @@ class MasterBody(IBody):
         self.set_suppressed(value)
 
     @property
+    @min_backend_version(27, 1, 0)
+    def is_visible(self) -> bool:  # noqa: D102
+        return self._grpc_client.services.bodies.get_visibility(id=self.id).get("result")
+
+    @is_visible.setter
+    def is_visible(self, value: bool) -> None:  # noqa: D102
+        self.set_visibility(value)
+
+    @property
     def color(self) -> str:  # noqa: D102
         """Get the current color of the body."""
         if self._color is None and self.is_alive:
@@ -1365,6 +1379,12 @@ class MasterBody(IBody):
     ) -> None:
         self._grpc_client.log.debug(f"Setting body {self.id}, as suppressed: {suppressed}.")
         self._grpc_client.services.bodies.set_suppressed(bodies=[self.id], is_suppressed=suppressed)
+
+    @check_input_types
+    @min_backend_version(27, 1, 0)
+    def set_visibility(self, visible: bool) -> None:  # noqa: D102
+        self._grpc_client.log.debug(f"Setting body {self.id}, as visible: {visible}.")
+        self._grpc_client.services.bodies.set_visibility(id=self.id, is_visible=visible)
 
     @check_input_types
     @min_backend_version(25, 1, 0)
@@ -1885,6 +1905,14 @@ class Body(IBody):
     @is_suppressed.setter
     def is_suppressed(self, suppressed: bool):  # noqa: D102
         self._template.is_suppressed = suppressed
+
+    @property
+    def is_visible(self) -> bool:  # noqa: D102
+        return self._template.is_visible
+
+    @is_visible.setter
+    def is_visible(self, value: bool) -> None:  # noqa: D102
+        self._template.is_visible = value
 
     @property
     def color(self) -> str:  # noqa: D102

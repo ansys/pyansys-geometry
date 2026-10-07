@@ -508,6 +508,38 @@ class GRPCBodyServiceV1(GRPCBodyService):
         return {"result": result}
 
     @protect_grpc
+    def get_visibility(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
+
+        # Create the request with MultipleEntitiesRequest
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+
+        # Call the gRPC service
+        response = self.stub.GetVisibility(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {
+            "result": response.result[kwargs["id"]],
+            "success": response.command_response.success,
+        }
+
+    @protect_grpc
+    def set_visibility(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.design.geometry.body_pb2 import SetVisibilityRequest
+
+        # Create the request with SetVisibilityRequest
+        request = SetVisibilityRequest(
+            body_ids=[build_grpc_id(kwargs["id"])],
+            is_visible=kwargs["is_visible"],
+        )
+
+        # Call the gRPC service
+        self.stub.SetVisibility(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {}
+
+    @protect_grpc
     def get_color(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.commonmessages_pb2 import (
             MultipleEntitiesRequest,

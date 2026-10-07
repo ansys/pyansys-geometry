@@ -973,6 +973,18 @@ def test_body_suppression(modeler: Modeler):
     assert box.is_suppressed is False
 
 
+def test_body_visibility(modeler: Modeler):
+    """Test default body visibility, toggling, and invalid input."""
+    design = modeler.create_design("BodyVisibility")
+    body = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+
+    assert body.is_visible
+    body.is_visible = False
+    assert not body.is_visible
+    body.is_visible = True
+    assert body.is_visible
+
+
 def test_set_body_color(modeler: Modeler):
     """Test the getting and setting of body color."""
 

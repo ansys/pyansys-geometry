@@ -409,6 +409,20 @@ class GRPCBodyServiceV0(GRPCBodyService):
         return {"color": resp.color}
 
     @protect_grpc
+    def get_visibility(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_visibility' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def set_visibility(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.set_visibility' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def get_faces(self, **kwargs) -> dict:  # noqa: D102
         # Call the gRPC service
         resp = self.stub.GetFaces(request=build_grpc_id(kwargs["id"]))
