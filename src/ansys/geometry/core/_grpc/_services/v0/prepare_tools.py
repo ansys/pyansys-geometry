@@ -124,12 +124,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
-        if kwargs.get("geometry_imprint", False):
-            if not hasattr(request, "geometry_imprint"):
-                raise NotImplementedError(
-                    "Geometry imprinting requires updated API protobuf stubs."
-                )
-            request.geometry_imprint.value = True
 
         # Call the gRPC service
         response = self.stub.ShareTopology(request)
@@ -151,12 +145,6 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             tolerance=DoubleValue(value=from_measurement_to_server_length(kwargs["tolerance"])),
             preserve_instances=BoolValue(value=kwargs["preserve_instances"]),
         )
-        if kwargs.get("geometry_imprint", False):
-            if not hasattr(request, "geometry_imprint"):
-                raise NotImplementedError(
-                    "Geometry imprinting requires updated API protobuf stubs."
-                )
-            request.geometry_imprint.value = True
 
         # Call the gRPC service
         response = self.stub.EnhancedShareTopology(request)
