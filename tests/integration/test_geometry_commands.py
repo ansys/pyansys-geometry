@@ -956,9 +956,7 @@ def test_split_body_rejects_slicers_from_different_bodies(modeler: Modeler):
             bodies=[body1], slicers=[body1.edges[0], body2.edges[0]]
         )
     with pytest.raises(GeometryRuntimeError, match="All faces must belong to the same body"):
-        modeler.geometry_commands.split_body(
-            bodies=[body1], faces=[body1.faces[0], body2.faces[0]]
-        )
+        modeler.geometry_commands.split_body(bodies=[body1], faces=[body1.faces[0], body2.faces[0]])
 
 
 def test_get_round_info(modeler: Modeler):

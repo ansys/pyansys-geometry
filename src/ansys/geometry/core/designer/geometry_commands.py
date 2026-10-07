@@ -1367,7 +1367,7 @@ class GeometryCommands:
         bodies : list[Body]
             Bodies to split.
         plane : Plane | None, default: None
-            Plane to split with. 
+            Plane to split with.
         slicers : Edge | list[Edge] | Face | list[Face] | None, default: None
             Slicers to split with.
         faces : list[Face] | None, default: None
@@ -1406,7 +1406,7 @@ class GeometryCommands:
             check_type_all_elements_in_iterable(slicers, (Edge, Face))
             if len({slicer.body.id for slicer in slicers}) > 1:
                 raise GeometryRuntimeError("All slicers must belong to the same body.")
-            
+
             slicer_items = [slicer.id for slicer in slicers]
 
         face_items = []
