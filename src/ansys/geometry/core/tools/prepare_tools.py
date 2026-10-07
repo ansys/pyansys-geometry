@@ -326,6 +326,7 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        The ``geometry_imprint`` option is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -382,6 +383,7 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+        The ``geometry_imprint`` option is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.body import Body
 

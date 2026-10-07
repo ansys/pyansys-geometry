@@ -152,13 +152,8 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
             preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
         )
-        if kwargs.get("geometry_imprint", False):
-            if not hasattr(request, "geometry_imprint"):
-                raise NotImplementedError(
-                    "Geometry imprinting requires updated API protobuf stubs."
-                )
-            request.geometry_imprint = True
 
         # Call the gRPC service
         response = self.stub.ShareTopology(request)
@@ -181,13 +176,8 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
             preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
         )
-        if kwargs.get("geometry_imprint", False):
-            if not hasattr(request, "geometry_imprint"):
-                raise NotImplementedError(
-                    "Geometry imprinting requires updated API protobuf stubs."
-                )
-            request.geometry_imprint = True
 
         # Call the gRPC service
         response = self.stub.EnhancedShareTopology(request)
