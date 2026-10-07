@@ -1355,10 +1355,10 @@ class GeometryCommands:
     def split_body(
         self,
         bodies: list["Body"],
-        plane: Plane,
-        slicers: Union["Edge", list["Edge"], "Face", list["Face"]],
-        faces: list["Face"],
-        extendfaces: bool,
+        plane: Plane | None = None,
+        slicers: "Edge | list[Edge] | Face | list[Face] | None" = None,
+        faces: list["Face"] | None = None,
+        extendfaces: bool = False,
     ) -> bool:
         """Split bodies with a plane, slicers, or faces.
 
@@ -1366,13 +1366,13 @@ class GeometryCommands:
         ----------
         bodies : list[Body]
             Bodies to split.
-        plane : Plane
-            Plane to split with
-        slicers : Edge | list[Edge] | Face | list[Face]
+        plane : Plane | None, default: None
+            Plane to split with. 
+        slicers : Edge | list[Edge] | Face | list[Face] | None, default: None
             Slicers to split with.
-        faces : list[Face]
+        faces : list[Face] | None, default: None
             Faces to split with.
-        extendFaces : bool
+        extendFaces : bool, default: False
             Extend faces if split with faces.
 
         Returns
@@ -1383,10 +1383,14 @@ class GeometryCommands:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+        Faces in the slicers or faces list must all belong to the same body.
         """
         from ansys.geometry.core.designer.body import Body
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
+
+        if all(x is None for x in [plane, slicers, faces]):
+            raise ValueError("At least one of 'plane', 'slicers', or 'faces' must be provided.")
 
         check_type_all_elements_in_iterable(bodies, Body)
 
@@ -1400,12 +1404,17 @@ class GeometryCommands:
         if slicers is not None:
             slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
             check_type_all_elements_in_iterable(slicers, (Edge, Face))
+            if len({slicer.body.id for slicer in slicers}) > 1:
+                raise GeometryRuntimeError("All slicers must belong to the same body.")
+            
             slicer_items = [slicer.id for slicer in slicers]
 
         face_items = []
         if faces is not None:
             faces: list["Face"] = faces if isinstance(faces, list) else [faces]
             check_type_all_elements_in_iterable(faces, Face)
+            if len({face.body.id for face in faces}) > 1:
+                raise GeometryRuntimeError("All faces must belong to the same body.")
             face_items = [face.id for face in faces]
 
         result = self._grpc_client._services.bodies.split_body(

@@ -38,6 +38,7 @@ from ansys.geometry.core.designer.geometry_commands import (
     SplitFaceParameterType,
     SplitFaceType,
 )
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
@@ -942,6 +943,22 @@ def test_split_body_by_face(modeler: Modeler):
     assert design.bodies[2].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_split_body_rejects_slicers_from_different_bodies(modeler: Modeler):
+    """Test that slicers from different bodies are rejected."""
+    design = modeler.create_design("split_body_mixed_slicers")
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    with pytest.raises(GeometryRuntimeError, match="All slicers must belong to the same body"):
+        modeler.geometry_commands.split_body(
+            bodies=[body1], slicers=[body1.edges[0], body2.edges[0]]
+        )
+    with pytest.raises(GeometryRuntimeError, match="All faces must belong to the same body"):
+        modeler.geometry_commands.split_body(
+            bodies=[body1], faces=[body1.faces[0], body2.faces[0]]
+        )
 
 
 def test_get_round_info(modeler: Modeler):
