@@ -53,6 +53,7 @@ from ansys.geometry.core.misc.checks import (
     check_input_types,
     check_type,
     check_type_all_elements_in_iterable,
+    deprecated_argument,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Angle, Distance
@@ -1351,6 +1352,9 @@ class GeometryCommands:
 
         return result.get("success")
 
+    @deprecated_argument(arg="plane", alternative="cutter", version="0.18.2", remove="0.20.0")
+    @deprecated_argument(arg="slicers", alternative="cutter", version="0.18.2", remove="0.20.0")
+    @deprecated_argument(arg="faces", alternative="cutter", version="0.18.2", remove="0.20.0")
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
@@ -1359,21 +1363,28 @@ class GeometryCommands:
         slicers: "Edge | list[Edge] | Face | list[Face] | None" = None,
         faces: list["Face"] | None = None,
         extendfaces: bool = False,
+        cutter: "Plane | Edge | list[Edge] | Face | list[Face] | None" = None,
     ) -> bool:
         """Split bodies with a plane, slicers, or faces.
+
+        Exactly one of ``cutter``, ``plane``, ``slicers``, or ``faces`` must be provided.
 
         Parameters
         ----------
         bodies : list[Body]
             Bodies to split.
         plane : Plane | None, default: None
-            Plane to split with.
+            Plane to split with. If not provided, the split will rely on slicers or faces.
         slicers : Edge | list[Edge] | Face | list[Face] | None, default: None
-            Slicers to split with.
+            Slicers to split with. If not provided, the split will rely on the plane or faces.
         faces : list[Face] | None, default: None
-            Faces to split with.
-        extendFaces : bool, default: False
+            Faces to split with. If not provided, the split will rely on the plane or slicers.
+        extendfaces : bool, default: False
             Extend faces if split with faces.
+        cutter : Plane | Edge | list[Edge] | Face | list[Face] | None, default: None
+            Cutter to split with. Lists must be nonempty, contain only edges or only
+            faces, and belong to the same body. Cannot be combined with ``plane``,
+            ``slicers``, or ``faces``.
 
         Returns
         -------
@@ -1389,8 +1400,25 @@ class GeometryCommands:
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
-        if all(x is None for x in [plane, slicers, faces]):
-            raise ValueError("At least one of 'plane', 'slicers', or 'faces' must be provided.")
+        if sum(item is not None for item in (cutter, plane, slicers, faces)) != 1:
+            raise ValueError(
+                "Exactly one of 'cutter', 'plane', 'slicers', or 'faces' must be provided."
+            )
+
+        if cutter is not None:
+            if isinstance(cutter, Plane):
+                plane = cutter
+            else:
+                cutter_items = cutter if isinstance(cutter, list) else [cutter]
+                if not cutter_items:
+                    raise ValueError("'cutter' must not be an empty list.")
+                check_type(cutter_items[0], (Edge, Face))
+                if isinstance(cutter_items[0], Edge):
+                    check_type_all_elements_in_iterable(cutter_items, Edge)
+                    slicers = cutter_items
+                else:
+                    check_type_all_elements_in_iterable(cutter_items, Face)
+                    faces = cutter_items
 
         check_type_all_elements_in_iterable(bodies, Body)
 
