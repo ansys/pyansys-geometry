@@ -169,9 +169,6 @@ especially spheres and cylinders:
 result = modeler.prepare_tools.share_topology(design.bodies, geometry_imprint=True)
 ```
 
-Geometry-based imprinting requires API protobuf stubs and a backend that support
-the option. Older protobuf stubs continue to support the default workflow but
-raise ``NotImplementedError`` when geometry-based imprinting is requested.
 
 ```{code-cell} ipython3
 design = modeler.create_design("ShareTopologyExample")
