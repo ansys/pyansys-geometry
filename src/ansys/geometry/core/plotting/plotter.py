@@ -295,7 +295,7 @@ class GeometryPlotter(PlotterInterface):
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         try:
-            if body.is_suppressed:
+            if body.is_suppressed or not body.is_visible:
                 return
         except GeometryRuntimeError:  # pragma: no cover
             # For backward compatibility with older versions of PyAnsys Geometry
