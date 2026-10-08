@@ -1401,55 +1401,58 @@ class GeometryCommands:
         from ansys.geometry.core.designer.face import Face
 
         if sum(item is not None for item in (cutter, plane, slicers, faces)) != 1:
-            raise ValueError(
+            raise GeometryRuntimeError(
                 "Exactly one of 'cutter', 'plane', 'slicers', or 'faces' must be provided."
             )
 
+        split_by_plane, slicer_ids, face_ids = None, [], []
+
+        # Logic to handle new implementation (one cutter argument accepted)
         if cutter is not None:
             if isinstance(cutter, Plane):
-                plane = cutter
+                split_by_plane = cutter
             else:
                 cutter_items = cutter if isinstance(cutter, list) else [cutter]
                 if not cutter_items:
-                    raise ValueError("'cutter' must not be an empty list.")
-                check_type(cutter_items[0], (Edge, Face))
+                    raise GeometryRuntimeError("'cutter' must not be an empty list.")
                 if isinstance(cutter_items[0], Edge):
                     check_type_all_elements_in_iterable(cutter_items, Edge)
-                    slicers = cutter_items
-                else:
+                    slicer_ids = [cutter_item.id for cutter_item in cutter_items]
+                elif isinstance(cutter_items[0], Face):
                     check_type_all_elements_in_iterable(cutter_items, Face)
-                    faces = cutter_items
+                    face_ids = [cutter_item.id for cutter_item in cutter_items]
+                else:
+                    raise GeometryRuntimeError(
+                        "'cutter' must be a Plane, Edge, or Face."
+                    )
+        else:
+            # Logic to handle old implementation (plane, slicers, or faces arguments)
+            if plane is not None:
+                check_type(plane, Plane)
+                split_by_plane = plane
+            elif slicers is not None:
+                slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
+                check_type_all_elements_in_iterable(slicers, (Edge, Face))
+                if len({slicer.body.id for slicer in slicers}) > 1:
+                    raise GeometryRuntimeError("All slicers must belong to the same body.")
+                slicer_ids = [slicer.id for slicer in slicers]
+            elif faces is not None:
+                faces: list["Face"] = faces if isinstance(faces, list) else [faces]
+                check_type_all_elements_in_iterable(faces, Face)
+                if len({face.body.id for face in faces}) > 1:
+                    raise GeometryRuntimeError("All faces must belong to the same body.")
+                face_ids = [face.id for face in faces]
 
+        # Check body validity and reset tessellation cache
         check_type_all_elements_in_iterable(bodies, Body)
-
         for body in bodies:
             body._reset_tessellation_cache()
 
-        if plane is not None:
-            check_type(plane, Plane)
-
-        slicer_items = []
-        if slicers is not None:
-            slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
-            check_type_all_elements_in_iterable(slicers, (Edge, Face))
-            if len({slicer.body.id for slicer in slicers}) > 1:
-                raise GeometryRuntimeError("All slicers must belong to the same body.")
-
-            slicer_items = [slicer.id for slicer in slicers]
-
-        face_items = []
-        if faces is not None:
-            faces: list["Face"] = faces if isinstance(faces, list) else [faces]
-            check_type_all_elements_in_iterable(faces, Face)
-            if len({face.body.id for face in faces}) > 1:
-                raise GeometryRuntimeError("All faces must belong to the same body.")
-            face_items = [face.id for face in faces]
-
         result = self._grpc_client._services.bodies.split_body(
             body_ids=[body.id for body in bodies],
-            plane=plane,
-            slicer_ids=slicer_items,
-            face_ids=face_items,
+            plane=split_by_plane,
+            slicer_ids=slicer_ids,
+            face_ids=face_ids,
             extend_surfaces=extendfaces,
         )
 
