@@ -173,7 +173,7 @@ wheels = [
 
 [[package]]
 name = "ansys-api-discovery"
-version = "1.2.17"
+version = "1.2.18"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ansys-api-geometry" },
@@ -393,7 +393,7 @@ tests-minimal = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-api-discovery", specifier = "==1.2.17" },
+    { name = "ansys-api-discovery", specifier = "==1.2.18" },
     { name = "ansys-platform-instancemanagement", marker = "extra == 'all'", specifier = ">=1.0.3,<2" },
     { name = "ansys-tools-common", specifier = ">=0.3,<1" },
     { name = "ansys-tools-visualization-interface", marker = "extra == 'graphics'", specifier = ">=0.2.6" },
