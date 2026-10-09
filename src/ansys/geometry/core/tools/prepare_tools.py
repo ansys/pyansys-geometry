@@ -301,6 +301,7 @@ class PrepareTools:
         bodies: list["Body"],
         tol: Distance | Quantity | Real = 0.0,
         preserve_instances: bool = False,
+        geometry_imprint: bool = False,
     ) -> bool:
         """Share topology between the chosen bodies.
 
@@ -312,6 +313,10 @@ class PrepareTools:
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
+        geometry_imprint : bool, default: False
+            Enable geometry-based (Parasolid) imprinting instead of facet-based imprinting.
+            This can improve performance for models with many bodies, especially spheres
+            and cylinders. The default preserves the existing facet-based workflow.
 
         Returns
         -------
@@ -321,6 +326,7 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 24R2.
+        The ``geometry_imprint`` option is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -335,6 +341,7 @@ class PrepareTools:
             bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
         )
 
         parent_design = get_design_from_body(bodies[0])
@@ -351,6 +358,7 @@ class PrepareTools:
         bodies: list["Body"],
         tol: Distance | Quantity | Real = 0.0,
         preserve_instances: bool = False,
+        geometry_imprint: bool = False,
     ) -> RepairToolMessage:
         """Share topology between the chosen bodies.
 
@@ -362,6 +370,10 @@ class PrepareTools:
             Maximum distance between bodies.
         preserve_instances : bool
             Whether instances are preserved.
+        geometry_imprint : bool, default: False
+            Enable geometry-based (Parasolid) imprinting instead of facet-based imprinting.
+            This can improve performance for models with many bodies, especially spheres
+            and cylinders. The default preserves the existing facet-based workflow.
 
         Returns
         -------
@@ -371,6 +383,7 @@ class PrepareTools:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+        The ``geometry_imprint`` option is only available starting on Ansys release 27R1.
         """
         from ansys.geometry.core.designer.body import Body
 
@@ -387,6 +400,7 @@ class PrepareTools:
             bodies=[body.id for body in bodies],
             tolerance=tol,
             preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
         )
 
         parent_design = get_design_from_body(bodies[0])
