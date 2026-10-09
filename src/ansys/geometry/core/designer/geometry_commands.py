@@ -1422,9 +1422,7 @@ class GeometryCommands:
                     check_type_all_elements_in_iterable(cutter_items, Face)
                     face_ids = [cutter_item.id for cutter_item in cutter_items]
                 else:
-                    raise GeometryRuntimeError(
-                        "'cutter' must be a Plane, Edge, or Face."
-                    )
+                    raise GeometryRuntimeError("'cutter' must be a Plane, Edge, or Face.")
         else:
             # Logic to handle old implementation (plane, slicers, or faces arguments)
             if plane is not None:

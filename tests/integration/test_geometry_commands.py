@@ -855,7 +855,7 @@ def test_split_body_by_plane(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     origin = Point3D([0, 0, 0.5])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
-    
+
     success = modeler.geometry_commands.split_body(bodies=[body], cutter=plane, extendfaces=True)
     assert success
     assert len(design.bodies) == 4
@@ -900,7 +900,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
     body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
     body2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), 0.5)
     face_to_split = body2.faces[1]
-    
+
     success = modeler.geometry_commands.split_body(
         bodies=[body], cutter=face_to_split, extendfaces=True
     )
@@ -945,7 +945,7 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "Edge_Slice_Test.dsco")
     body = design.bodies[0]
     edge_to_split = body.edges[2]
-    
+
     success = modeler.geometry_commands.split_body(
         bodies=[body], cutter=edge_to_split, extendfaces=True
     )
@@ -1000,9 +1000,9 @@ def test_split_body_error_paths(modeler: Modeler):
     with pytest.raises(GeometryRuntimeError, match="Exactly one of 'cutter', 'plane',"):
         modeler.geometry_commands.split_body(bodies=[body1])
     with pytest.raises(GeometryRuntimeError, match="'cutter' must not be an empty list."):
-            modeler.geometry_commands.split_body(bodies=[body1], cutter=[])
+        modeler.geometry_commands.split_body(bodies=[body1], cutter=[])
     with pytest.raises(GeometryRuntimeError, match="'cutter' must be a Plane, Edge, or Face."):
-            modeler.geometry_commands.split_body(bodies=[body1], cutter=body1.vertices[0])
+        modeler.geometry_commands.split_body(bodies=[body1], cutter=body1.vertices[0])
     with pytest.raises(GeometryRuntimeError, match="All slicers must belong to the same body"):
         modeler.geometry_commands.split_body(
             bodies=[body1], slicers=[body1.edges[0], body2.edges[0]]
