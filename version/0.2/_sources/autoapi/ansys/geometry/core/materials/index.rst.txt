@@ -1,0 +1,39 @@
+:py:mod:`ansys.geometry.core.materials`
+=======================================
+
+.. py:module:: ansys.geometry.core.materials
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``Materials`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   material/index.rst
+   property/index.rst
+
+

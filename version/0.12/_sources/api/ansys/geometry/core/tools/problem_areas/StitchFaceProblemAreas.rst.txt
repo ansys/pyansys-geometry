@@ -1,0 +1,152 @@
+
+
+
+
+
+
+:class:`StitchFaceProblemAreas`
+===============================
+
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.StitchFaceProblemAreas(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient, bodies: list[ansys.geometry.core.designer.body.Body])
+
+   Bases: :py:obj:`ProblemArea`
+
+
+   
+   Represents a stitch face problem area with unique identifier and associated faces.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the problem area.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies associated with the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: StitchFaceProblemAreas
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix the problem area.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~bodies`
+            - The list of bodies connected to this problem area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import StitchFaceProblemAreas
+
+Property detail
+---------------
+
+.. py:property:: bodies
+   :type: list[ansys.geometry.core.designer.body.Body]
+
+
+   
+   The list of bodies connected to this problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: fix() -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Fix the problem area.
+
+
+
+
+
+   :Returns:
+
+       message: :obj:`RepairToolMessage`
+           Message containing created and/or modified bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

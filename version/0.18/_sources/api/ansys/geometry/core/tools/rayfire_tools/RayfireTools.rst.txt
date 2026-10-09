@@ -1,0 +1,281 @@
+
+
+
+
+
+
+:class:`RayfireTools`
+=====================
+
+
+.. py:class:: ansys.geometry.core.tools.rayfire_tools.RayfireTools(grpc_client: ansys.geometry.core.connection.client.GrpcClient, modeler: ansys.geometry.core.modeler.Modeler, _internal_use: bool = False)
+
+   
+   Rayfire tools for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **modeler** : :obj:`Modeler`
+           The parent modeler instance.
+
+       **_internal_use** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Internal flag to prevent direct instantiation by users.
+           This parameter is for internal use only.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`GeometryRuntimeError`
+           If the class is instantiated directly by users instead
+           of through the modeler.
+
+
+
+
+   .. rubric:: Notes
+
+   This class should not be instantiated directly. Use
+   ``modeler.rayfire_tools`` instead.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RayfireTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~rayfire`
+            - Perform rayfire operation.
+          * - :py:attr:`~rayfire_faces`
+            - Perform the rayfire operation on faces.
+          * - :py:attr:`~rayfire_ordered`
+            - Perform a rayfire ordered operation.
+          * - :py:attr:`~rayfire_ordered_uv`
+            - Perform a rayfire ordered operation.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.rayfire_tools import RayfireTools
+
+
+
+Method detail
+-------------
+
+.. py:method:: rayfire(body: ansys.geometry.core.designer.body.Body, faces: list[ansys.geometry.core.designer.face.Face], direction: ansys.geometry.core.math.vector.UnitVector3D, points: list[ansys.geometry.core.math.point.Point3D], max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real) -> list[RayfireImpact]
+
+   
+   Perform rayfire operation.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to perform rayfire on.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to consider.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of the ray.
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Starting points for rays.
+
+       **max_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum distance to check.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`RayFireImpact`]
+           Rayfire results.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rayfire_faces(body: ansys.geometry.core.designer.body.Body, faces: list[ansys.geometry.core.designer.face.Face], points: list[ansys.geometry.core.math.point.Point3D], options: ansys.geometry.core.misc.options.RayfireOptions | None = None) -> list[RayfireImpact]
+
+   
+   Perform the rayfire operation on faces.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to perform rayfire on.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to consider.
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Starting points for rays.
+
+       **options** : :obj:`RayfireOptions`, default: :data:`python:None`
+           Options for the rayfire operation.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`RayfireImpact`]
+           Rayfire results.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rayfire_ordered(body: ansys.geometry.core.designer.body.Body, faces: list[ansys.geometry.core.designer.face.Face], direction: ansys.geometry.core.math.vector.UnitVector3D, ray_radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, points: list[ansys.geometry.core.math.point.Point3D], max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, tight_tolerance: bool = False) -> list[list[RayfireImpact]]
+
+   
+   Perform a rayfire ordered operation.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to perform rayfire on.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to consider.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of the ray.
+
+       **ray_radius** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The radius of the ray.
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Starting points for rays.
+
+       **max_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum distance to check.
+
+       **tight_tolerance** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to use a tight tolerance for the ray fire operation.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:class:`python:list`\[:obj:`RayfireImpact`]]
+           Rayfire results, with one list of impacts per input point.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: rayfire_ordered_uv(body: ansys.geometry.core.designer.body.Body, faces: list[ansys.geometry.core.designer.face.Face], direction: ansys.geometry.core.math.vector.UnitVector3D, ray_radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, points: list[ansys.geometry.core.math.point.Point3D], max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, tight_tolerance: bool = False) -> list[list[RayfireImpact]]
+
+   
+   Perform a rayfire ordered operation.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           Body to perform rayfire on.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           Faces to consider.
+
+       **direction** : :obj:`UnitVector3D`
+           Direction of the ray.
+
+       **ray_radius** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The radius of the ray.
+
+       **points** : :class:`python:list`\[:obj:`Point3D`]
+           Starting points for rays.
+
+       **max_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum distance to check.
+
+       **tight_tolerance** : :ref:`bool <python:bltin-boolean-values>`
+           Whether to use a tight tolerance for the ray fire operation.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:class:`python:list`\[:obj:`RayfireImpact`]]
+           Rayfire results, with one list of impacts per input point.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

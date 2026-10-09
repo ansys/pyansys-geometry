@@ -1,0 +1,149 @@
+
+
+
+
+
+
+:class:`ShowDesignPoints`
+=========================
+
+
+.. py:class:: ansys.geometry.core.plotting.widgets.show_design_point.ShowDesignPoints(plotter_helper: ansys.tools.visualization_interface.backends.pyvista.PyVistaBackend)
+
+   Bases: :py:obj:`ansys.tools.visualization_interface.backends.pyvista.widgets.PlotterWidget`
+
+
+   
+   Provides the a button to hide/show DesignPoint objects in the plotter.
+
+
+   :Parameters:
+
+       **plotter_helper** : :obj:`GeometryPlotter`
+           Provides the plotter to add the button to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ShowDesignPoints
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~callback`
+            - Remove or add the DesignPoint actors upon click.
+          * - :py:attr:`~update`
+            - Define the configuration and representation of the button widget.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plotter_helper`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.show_design_point import ShowDesignPoints
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: plotter_helper
+
+
+
+Method detail
+-------------
+
+.. py:method:: callback(state: bool) -> None
+
+   
+   Remove or add the DesignPoint actors upon click.
+
+
+   :Parameters:
+
+       **state** : :ref:`bool <python:bltin-boolean-values>`
+           State of the button, which is inherited from PyVista. The value is ``True``
+           if the button is active.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update() -> None
+
+   
+   Define the configuration and representation of the button widget.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

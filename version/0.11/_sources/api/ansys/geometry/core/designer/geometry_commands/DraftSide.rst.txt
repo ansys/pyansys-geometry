@@ -1,0 +1,99 @@
+
+
+
+
+
+
+:class:`DraftSide`
+==================
+
+
+.. py:class:: ansys.geometry.core.designer.geometry_commands.DraftSide(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for draft sides.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: DraftSide
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NO_SPLIT`
+            - 
+          * - :py:attr:`~THIS`
+            - 
+          * - :py:attr:`~OTHER`
+            - 
+          * - :py:attr:`~BACK`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.geometry_commands import DraftSide
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NO_SPLIT
+   :value: 0
+
+
+.. py:attribute:: THIS
+   :value: 1
+
+
+.. py:attribute:: OTHER
+   :value: 2
+
+
+.. py:attribute:: BACK
+   :value: 3
+
+
+
+
+
+

@@ -1,0 +1,92 @@
+
+
+
+
+
+
+:class:`MatingCondition`
+========================
+
+
+.. py:class:: ansys.geometry.core.designer.mating_conditions.MatingCondition
+
+   
+   MatingCondition dataclass.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MatingCondition
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - 
+          * - :py:attr:`~is_deleted`
+            - 
+          * - :py:attr:`~is_enabled`
+            - 
+          * - :py:attr:`~is_satisfied`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.mating_conditions import MatingCondition
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: id
+   :type:  str
+
+.. py:attribute:: is_deleted
+   :type:  bool
+
+.. py:attribute:: is_enabled
+   :type:  bool
+
+.. py:attribute:: is_satisfied
+   :type:  bool
+
+
+
+
+

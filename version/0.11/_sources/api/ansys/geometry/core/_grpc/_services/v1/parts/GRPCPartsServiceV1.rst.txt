@@ -1,0 +1,125 @@
+
+
+
+
+
+
+:class:`GRPCPartsServiceV1`
+===========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.parts.GRPCPartsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.parts.GRPCPartsService`
+
+
+   
+   Parts service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   parts service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GRPCPartsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~export`
+            - Export a part to a file.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.parts import GRPCPartsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: export(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Export a part to a file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

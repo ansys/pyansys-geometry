@@ -1,0 +1,526 @@
+:py:mod:`ansys.geometry.core.primitives.line`
+=============================================
+
+.. py:module:: ansys.geometry.core.primitives.line
+
+.. autoapi-nested-parse::
+
+   Provides the ``Line`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.line.Line
+   ansys.geometry.core.primitives.line.LineEvaluation
+
+
+
+
+.. py:class:: Line(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.Point3D], direction: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D])
+
+
+   
+   Provides 3D ``Line`` representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`]
+           Origin of the line.
+
+       **direction** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           Direction of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Origin of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: direction
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Direction of the line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: object) -> bool
+
+      
+      Equals operator for the ``Line`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: evaluate(parameter: float) -> LineEvaluation
+
+      
+      Evaluate the line at the given parameter.
+
+
+      :Parameters:
+
+          **parameter** : :obj:`Real`
+              The parameter at which to evaluate the line.
+
+      :Returns:
+
+          :obj:`LineEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transformed_copy(matrix: ansys.geometry.core.math.Matrix44) -> Line
+
+      
+      Create a transformed copy of the line based on a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The transformation matrix to apply to the line.
+
+      :Returns:
+
+          :obj:`Line`
+              A new line that is the transformed copy of the original line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_point(point: ansys.geometry.core.math.Point3D) -> LineEvaluation
+
+      
+      Project a point onto the line and return its ``LineEvaluation``.
+
+
+      :Parameters:
+
+          **point** : :obj:`Point3D`
+              The point to project onto the line.
+
+      :Returns:
+
+          :obj:`LineEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_coincident_line(other: Line) -> bool
+
+      
+      Determine if this line is coincident with another.
+
+
+      :Parameters:
+
+          **other** : :obj:`Line`
+              The line to determine coincidence with.
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              Returns ``True`` if this line is coincident with the other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_opposite_line(other: Line) -> bool
+
+      
+      Determine if this line is opposite another.
+
+
+      :Parameters:
+
+          **other** : :obj:`Line`
+              The line to determine opposition with.
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              Returns ``True`` if this line is opposite to the other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+      
+      Return the parametrization of a ``Line`` instance.
+
+      The parameter of a line specifies the distance from the `origin` in the
+      direction of `direction`.
+
+
+      :Returns:
+
+          :obj:`Parameterization`
+              Information about how a line is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: LineEvaluation(line: Line, parameter: float = None)
+
+
+   Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+   
+   Provides result class when evaluating a line.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: line
+      :type: Line
+
+      
+      The line being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parameter
+      :type: float
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+
+      
+      The position of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Point3D`
+              The point that lies on the line at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tangent() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The tangent of the evaluation.
+
+      This is always equal to the direction of the line.
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The tangent unit vector to the line at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: first_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The first derivative of the evaluation.
+
+      This is always equal to the direction of the line.
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The first derivative of this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: second_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative of the evaluation.
+
+      This is always equal to a zero vector.
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative of this evaluation. Always ``Vector3D([0, 0, 0])``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: curvature() -> float
+
+      
+      The curvature of the line.
+
+      This will always be 0.
+
+
+      :Returns:
+
+          :obj:`Real`
+              The curvature of the line. Always 0.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

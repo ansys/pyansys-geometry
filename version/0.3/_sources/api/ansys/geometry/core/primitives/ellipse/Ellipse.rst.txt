@@ -1,0 +1,625 @@
+
+
+
+
+Ellipse
+=======
+
+.. py:class:: Ellipse(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point3D], major_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], minor_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.vector.UnitVector3D, ansys.geometry.core.math.vector.Vector3D] = UNITVECTOR3D_Z)
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse
+
+
+
+
+Provides 3D ellipse representation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Ellipse
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the ellipse along the y-axis.
+          * - :py:attr:`~evaluate`
+            - Evaluate the ellipse at the given parameter.
+          * - :py:attr:`~project_point`
+            - Project a point onto the ellipse and evaluate the ellipse.
+          * - :py:attr:`~is_coincident_ellipse`
+            - Determine if this ellipse is coincident with another.
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the ellipse based on a transformation matrix.
+          * - :py:attr:`~get_parameterization`
+            - Get the parametrization of the ellipse.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the ellipse.
+          * - :py:attr:`~major_radius`
+            - Major radius of the ellipse.
+          * - :py:attr:`~minor_radius`
+            - Minor radius of the ellipse.
+          * - :py:attr:`~dir_x`
+            - X-direction of the ellipse.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the ellipse.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the ellipse.
+          * - :py:attr:`~eccentricity`
+            - Eccentricity of the ellipse.
+          * - :py:attr:`~linear_eccentricity`
+            - Linear eccentricity of the ellipse.
+          * - :py:attr:`~semi_latus_rectum`
+            - Semi-latus rectum of the ellipse.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the ellipse.
+          * - :py:attr:`~area`
+            - Area of the ellipse.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Ellipse`` class.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.ellipse import Ellipse
+
+
+Property detail
+---------------
+.. py:property:: origin
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.origin
+   :type: Point3D
+
+
+   
+   Origin of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: major_radius
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.major_radius
+   :type: pint.Quantity
+
+
+   
+   Major radius of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: minor_radius
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.minor_radius
+   :type: pint.Quantity
+
+
+   
+   Minor radius of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.dir_x
+   :type: UnitVector3D
+
+
+   
+   X-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.dir_y
+   :type: UnitVector3D
+
+
+   
+   Y-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.dir_z
+   :type: UnitVector3D
+
+
+   
+   Z-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: eccentricity
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.eccentricity
+   :type: Real
+
+
+   
+   Eccentricity of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: linear_eccentricity
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.linear_eccentricity
+   :type: pint.Quantity
+
+
+   
+   Linear eccentricity of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The linear eccentricity is the distance from the center to the focus.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: semi_latus_rectum
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.semi_latus_rectum
+   :type: pint.Quantity
+
+
+   
+   Semi-latus rectum of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.primitives.ellipse.Ellipse.area
+   :type: pint.Quantity
+
+
+   
+   Area of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __eq__(other: Ellipse) -> bool
+
+   
+   Equals operator for the ``Ellipse`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: mirrored_copy() -> Ellipse
+
+   
+   Create a mirrored copy of the ellipse along the y-axis.
+
+
+
+   :Returns:
+
+       :obj:`Ellipse`
+           New ellipse that is a mirrored copy of the original ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> EllipseEvaluation
+
+   
+   Evaluate the ellipse at the given parameter.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`Real`
+           Parameter to evaluate the ellipse at.
+
+   :Returns:
+
+       :obj:`EllipseEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> EllipseEvaluation
+
+   
+   Project a point onto the ellipse and evaluate the ellipse.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the ellipse.
+
+   :Returns:
+
+       :obj:`EllipseEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: is_coincident_ellipse(other: Ellipse) -> bool
+
+   
+   Determine if this ellipse is coincident with another.
+
+
+   :Parameters:
+
+       **other** : :obj:`Ellipse`
+           Ellipse to determine coincidence with.
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if this ellipse is coincident with the other, ``False`` otherwise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Ellipse
+
+   
+   Create a transformed copy of the ellipse based on a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4x4 transformation matrix to apply to the ellipse.
+
+   :Returns:
+
+       :obj:`Ellipse`
+           New ellipse that is the transformed copy of the original ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: get_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+   
+   Get the parametrization of the ellipse.
+
+   The parameter of an ellipse specifies the clockwise angle around the axis
+   (right-hand corkscrew law), with a zero parameter at ``dir_x`` and a period of 2*pi.
+
+
+   :Returns:
+
+       :obj:`Parameterization`
+           Information about how the ellipse is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

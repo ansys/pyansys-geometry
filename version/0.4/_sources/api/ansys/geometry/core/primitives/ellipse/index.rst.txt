@@ -1,0 +1,86 @@
+
+
+
+
+
+The ``ellipse.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.primitives.ellipse
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ellipse
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Ellipse`
+            - Provides 3D ellipse representation.
+
+
+          * - :py:attr:`~EllipseEvaluation`
+            - Evaluate an ellipse at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Ellipse<Ellipse>
+    🝆 EllipseEvaluation<EllipseEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing an ellipse.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

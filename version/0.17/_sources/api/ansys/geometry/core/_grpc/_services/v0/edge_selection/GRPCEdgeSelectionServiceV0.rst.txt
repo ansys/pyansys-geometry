@@ -1,0 +1,556 @@
+
+
+
+
+
+
+:class:`GRPCEdgeSelectionServiceV0`
+===================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.edge_selection.GRPCEdgeSelectionServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.edge_selection.GRPCEdgeSelectionService`
+
+
+   
+   Edge Selection service for gRPC communication with the Geometry server (v0).
+
+   The EdgeSelection RPC service is not available in the v0 API.
+   All methods raise :exc:`NotImplementedError`.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCEdgeSelectionServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_edges`
+            - Return all visible edges in the active document.
+          * - :py:attr:`~get_all_edges`
+            - Return all edges in the active document.
+          * - :py:attr:`~get_edges_from_named_selection`
+            - Return edges belonging to a named selection.
+          * - :py:attr:`~get_edges_with_length`
+            - Return edges whose length falls within a range.
+          * - :py:attr:`~get_edges_with_x_location`
+            - Return edges whose X-location falls within a range.
+          * - :py:attr:`~get_edges_with_y_location`
+            - Return edges whose Y-location falls within a range.
+          * - :py:attr:`~get_edges_with_z_location`
+            - Return edges whose Z-location falls within a range.
+          * - :py:attr:`~invert_edge_selection`
+            - Return the complement of the provided edge selection.
+          * - :py:attr:`~filter_edges_by_length`
+            - Filter edges by length range.
+          * - :py:attr:`~filter_edges_max_length`
+            - Filter edges keeping only the edge with maximum length.
+          * - :py:attr:`~filter_edges_min_length`
+            - Filter edges keeping only the edge with minimum length.
+          * - :py:attr:`~filter_edges_by_curve_type`
+            - Filter edges by curve type.
+          * - :py:attr:`~filter_edges_length_percentile`
+            - Filter edges by length percentile range.
+          * - :py:attr:`~extend_nearby_edges`
+            - Extend selection to include nearby edges within a distance.
+          * - :py:attr:`~extend_to_connected`
+            - Extend selection to all topologically connected edges.
+          * - :py:attr:`~extend_to_tangent_chain`
+            - Extend selection to all tangentially chained edges.
+          * - :py:attr:`~extend_to_coaxial_edges`
+            - Extend selection to all coaxial edges.
+          * - :py:attr:`~order_edges_by_length`
+            - Order edges by length.
+          * - :py:attr:`~group_edges_by_curve_type`
+            - Group edges by curve type.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.edge_selection import GRPCEdgeSelectionServiceV0
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_all_visible_edges(**kwargs) -> dict
+
+   
+   Return all visible edges in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_edges(**kwargs) -> dict
+
+   
+   Return all edges in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_from_named_selection(**kwargs) -> dict
+
+   
+   Return edges belonging to a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_length(**kwargs) -> dict
+
+   
+   Return edges whose length falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_x_location(**kwargs) -> dict
+
+   
+   Return edges whose X-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_y_location(**kwargs) -> dict
+
+   
+   Return edges whose Y-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges_with_z_location(**kwargs) -> dict
+
+   
+   Return edges whose Z-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_edge_selection(**kwargs) -> dict
+
+   
+   Return the complement of the provided edge selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_by_length(**kwargs) -> dict
+
+   
+   Filter edges by length range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_max_length(**kwargs) -> dict
+
+   
+   Filter edges keeping only the edge with maximum length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_min_length(**kwargs) -> dict
+
+   
+   Filter edges keeping only the edge with minimum length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_by_curve_type(**kwargs) -> dict
+
+   
+   Filter edges by curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_edges_length_percentile(**kwargs) -> dict
+
+   
+   Filter edges by length percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_nearby_edges(**kwargs) -> dict
+
+   
+   Extend selection to include nearby edges within a distance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_connected(**kwargs) -> dict
+
+   
+   Extend selection to all topologically connected edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_tangent_chain(**kwargs) -> dict
+
+   
+   Extend selection to all tangentially chained edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coaxial_edges(**kwargs) -> dict
+
+   
+   Extend selection to all coaxial edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_edges_by_length(**kwargs) -> dict
+
+   
+   Order edges by length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_edges_by_curve_type(**kwargs) -> dict
+
+   
+   Group edges by curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

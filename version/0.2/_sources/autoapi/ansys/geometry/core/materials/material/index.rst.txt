@@ -1,0 +1,141 @@
+:py:mod:`ansys.geometry.core.materials.material`
+================================================
+
+.. py:module:: ansys.geometry.core.materials.material
+
+.. autoapi-nested-parse::
+
+   Provides the ``Material`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.materials.material.Material
+
+
+
+
+.. py:class:: Material(name: str, density: pint.Quantity, additional_properties: beartype.typing.Optional[beartype.typing.Sequence[ansys.geometry.core.materials.property.MaterialProperty]] = None)
+
+
+   
+   Provides the data structure for a material.
+
+
+   :Parameters:
+
+       **name: str**
+           Material name.
+
+       **density: ~pint.Quantity**
+           Material density.
+
+       **additional_properties: Sequence[MaterialProperty], default: None**
+           Additional material properties.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: properties
+      :type: beartype.typing.Dict[ansys.geometry.core.materials.property.MaterialPropertyType, ansys.geometry.core.materials.property.MaterialProperty]
+
+      
+      List of material properties.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Material name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: add_property(type: ansys.geometry.core.materials.property.MaterialPropertyType, name: str, quantity: pint.Quantity) -> None
+
+      
+      Add a material property to the ``Material`` class.
+
+
+      :Parameters:
+
+          **type** : :obj:`MaterialPropertyType`
+              Type of the material property.
+
+          **name: str**
+              Material name.
+
+          **quantity: ~pint.Quantity**
+              Value and unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,118 @@
+
+
+
+
+
+
+The ``sketch.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.sketch.sketch
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: sketch
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch.sketch.Sketch`
+            - Provides for building 2D sketch elements.
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~SketchObject`
+            - Type to refer to both ``SketchEdge`` and ``SketchFace``.
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Sketch</api/ansys/geometry/core/sketch/sketch/Sketch>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a sketch.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: SketchObject
+
+   
+   Type to refer to both ``SketchEdge`` and ``SketchFace``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

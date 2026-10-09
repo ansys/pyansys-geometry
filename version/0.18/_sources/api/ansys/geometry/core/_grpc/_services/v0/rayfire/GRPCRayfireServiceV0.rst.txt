@@ -1,0 +1,194 @@
+
+
+
+
+
+
+:class:`GRPCRayfireServiceV0`
+=============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.rayfire.GRPCRayfireServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.rayfire.GRPCRayfireService`
+
+
+   
+   Rayfire service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   rayfire service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+.. py:currentmodule:: GRPCRayfireServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fire`
+            - Perform a rayfire operation to find impacted bodies.
+          * - :py:attr:`~fire_ordered`
+            - Perform a rayfire ordered operation.
+          * - :py:attr:`~fire_faces`
+            - Perform a rayfire operation to find impacted faces.
+          * - :py:attr:`~fire_ordered_uv`
+            - Perform a rayfire ordered UV operation.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.rayfire import GRPCRayfireServiceV0
+
+
+
+Method detail
+-------------
+
+.. py:method:: fire(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Perform a rayfire operation to find impacted bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fire_ordered(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Perform a rayfire ordered operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fire_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Perform a rayfire operation to find impacted faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fire_ordered_uv(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Perform a rayfire ordered UV operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

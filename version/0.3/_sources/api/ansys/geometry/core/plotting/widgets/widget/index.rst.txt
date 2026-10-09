@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``widget.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.widget
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: widget
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~PlotterWidget`
+            - Provides an abstract class for plotter widgets.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 PlotterWidget<PlotterWidget>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the abstract implementation of plotter widgets.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

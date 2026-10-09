@@ -1,0 +1,109 @@
+
+
+
+
+ViewDirection
+=============
+
+.. py:class:: ViewDirection
+   :canonical: ansys.geometry.core.plotting.widgets.view_button.ViewDirection
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum with the available views.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ViewDirection
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~XYPLUS`
+            - 
+          * - :py:attr:`~XYMINUS`
+            - 
+          * - :py:attr:`~XZPLUS`
+            - 
+          * - :py:attr:`~XZMINUS`
+            - 
+          * - :py:attr:`~YZPLUS`
+            - 
+          * - :py:attr:`~YZMINUS`
+            - 
+          * - :py:attr:`~ISOMETRIC`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.plotting.widgets.view_button import ViewDirection
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: XYPLUS
+   :value: (0, '+xy.png', (5, 220))
+
+   
+
+.. py:attribute:: XYMINUS
+   :value: (1, '-xy.png', (5, 251))
+
+   
+
+.. py:attribute:: XZPLUS
+   :value: (2, '+xz.png', (5, 282))
+
+   
+
+.. py:attribute:: XZMINUS
+   :value: (3, '-xz.png', (5, 313))
+
+   
+
+.. py:attribute:: YZPLUS
+   :value: (4, '+yz.png', (5, 344))
+
+   
+
+.. py:attribute:: YZMINUS
+   :value: (5, '-yz.png', (5, 375))
+
+   
+
+.. py:attribute:: ISOMETRIC
+   :value: (6, 'isometric.png', (5, 406))
+
+   
+
+
+

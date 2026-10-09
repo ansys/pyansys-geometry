@@ -1,0 +1,242 @@
+:py:mod:`ansys.geometry.core.modeler`
+=====================================
+
+.. py:module:: ansys.geometry.core.modeler
+
+.. autoapi-nested-parse::
+
+   Provides the ``Modeler`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.modeler.Modeler
+
+
+
+
+.. py:class:: Modeler(host: str = DEFAULT_HOST, port: beartype.typing.Union[str, int] = DEFAULT_PORT, channel: beartype.typing.Optional[grpc.Channel] = None, remote_instance: beartype.typing.Optional[ansys.platform.instancemanagement.Instance] = None, local_instance: beartype.typing.Optional[ansys.geometry.core.connection.local_instance.LocalDockerInstance] = None, timeout: beartype.typing.Optional[ansys.geometry.core.typing.Real] = 60, logging_level: beartype.typing.Optional[int] = logging.INFO, logging_file: beartype.typing.Optional[beartype.typing.Union[pathlib.Path, str]] = None)
+
+
+   
+   Provides for interacting with an open session of the Geometry service.
+
+
+   :Parameters:
+
+       **host** : :class:`python:str`,  default: :obj:`DEFAULT_HOST`
+           Host where the server is running.
+
+       **port** : :obj:`Union`\[:class:`python:str`, :class:`python:int`], default: :obj:`DEFAULT_PORT`
+           Port number where the server is running.
+
+       **channel** : :obj:`~grpc.Channel`, default: :data:`python:None`
+           gRPC channel for server communication.
+
+       **remote_instance** : :obj:`ansys.platform.instancemanagement.Instance`, default: :data:`python:None`
+           Corresponding remote instance when the Geometry service
+           is launched through PyPIM. This instance is deleted when the
+           :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **local_instance** : :obj:`LocalDockerInstance`, default: :data:`python:None`
+           Corresponding local instance when the Geometry service is launched through
+           the ``launch_local_modeler()`` interface. This instance will be deleted
+           when the :func:`GrpcClient.close <ansys.geometry.core.client.GrpcClient.close >`
+           method is called.
+
+       **timeout** : :obj:`Real`, default: 60
+           Timeout in seconds to achieve the connection.
+
+       **logging_level** : :class:`python:int`, default: :obj:`INFO`
+           Logging level to apply to the client.
+
+       **logging_file** : :class:`python:str`, :obj:`Path`, default: :data:`python:None`
+           File to output the log to, if requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: client
+      :type: ansys.geometry.core.connection.client.GrpcClient
+
+      
+      ``Modeler`` instance client.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: create_design(name: str) -> ansys.geometry.core.designer.design.Design
+
+      
+      Initialize a new design with the connected client.
+
+
+      :Parameters:
+
+          **name** : :class:`python:str`
+              Name for the new design.
+
+      :Returns:
+
+          :obj:`Design`
+              Design object created on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: read_existing_design() -> ansys.geometry.core.designer.design.Design
+
+      
+      Read existing design on the service with the connected client.
+
+
+
+      :Returns:
+
+          :obj:`Design`
+              Design object already living on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: close() -> None
+
+      
+      ``Modeler`` easy-access method to the client's close method.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: open_file(file_path: str) -> ansys.geometry.core.designer.Design
+
+      
+      Open a file. ``file_path`` must include the extension.
+
+      This imports a design into the service. On Windows, `.scdocx` and HOOPS Exchange formats
+      are supported. On Linux, only `.scdocx` is supported.
+
+      :Parameters:
+
+          **file_path** : :class:`python:str`
+              The path of the file. Must include extension.
+
+      :Returns:
+
+          :obj:`Design`
+              The newly imported design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the modeler as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

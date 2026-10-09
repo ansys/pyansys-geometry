@@ -1,0 +1,96 @@
+
+
+
+
+
+The ``materials`` package 
+=============================
+
+.. py:module:: ansys.geometry.core.materials
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: materials
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.materials.material`
+            - Provides the data structure for material and for adding a material property.
+
+
+          * - :py:attr:`~ansys.geometry.core.materials.property`
+            - Provides the ``MaterialProperty`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 material<material/index.rst>
+    🗎 property<property/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry materials subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

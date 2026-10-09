@@ -1,0 +1,168 @@
+
+
+
+
+
+
+The ``errors.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.errors
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: errors
+.. tab-set::
+
+
+
+
+
+
+    .. tab-item:: Exceptions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.errors.GeometryRuntimeError`
+            - Provides error message when Geometry service passes a runtime error.
+
+
+          * - :py:obj:`~ansys.geometry.core.errors.GeometryExitedError`
+            - Provides error message to raise when Geometry service has exited.
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~handler`
+            - Pass signal to the custom interrupt handler.
+
+
+          * - :py:obj:`~protect_grpc`
+            - Capture gRPC exceptions and raise a more succinct error message.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~SIGINT_TRACKER`
+            - 
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-lightning_bolt"></span> GeometryRuntimeError</api/ansys/geometry/core/errors/GeometryRuntimeError>
+    <span class="nf nf-md-lightning_bolt"></span> GeometryExitedError</api/ansys/geometry/core/errors/GeometryExitedError>
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides PyAnsys Geometry-specific errors.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: handler(sig, frame)
+
+   
+   Pass signal to the custom interrupt handler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: protect_grpc(func)
+
+   
+   Capture gRPC exceptions and raise a more succinct error message.
+
+   This method captures the ``KeyboardInterrupt`` exception to avoid
+   segfaulting the Geometry service.
+
+   While this works some of the time, it does not work all of the time. For some
+   reason, gRPC still captures SIGINT.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: SIGINT_TRACKER
+   :value: []
+
+
+
+

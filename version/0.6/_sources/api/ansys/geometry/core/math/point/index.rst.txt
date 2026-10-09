@@ -1,0 +1,179 @@
+
+
+
+
+
+
+The ``point.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.math.point
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: point
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.point.Point2D`
+            - Provides geometry primitive representation for a 2D point.
+
+
+          * - :py:obj:`~ansys.geometry.core.math.point.Point3D`
+            - Provides geometry primitive representation for a 3D point.
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_POINT2D_VALUES`
+            - Default values for a 2D point.
+
+
+          * - :py:obj:`~DEFAULT_POINT3D_VALUES`
+            - Default values for a 3D point.
+
+
+          * - :py:obj:`~BASE_UNIT_LENGTH`
+            - Default value for the length of the base unit.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Point2D</api/ansys/geometry/core/math/point/Point2D>
+    <span class="nf nf-cod-symbol_class"></span> Point3D</api/ansys/geometry/core/math/point/Point3D>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides geometry primitive representation for 2D and 3D points.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_POINT2D_VALUES
+
+   
+   Default values for a 2D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_POINT3D_VALUES
+
+   
+   Default values for a 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BASE_UNIT_LENGTH
+
+   
+   Default value for the length of the base unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

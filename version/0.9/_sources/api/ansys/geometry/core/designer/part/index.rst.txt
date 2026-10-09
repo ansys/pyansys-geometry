@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``part.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.part
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: part
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.part.Part`
+            - Represents a part master.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.part.MasterComponent`
+            - Represents a part occurrence.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Part</api/ansys/geometry/core/designer/part/Part>
+    <span class="nf nf-cod-symbol_class"></span> MasterComponent</api/ansys/geometry/core/designer/part/MasterComponent>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module providing fundamental data of an assembly.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

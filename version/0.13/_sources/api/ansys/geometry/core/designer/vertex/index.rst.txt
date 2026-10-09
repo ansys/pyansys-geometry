@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``vertex.py`` module
+========================
+
+.. py:module:: ansys.geometry.core.designer.vertex
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: vertex
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.vertex.Vertex`
+            - Represents a single vertex of a body within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Vertex</api/ansys/geometry/core/designer/vertex/Vertex>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for managing a vertex.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,163 @@
+
+
+
+
+
+
+The ``options.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.misc.options
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.misc.options
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.ImportOptions`
+            - Import options when opening a file.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.ImportOptionsDefinitions`
+            - Import options definitions when opening a file.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.TessellationOptions`
+            - Provides options for getting tessellation.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.FMDExportOptions`
+            - Provides options for FMD export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBExportOptions`
+            - Provides options for PMDB export.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.AnalysisType`
+            - Provides values for the analysis type used during PMDB export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBMixedPartExportType`
+            - Provides values for the mixed-part export type used during PMDB export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBAttachWeightClass`
+            - Provides values for the attach weight class used during PMDB export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBImportParameterType`
+            - Provides values for the parameter processing type used during PMDB export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBPlugInFacetQuality`
+            - Provides values for the plug-in facet quality used during PMDB export.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options.PMDBTargetApplication`
+            - Provides values for the target application used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ImportOptions</api/ansys/geometry/core/misc/options/ImportOptions>
+    <span class="nf nf-cod-symbol_class"></span> ImportOptionsDefinitions</api/ansys/geometry/core/misc/options/ImportOptionsDefinitions>
+    <span class="nf nf-cod-symbol_class"></span> TessellationOptions</api/ansys/geometry/core/misc/options/TessellationOptions>
+    <span class="nf nf-cod-symbol_class"></span> FMDExportOptions</api/ansys/geometry/core/misc/options/FMDExportOptions>
+    <span class="nf nf-cod-symbol_class"></span> PMDBExportOptions</api/ansys/geometry/core/misc/options/PMDBExportOptions>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> AnalysisType</api/ansys/geometry/core/misc/options/AnalysisType>
+    <span class="nf nf-cod-symbol_enum"></span> PMDBMixedPartExportType</api/ansys/geometry/core/misc/options/PMDBMixedPartExportType>
+    <span class="nf nf-cod-symbol_enum"></span> PMDBAttachWeightClass</api/ansys/geometry/core/misc/options/PMDBAttachWeightClass>
+    <span class="nf nf-cod-symbol_enum"></span> PMDBImportParameterType</api/ansys/geometry/core/misc/options/PMDBImportParameterType>
+    <span class="nf nf-cod-symbol_enum"></span> PMDBPlugInFacetQuality</api/ansys/geometry/core/misc/options/PMDBPlugInFacetQuality>
+    <span class="nf nf-cod-symbol_enum"></span> PMDBTargetApplication</api/ansys/geometry/core/misc/options/PMDBTargetApplication>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides various option classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

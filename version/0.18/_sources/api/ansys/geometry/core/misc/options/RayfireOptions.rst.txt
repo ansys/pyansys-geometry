@@ -1,0 +1,355 @@
+
+
+
+
+
+
+:class:`RayfireOptions`
+=======================
+
+
+.. py:class:: ansys.geometry.core.misc.options.RayfireOptions(radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, direction: ansys.geometry.core.math.vector.UnitVector3D, max_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, min_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, tight_tolerance: bool = False, pick_back_faces: bool = False, max_hits: int = 0, request_params: bool = False, request_secondary: bool = False)
+
+   
+   Additional options for ray fire operations.
+
+
+   :Parameters:
+
+       **radius** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The radius of the ray.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **direction** : :obj:`UnitVector3D`
+           The direction for the ray to be fired in.
+
+       **max_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The maximum distance the ray should travel.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **min_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The minimum distance the ray should travel.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **tight_tolerance** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether to use a tight tolerance for the ray fire operation.
+
+       **pick_back_faces** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether to pick back faces during the ray fire operation.
+
+       **max_hits** : :class:`python:int`, default=0
+           The maximum number of hits the ray should register.
+
+       **request_params** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether to request additional parameters for the ray fire operation.
+
+       **request_secondary** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether to request secondary hits for the ray fire operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RayfireOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~radius`
+            - Radius.
+          * - :py:attr:`~direction`
+            - Direction.
+          * - :py:attr:`~max_distance`
+            - Maximum distance.
+          * - :py:attr:`~min_distance`
+            - Minimum distance.
+          * - :py:attr:`~tight_tolerance`
+            - Tight tolerance.
+          * - :py:attr:`~pick_back_faces`
+            - Pick back faces.
+          * - :py:attr:`~max_hits`
+            - Maximum hits.
+          * - :py:attr:`~request_params`
+            - Request parameters.
+          * - :py:attr:`~request_secondary`
+            - Request secondary.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import RayfireOptions
+
+Property detail
+---------------
+
+.. py:property:: radius
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Radius.
+
+   The radius of the ray.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: direction
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Direction.
+
+   The direction for the ray to be fired in.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_distance
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Maximum distance.
+
+   The maximum distance the ray should travel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: min_distance
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Minimum distance.
+
+   The minimum distance the ray should travel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: tight_tolerance
+   :type: bool
+
+
+   
+   Tight tolerance.
+
+   Whether to use a tight tolerance for the ray fire operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: pick_back_faces
+   :type: bool
+
+
+   
+   Pick back faces.
+
+   Whether to pick back faces during the ray fire operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_hits
+   :type: int
+
+
+   
+   Maximum hits.
+
+   The maximum number of hits the ray should register.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: request_params
+   :type: bool
+
+
+   
+   Request parameters.
+
+   Whether to request additional parameters for the ray fire operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: request_secondary
+   :type: bool
+
+
+   
+   Request secondary.
+
+   Whether to request secondary hits for the ray fire operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

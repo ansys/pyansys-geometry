@@ -1,0 +1,1781 @@
+
+
+
+
+
+
+:class:`GRPCBodySelectionServiceV0`
+===================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.body_selection.GRPCBodySelectionServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.body_selection.GRPCBodySelectionService`
+
+
+   
+   Body Selection service for gRPC communication with the Geometry server (v0).
+
+   The BodySelection RPC service is not available in the v0 API.
+   All methods raise :exc:`NotImplementedError`.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCBodySelectionServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_bodies`
+            - Return all visible bodies in the active document.
+          * - :py:attr:`~get_all_bodies`
+            - Return all bodies in the active document.
+          * - :py:attr:`~get_all_surface_bodies`
+            - Return all surface bodies in the active document.
+          * - :py:attr:`~get_all_solid_bodies`
+            - Return all solid bodies in the active document.
+          * - :py:attr:`~get_bodies_from_named_selection`
+            - Return bodies belonging to a named selection.
+          * - :py:attr:`~get_bodies_with_name`
+            - Return bodies whose name matches a filter.
+          * - :py:attr:`~get_bodies_with_volume`
+            - Return bodies whose volume falls within a range.
+          * - :py:attr:`~get_bodies_with_surface_area`
+            - Return bodies whose surface area falls within a range.
+          * - :py:attr:`~get_bodies_with_x_location`
+            - Return bodies whose X-location falls within a range.
+          * - :py:attr:`~get_bodies_with_y_location`
+            - Return bodies whose Y-location falls within a range.
+          * - :py:attr:`~get_bodies_with_z_location`
+            - Return bodies whose Z-location falls within a range.
+          * - :py:attr:`~get_bodies_with_color`
+            - Return bodies matching a given color.
+          * - :py:attr:`~invert_body_selection`
+            - Return the complement of the provided body selection.
+          * - :py:attr:`~filter_bodies_by_volume`
+            - Filter bodies by volume range.
+          * - :py:attr:`~filter_bodies_max_volume`
+            - Filter bodies keeping only the body with maximum volume.
+          * - :py:attr:`~filter_bodies_min_volume`
+            - Filter bodies keeping only the body with minimum volume.
+          * - :py:attr:`~filter_bodies_by_surface_area`
+            - Filter bodies by surface area range.
+          * - :py:attr:`~filter_bodies_max_surface_area`
+            - Filter bodies keeping only the body with maximum surface area.
+          * - :py:attr:`~filter_bodies_min_surface_area`
+            - Filter bodies keeping only the body with minimum surface area.
+          * - :py:attr:`~filter_bodies_by_face_count`
+            - Filter bodies by face count range.
+          * - :py:attr:`~filter_bodies_max_face_count`
+            - Filter bodies keeping only the body with the maximum face count.
+          * - :py:attr:`~filter_bodies_min_face_count`
+            - Filter bodies keeping only the body with the minimum face count.
+          * - :py:attr:`~filter_bodies_by_edge_count`
+            - Filter bodies by edge count range.
+          * - :py:attr:`~filter_bodies_max_edge_count`
+            - Filter bodies keeping only the body with the maximum edge count.
+          * - :py:attr:`~filter_bodies_min_edge_count`
+            - Filter bodies keeping only the body with the minimum edge count.
+          * - :py:attr:`~filter_bodies_by_loop_count`
+            - Filter bodies by loop count range.
+          * - :py:attr:`~filter_bodies_max_loop_count`
+            - Filter bodies keeping only the body with the maximum loop count.
+          * - :py:attr:`~filter_bodies_min_loop_count`
+            - Filter bodies keeping only the body with the minimum loop count.
+          * - :py:attr:`~filter_bodies_by_number_surfaces`
+            - Filter bodies by surface-type count range.
+          * - :py:attr:`~filter_bodies_by_number_curves`
+            - Filter bodies by curve-type count range.
+          * - :py:attr:`~filter_bodies_max_number_surfaces`
+            - Filter bodies keeping those with the maximum count of a surface type.
+          * - :py:attr:`~filter_bodies_max_number_curves`
+            - Filter bodies keeping those with the maximum count of a curve type.
+          * - :py:attr:`~filter_bodies_min_number_surfaces`
+            - Filter bodies keeping those with the minimum count of a surface type.
+          * - :py:attr:`~filter_bodies_min_number_curves`
+            - Filter bodies keeping those with the minimum count of a curve type.
+          * - :py:attr:`~filter_bodies_by_number_surfaces_percentile`
+            - Filter bodies by surface-type count percentile range.
+          * - :py:attr:`~filter_bodies_by_number_curves_percentile`
+            - Filter bodies by curve-type count percentile range.
+          * - :py:attr:`~filter_bodies_by_color`
+            - Filter bodies by color.
+          * - :py:attr:`~filter_bodies_by_name`
+            - Filter bodies by name pattern.
+          * - :py:attr:`~filter_bodies_containing_surface_types`
+            - Filter bodies that contain specific surface types.
+          * - :py:attr:`~filter_bodies_containing_curve_types`
+            - Filter bodies that contain specific curve types.
+          * - :py:attr:`~filter_bodies_volume_percentile`
+            - Filter bodies by volume percentile range.
+          * - :py:attr:`~filter_bodies_surface_area_percentile`
+            - Filter bodies by surface area percentile range.
+          * - :py:attr:`~filter_bodies_face_count_percentile`
+            - Filter bodies by face count percentile range.
+          * - :py:attr:`~filter_bodies_edge_count_percentile`
+            - Filter bodies by edge count percentile range.
+          * - :py:attr:`~filter_bodies_loop_count_percentile`
+            - Filter bodies by loop count percentile range.
+          * - :py:attr:`~filter_surface_bodies`
+            - Filter down to only surface bodies.
+          * - :py:attr:`~filter_solid_bodies`
+            - Filter down to only solid bodies.
+          * - :py:attr:`~extend_to_same_volume`
+            - Extend selection to bodies with the same volume.
+          * - :py:attr:`~extend_to_same_surface_area`
+            - Extend selection to bodies with the same surface area.
+          * - :py:attr:`~extend_to_same_number_of_faces`
+            - Extend selection to bodies with the same number of faces.
+          * - :py:attr:`~extend_to_same_number_of_edges`
+            - Extend selection to bodies with the same number of edges.
+          * - :py:attr:`~extend_to_same_color`
+            - Extend selection to bodies with the same color.
+          * - :py:attr:`~extend_to_same_name`
+            - Extend selection to bodies with the same name.
+          * - :py:attr:`~extend_nearby_bodies`
+            - Extend selection to bodies within a specified distance.
+          * - :py:attr:`~order_bodies_by_volume`
+            - Return bodies ordered by volume.
+          * - :py:attr:`~order_bodies_by_surface_area`
+            - Return bodies ordered by surface area.
+          * - :py:attr:`~order_bodies_by_face_count`
+            - Return bodies ordered by face count.
+          * - :py:attr:`~order_bodies_by_edge_count`
+            - Return bodies ordered by edge count.
+          * - :py:attr:`~order_bodies_by_loop_count`
+            - Return bodies ordered by loop count.
+          * - :py:attr:`~order_bodies_by_number_of_surfaces`
+            - Return bodies ordered by number of surfaces.
+          * - :py:attr:`~order_bodies_by_number_of_curves`
+            - Return bodies ordered by number of curves.
+          * - :py:attr:`~group_bodies_by_volume`
+            - Return bodies grouped by volume.
+          * - :py:attr:`~group_bodies_by_surface_area`
+            - Return bodies grouped by surface area.
+          * - :py:attr:`~group_bodies_by_face_count`
+            - Return bodies grouped by face count.
+          * - :py:attr:`~group_bodies_by_edge_count`
+            - Return bodies grouped by edge count.
+          * - :py:attr:`~group_bodies_by_loop_count`
+            - Return bodies grouped by loop count.
+          * - :py:attr:`~group_bodies_by_color`
+            - Return bodies grouped by color.
+          * - :py:attr:`~group_bodies_by_name`
+            - Return bodies grouped by name.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.body_selection import GRPCBodySelectionServiceV0
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_all_visible_bodies(**kwargs) -> dict
+
+   
+   Return all visible bodies in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_bodies(**kwargs) -> dict
+
+   
+   Return all bodies in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_surface_bodies(**kwargs) -> dict
+
+   
+   Return all surface bodies in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_solid_bodies(**kwargs) -> dict
+
+   
+   Return all solid bodies in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_from_named_selection(**kwargs) -> dict
+
+   
+   Return bodies belonging to a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_name(**kwargs) -> dict
+
+   
+   Return bodies whose name matches a filter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_volume(**kwargs) -> dict
+
+   
+   Return bodies whose volume falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_surface_area(**kwargs) -> dict
+
+   
+   Return bodies whose surface area falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_x_location(**kwargs) -> dict
+
+   
+   Return bodies whose X-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_y_location(**kwargs) -> dict
+
+   
+   Return bodies whose Y-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_z_location(**kwargs) -> dict
+
+   
+   Return bodies whose Z-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_color(**kwargs) -> dict
+
+   
+   Return bodies matching a given color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_body_selection(**kwargs) -> dict
+
+   
+   Return the complement of the provided body selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_volume(**kwargs) -> dict
+
+   
+   Filter bodies by volume range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_volume(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with maximum volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_volume(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with minimum volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_surface_area(**kwargs) -> dict
+
+   
+   Filter bodies by surface area range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_surface_area(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with maximum surface area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_surface_area(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with minimum surface area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_face_count(**kwargs) -> dict
+
+   
+   Filter bodies by face count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_face_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the maximum face count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_face_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the minimum face count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_edge_count(**kwargs) -> dict
+
+   
+   Filter bodies by edge count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_edge_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the maximum edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_edge_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the minimum edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_loop_count(**kwargs) -> dict
+
+   
+   Filter bodies by loop count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_loop_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the maximum loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_loop_count(**kwargs) -> dict
+
+   
+   Filter bodies keeping only the body with the minimum loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_surfaces(**kwargs) -> dict
+
+   
+   Filter bodies by surface-type count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_curves(**kwargs) -> dict
+
+   
+   Filter bodies by curve-type count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_number_surfaces(**kwargs) -> dict
+
+   
+   Filter bodies keeping those with the maximum count of a surface type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_number_curves(**kwargs) -> dict
+
+   
+   Filter bodies keeping those with the maximum count of a curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_number_surfaces(**kwargs) -> dict
+
+   
+   Filter bodies keeping those with the minimum count of a surface type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_number_curves(**kwargs) -> dict
+
+   
+   Filter bodies keeping those with the minimum count of a curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_surfaces_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by surface-type count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_curves_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by curve-type count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_color(**kwargs) -> dict
+
+   
+   Filter bodies by color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_name(**kwargs) -> dict
+
+   
+   Filter bodies by name pattern.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_containing_surface_types(**kwargs) -> dict
+
+   
+   Filter bodies that contain specific surface types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_containing_curve_types(**kwargs) -> dict
+
+   
+   Filter bodies that contain specific curve types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_volume_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by volume percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_surface_area_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by surface area percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_face_count_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by face count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_edge_count_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by edge count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_loop_count_percentile(**kwargs) -> dict
+
+   
+   Filter bodies by loop count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_surface_bodies(**kwargs) -> dict
+
+   
+   Filter down to only surface bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_solid_bodies(**kwargs) -> dict
+
+   
+   Filter down to only solid bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_volume(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_surface_area(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same surface area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_faces(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same number of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_edges(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same number of edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_color(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_name(**kwargs) -> dict
+
+   
+   Extend selection to bodies with the same name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_nearby_bodies(**kwargs) -> dict
+
+   
+   Extend selection to bodies within a specified distance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_volume(**kwargs) -> dict
+
+   
+   Return bodies ordered by volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_surface_area(**kwargs) -> dict
+
+   
+   Return bodies ordered by surface area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_face_count(**kwargs) -> dict
+
+   
+   Return bodies ordered by face count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_edge_count(**kwargs) -> dict
+
+   
+   Return bodies ordered by edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_loop_count(**kwargs) -> dict
+
+   
+   Return bodies ordered by loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_number_of_surfaces(**kwargs) -> dict
+
+   
+   Return bodies ordered by number of surfaces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_number_of_curves(**kwargs) -> dict
+
+   
+   Return bodies ordered by number of curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_volume(**kwargs) -> dict
+
+   
+   Return bodies grouped by volume.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_surface_area(**kwargs) -> dict
+
+   
+   Return bodies grouped by surface area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_face_count(**kwargs) -> dict
+
+   
+   Return bodies grouped by face count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_edge_count(**kwargs) -> dict
+
+   
+   Return bodies grouped by edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_loop_count(**kwargs) -> dict
+
+   
+   Return bodies grouped by loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_color(**kwargs) -> dict
+
+   
+   Return bodies grouped by color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_name(**kwargs) -> dict
+
+   
+   Return bodies grouped by name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

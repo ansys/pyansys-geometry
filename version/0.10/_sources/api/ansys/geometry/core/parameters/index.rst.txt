@@ -1,0 +1,92 @@
+
+
+
+
+
+
+The ``parameters`` package
+==============================
+
+.. py:module:: ansys.geometry.core.parameters
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: parameters
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.parameters.parameter`
+            - Provides get and set methods for parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> parameter</api/ansys/geometry/core/parameters/parameter/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry parameters subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

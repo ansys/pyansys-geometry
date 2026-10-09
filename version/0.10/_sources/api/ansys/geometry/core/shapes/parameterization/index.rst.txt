@@ -1,0 +1,121 @@
+
+
+
+
+
+
+The ``parameterization.py`` module
+==================================
+
+.. py:module:: ansys.geometry.core.shapes.parameterization
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: parameterization
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization.ParamUV`
+            - Parameter class containing 2 parameters: (u, v).
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization.Interval`
+            - Interval class that defines a range of values.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization.Parameterization`
+            - Parameterization class describes the parameters of a specific geometry.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization.ParamForm`
+            - ParamForm enum class that defines the form of a Parameterization.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization.ParamType`
+            - ParamType enum class that defines the type of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ParamUV</api/ansys/geometry/core/shapes/parameterization/ParamUV>
+    <span class="nf nf-cod-symbol_class"></span> Interval</api/ansys/geometry/core/shapes/parameterization/Interval>
+    <span class="nf nf-cod-symbol_class"></span> Parameterization</api/ansys/geometry/core/shapes/parameterization/Parameterization>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> ParamForm</api/ansys/geometry/core/shapes/parameterization/ParamForm>
+    <span class="nf nf-cod-symbol_enum"></span> ParamType</api/ansys/geometry/core/shapes/parameterization/ParamType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the parametrization-related classes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

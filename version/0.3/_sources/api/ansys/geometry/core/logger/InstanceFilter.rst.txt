@@ -1,0 +1,88 @@
+
+
+
+
+InstanceFilter
+==============
+
+.. py:class:: InstanceFilter(name='')
+   :canonical: ansys.geometry.core.logger.InstanceFilter
+
+
+
+Bases: :py:obj:`logging.Filter`
+
+Ensures that the ``instance_name`` record always exists.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: InstanceFilter
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~filter`
+            - Ensure that the ``instance_name`` attribute is always present.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.logger import InstanceFilter
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: filter(record)
+
+   
+   Ensure that the ``instance_name`` attribute is always present.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

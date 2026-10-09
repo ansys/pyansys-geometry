@@ -1,0 +1,64 @@
+
+
+
+
+Angle
+=====
+
+.. py:class:: Angle(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: beartype.typing.Optional[pint.Unit] = None)
+   :canonical: ansys.geometry.core.misc.measurements.Angle
+
+
+
+Bases: :py:obj:`Measurement`
+
+
+   Provides the ``Measurement`` subclass for holding an angle.
+
+
+   :Parameters:
+
+       **value** : :obj:`Union`\[:obj:`Real`, :obj:`Quantity`]
+           Value of the angle.
+
+       **unit** : :obj:`~pint.Unit`, default: :obj:`DEFAULT_UNITS.ANGLE`
+           Units for the distance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import Angle
+
+
+
+
+

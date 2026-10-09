@@ -1,0 +1,254 @@
+
+
+
+
+
+
+The ``conversions.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.conversions
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: conversions
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~from_measurement_to_server_length`
+            - Convert a measurement to a length value.
+
+
+          * - :py:obj:`~from_measurement_to_server_angle`
+            - Convert a measurement to an angle value.
+
+
+          * - :py:obj:`~from_measurement_to_server_area`
+            - Convert a measurement to an area value.
+
+
+          * - :py:obj:`~to_distance`
+            - Convert a server value to a Distance object.
+
+
+          * - :py:obj:`~to_area`
+            - Convert a server value to an area object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing server-version agnostic conversions.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: from_measurement_to_server_length(input: ansys.geometry.core.misc.measurements.Measurement) -> float
+
+   
+   Convert a measurement to a length value.
+
+
+   :Parameters:
+
+       **value** : :obj:`Measurement`
+           Measurement value.
+
+
+
+   :Returns:
+
+       :class:`python:float`
+           Length value in server-defined units. By default, meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_measurement_to_server_angle(input: ansys.geometry.core.misc.measurements.Measurement) -> float
+
+   
+   Convert a measurement to an angle value.
+
+
+   :Parameters:
+
+       **value** : :obj:`Measurement`
+           Measurement value.
+
+
+
+   :Returns:
+
+       :class:`python:float`
+           Angle value in server-defined units. By default, radians.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: from_measurement_to_server_area(input: ansys.geometry.core.misc.measurements.Measurement) -> float
+
+   
+   Convert a measurement to an area value.
+
+
+   :Parameters:
+
+       **value** : :obj:`Measurement`
+           Measurement value.
+
+
+
+   :Returns:
+
+       :class:`python:float`
+           Area value in server-defined units. By default, square meters.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_distance(value: float | int) -> ansys.geometry.core.misc.measurements.Distance
+
+   
+   Convert a server value to a Distance object.
+
+
+   :Parameters:
+
+       **value** : :class:`python:float` | :class:`python:int`
+           Value to convert.
+
+
+
+   :Returns:
+
+       :obj:`Distance`
+           Converted distance.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The value is converted to a Distance object using the default server length unit.
+   The value should represent a length in the server's unit system.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: to_area(value: float | int) -> pint.Quantity
+
+   
+   Convert a server value to an area object.
+
+
+   :Parameters:
+
+       **value** : :class:`python:float` | :class:`python:int`
+           Value to convert.
+
+
+
+   :Returns:
+
+       :obj:`Quantity`
+           Converted area.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The value is converted to a Quantity object using the default server area unit.
+   The value should represent an area in the server's unit system.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

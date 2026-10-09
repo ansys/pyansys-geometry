@@ -1,0 +1,339 @@
+:py:mod:`ansys.geometry.core.primitives.surface_evaluation`
+===========================================================
+
+.. py:module:: ansys.geometry.core.primitives.surface_evaluation
+
+.. autoapi-nested-parse::
+
+   Provides the ``SurfaceEvaluation`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.surface_evaluation.SurfaceEvaluation
+
+
+
+
+.. py:class:: SurfaceEvaluation(parameter: ansys.geometry.core.primitives.parameterization.ParamUV)
+
+
+   
+   Provides result class when evaluating a surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: parameter
+      :type: ansys.geometry.core.typing.Real
+      :abstractmethod:
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+      :abstractmethod:
+
+      
+      The point on the surface, based on the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normal() -> ansys.geometry.core.math.UnitVector3D
+      :abstractmethod:
+
+      
+      The normal to the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: u_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The first derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: v_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The first derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: uu_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The second derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: uv_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The second derivative with respect to u and v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: vv_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The second derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: min_curvature() -> ansys.geometry.core.typing.Real
+      :abstractmethod:
+
+      
+      The minimum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: min_curvature_direction() -> ansys.geometry.core.math.UnitVector3D
+      :abstractmethod:
+
+      
+      The minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: max_curvature() -> ansys.geometry.core.typing.Real
+      :abstractmethod:
+
+      
+      The maximum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: max_curvature_direction() -> ansys.geometry.core.math.UnitVector3D
+      :abstractmethod:
+
+      
+      The maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
