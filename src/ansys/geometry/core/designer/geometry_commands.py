@@ -53,6 +53,7 @@ from ansys.geometry.core.misc.checks import (
     check_input_types,
     check_type,
     check_type_all_elements_in_iterable,
+    deprecated_argument,
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Angle, Distance
@@ -1351,29 +1352,39 @@ class GeometryCommands:
 
         return result.get("success")
 
+    @deprecated_argument(arg="plane", alternative="cutter", version="0.18.2", remove="0.20.0")
+    @deprecated_argument(arg="slicers", alternative="cutter", version="0.18.2", remove="0.20.0")
+    @deprecated_argument(arg="faces", alternative="cutter", version="0.18.2", remove="0.20.0")
     @min_backend_version(25, 2, 0)
     def split_body(
         self,
         bodies: list["Body"],
-        plane: Plane,
-        slicers: Union["Edge", list["Edge"], "Face", list["Face"]],
-        faces: list["Face"],
-        extendfaces: bool,
+        plane: Plane | None = None,
+        slicers: "Edge | list[Edge] | Face | list[Face] | None" = None,
+        faces: list["Face"] | None = None,
+        extendfaces: bool = False,
+        cutter: "Plane | Edge | list[Edge] | Face | list[Face] | None" = None,
     ) -> bool:
         """Split bodies with a plane, slicers, or faces.
+
+        Exactly one of ``cutter``, ``plane``, ``slicers``, or ``faces`` must be provided.
 
         Parameters
         ----------
         bodies : list[Body]
             Bodies to split.
-        plane : Plane
-            Plane to split with
-        slicers : Edge | list[Edge] | Face | list[Face]
-            Slicers to split with.
-        faces : list[Face]
-            Faces to split with.
-        extendFaces : bool
+        plane : Plane | None, default: None
+            Plane to split with. If not provided, the split will rely on slicers or faces.
+        slicers : Edge | list[Edge] | Face | list[Face] | None, default: None
+            Slicers to split with. If not provided, the split will rely on the plane or faces.
+        faces : list[Face] | None, default: None
+            Faces to split with. If not provided, the split will rely on the plane or slicers.
+        extendfaces : bool, default: False
             Extend faces if split with faces.
+        cutter : Plane | Edge | list[Edge] | Face | list[Face] | None, default: None
+            Cutter to split with. Lists must be nonempty, contain only edges or only
+            faces, and belong to the same body. Cannot be combined with ``plane``,
+            ``slicers``, or ``faces``.
 
         Returns
         -------
@@ -1383,36 +1394,63 @@ class GeometryCommands:
         Warnings
         --------
         This method is only available starting on Ansys release 25R2.
+        Faces in the slicers or faces list must all belong to the same body.
         """
         from ansys.geometry.core.designer.body import Body
         from ansys.geometry.core.designer.edge import Edge
         from ansys.geometry.core.designer.face import Face
 
-        check_type_all_elements_in_iterable(bodies, Body)
+        if sum(item is not None for item in (cutter, plane, slicers, faces)) != 1:
+            raise GeometryRuntimeError(
+                "Exactly one of 'cutter', 'plane', 'slicers', or 'faces' must be provided."
+            )
 
+        split_by_plane, slicer_ids, face_ids = None, [], []
+
+        # Logic to handle new implementation (one cutter argument accepted)
+        if cutter is not None:
+            if isinstance(cutter, Plane):
+                split_by_plane = cutter
+            else:
+                cutter_items = cutter if isinstance(cutter, list) else [cutter]
+                if not cutter_items:
+                    raise GeometryRuntimeError("'cutter' must not be an empty list.")
+                if isinstance(cutter_items[0], Edge):
+                    check_type_all_elements_in_iterable(cutter_items, Edge)
+                    slicer_ids = [cutter_item.id for cutter_item in cutter_items]
+                elif isinstance(cutter_items[0], Face):
+                    check_type_all_elements_in_iterable(cutter_items, Face)
+                    face_ids = [cutter_item.id for cutter_item in cutter_items]
+                else:
+                    raise GeometryRuntimeError("'cutter' must be a Plane, Edge, or Face.")
+        else:
+            # Logic to handle old implementation (plane, slicers, or faces arguments)
+            if plane is not None:
+                check_type(plane, Plane)
+                split_by_plane = plane
+            elif slicers is not None:
+                slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
+                check_type_all_elements_in_iterable(slicers, (Edge, Face))
+                if len({slicer.body.id for slicer in slicers}) > 1:
+                    raise GeometryRuntimeError("All slicers must belong to the same body.")
+                slicer_ids = [slicer.id for slicer in slicers]
+            elif faces is not None:
+                faces: list["Face"] = faces if isinstance(faces, list) else [faces]
+                check_type_all_elements_in_iterable(faces, Face)
+                if len({face.body.id for face in faces}) > 1:
+                    raise GeometryRuntimeError("All faces must belong to the same body.")
+                face_ids = [face.id for face in faces]
+
+        # Check body validity and reset tessellation cache
+        check_type_all_elements_in_iterable(bodies, Body)
         for body in bodies:
             body._reset_tessellation_cache()
 
-        if plane is not None:
-            check_type(plane, Plane)
-
-        slicer_items = []
-        if slicers is not None:
-            slicers: list["Face", "Edge"] = slicers if isinstance(slicers, list) else [slicers]
-            check_type_all_elements_in_iterable(slicers, (Edge, Face))
-            slicer_items = [slicer.id for slicer in slicers]
-
-        face_items = []
-        if faces is not None:
-            faces: list["Face"] = faces if isinstance(faces, list) else [faces]
-            check_type_all_elements_in_iterable(faces, Face)
-            face_items = [face.id for face in faces]
-
         result = self._grpc_client._services.bodies.split_body(
             body_ids=[body.id for body in bodies],
-            plane=plane,
-            slicer_ids=slicer_items,
-            face_ids=face_items,
+            plane=split_by_plane,
+            slicer_ids=slicer_ids,
+            face_ids=face_ids,
             extend_surfaces=extendfaces,
         )
 

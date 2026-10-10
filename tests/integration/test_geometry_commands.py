@@ -38,6 +38,7 @@ from ansys.geometry.core.designer.geometry_commands import (
     SplitFaceParameterType,
     SplitFaceType,
 )
+from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_Y, UNITVECTOR3D_Z
 from ansys.geometry.core.misc import UNITS
@@ -841,10 +842,23 @@ def test_split_body_by_plane(modeler: Modeler):
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
 
     success = modeler.geometry_commands.split_body([body], plane, None, None, True)
-    assert success is True
-
+    assert success
     assert len(design.bodies) == 2
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
 
+    # Retest with cutter implementation
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    origin = Point3D([0, 0, 0.5])
+    plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
+
+    success = modeler.geometry_commands.split_body(bodies=[body], cutter=plane, extendfaces=True)
+    assert success
+    assert len(design.bodies) == 4
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
@@ -870,10 +884,28 @@ def test_split_body_by_slicer_face(modeler: Modeler):
     face_to_split = body2.faces[1]
 
     success = modeler.geometry_commands.split_body([body], None, [face_to_split], None, True)
-    assert success is True
-
+    assert success
     assert len(design.bodies) == 3
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
+    assert design.bodies[2].volume.m == pytest.approx(
+        Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
+    )
 
+    # Retest with cutter implementation
+    body = design.extrude_sketch("box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), 0.5)
+    face_to_split = body2.faces[1]
+
+    success = modeler.geometry_commands.split_body(
+        bodies=[body], cutter=face_to_split, extendfaces=True
+    )
+    assert success
+    assert len(design.bodies) == 6
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
@@ -900,10 +932,25 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
     edge_to_split = body.edges[2]
 
     success = modeler.geometry_commands.split_body([body], None, [edge_to_split], None, True)
-    assert success is True
-
+    assert success
     assert len(design.bodies) == 2
+    assert design.bodies[0].volume.m == pytest.approx(
+        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
+    )
+    assert design.bodies[1].volume.m == pytest.approx(
+        Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
+    )
 
+    # Retest with cutter implementation
+    design = modeler.open_file(FILES_DIR / "Edge_Slice_Test.dsco")
+    body = design.bodies[0]
+    edge_to_split = body.edges[2]
+
+    success = modeler.geometry_commands.split_body(
+        bodies=[body], cutter=edge_to_split, extendfaces=True
+    )
+    assert success
+    assert len(design.bodies) == 2
     assert design.bodies[0].volume.m == pytest.approx(
         Quantity(3.1415927e-06, UNITS.m**3).m, rel=1e-5, abs=1e-8
     )
@@ -942,6 +989,26 @@ def test_split_body_by_face(modeler: Modeler):
     assert design.bodies[2].volume.m == pytest.approx(
         Quantity(0.5, UNITS.m**3).m, rel=1e-6, abs=1e-8
     )
+
+
+def test_split_body_error_paths(modeler: Modeler):
+    """Test that slicers from different bodies are rejected and one type is required."""
+    design = modeler.create_design("split_body_mixed_slicers")
+    body1 = design.extrude_sketch("box1", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body2 = design.extrude_sketch("box2", Sketch().box(Point2D([3, 0]), 1, 1), 1)
+
+    with pytest.raises(GeometryRuntimeError, match="Exactly one of 'cutter', 'plane',"):
+        modeler.geometry_commands.split_body(bodies=[body1])
+    with pytest.raises(GeometryRuntimeError, match="'cutter' must not be an empty list."):
+        modeler.geometry_commands.split_body(bodies=[body1], cutter=[])
+    with pytest.raises(GeometryRuntimeError, match="'cutter' must be a Plane, Edge, or Face."):
+        modeler.geometry_commands.split_body(bodies=[body1], cutter=body1.vertices[0])
+    with pytest.raises(GeometryRuntimeError, match="All slicers must belong to the same body"):
+        modeler.geometry_commands.split_body(
+            bodies=[body1], slicers=[body1.edges[0], body2.edges[0]]
+        )
+    with pytest.raises(GeometryRuntimeError, match="All faces must belong to the same body"):
+        modeler.geometry_commands.split_body(bodies=[body1], faces=[body1.faces[0], body2.faces[0]])
 
 
 def test_get_round_info(modeler: Modeler):
