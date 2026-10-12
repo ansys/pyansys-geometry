@@ -1359,11 +1359,11 @@ class GeometryCommands:
     def split_body(
         self,
         bodies: list["Body"],
+        cutter: "Plane | Edge | list[Edge] | Face | list[Face] | None" = None,
         plane: Plane | None = None,
         slicers: "Edge | list[Edge] | Face | list[Face] | None" = None,
         faces: list["Face"] | None = None,
         extendfaces: bool = False,
-        cutter: "Plane | Edge | list[Edge] | Face | list[Face] | None" = None,
     ) -> bool:
         """Split bodies with a plane, slicers, or faces.
 
@@ -1373,6 +1373,10 @@ class GeometryCommands:
         ----------
         bodies : list[Body]
             Bodies to split.
+        cutter : Plane | Edge | list[Edge] | Face | list[Face] | None, default: None
+            Cutter to split with. Lists must be nonempty, contain only edges or only
+            faces, and belong to the same body. Cannot be combined with ``plane``,
+            ``slicers``, or ``faces``.
         plane : Plane | None, default: None
             Plane to split with. If not provided, the split will rely on slicers or faces.
         slicers : Edge | list[Edge] | Face | list[Face] | None, default: None
@@ -1381,10 +1385,6 @@ class GeometryCommands:
             Faces to split with. If not provided, the split will rely on the plane or slicers.
         extendfaces : bool, default: False
             Extend faces if split with faces.
-        cutter : Plane | Edge | list[Edge] | Face | list[Face] | None, default: None
-            Cutter to split with. Lists must be nonempty, contain only edges or only
-            faces, and belong to the same body. Cannot be combined with ``plane``,
-            ``slicers``, or ``faces``.
 
         Returns
         -------

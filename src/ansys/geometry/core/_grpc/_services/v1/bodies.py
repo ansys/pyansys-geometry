@@ -1064,7 +1064,6 @@ class GRPCBodyServiceV1(GRPCBodyService):
             SplitBodyRequestData,
         )
 
-        print(kwargs["plane"])
         # Create the request - assumes all inputs are valid and of the proper type
         request = SplitBodyRequest(
             request_data=[
