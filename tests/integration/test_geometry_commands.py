@@ -841,7 +841,7 @@ def test_split_body_by_plane(modeler: Modeler):
     origin = Point3D([0, 0, 0.5])
     plane = Plane(origin, direction_x=[1, 0, 0], direction_y=[0, 1, 0])
 
-    success = modeler.geometry_commands.split_body([body], plane, None, None, True)
+    success = modeler.geometry_commands.split_body([body], plane=plane, extendfaces=True)
     assert success
     assert len(design.bodies) == 2
     assert design.bodies[0].volume.m == pytest.approx(
@@ -883,7 +883,7 @@ def test_split_body_by_slicer_face(modeler: Modeler):
 
     face_to_split = body2.faces[1]
 
-    success = modeler.geometry_commands.split_body([body], None, [face_to_split], None, True)
+    success = modeler.geometry_commands.split_body([body], slicers=[face_to_split], extendfaces=True)
     assert success
     assert len(design.bodies) == 3
     assert design.bodies[0].volume.m == pytest.approx(
@@ -931,7 +931,7 @@ def test_split_body_by_slicer_edge(modeler: Modeler):
 
     edge_to_split = body.edges[2]
 
-    success = modeler.geometry_commands.split_body([body], None, [edge_to_split], None, True)
+    success = modeler.geometry_commands.split_body([body], slicers=[edge_to_split], extendfaces=True)
     assert success
     assert len(design.bodies) == 2
     assert design.bodies[0].volume.m == pytest.approx(
@@ -975,7 +975,7 @@ def test_split_body_by_face(modeler: Modeler):
 
     face_to_split = body2.faces[1]
 
-    success = modeler.geometry_commands.split_body([body], None, None, [face_to_split], True)
+    success = modeler.geometry_commands.split_body([body], faces=[face_to_split], extendfaces=True)
     assert success is True
 
     assert len(design.bodies) == 3
