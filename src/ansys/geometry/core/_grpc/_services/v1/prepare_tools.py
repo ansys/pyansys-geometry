@@ -152,6 +152,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
             preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
         )
 
         # Call the gRPC service
@@ -175,6 +176,7 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
             selection_ids=[build_grpc_id(body) for body in kwargs["bodies"]],
             tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
             preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
         )
 
         # Call the gRPC service

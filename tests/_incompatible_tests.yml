@@ -178,6 +178,7 @@ backends:
       - tests/integration/test_geometry_commands.py::test_circular_pattern_on_imported_geometry_faces_modify
       - tests/integration/test_geometry_commands.py::test_fill_pattern_on_imported_geometry_faces
       - tests/integration/test_geometry_commands.py::test_update_fill_pattern_on_imported_geometry_faces
+      - tests/integration/test_geometry_commands.py::test_split_body_error_paths
       - tests/integration/test_mating_conditions.py::test_align_condition
       - tests/integration/test_mating_conditions.py::test_tangent_condition
       - tests/integration/test_mating_conditions.py::test_orient_condition
@@ -348,6 +349,7 @@ backends:
       - tests/integration/test_datum_lines.py::test_import_datum_lines
       - tests/integration/test_design.py::test_load_small_units
       - tests/integration/test_design.py::test_load_large_units
+      - tests/integration/test_geometry_commands.py::test_split_body_error_paths
       # Opening large files through streaming is only available from 25.2 onwards
       - tests/integration/test_design.py::test_modeler_open_files
       # Named selections elements are only consistent from 25.2 onwards

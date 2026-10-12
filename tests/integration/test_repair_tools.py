@@ -62,7 +62,7 @@ def test_find_split_edge_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "SplitEdgeDesignTest.scdocx")
     problem_areas = modeler.repair_tools.find_split_edges(design.bodies, 25, 150)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_split_edge_edges(modeler: Modeler):
@@ -91,7 +91,7 @@ def test_find_extra_edge_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "ExtraEdgesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_extra_edges(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_extra_edge_edges(modeler: Modeler):
@@ -121,7 +121,7 @@ def test_find_inexact_edge_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "InExactEdgesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_inexact_edges(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_inexact_edge_edges(modeler: Modeler):
@@ -153,7 +153,7 @@ def test_find_missing_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "MissingFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_missing_faces(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_missing_face_faces(modeler: Modeler):
@@ -185,7 +185,7 @@ def test_duplicate_face_id(modeler: Modeler):
     """Test whether duplicate face problem area has the id."""
     design = modeler.open_file(FILES_DIR / "DuplicateFacesDesignBefore.scdocx")
     problem_areas = modeler.repair_tools.find_duplicate_faces(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_duplicate_face_faces(modeler: Modeler):
@@ -217,7 +217,7 @@ def test_find_small_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "SmallFacesBefore.scdocx")
     problem_areas = modeler.repair_tools.find_small_faces(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_small_face_faces(modeler: Modeler):
@@ -264,7 +264,7 @@ def test_find_stitch_face_id(modeler: Modeler):
     """Test whether problem area has the id."""
     design = modeler.open_file(FILES_DIR / "stitch_before.scdocx")
     problem_areas = modeler.repair_tools.find_stitch_faces(design.bodies)
-    assert problem_areas[0].id != "0"
+    assert problem_areas[0].id.isdigit()
 
 
 def test_find_stitch_face_bodies(modeler: Modeler):

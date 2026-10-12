@@ -32,6 +32,7 @@ from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 from ansys.geometry.core.connection.client import GrpcClient
 import ansys.geometry.core.connection.defaults as pygeom_defaults
+from ansys.geometry.core.connection.transport import _handle_transport_mode
 from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import check_type, min_backend_version
@@ -106,6 +107,8 @@ class Modeler:
         By default `None` and thus search for the "ANSYS_GRPC_CERTIFICATES" environment variable.
         If not found, it will use the "certs" folder assuming it is in the current working
         directory.
+    _skip_transport_check : bool, default: False
+        Whether to skip the transport mode check. Skip when calling from launcher.
     """
 
     def __init__(
@@ -124,9 +127,31 @@ class Modeler:
         uds_dir: Path | str | None = None,
         uds_id: str | None = None,
         certs_dir: Path | str | None = None,
+        _skip_transport_check: bool = False,
     ):
         """Initialize the ``Modeler`` class."""
         from ansys.geometry.core.designer.geometry_commands import GeometryCommands
+
+        if channel is None or not _skip_transport_check:
+            _, transport_values = _handle_transport_mode(
+                host=host,
+                transport_mode=transport_mode,
+                uds_dir=uds_dir,
+                uds_id=uds_id,
+                certs_dir=certs_dir,
+            )
+            transport_mode = transport_values["transport_mode"]
+            uds_id = transport_values["uds_id"]
+            uds_dir = (
+                Path(transport_values["uds_dir"])
+                if transport_values["uds_dir"] is not None
+                else None
+            )
+            certs_dir = (
+                Path(transport_values["certs_dir"]).resolve().as_posix()
+                if transport_values["certs_dir"] is not None
+                else None
+            )
 
         self._grpc_client = GrpcClient(
             host=host,

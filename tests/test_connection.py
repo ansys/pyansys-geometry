@@ -41,6 +41,7 @@ from ansys.geometry.core.connection.product_instance import (
     _manifest_path_provider,
     prepare_and_start_backend,
 )
+from ansys.geometry.core.connection.transport import _handle_transport_mode
 from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 
 
@@ -398,3 +399,74 @@ def test_grpc_client_get_backend_failure():
 
     assert exc.value.__cause__ is not None
     mock_channel.close.assert_called_once()
+
+
+def test_handle_transport_mode_connection_and_launch_modes(tmp_path, monkeypatch):
+    """Preserve transport defaults and distinguish direct connections from launches."""
+    local_dir = tmp_path / "local"
+    _, local_values = _handle_transport_mode(host="localhost", uds_dir=local_dir)
+    _, remote_values = _handle_transport_mode(host="geometry.example.com", certs_dir=tmp_path)
+
+    assert local_values["transport_mode"] == ("wnua" if os.name == "nt" else "uds")
+    assert remote_values["transport_mode"] == "mtls"
+    assert remote_values["certs_dir"] == str(tmp_path)
+    assert not local_dir.exists()
+
+    direct_dir = tmp_path / "direct-uds"
+    direct_args, direct_values = _handle_transport_mode(
+        host="localhost", transport_mode="uds", uds_dir=direct_dir
+    )
+    assert direct_args == []
+    assert direct_values["uds_id"] is None
+    assert direct_values["uds_dir"] == str(direct_dir)
+    assert not direct_dir.exists()
+
+    launch_dir = tmp_path / "launch-uds"
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.transport.uuid.uuid4", lambda: "generated-id"
+    )
+    monkeypatch.setattr(
+        "ansys.geometry.core.connection.transport.verify_uds_socket", lambda *args: False
+    )
+
+    launch_args, launch_values = _handle_transport_mode(
+        host="localhost", transport_mode="uds", uds_dir=launch_dir, launch_backend=True
+    )
+
+    assert launch_values["uds_id"] == "generated-id"
+    assert launch_args == [
+        "--transport-mode=uds",
+        f"--uds-dir={launch_dir.resolve().as_posix()}",
+        "--uds-id=generated-id",
+    ]
+    assert launch_dir.is_dir()
+
+    with pytest.raises(RuntimeError, match="only available for localhost"):
+        _handle_transport_mode(host="geometry.example.com", transport_mode="uds")
+
+
+def test_modeler_uses_shared_transport_settings(tmp_path, monkeypatch):
+    """Pass shared transport normalization results to GrpcClient."""
+    from ansys.geometry.core import modeler as modeler_module
+    from ansys.geometry.core.modeler import Modeler
+
+    mock_client = MagicMock()
+    grpc_client = MagicMock(return_value=mock_client)
+    monkeypatch.setattr(modeler_module, "GrpcClient", grpc_client)
+    for tool_name in (
+        "MeasurementTools",
+        "RepairTools",
+        "PrepareTools",
+        "UnsupportedCommands",
+        "RayfireTools",
+    ):
+        monkeypatch.setattr(modeler_module, tool_name, MagicMock())
+    monkeypatch.setattr(
+        "ansys.geometry.core.designer.geometry_commands.GeometryCommands", MagicMock()
+    )
+
+    Modeler(host="geometry.example.com", transport_mode="mtls", certs_dir=tmp_path)
+
+    grpc_client.assert_called_once()
+    assert grpc_client.call_args.kwargs["transport_mode"] == "mtls"
+    assert grpc_client.call_args.kwargs["certs_dir"] == tmp_path.resolve().as_posix()
