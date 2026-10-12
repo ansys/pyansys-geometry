@@ -36,9 +36,7 @@ except ImportError:
         allow_module_level=True,
     )
 
-from contextlib import nullcontext
 from pathlib import Path
-from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 from ansys.tools.visualization_interface import EdgePlot, MeshObjectPlot
@@ -47,16 +45,10 @@ from pint import Quantity
 import pytest
 
 from ansys.geometry.core import Modeler
-from ansys.geometry.core._grpc._services.v0.faces import GRPCFacesServiceV0
-from ansys.geometry.core._grpc._services.v1.faces import GRPCFacesServiceV1
-from ansys.geometry.core.designer.body import Body
-from ansys.geometry.core.designer.component import Component
-from ansys.geometry.core.designer.face import Face, SurfaceType
 from ansys.geometry.core.math import UNITVECTOR3D_Y, UNITVECTOR3D_Z, Plane, Point2D, Point3D
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X
 from ansys.geometry.core.math.vector import UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
 from ansys.geometry.core.misc.measurements import Angle
 from ansys.geometry.core.misc.options import ImportOptions
 from ansys.geometry.core.plotting import GeometryPlotter
@@ -94,179 +86,44 @@ skip_no_xserver = pytest.mark.skipif(
 IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 
-@pytest.mark.parametrize("merge_option", ["merge_faces", "merge_bodies"])
+@skip_no_xserver
 @pytest.mark.parametrize(
-    "service_colors, merge_bodies, expected_merge",
-    [(True, True, True), (True, False, False), (True, None, False), (False, None, True)],
+    "merge_option, merge",
+    [("merge_faces", True), ("merge_faces", False), ("merge_bodies", True)],
 )
-def test_service_colors_component_merge(service_colors, merge_bodies, expected_merge, merge_option):
-    """Honor explicit body merging while retaining color-dependent defaults."""
-    component = MagicMock()
-    options = {"use_service_colors": service_colors}
-    if merge_bodies is not None:
-        options[merge_option] = merge_bodies
-
-    warning = (
-        pytest.warns(DeprecationWarning, match="merge_faces")
-        if merge_option == "merge_bodies" and merge_bodies is not None
-        else nullcontext()
-    )
-    with warning, patch("ansys.geometry.core.plotting.GeometryPlotter") as plotter:
-        Component.plot(component, **options)
-
-    call_options = plotter.return_value.plot.call_args.kwargs
-    assert call_options["merge_faces"] is expected_merge
-    assert "merge_bodies" not in call_options
-    assert call_options["merge_component"] is (not service_colors)
-
-
-@pytest.mark.parametrize("merge_option", ["merge_faces", "merge_bodies"])
-@pytest.mark.parametrize("merge", [True, False])
-def test_merge_faces_plotter_alias(merge_option, merge):
-    """Route both option names without passing them to the rendering backend."""
-    plotter = object.__new__(GeometryPlotter)
-    component = MagicMock(spec=Component)
-    warning = (
-        pytest.warns(DeprecationWarning, match="merge_faces")
-        if merge_option == "merge_bodies"
-        else nullcontext()
-    )
-    with warning, patch.object(plotter, "add_component") as add_component:
-        plotter.plot(component, **{merge_option: merge})
-
-    add_component.assert_called_once_with(
-        component, merge_component=None, merge_bodies=merge, exclude_ids=None
-    )
-
-
-@pytest.mark.parametrize("entry_point", ["component", "plotter"])
-def test_merge_faces_conflicting_aliases(entry_point):
-    """Reject supplying both the preferred name and its deprecated alias."""
-    with pytest.warns(DeprecationWarning, match="merge_faces"):
-        with pytest.raises(ValueError, match="Specify only one"):
-            if entry_point == "component":
-                Component.plot(MagicMock(), merge_faces=True, merge_bodies=False)
-            else:
-                GeometryPlotter.plot(MagicMock(), None, merge_faces=True, merge_bodies=False)
-
-
-@pytest.mark.parametrize("merge", [True, False])
-def test_merge_faces_body_list(merge):
-    """Preserve the merge option when plotting separate bodies in a list."""
-    plotter = object.__new__(GeometryPlotter)
-    bodies = [MagicMock(spec=Body), MagicMock(spec=Body)]
-    with patch.object(plotter, "add_body") as add_body:
-        plotter.plot(bodies, merge_faces=merge)
-
-    assert add_body.call_count == 2
-    for call, body in zip(add_body.call_args_list, bodies):
-        assert call.args == (body,)
-        assert call.kwargs == {"merge": merge, "exclude_ids": None}
-
-
-@pytest.mark.parametrize("service_colors", [True, False])
-@pytest.mark.parametrize("merge", [True, False])
-def test_merge_faces_body_plot(service_colors, merge):
-    """Honor explicit face merging in body plotting with and without service colors."""
-    body = MagicMock()
-    body.tessellate.return_value = pv.PolyData()
-    with patch("ansys.geometry.core.plotting.GeometryPlotter") as plotter:
-        Body.plot(body, use_service_colors=service_colors, merge_faces=merge)
-
-    assert plotter.return_value.plot.call_args.kwargs["merge_faces"] is merge
-    assert "merge_bodies" not in plotter.return_value.plot.call_args.kwargs
-    if service_colors:
-        body.tessellate.assert_not_called()
+def test_plot_service_colors_merge_faces(modeler: Modeler, tmp_path, merge_option, merge):
+    """Preserve face colors or use body colors when merging, including the deprecated alias."""
+    design = modeler.create_design("ServiceColorsMergeFaces")
+    body = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body.color = "#0000ff80"
+    body.faces[0].color = "#ff000040"
+    plotter = GeometryPlotter(use_service_colors=True)
+    options = {merge_option: merge}
+    if merge_option == "merge_bodies":
+        with pytest.warns(DeprecationWarning, match="0.18.2.*0.20.0"):
+            plotter.plot(design, **options)
     else:
-        body.tessellate.assert_called_once_with(merge=merge)
-
-
-def test_service_colors_batch_request():
-    """Fetch multiple v1 face colors with one RPC and skip empty batches."""
-    service = object.__new__(GRPCFacesServiceV1)
-    service.stub = MagicMock()
-    service.stub.GetColor.return_value.colors = {"face1": "#ff000080", "face2": ""}
-
-    assert service.get_colors(ids=["face1", "face2"]) == {
-        "colors": {"face1": "#ff000080", "face2": ""}
-    }
-    service.stub.GetColor.assert_called_once()
-    request = service.stub.GetColor.call_args.kwargs["request"]
-    assert [entity.id for entity in request.ids] == ["face1", "face2"]
-
-    service.stub.reset_mock()
-    assert service.get_colors(ids=[]) == {"colors": {}}
-    service.stub.GetColor.assert_not_called()
-
-
-def test_service_colors_legacy_fallback():
-    """Fetch v0 colors using the existing single-face RPC."""
-    service = object.__new__(GRPCFacesServiceV0)
-    service.stub = MagicMock()
-    service.stub.GetColor.side_effect = [
-        SimpleNamespace(color="#ff000080"),
-        SimpleNamespace(color=""),
-    ]
-
-    assert service.get_colors(ids=["face1", "face2"]) == {
-        "colors": {"face1": "#ff000080", "face2": ""}
-    }
-    assert service.stub.GetColor.call_count == 2
-    assert [call.kwargs["request"].id for call in service.stub.GetColor.call_args_list] == [
-        "face1",
-        "face2",
-    ]
-
-
-@pytest.mark.parametrize("inherited_color", ["", DEFAULT_COLOR, DEFAULT_COLOR.lower() + "ff", None])
-def test_service_colors_plot_batch(inherited_color):
-    """Preserve face alpha and body-color inheritance without individual color RPCs."""
-    client = MagicMock()
-    client.backend_version = (27, 1, 0)
-    body = MagicMock()
-    body.is_suppressed = False
-    body.color = "#0000ff66"
-    body.opacity = 0.4
-    body._grpc_client = client
-    body.faces = [
-        Face("face1", SurfaceType.SURFACETYPE_PLANE, body, client),
-        Face("face2", SurfaceType.SURFACETYPE_PLANE, body, client),
-    ]
-    colors = {"face1": "#FF000080"}
-    if inherited_color is not None:
-        colors["face2"] = inherited_color
-    client.services.faces.get_colors.return_value = {"colors": colors}
-    plotter = object.__new__(GeometryPlotter)
-    plotter._use_service_colors = True
-    plotter._backend = MagicMock()
-
-    with patch.object(Face, "tessellate", return_value=pv.PolyData()):
-        plotter.add_body(body)
-
-    client.services.faces.get_colors.assert_called_once_with(ids=["face1", "face2"])
-    client.services.faces.get_color.assert_not_called()
-    calls = plotter._backend.pv_interface.plot.call_args_list
-    assert len(calls) == 2
-    assert calls[0].kwargs == {"color": "#ff000080", "opacity": 128 / 255}
-    assert calls[1].kwargs == {"color": body.color, "opacity": body.opacity}
-
-
-@pytest.mark.parametrize("merge, options", [(True, {}), (False, {"color": "green"})])
-def test_service_colors_plot_no_face_requests(merge, options):
-    """Avoid fetching faces and their colors for merged bodies or explicit colors."""
-    body = MagicMock()
-    body.is_suppressed = False
-    plotter = object.__new__(GeometryPlotter)
-    plotter._use_service_colors = True
-    plotter._backend = MagicMock()
-    plotter._backend._allow_picking = False
-
-    plotter.add_body(body, merge=merge, **options)
-
-    body._grpc_client.services.faces.get_colors.assert_not_called()
-    assert "faces" not in body._mock_children
-    body.tessellate.assert_called_once_with(merge=merge)
-    plotter._backend.pv_interface.plot.assert_called_once()
+        plotter.plot(design, **options)
+    scene = plotter.backend.pv_interface.scene
+    actors = [actor for actor in scene.actors.values() if isinstance(actor, pv.Actor)]
+    assert len(actors) == (1 if merge else 6)
+    assert {pv.Color(actor.prop.color).hex_rgb for actor in actors} == (
+        {"#0000ff"} if merge else {"#0000ff", "#ff0000"}
+    )
+    assert {actor.prop.opacity for actor in actors} == (
+        {128 / 255} if merge else {128 / 255, 64 / 255}
+    )
+    scene.close()
+    screenshot = tmp_path / "service_colors.png"
+    if merge_option == "merge_bodies":
+        with pytest.warns(DeprecationWarning, match="0.18.2.*0.20.0"):
+            design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
+        positional_screenshot = tmp_path / "positional.png"
+        design.plot(False, merge, str(positional_screenshot), None, True)
+        assert positional_screenshot.exists()
+    else:
+        design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
+    assert screenshot.exists()
 
 
 @skip_no_xserver

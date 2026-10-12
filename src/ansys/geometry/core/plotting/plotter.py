@@ -565,7 +565,9 @@ class GeometryPlotter(PlotterInterface):
             _ = self.plot(object, name_filter, **plotting_options)
 
     # Override add function from plotter
-    @deprecated_argument(arg="merge_bodies", alternative="merge_faces")
+    @deprecated_argument(
+        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
+    )
     def plot(
         self,
         plottable_object: Any,
@@ -586,12 +588,6 @@ class GeometryPlotter(PlotterInterface):
             Selection to highlight on top of the plotted object.
         highlight_color : str, default: "#FF0000"
             Color used to highlight the selection.
-        merge_faces : bool, optional
-            Merge the face meshes within each body into one mesh, keeping bodies separate.
-            With service colors, use each body's color instead of individual face colors.
-            This affects plotting only, not the geometry.
-        merge_bodies : bool, optional
-            Deprecated alias for ``merge_faces``. Do not supply both names.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
             you are using.

@@ -2343,15 +2343,18 @@ class Component:
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
     @graphics_required
-    @deprecated_argument(arg="merge_bodies", alternative="merge_faces")
+    @deprecated_argument(
+        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
+    )
     def plot(
         self,
         merge_component: bool = True,
-        merge_faces: bool | None = None,
+        merge_bodies: bool | None = None,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
         allow_picking: bool | None = None,
+        merge_faces: bool | None = None,
         **plotting_options: dict | None,
     ) -> None | list[Any]:
         """Plot the component.
@@ -2362,13 +2365,9 @@ class Component:
             Whether to merge the component into a single dataset. By default, ``True``.
             Performance improved. When ``True``, all the faces of the component are effectively
             merged into a single dataset. If ``False``, the individual bodies are kept separate.
-        merge_faces : bool, default: None
-            Whether to merge the face meshes within each body into one mesh. Separate
-            bodies remain separate. When ``None``, faces are merged unless service colors
-            are enabled. With service colors, ``True`` uses each body's color and ignores
-            individual face colors. This affects plotting only, not the geometry.
-        merge_bodies : bool, optional
-            Deprecated alias for ``merge_faces``. Do not supply both names.
+        merge_bodies : bool, default: None
+            Deprecated alias for ``merge_faces``. Deprecated in version 0.18.2 and
+            scheduled for removal in version 0.20.0. Do not supply both names.
         screenshot : str, default: None
             Path for saving a screenshot of the image being represented.
         use_trame : bool, default: None
@@ -2382,6 +2381,12 @@ class Component:
         allow_picking : bool, default: None
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
+        merge_faces : bool, default: None
+            Whether to merge the face meshes within each body into one mesh. When
+            ``merge_component`` is ``False``, separate bodies remain separate. When
+            ``None``, faces are merged unless service colors are enabled. With service
+            colors, ``True`` uses each body's color and ignores individual face colors.
+            This affects plotting only, not the geometry.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
@@ -2429,7 +2434,7 @@ class Component:
         from ansys.geometry.core.plotting import GeometryPlotter
         from ansys.geometry.core.plotting.plotter import _resolve_merge_faces
 
-        merge_faces = _resolve_merge_faces(merge_faces, plotting_options.pop("merge_bodies", None))
+        merge_faces = _resolve_merge_faces(merge_faces, merge_bodies)
 
         use_service_colors = (
             use_service_colors

@@ -2329,7 +2329,9 @@ class Body(IBody):
         return self._template.remove_faces(selection, offset)
 
     @graphics_required
-    @deprecated_argument(arg="merge_bodies", alternative="merge_faces")
+    @deprecated_argument(
+        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
+    )
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -2345,7 +2347,6 @@ class Body(IBody):
 
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
-        from ansys.geometry.core.plotting.plotter import _resolve_merge_faces
 
         use_service_colors = (
             use_service_colors
@@ -2353,10 +2354,8 @@ class Body(IBody):
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        merge_faces = _resolve_merge_faces(
-            plotting_options.pop("merge_faces", None),
-            plotting_options.pop("merge_bodies", None),
-        )
+        plotting_options.pop("merge_bodies", None)
+        merge_faces = plotting_options.pop("merge_faces", None)
         explicit_merge_faces = merge_faces is not None
         plotting_options["merge_faces"] = merge_faces if explicit_merge_faces else merge
 
