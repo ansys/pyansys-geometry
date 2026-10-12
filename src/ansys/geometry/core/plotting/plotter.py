@@ -41,6 +41,7 @@ from ansys.tools.visualization_interface import (
     Plotter as PlotterInterface,
 )
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
+from matplotlib import colors as mcolors
 import numpy as np
 from pygltflib.utils import gltf2glb
 import pyvista as pv
@@ -66,6 +67,7 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.checks import deprecated_argument
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 from ansys.geometry.core.shapes.curves import Curve
@@ -73,6 +75,13 @@ from ansys.geometry.core.shapes.surfaces import Surface
 from ansys.geometry.core.sketch.sketch import Sketch
 
 POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
+
+
+def _resolve_merge_faces(merge_faces: bool | None, merge_bodies: bool | None) -> bool | None:
+    """Resolve the face-merging option and its deprecated alias."""
+    if merge_faces is not None and merge_bodies is not None:
+        raise ValueError("Specify only one of 'merge_faces' and 'merge_bodies'.")
+    return merge_faces if merge_faces is not None else merge_bodies
 
 
 class GeometryPlotter(PlotterInterface):
@@ -312,14 +321,21 @@ class GeometryPlotter(PlotterInterface):
             return
 
         if self.use_service_colors and "color" not in plotting_options:
-            faces = body.faces
             body_color = body.color
+            body_opacity = body.opacity
             if not merge:
+                faces = body.faces
+                colors = body._grpc_client.services.faces.get_colors(
+                    ids=[face.id for face in faces]
+                )["colors"]
+                for face in faces:
+                    color = colors.get(face.id)
+                    face._color = mcolors.to_hex(color, keep_alpha=True) if color else DEFAULT_COLOR
                 for face in faces:
                     face_color = face.color
                     if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
-                        plotting_options["opacity"] = body.opacity
+                        plotting_options["opacity"] = body_opacity
                     else:
                         plotting_options["color"] = face_color
                         plotting_options["opacity"] = face.opacity
@@ -328,7 +344,7 @@ class GeometryPlotter(PlotterInterface):
             else:
                 dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
-                plotting_options["opacity"] = body.opacity
+                plotting_options["opacity"] = body_opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
 
@@ -549,6 +565,7 @@ class GeometryPlotter(PlotterInterface):
             _ = self.plot(object, name_filter, **plotting_options)
 
     # Override add function from plotter
+    @deprecated_argument(arg="merge_bodies", alternative="merge_faces")
     def plot(
         self,
         plottable_object: Any,
@@ -569,6 +586,12 @@ class GeometryPlotter(PlotterInterface):
             Selection to highlight on top of the plotted object.
         highlight_color : str, default: "#FF0000"
             Color used to highlight the selection.
+        merge_faces : bool, optional
+            Merge the face meshes within each body into one mesh, keeping bodies separate.
+            With service colors, use each body's color instead of individual face colors.
+            This affects plotting only, not the geometry.
+        merge_bodies : bool, optional
+            Deprecated alias for ``merge_faces``. Do not supply both names.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments, depend of the backend implementation
             you are using.
@@ -579,11 +602,10 @@ class GeometryPlotter(PlotterInterface):
         items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
-        if "merge_bodies" in plotting_options:
-            merge_bodies = plotting_options["merge_bodies"]
-            plotting_options.pop("merge_bodies", None)
-        else:
-            merge_bodies = None
+        merge_bodies = _resolve_merge_faces(
+            plotting_options.pop("merge_faces", None),
+            plotting_options.pop("merge_bodies", None),
+        )
 
         if "merge_component" in plotting_options:
             merge_component = plotting_options["merge_component"]
@@ -650,7 +672,13 @@ class GeometryPlotter(PlotterInterface):
         ):
             self.add_sketch_polydata(plottable_object, **plotting_options)
         elif isinstance(plottable_object, list):
-            self.plot_iter(plottable_object, name_filter, **plotting_options)
+            self.plot_iter(
+                plottable_object,
+                name_filter,
+                merge_faces=merge_bodies,
+                merge_component=merge_component,
+                **plotting_options,
+            )
         elif isinstance(plottable_object, MeshObjectPlot):
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
             self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
@@ -725,17 +753,18 @@ class GeometryPlotter(PlotterInterface):
         )
         LOG.debug(
             "When calling export_glb, if you had previously set the plotting_options "
-            "'merge_bodies' or 'merge_component' to False, they will be ignored."
+            "'merge_faces' or 'merge_component' to False, they will be ignored."
         )
         plotting_options["merge_component"] = True
-        plotting_options["merge_bodies"] = True
+        plotting_options.pop("merge_bodies", None)
+        plotting_options["merge_faces"] = True
 
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
         else:
             LOG.warning(
                 "If you had previously added the objects to the plotter, "
-                "make sure that the options 'merge_bodies' and 'merge_component' "
+                "make sure that the options 'merge_faces' and 'merge_component' "
                 "are set to True, otherwise the export will not work as expected."
             )
 

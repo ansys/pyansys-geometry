@@ -191,6 +191,15 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {"color": color}
 
     @protect_grpc
+    def get_colors(self, **kwargs) -> dict:
+        """Get the colors of multiple faces in a single request."""
+        if not kwargs["ids"]:
+            return {"colors": {}}
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(face_id) for face_id in kwargs["ids"]])
+        response = self.stub.GetColor(request=request)
+        return {"colors": dict(response.colors)}
+
+    @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.designmessages_pb2 import (
             GetBoundingBoxRequest,

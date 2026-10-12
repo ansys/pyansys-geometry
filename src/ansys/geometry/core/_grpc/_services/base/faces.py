@@ -75,6 +75,12 @@ class GRPCFacesService(ABC):  # pragma: no cover
         """Get the color of a face."""
         pass
 
+    def get_colors(self, **kwargs) -> dict:
+        """Get face colors, falling back to individual requests."""
+        return {
+            "colors": {face_id: self.get_color(id=face_id)["color"] for face_id in kwargs["ids"]}
+        }
+
     @abstractmethod
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of a face."""

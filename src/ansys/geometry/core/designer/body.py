@@ -57,6 +57,7 @@ from ansys.geometry.core.misc.checks import (
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
+    deprecated_argument,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
@@ -2328,6 +2329,7 @@ class Body(IBody):
         return self._template.remove_faces(selection, offset)
 
     @graphics_required
+    @deprecated_argument(arg="merge_bodies", alternative="merge_faces")
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -2343,6 +2345,7 @@ class Body(IBody):
 
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
+        from ansys.geometry.core.plotting.plotter import _resolve_merge_faces
 
         use_service_colors = (
             use_service_colors
@@ -2350,19 +2353,25 @@ class Body(IBody):
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        # Add to plotting options as well... to be used by the plotter if necessary
-        plotting_options["merge_bodies"] = merge
+        merge_faces = _resolve_merge_faces(
+            plotting_options.pop("merge_faces", None),
+            plotting_options.pop("merge_bodies", None),
+        )
+        explicit_merge_faces = merge_faces is not None
+        plotting_options["merge_faces"] = merge_faces if explicit_merge_faces else merge
 
         # In case that service colors are requested, merge will be ignored.
         # An info message will be issued to the user.
-        if use_service_colors and merge:
+        if use_service_colors and merge and not explicit_merge_faces:
             self._template._grpc_client.log.info(
                 "Ignoring 'merge' option since 'use_service_colors' is set to True."
             )
-            plotting_options["merge_bodies"] = False
+            plotting_options["merge_faces"] = False
 
         mesh_object = (
-            self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
+            self
+            if use_service_colors
+            else MeshObjectPlot(self, self.tessellate(merge=plotting_options["merge_faces"]))
         )
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)
