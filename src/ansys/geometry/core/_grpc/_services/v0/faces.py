@@ -182,6 +182,7 @@ class GRPCFacesServiceV0(GRPCFacesService):
         return {"color": response.color}
 
     def get_colors(self, **kwargs) -> dict:  # noqa: D102
+        # Use the get_color method to retrieve colors for multiple faces
         return {
             "colors": {face_id: self.get_color(id=face_id)["color"] for face_id in kwargs["ids"]}
         }
