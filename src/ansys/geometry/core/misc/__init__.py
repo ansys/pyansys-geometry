@@ -55,6 +55,7 @@ from ansys.geometry.core.misc.checks import (
 from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
 from ansys.geometry.core.misc.options import (
     ImportOptions,
+    RayfireOptions,
     TessellationOptions,
     VolumeExtractOptions,
 )

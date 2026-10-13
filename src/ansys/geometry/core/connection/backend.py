@@ -130,7 +130,8 @@ class ApiVersions(Enum):
     V_251 = 251
     V_252 = 252
     V_261 = 261
-    V_271 = LATEST = 271
+    V_271 = 271
+    V_272 = LATEST = 272
 
     @staticmethod
     def parse_input(version: Union[int, str, "ApiVersions"]) -> "ApiVersions":

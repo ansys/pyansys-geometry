@@ -2505,6 +2505,9 @@ class Body(IBody):
             for b in grpc_other:
                 b.parent_component.delete_body(b)
             parent_design._update_design_inplace()
+
+            # When tracker is off, we don't know whether the body was fully deleted.
+            self._is_alive = not response.get("body_is_deleted", False)
         else:
             # If USE_TRACKER_TO_UPDATE_DESIGN is True, we serialize the response
             # and update the parent design with the serialized response.

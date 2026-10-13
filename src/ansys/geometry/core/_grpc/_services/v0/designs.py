@@ -284,6 +284,20 @@ class GRPCDesignsServiceV0(GRPCDesignsService):
         # Return the response - formatted as a dictionary
         return {"file_path": response.file_path}
 
+    @protect_grpc
+    def get_length_scale(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.get_length_scale' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def set_length_scale(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.set_length_scale' is not "
+            "implemented in this protofile version."
+        )
+
     def _serialize_assembly_response(self, response):
         def serialize_body(body):
             return {

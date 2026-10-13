@@ -109,3 +109,13 @@ class GRPCDesignsService(ABC):  # pragma: no cover
     def download_file(self, **kwargs) -> dict:
         """Download the design from the server."""
         pass
+
+    @abstractmethod
+    def get_length_scale(self, **kwargs) -> dict:
+        """Get the length scale of the design."""
+        pass
+
+    @abstractmethod
+    def set_length_scale(self, **kwargs) -> dict:
+        """Set the length scale of the design."""
+        pass
