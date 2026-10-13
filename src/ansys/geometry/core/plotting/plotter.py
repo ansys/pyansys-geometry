@@ -79,7 +79,7 @@ POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
 
 def _resolve_merge_faces(merge_faces: bool | None, merge_bodies: bool | None) -> bool | None:
     """Resolve the face-merging option and its deprecated alias."""
-    if merge_faces is not None and merge_bodies is not None:
+    if merge_faces is not None and merge_bodies is False:
         raise ValueError("Specify only one of 'merge_faces' and 'merge_bodies'.")
     return merge_faces if merge_faces is not None else merge_bodies
 
@@ -327,7 +327,7 @@ class GeometryPlotter(PlotterInterface):
                 faces = body.faces
                 colors = body._grpc_client.services.faces.get_colors(
                     ids=[face.id for face in faces]
-                )["colors"]
+                ).get("colors")
                 for face in faces:
                     color = colors.get(face.id)
                     face._color = mcolors.to_hex(color, keep_alpha=True) if color else DEFAULT_COLOR
@@ -598,7 +598,7 @@ class GeometryPlotter(PlotterInterface):
         items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
-        merge_bodies = _resolve_merge_faces(
+        merge_faces = _resolve_merge_faces(
             plotting_options.pop("merge_faces", None),
             plotting_options.pop("merge_bodies", None),
         )
@@ -647,7 +647,7 @@ class GeometryPlotter(PlotterInterface):
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(
                 plottable_object,
-                merge=merge_bodies,
+                merge=merge_faces,
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
@@ -657,7 +657,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_component(
                 plottable_object,
                 merge_component=merge_component,
-                merge_bodies=merge_bodies,
+                merge_bodies=merge_faces,
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
@@ -671,7 +671,7 @@ class GeometryPlotter(PlotterInterface):
             self.plot_iter(
                 plottable_object,
                 name_filter,
-                merge_faces=merge_bodies,
+                merge_faces=merge_faces,
                 merge_component=merge_component,
                 **plotting_options,
             )

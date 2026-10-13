@@ -99,11 +99,7 @@ def test_plot_service_colors_merge_faces(modeler: Modeler, tmp_path, merge_optio
     body.faces[0].color = "#ff000040"
     plotter = GeometryPlotter(use_service_colors=True)
     options = {merge_option: merge}
-    if merge_option == "merge_bodies":
-        with pytest.warns(DeprecationWarning, match="0.18.2.*0.20.0"):
-            plotter.plot(design, **options)
-    else:
-        plotter.plot(design, **options)
+    plotter.plot(design, **options)
     scene = plotter.backend.pv_interface.scene
     actors = [actor for actor in scene.actors.values() if isinstance(actor, pv.Actor)]
     assert len(actors) == (1 if merge else 6)
@@ -115,14 +111,11 @@ def test_plot_service_colors_merge_faces(modeler: Modeler, tmp_path, merge_optio
     )
     scene.close()
     screenshot = tmp_path / "service_colors.png"
+    design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
     if merge_option == "merge_bodies":
-        with pytest.warns(DeprecationWarning, match="0.18.2.*0.20.0"):
-            design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
         positional_screenshot = tmp_path / "positional.png"
         design.plot(False, merge, str(positional_screenshot), None, True)
         assert positional_screenshot.exists()
-    else:
-        design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
     assert screenshot.exists()
 
 

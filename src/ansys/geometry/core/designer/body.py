@@ -2354,7 +2354,6 @@ class Body(IBody):
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        plotting_options.pop("merge_bodies", None)
         merge_faces = plotting_options.pop("merge_faces", None)
         explicit_merge_faces = merge_faces is not None
         plotting_options["merge_faces"] = merge_faces if explicit_merge_faces else merge

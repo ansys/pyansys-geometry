@@ -2349,7 +2349,7 @@ class Component:
     def plot(
         self,
         merge_component: bool = True,
-        merge_bodies: bool | None = None,
+        merge_bodies: bool = True,
         screenshot: str | None = None,
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
@@ -2365,7 +2365,7 @@ class Component:
             Whether to merge the component into a single dataset. By default, ``True``.
             Performance improved. When ``True``, all the faces of the component are effectively
             merged into a single dataset. If ``False``, the individual bodies are kept separate.
-        merge_bodies : bool, default: None
+        merge_bodies : bool, default: True
             Deprecated alias for ``merge_faces``. Deprecated in version 0.18.2 and
             scheduled for removal in version 0.20.0. Do not supply both names.
         screenshot : str, default: None
@@ -2384,7 +2384,7 @@ class Component:
         merge_faces : bool, default: None
             Whether to merge the face meshes within each body into one mesh. When
             ``merge_component`` is ``False``, separate bodies remain separate. When
-            ``None``, faces are merged unless service colors are enabled. With service
+            ``None``, the value of ``merge_bodies`` is used. With service
             colors, ``True`` uses each body's color and ignores individual face colors.
             This affects plotting only, not the geometry.
         **plotting_options : dict, default: None
