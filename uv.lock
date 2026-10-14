@@ -496,7 +496,7 @@ dev = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "quarto-cli", specifier = "==1.10.19" },
     { name = "requests", specifier = "==2.34.2" },
@@ -535,7 +535,7 @@ doc = [
     { name = "protobuf", specifier = "==7.36.2" },
     { name = "pydantic", specifier = "==2.13.5" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
     { name = "quarto-cli", specifier = "==1.10.19" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -562,7 +562,7 @@ general-all = [
     { name = "protobuf", specifier = "==7.36.2" },
     { name = "pydantic", specifier = "==2.13.5" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
     { name = "semver", specifier = "==3.1.0" },
@@ -587,7 +587,7 @@ tests = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.0" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -2130,6 +2130,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/65/3d/3c9f8bce5d5448107bd285cd80185e76c9c871d076b580dfd90997e52904/jupyter_server-2.21.1.tar.gz", hash = "sha256:a8960aa29263f6041283e97d4756b099fb49b767baab6371891ecb1bd40a63df", size = 761651, upload-time = "2026-09-15T16:00:07.853Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/1d/39/91bc08650cc8e3efeb7a83c25e20ebddcc9b70d28b4eb6f51a4fb55da7a4/jupyter_server-2.21.1-py3-none-any.whl", hash = "sha256:2a6467606af7dbae2e7e31640030025969e15db6a649eae334af90415dc71dca", size = 394641, upload-time = "2026-09-15T16:00:05.526Z" },
+]
+
+[[package]]
+name = "jupyter-server-proxy"
+version = "4.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "jupyter-server" },
+    { name = "simpervisor" },
+    { name = "tornado" },
+    { name = "traitlets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ab/aa/248d5833f0ccc35143ad30cc30d72a057436c026a0a392fe7a77a6655849/jupyter_server_proxy-4.6.0.tar.gz", hash = "sha256:b3f8fdb4c6b59fdb41f0d5342f002719eaad5f375e87fa659e21fe69d35ee6c1", size = 145931, upload-time = "2026-09-21T19:52:32.563Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ce/0b/c0ecd986a736a1bec4f29c5e1f96794d9e7c88f93a5810842bd302c14fa0/jupyter_server_proxy-4.6.0-py3-none-any.whl", hash = "sha256:fe4094802630446780d13cbfc75a64106ae0b528d1d2c281d06753fe1019e69a", size = 46305, upload-time = "2026-09-21T19:51:45.977Z" },
 ]
 
 [[package]]
@@ -3688,7 +3704,7 @@ wheels = [
 
 [[package]]
 name = "pyvista"
-version = "0.49.0"
+version = "0.49.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cyclopts" },
@@ -3702,16 +3718,14 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "vtk" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/99/8f/fc7f2662d989d489d4b9048fdc030f6960ad5a0d09dd00016abc64ffa02d/pyvista-0.49.0.tar.gz", hash = "sha256:5bc914769dfa9baeedb3b761c81e3326bd4c7a3aeed475c25f164c798806dba2", size = 2704091, upload-time = "2026-09-08T03:50:50.682Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7b/1f/77d43ddf04d8fb7703bc125a6546d6300657f56464c76c18550aa0c991f4/pyvista-0.49.1.tar.gz", hash = "sha256:e3a37f2330ce9d2d680a153ac08fea2bd900aa59d13db46da8f64c92896ddd8e", size = 2705888, upload-time = "2026-10-11T16:53:05.078Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/13/28/10413555dd9cbd410c2762c8e6172ce9bd88c8c7997f7290f173969614dc/pyvista-0.49.0-py3-none-any.whl", hash = "sha256:8528b753baf9a32dd7a44f4e88912fe5c8771f7d921c813e1cbac35fc5a37996", size = 2732156, upload-time = "2026-09-08T03:50:48.933Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/48/39c762c55cb110aa1bd72cebbcc927c1a481f5bd17db4cab86933ce03578/pyvista-0.49.1-py3-none-any.whl", hash = "sha256:e4bd78c829051207e885281c45d03280dcde25445e1885c0824518ea7849b1c8", size = 2734000, upload-time = "2026-10-11T16:53:02.571Z" },
 ]
 
 [package.optional-dependencies]
 jupyter = [
-    { name = "ipywidgets" },
-    { name = "nest-asyncio2" },
-    { name = "trame-pyvista" },
+    { name = "trame-pyvista", extra = ["jupyter"] },
 ]
 
 [[package]]
@@ -4180,6 +4194,15 @@ wheels = [
 ]
 
 [[package]]
+name = "simpervisor"
+version = "1.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/dd/fc/9182a4049036c5de29f84a16c5a33304ffc4dbb06d76d569ded8ad527574/simpervisor-1.0.0.tar.gz", hash = "sha256:7eb87ca86d5e276976f5bb0290975a05d452c6a7b7f58062daea7d8369c823c1", size = 14637, upload-time = "2023-05-18T14:01:27.069Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/65/be223a02df814a3dbd84d8a0c446d21d4860a4f23ec4d81aabea34e7e994/simpervisor-1.0.0-py3-none-any.whl", hash = "sha256:3e313318264559beea3f475ead202bc1cd58a2f1288363abb5657d306c5b8388", size = 8342, upload-time = "2023-05-18T14:01:25.92Z" },
+]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4473,6 +4496,13 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b8/75/0cab7683efdc93d1e0d652727a6c847af9169276a8c77317819ea786096b/trame_pyvista-0.1.7.tar.gz", hash = "sha256:13d2c5d6fb58562891372a3638f40ea88f39d4e4414de927ee797e7907244233", size = 79605, upload-time = "2026-08-14T19:13:06.106Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f1/7e/14338648aaca4598437f62438b802727af9781824d120c47ca70d6cae96b/trame_pyvista-0.1.7-py3-none-any.whl", hash = "sha256:c728d85732bc6e0eb69cef11205e55c9b921e8e587d9590d86dc29a65ad65202", size = 29050, upload-time = "2026-08-14T19:13:04.612Z" },
+]
+
+[package.optional-dependencies]
+jupyter = [
+    { name = "ipywidgets" },
+    { name = "jupyter-server-proxy" },
+    { name = "nest-asyncio2" },
 ]
 
 [[package]]
