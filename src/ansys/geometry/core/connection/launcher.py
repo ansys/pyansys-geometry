@@ -25,8 +25,14 @@
 import logging
 import os
 from pathlib import Path
+import sys
 import tempfile
 from typing import TYPE_CHECKING
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 from ansys.geometry.core.connection.backend import ApiVersions, BackendType
 import ansys.geometry.core.connection.defaults as pygeom_defaults
@@ -40,6 +46,7 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
     deprecated_argument,
+    deprecated_doc,
     deprecated_method,
     kwargs_passed_not_accepted,
 )
@@ -525,6 +532,9 @@ def launch_modeler_with_spaceclaim_and_pimlight(
 @kwargs_passed_not_accepted
 @deprecated_method(
     "launch_modeler_with_dms", "use launch_modeler_with_dms instead", "0.17.2", "0.19.0"
+)
+@deprecated(
+    "launch_modeler_with_geometry_service is deprecated, use launch_modeler_with_dms instead"
 )
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
