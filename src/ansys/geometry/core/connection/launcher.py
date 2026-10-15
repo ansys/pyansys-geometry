@@ -46,7 +46,6 @@ from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
     check_type,
     deprecated_argument,
-    deprecated_doc,
     deprecated_method,
     kwargs_passed_not_accepted,
 )
