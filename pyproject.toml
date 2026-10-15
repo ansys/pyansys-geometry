@@ -109,7 +109,7 @@ general-all = [
   "protobuf==7.36.2",
   "pydantic==2.13.5",
   "pygltflib==1.16.5",
-  "pyvista[jupyter]==0.49.0",
+  "pyvista[jupyter]==0.49.1",
   "requests==2.34.2",
   "scipy==1.18.1",
   "semver==3.1.0",
