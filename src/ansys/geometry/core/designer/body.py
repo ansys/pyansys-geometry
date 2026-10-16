@@ -2329,9 +2329,6 @@ class Body(IBody):
         return self._template.remove_faces(selection, offset)
 
     @graphics_required
-    @deprecated_argument(
-        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
-    )
     def plot(  # noqa: D102
         self,
         merge: bool = True,
@@ -2354,13 +2351,11 @@ class Body(IBody):
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        merge_faces = plotting_options.pop("merge_faces", None)
-        explicit_merge_faces = merge_faces is not None
-        plotting_options["merge_faces"] = merge_faces if explicit_merge_faces else merge
+        plotting_options["merge_faces"] = merge
 
         # In case that service colors are requested, merge will be ignored.
         # An info message will be issued to the user.
-        if use_service_colors and merge and not explicit_merge_faces:
+        if use_service_colors and merge:
             self._template._grpc_client.log.info(
                 "Ignoring 'merge' option since 'use_service_colors' is set to True."
             )

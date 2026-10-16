@@ -77,13 +77,6 @@ from ansys.geometry.core.sketch.sketch import Sketch
 POLYDATA_COLOR_CYCLER = cycle(pv.colors.get_cycler("matplotlib"))
 
 
-def _resolve_merge_faces(merge_faces: bool | None, merge_bodies: bool | None) -> bool | None:
-    """Resolve the face-merging option and its deprecated alias."""
-    if merge_faces is not None and merge_bodies is False:
-        raise ValueError("Specify only one of 'merge_faces' and 'merge_bodies'.")
-    return merge_faces if merge_faces is not None else merge_bodies
-
-
 class GeometryPlotter(PlotterInterface):
     """Plotter for PyAnsys Geometry objects.
 
@@ -598,10 +591,13 @@ class GeometryPlotter(PlotterInterface):
         items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
-        merge_faces = _resolve_merge_faces(
-            plotting_options.pop("merge_faces", None),
-            plotting_options.pop("merge_bodies", None),
-        )
+        merge_faces = None
+        if "merge_faces" in plotting_options:
+            merge_faces = plotting_options["merge_faces"]
+            plotting_options.pop("merge_faces", None)
+        elif "merge_bodies" in plotting_options:
+            merge_faces = plotting_options["merge_bodies"]
+            plotting_options.pop("merge_bodies", None)
 
         if "merge_component" in plotting_options:
             merge_component = plotting_options["merge_component"]

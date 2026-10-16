@@ -2363,7 +2363,7 @@ class Component:
         ----------
         merge_component : bool, default: True
             Whether to merge the component into a single dataset. By default, ``True``.
-            Performance improved. When ``True``, all the faces of the component are effectively
+            Performance improved. When ``True``, all the bodies of the component are effectively
             merged into a single dataset. If ``False``, the individual bodies are kept separate.
         merge_bodies : bool, default: True
             Deprecated alias for ``merge_faces``. Deprecated in version 0.18.2 and
@@ -2382,11 +2382,9 @@ class Component:
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
         merge_faces : bool, default: None
-            Whether to merge the face meshes within each body into one mesh. When
-            ``merge_component`` is ``False``, separate bodies remain separate. When
-            ``None``, the value of ``merge_bodies`` is used. With service
-            colors, ``True`` uses each body's color and ignores individual face colors.
-            This affects plotting only, not the geometry.
+            Whether to merge the face meshes within each body into one mesh. When ``None``, 
+            the value of ``merge_bodies`` is used. With service colors, ``True`` uses each body's 
+            color and ignores individual face colors. This affects plotting only, not the geometry.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
@@ -2432,9 +2430,8 @@ class Component:
         """
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
-        from ansys.geometry.core.plotting.plotter import _resolve_merge_faces
 
-        merge_faces = _resolve_merge_faces(merge_faces, merge_bodies)
+        merge_faces = merge_faces if merge_faces is not None else merge_bodies
 
         use_service_colors = (
             use_service_colors
