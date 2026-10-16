@@ -58,6 +58,7 @@ from ansys.geometry.core.misc.auxiliary import get_design_from_component
 from ansys.geometry.core.misc.checks import (
     check_input_types,
     check_nurbs_compatibility,
+    deprecated_argument,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,
@@ -2342,6 +2343,9 @@ class Component:
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 
     @graphics_required
+    @deprecated_argument(
+        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
+    )
     def plot(
         self,
         merge_component: bool = True,
@@ -2350,6 +2354,7 @@ class Component:
         use_trame: bool | None = None,
         use_service_colors: bool | None = None,
         allow_picking: bool | None = None,
+        merge_faces: bool | None = None,
         **plotting_options: dict | None,
     ) -> None | list[Any]:
         """Plot the component.
@@ -2358,13 +2363,11 @@ class Component:
         ----------
         merge_component : bool, default: True
             Whether to merge the component into a single dataset. By default, ``True``.
-            Performance improved. When ``True``, all the faces of the component are effectively
+            Performance improved. When ``True``, all the bodies of the component are effectively
             merged into a single dataset. If ``False``, the individual bodies are kept separate.
         merge_bodies : bool, default: True
-            Whether to merge each body into a single dataset. By default, ``True``.
-            Performance improved. When ``True``, all the faces of each individual body are
-            effectively merged into a single dataset. If ``False``, the individual faces are kept
-            separate.
+            Deprecated alias for ``merge_faces``. Deprecated in version 0.18.2 and
+            scheduled for removal in version 0.20.0. Do not supply both names.
         screenshot : str, default: None
             Path for saving a screenshot of the image being represented.
         use_trame : bool, default: None
@@ -2378,6 +2381,10 @@ class Component:
         allow_picking : bool, default: None
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
+        merge_faces : bool, default: None
+            Whether to merge the face meshes within each body into one mesh. When ``None``,
+            the value of ``merge_bodies`` is used. With service colors, ``True`` uses each body's
+            color and ignores individual face colors. This affects plotting only, not the geometry.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
 
@@ -2424,11 +2431,15 @@ class Component:
         import ansys.geometry.core as pyansys_geometry
         from ansys.geometry.core.plotting import GeometryPlotter
 
+        merge_faces = merge_faces if merge_faces is not None else merge_bodies
+
         use_service_colors = (
             use_service_colors
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
+        if merge_faces is None:
+            merge_faces = not use_service_colors
         # If picking is enabled, we should not merge the component
         if allow_picking:
             # This blocks the user from selecting the component itself
@@ -2440,24 +2451,17 @@ class Component:
             )
             merge_component = False
 
-        # Add merge_component and merge_bodies to the plotting options
+        # Add merge options to the plotting options
         plotting_options["merge_component"] = merge_component
-        plotting_options["merge_bodies"] = merge_bodies
+        plotting_options["merge_faces"] = merge_faces
 
-        # At component level, if ``multi_colors`` or ``use_service_colors`` are defined
-        # we should not merge the component or the bodies (only if ``use_service_colors`` is True).
+        # Keep bodies separate when using multiple colors or service colors.
         if plotting_options.get("multi_colors", False) or use_service_colors:
             plotting_options["merge_component"] = False
             self._grpc_client.log.info(
                 "Ignoring 'merge_component=True' (default behavior) as "
                 "'multi_colors' or 'use_service_colors' are defined."
             )
-            if use_service_colors:
-                plotting_options["merge_bodies"] = False
-                self._grpc_client.log.info(
-                    "Ignoring 'merge_bodies=True' (default behavior) as "
-                    "'use_service_colors' is defined."
-                )
 
         pl = GeometryPlotter(
             use_trame=use_trame,
