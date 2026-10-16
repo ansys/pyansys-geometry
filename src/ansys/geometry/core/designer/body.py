@@ -57,7 +57,6 @@ from ansys.geometry.core.misc.checks import (
     check_nurbs_compatibility,
     check_type,
     check_type_all_elements_in_iterable,
-    deprecated_argument,
     ensure_design_is_active,
     graphics_required,
     min_backend_version,

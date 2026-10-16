@@ -2382,8 +2382,8 @@ class Component:
             Whether to enable picking. The default is ``None``, in which case the
             picker is not enabled.
         merge_faces : bool, default: None
-            Whether to merge the face meshes within each body into one mesh. When ``None``, 
-            the value of ``merge_bodies`` is used. With service colors, ``True`` uses each body's 
+            Whether to merge the face meshes within each body into one mesh. When ``None``,
+            the value of ``merge_bodies`` is used. With service colors, ``True`` uses each body's
             color and ignores individual face colors. This affects plotting only, not the geometry.
         **plotting_options : dict, default: None
             Keyword arguments for plotting. For allowable keyword arguments, see the
