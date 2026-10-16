@@ -107,7 +107,7 @@ general-all = [
   "numpy==2.5.4",
   "pint==0.26.1",
   "protobuf==7.36.2",
-  "pydantic==2.14.0",
+  "pydantic==2.14.1",
   "pygltflib==1.16.5",
   "pyvista[jupyter]==0.49.1",
   "requests==2.34.2",
