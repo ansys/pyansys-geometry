@@ -1,0 +1,116 @@
+
+
+
+
+BeamProfile
+===========
+
+.. py:class:: BeamProfile(id: str, name: str)
+   :canonical: ansys.geometry.core.designer.beam.BeamProfile
+
+
+
+
+Represents a single beam profile organized within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: BeamProfile
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the beam profile.
+          * - :py:attr:`~name`
+            - Name of the beam profile.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import BeamProfile
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.beam.BeamProfile.id
+   :type: str
+
+
+   
+   ID of the beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.designer.beam.BeamProfile.name
+   :type: str
+
+
+   
+   Name of the beam profile.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

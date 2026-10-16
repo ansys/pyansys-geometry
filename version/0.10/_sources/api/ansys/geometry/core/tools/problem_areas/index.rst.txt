@@ -1,0 +1,157 @@
+
+
+
+
+
+
+The ``problem_areas.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core.tools.problem_areas
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: problem_areas
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.ProblemArea`
+            - Represents problem areas.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.DuplicateFaceProblemAreas`
+            - Provides duplicate face problem area definition.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.MissingFaceProblemAreas`
+            - Provides missing face problem area definition.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.InexactEdgeProblemAreas`
+            - Represents an inexact edge problem area with unique identifier and associated edges.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.ExtraEdgeProblemAreas`
+            - Represents a extra edge problem area with unique identifier and associated edges.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.ShortEdgeProblemAreas`
+            - Represents a short edge problem area with a unique identifier and associated edges.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.SmallFaceProblemAreas`
+            - Represents a small face problem area with a unique identifier and associated faces.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.SplitEdgeProblemAreas`
+            - Represents a split edge problem area with unique identifier and associated edges.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.StitchFaceProblemAreas`
+            - Represents a stitch face problem area with unique identifier and associated faces.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.UnsimplifiedFaceProblemAreas`
+            - Represents a unsimplified face problem area with unique identifier and associated faces.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.InterferenceProblemAreas`
+            - Represents an interference problem area with a unique identifier and associated bodies.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas.LogoProblemArea`
+            - Represents a logo problem area defined by a list of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ProblemArea</api/ansys/geometry/core/tools/problem_areas/ProblemArea>
+    <span class="nf nf-cod-symbol_class"></span> DuplicateFaceProblemAreas</api/ansys/geometry/core/tools/problem_areas/DuplicateFaceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> MissingFaceProblemAreas</api/ansys/geometry/core/tools/problem_areas/MissingFaceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> InexactEdgeProblemAreas</api/ansys/geometry/core/tools/problem_areas/InexactEdgeProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> ExtraEdgeProblemAreas</api/ansys/geometry/core/tools/problem_areas/ExtraEdgeProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> ShortEdgeProblemAreas</api/ansys/geometry/core/tools/problem_areas/ShortEdgeProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> SmallFaceProblemAreas</api/ansys/geometry/core/tools/problem_areas/SmallFaceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> SplitEdgeProblemAreas</api/ansys/geometry/core/tools/problem_areas/SplitEdgeProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> StitchFaceProblemAreas</api/ansys/geometry/core/tools/problem_areas/StitchFaceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> UnsimplifiedFaceProblemAreas</api/ansys/geometry/core/tools/problem_areas/UnsimplifiedFaceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> InterferenceProblemAreas</api/ansys/geometry/core/tools/problem_areas/InterferenceProblemAreas>
+    <span class="nf nf-cod-symbol_class"></span> LogoProblemArea</api/ansys/geometry/core/tools/problem_areas/LogoProblemArea>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+The problem area definition.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

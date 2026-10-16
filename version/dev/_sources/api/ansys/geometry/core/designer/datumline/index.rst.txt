@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``datumline.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.designer.datumline
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.designer.datumline
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.datumline.DatumLine`
+            - Provides for creating datum lines in components.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> DatumLine</api/ansys/geometry/core/designer/datumline/DatumLine>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating and managing datum lines.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

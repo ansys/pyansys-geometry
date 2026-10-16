@@ -1,0 +1,105 @@
+
+
+
+
+
+
+:class:`PMDBTargetApplication`
+==============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBTargetApplication
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the target application used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBTargetApplication
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~PARTMGR`
+            - 
+          * - :py:attr:`~DESIGNMODELER`
+            - 
+          * - :py:attr:`~FLUENTMESHING`
+            - 
+          * - :py:attr:`~AIM`
+            - 
+          * - :py:attr:`~SPACECLAIM`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBTargetApplication
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: PARTMGR
+   :value: 0
+
+
+.. py:attribute:: DESIGNMODELER
+   :value: 1
+
+
+.. py:attribute:: FLUENTMESHING
+   :value: 2
+
+
+.. py:attribute:: AIM
+   :value: 3
+
+
+.. py:attribute:: SPACECLAIM
+   :value: 4
+
+
+
+
+
+

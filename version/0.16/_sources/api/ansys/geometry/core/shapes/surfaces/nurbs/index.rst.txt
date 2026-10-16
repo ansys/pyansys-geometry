@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``nurbs.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.nurbs
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.shapes.surfaces.nurbs
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.nurbs.NURBSSurface`
+            - Represents a NURBS surface.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.nurbs.NURBSSurfaceEvaluation`
+            - Provides evaluation of a NURBS surface at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> NURBSSurface</api/ansys/geometry/core/shapes/surfaces/nurbs/NURBSSurface>
+    <span class="nf nf-cod-symbol_class"></span> NURBSSurfaceEvaluation</api/ansys/geometry/core/shapes/surfaces/nurbs/NURBSSurfaceEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a NURBS surface.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

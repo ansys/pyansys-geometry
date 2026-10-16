@@ -1,0 +1,247 @@
+
+
+
+
+
+
+:class:`GRPCPatternsServiceV0`
+==============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.patterns.GRPCPatternsServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.patterns.GRPCPatternsService`
+
+
+   
+   Patterns service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   patterns service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCPatternsServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_linear_pattern`
+            - Create a linear pattern of entities.
+          * - :py:attr:`~modify_linear_pattern`
+            - Modify a linear pattern of entities.
+          * - :py:attr:`~create_circular_pattern`
+            - Create a circular pattern of entities.
+          * - :py:attr:`~modify_circular_pattern`
+            - Modify a circular pattern of entities.
+          * - :py:attr:`~create_fill_pattern`
+            - Create a fill pattern of entities.
+          * - :py:attr:`~update_fill_pattern`
+            - Update a fill pattern of entities.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.patterns import GRPCPatternsServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_linear_pattern(**kwargs) -> dict
+
+   
+   Create a linear pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_linear_pattern(**kwargs) -> dict
+
+   
+   Modify a linear pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_circular_pattern(**kwargs) -> dict
+
+   
+   Create a circular pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: modify_circular_pattern(**kwargs) -> dict
+
+   
+   Modify a circular pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_fill_pattern(**kwargs) -> dict
+
+   
+   Create a fill pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: update_fill_pattern(**kwargs) -> dict
+
+   
+   Update a fill pattern of entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

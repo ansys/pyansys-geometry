@@ -1,0 +1,1451 @@
+
+
+
+
+
+
+:class:`GRPCFaceSelectionService`
+=================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.face_selection.GRPCFaceSelectionService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Face Selection service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCFaceSelectionService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_faces`
+            - Return all visible faces in the active document.
+          * - :py:attr:`~get_all_faces`
+            - Return all faces in the active document.
+          * - :py:attr:`~get_faces_from_named_selection`
+            - Return faces belonging to a named selection.
+          * - :py:attr:`~get_faces_with_area`
+            - Return faces whose area falls within a range.
+          * - :py:attr:`~get_faces_with_x_location`
+            - Return faces whose X-location falls within a range.
+          * - :py:attr:`~get_faces_with_y_location`
+            - Return faces whose Y-location falls within a range.
+          * - :py:attr:`~get_faces_with_z_location`
+            - Return faces whose Z-location falls within a range.
+          * - :py:attr:`~get_faces_with_color`
+            - Return faces matching a given color.
+          * - :py:attr:`~invert_face_selection`
+            - Return the complement of the provided face selection.
+          * - :py:attr:`~filter_faces_by_area`
+            - Filter faces by area range.
+          * - :py:attr:`~filter_faces_max_area`
+            - Filter faces keeping only the face with the maximum area.
+          * - :py:attr:`~filter_faces_min_area`
+            - Filter faces keeping only the face with the minimum area.
+          * - :py:attr:`~filter_faces_by_perimeter`
+            - Filter faces by perimeter range.
+          * - :py:attr:`~filter_faces_max_perimeter`
+            - Filter faces keeping only the face with the maximum perimeter.
+          * - :py:attr:`~filter_faces_min_perimeter`
+            - Filter faces keeping only the face with the minimum perimeter.
+          * - :py:attr:`~filter_faces_by_edge_count`
+            - Filter faces by edge count range.
+          * - :py:attr:`~filter_faces_max_edge_count`
+            - Filter faces keeping only the face with the maximum edge count.
+          * - :py:attr:`~filter_faces_min_edge_count`
+            - Filter faces keeping only the face with the minimum edge count.
+          * - :py:attr:`~filter_faces_by_loop_count`
+            - Filter faces by loop count range.
+          * - :py:attr:`~filter_faces_max_loop_count`
+            - Filter faces keeping only the face with the maximum loop count.
+          * - :py:attr:`~filter_faces_min_loop_count`
+            - Filter faces keeping only the face with the minimum loop count.
+          * - :py:attr:`~filter_faces_by_number_curves`
+            - Filter faces by curve-type count range.
+          * - :py:attr:`~filter_faces_max_number_curves`
+            - Filter faces keeping those with the maximum count of a curve type.
+          * - :py:attr:`~filter_faces_min_number_curves`
+            - Filter faces keeping those with the minimum count of a curve type.
+          * - :py:attr:`~filter_faces_containing_curve_types`
+            - Filter faces that contain specific curve types.
+          * - :py:attr:`~filter_faces_by_color`
+            - Filter faces by color.
+          * - :py:attr:`~filter_faces_area_percentile`
+            - Filter faces by area percentile range.
+          * - :py:attr:`~filter_faces_perimeter_percentile`
+            - Filter faces by perimeter percentile range.
+          * - :py:attr:`~filter_faces_edge_count_percentile`
+            - Filter faces by edge count percentile range.
+          * - :py:attr:`~filter_faces_loop_count_percentile`
+            - Filter faces by loop count percentile range.
+          * - :py:attr:`~filter_faces_by_number_curves_percentile`
+            - Filter faces by curve-type count percentile range.
+          * - :py:attr:`~extend_to_same_area`
+            - Extend selection to faces with the same area.
+          * - :py:attr:`~extend_to_same_number_of_edges`
+            - Extend selection to faces with the same number of edges.
+          * - :py:attr:`~extend_to_same_number_of_loops`
+            - Extend selection to faces with the same number of loops.
+          * - :py:attr:`~extend_to_same_color`
+            - Extend selection to faces with the same color.
+          * - :py:attr:`~extend_to_coincident`
+            - Extend selection to faces that are coincident.
+          * - :py:attr:`~extend_to_coaxial_faces`
+            - Extend selection to faces that are coaxial.
+          * - :py:attr:`~order_faces_by_area`
+            - Order faces by area.
+          * - :py:attr:`~order_faces_by_perimeter`
+            - Order faces by perimeter.
+          * - :py:attr:`~order_faces_by_edge_count`
+            - Order faces by edge count.
+          * - :py:attr:`~order_faces_by_loop_count`
+            - Order faces by loop count.
+          * - :py:attr:`~order_faces_by_number_curves`
+            - Order faces by number of a specific curve type.
+          * - :py:attr:`~group_faces_by_area`
+            - Group faces by area.
+          * - :py:attr:`~group_faces_by_perimeter`
+            - Group faces by perimeter.
+          * - :py:attr:`~group_faces_by_body`
+            - Group faces by parent body.
+          * - :py:attr:`~group_faces_by_edge_count`
+            - Group faces by edge count.
+          * - :py:attr:`~group_faces_by_loop_count`
+            - Group faces by loop count.
+          * - :py:attr:`~group_faces_by_color`
+            - Group faces by color.
+          * - :py:attr:`~group_faces_by_coincident`
+            - Group faces by coincidence.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.face_selection import GRPCFaceSelectionService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_all_visible_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return all visible faces in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return all faces in the active document.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_from_named_selection(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces belonging to a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces whose area falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_x_location(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces whose X-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_y_location(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces whose Y-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_z_location(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces whose Z-location falls within a range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return faces matching a given color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_face_selection(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Return the complement of the provided face selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by area range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the maximum area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the minimum area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_perimeter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by perimeter range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_perimeter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the maximum perimeter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_perimeter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the minimum perimeter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_edge_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by edge count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_edge_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the maximum edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_edge_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the minimum edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_loop_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by loop count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_loop_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the maximum loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_loop_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping only the face with the minimum loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_number_curves(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by curve-type count range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_number_curves(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping those with the maximum count of a curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_number_curves(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces keeping those with the minimum count of a curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_containing_curve_types(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces that contain specific curve types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_area_percentile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by area percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_perimeter_percentile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by perimeter percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_edge_count_percentile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by edge count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_loop_count_percentile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by loop count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_number_curves_percentile(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Filter faces by curve-type count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces with the same area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces with the same number of edges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_loops(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces with the same number of loops.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces with the same color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coincident(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces that are coincident.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coaxial_faces(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Extend selection to faces that are coaxial.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Order faces by area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_perimeter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Order faces by perimeter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_edge_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Order faces by edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_loop_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Order faces by loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_number_curves(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Order faces by number of a specific curve type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_perimeter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by perimeter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_body(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by parent body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_edge_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by edge count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_loop_count(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by loop count.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by color.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_coincident(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Group faces by coincidence.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

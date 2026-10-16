@@ -1,0 +1,172 @@
+
+
+
+
+
+
+:class:`GRPCAdminServiceV0`
+===========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.admin.GRPCAdminServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.admin.GRPCAdminService`
+
+
+   
+   Admin service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   admin service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCAdminServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_backend`
+            - Get server information.
+          * - :py:attr:`~get_logs`
+            - Get server logs.
+          * - :py:attr:`~get_service_status`
+            - Get server status (i.e. healthy or not).
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.admin import GRPCAdminServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_backend(**kwargs) -> dict
+
+   
+   Get server information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_logs(**kwargs) -> dict
+
+   
+   Get server logs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_service_status(**kwargs) -> dict
+
+   
+   Get server status (i.e. healthy or not).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

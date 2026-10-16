@@ -1,0 +1,152 @@
+
+
+
+
+
+
+:class:`SmallFaceProblemAreas`
+==============================
+
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.SmallFaceProblemAreas(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient, faces: list[ansys.geometry.core.designer.face.Face])
+
+   Bases: :py:obj:`ProblemArea`
+
+
+   
+   Represents a small face problem area with a unique identifier and associated faces.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the problem area.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **faces** : :class:`python:list`\[:obj:`Face`]
+           List of edges associated with the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SmallFaceProblemAreas
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix the problem area.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~faces`
+            - The list of faces connected to this problem area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import SmallFaceProblemAreas
+
+Property detail
+---------------
+
+.. py:property:: faces
+   :type: list[ansys.geometry.core.designer.face.Face]
+
+
+   
+   The list of faces connected to this problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: fix() -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Fix the problem area.
+
+
+
+
+
+   :Returns:
+
+       message: :obj:`RepairToolMessage`
+           Message containing created and/or modified bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

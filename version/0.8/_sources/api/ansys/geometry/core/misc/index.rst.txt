@@ -1,0 +1,117 @@
+
+
+
+
+
+
+The ``misc`` package
+========================
+
+.. py:module:: ansys.geometry.core.misc
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: misc
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.accuracy`
+            - Provides for evaluating decimal precision.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.auxiliary`
+            - Auxiliary functions for the PyAnsys Geometry library.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.checks`
+            - Provides functions for performing common checks.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.measurements`
+            - Provides various measurement-related classes.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.options`
+            - Provides various option classes.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc.units`
+            - Provides for handling units homogeneously throughout PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> accuracy</api/ansys/geometry/core/misc/accuracy/index>
+    <span class="nf nf-fa-file"></span> auxiliary</api/ansys/geometry/core/misc/auxiliary/index>
+    <span class="nf nf-fa-file"></span> checks</api/ansys/geometry/core/misc/checks/index>
+    <span class="nf nf-fa-file"></span> measurements</api/ansys/geometry/core/misc/measurements/index>
+    <span class="nf nf-fa-file"></span> options</api/ansys/geometry/core/misc/options/index>
+    <span class="nf nf-fa-file"></span> units</api/ansys/geometry/core/misc/units/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry miscellaneous subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

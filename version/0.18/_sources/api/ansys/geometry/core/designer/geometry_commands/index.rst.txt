@@ -1,0 +1,149 @@
+
+
+
+
+
+
+The ``geometry_commands.py`` module
+===================================
+
+.. py:module:: ansys.geometry.core.designer.geometry_commands
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.designer.geometry_commands
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.GeometryCommands`
+            - Provides geometry commands for PyAnsys Geometry.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.ExtrudeType`
+            - Provides values for extrusion types.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.OffsetMode`
+            - Provides values for offset modes during extrusions.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.FillPatternType`
+            - Provides values for types of fill patterns.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.DraftSide`
+            - Provides values for draft sides.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.SplitEdgeType`
+            - Provides values for types of edge splits.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.SplitEdgeReference`
+            - Provides values for references when splitting edges.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.SplitFaceType`
+            - Provides values for types of face splits.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.geometry_commands.SplitFaceParameterType`
+            - Provides values for parameters when splitting faces.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GeometryCommands</api/ansys/geometry/core/designer/geometry_commands/GeometryCommands>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> ExtrudeType</api/ansys/geometry/core/designer/geometry_commands/ExtrudeType>
+    <span class="nf nf-cod-symbol_enum"></span> OffsetMode</api/ansys/geometry/core/designer/geometry_commands/OffsetMode>
+    <span class="nf nf-cod-symbol_enum"></span> FillPatternType</api/ansys/geometry/core/designer/geometry_commands/FillPatternType>
+    <span class="nf nf-cod-symbol_enum"></span> DraftSide</api/ansys/geometry/core/designer/geometry_commands/DraftSide>
+    <span class="nf nf-cod-symbol_enum"></span> SplitEdgeType</api/ansys/geometry/core/designer/geometry_commands/SplitEdgeType>
+    <span class="nf nf-cod-symbol_enum"></span> SplitEdgeReference</api/ansys/geometry/core/designer/geometry_commands/SplitEdgeReference>
+    <span class="nf nf-cod-symbol_enum"></span> SplitFaceType</api/ansys/geometry/core/designer/geometry_commands/SplitFaceType>
+    <span class="nf nf-cod-symbol_enum"></span> SplitFaceParameterType</api/ansys/geometry/core/designer/geometry_commands/SplitFaceParameterType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for pulling geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

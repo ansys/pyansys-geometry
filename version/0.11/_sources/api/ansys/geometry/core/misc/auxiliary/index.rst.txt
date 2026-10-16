@@ -1,0 +1,581 @@
+
+
+
+
+
+
+The ``auxiliary.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.misc.auxiliary
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: auxiliary
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_design_from_component`
+            - Get the ``Design`` of the given ``Component`` object.
+
+
+          * - :py:obj:`~get_design_from_body`
+            - Get the ``Design`` of the given ``Body`` object.
+
+
+          * - :py:obj:`~get_design_from_face`
+            - Get the ``Design`` of the given ``Face`` object.
+
+
+          * - :py:obj:`~get_design_from_edge`
+            - Get the ``Design`` of the given ``Edge`` object.
+
+
+          * - :py:obj:`~get_all_bodies_from_design`
+            - Find all the ``Body`` objects inside a ``Design``.
+
+
+          * - :py:obj:`~get_bodies_from_ids`
+            - Find the ``Body`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~get_components_from_ids`
+            - Find the ``Component`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~get_faces_from_ids`
+            - Find the ``Face`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~get_edges_from_ids`
+            - Find the ``Edge`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~get_vertices_from_ids`
+            - Find the ``Vertex`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~get_beams_from_ids`
+            - Find the ``Beam`` objects inside a ``Design`` from its ids.
+
+
+          * - :py:obj:`~convert_color_to_hex`
+            - Get the hex string color from input formats.
+
+
+          * - :py:obj:`~convert_opacity_to_hex`
+            - Get the hex string from an opacity value.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~DEFAULT_COLOR`
+            - 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Auxiliary functions for the PyAnsys Geometry library.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_design_from_component(component: ansys.geometry.core.designer.component.Component) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Component`` object.
+
+
+   :Parameters:
+
+       **component** : :obj:`Component`
+           The component object for which to find the ``Design``.
+
+
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided component object.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_body(body: ansys.geometry.core.designer.body.Body) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Body`` object.
+
+
+   :Parameters:
+
+       **body** : :obj:`Body`
+           The body object for which to find the ``Design``.
+
+
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided body object.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_face(face: ansys.geometry.core.designer.face.Face) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Face`` object.
+
+
+   :Parameters:
+
+       **face** : :obj:`Face`
+           The face object for which to find the ``Design``.
+
+
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided face object.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_design_from_edge(edge: ansys.geometry.core.designer.edge.Edge) -> ansys.geometry.core.designer.design.Design
+
+   
+   Get the ``Design`` of the given ``Edge`` object.
+
+
+   :Parameters:
+
+       **edge** : :obj:`Edge`
+           The edge object for which to find the ``Design``.
+
+
+
+   :Returns:
+
+       :obj:`Design`
+           The ``Design`` of the provided edge object.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_all_bodies_from_design(design: ansys.geometry.core.designer.design.Design) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Find all the ``Body`` objects inside a ``Design``.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the bodies.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of Body objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and gets the corresponding ``Body`` objects.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_bodies_from_ids(design: ansys.geometry.core.designer.design.Design, body_ids: list[str]) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Find the ``Body`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the faces.
+
+       **body_ids** : :class:`python:list`\[:class:`python:str`]
+           List of body ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of Body objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and body ids, and gets their corresponding ``Body`` object.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_components_from_ids(design: ansys.geometry.core.designer.design.Design, component_ids: list[str]) -> list[ansys.geometry.core.designer.component.Component]
+
+   
+   Find the ``Component`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the components.
+
+       **component_ids** : :class:`python:list`\[:class:`python:str`]
+           List of component ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Component`]
+           List of Component objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and component ids, and gets their corresponding ``Component`` object.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_faces_from_ids(design: ansys.geometry.core.designer.design.Design, face_ids: list[str]) -> list[ansys.geometry.core.designer.face.Face]
+
+   
+   Find the ``Face`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the faces.
+
+       **face_ids** : :class:`python:list`\[:class:`python:str`]
+           List of face ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Face`]
+           List of Face objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and face ids, and gets their corresponding ``Face`` object.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_edges_from_ids(design: ansys.geometry.core.designer.design.Design, edge_ids: list[str]) -> list[ansys.geometry.core.designer.edge.Edge]
+
+   
+   Find the ``Edge`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the edges.
+
+       **edge_ids** : :class:`python:list`\[:class:`python:str`]
+           List of edge ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Edge`]
+           List of Edge objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and edge ids, and gets their corresponding ``Edge`` objects.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_vertices_from_ids(design: ansys.geometry.core.designer.design.Design, vertex_ids: list[str]) -> list[ansys.geometry.core.designer.vertex.Vertex]
+
+   
+   Find the ``Vertex`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the vertices.
+
+       **vertex_ids** : :class:`python:list`\[:class:`python:str`]
+           List of vertex ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Vertex`]
+           List of Vertex objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and vertex ids, and gets their corresponding ``Vertex`` objects.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_beams_from_ids(design: ansys.geometry.core.designer.design.Design, beam_ids: list[str]) -> list[ansys.geometry.core.designer.beam.Beam]
+
+   
+   Find the ``Beam`` objects inside a ``Design`` from its ids.
+
+
+   :Parameters:
+
+       **design** : :obj:`Design`
+           Parent design for the beams.
+
+       **beam_ids** : :class:`python:list`\[:class:`python:str`]
+           List of beam ids.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Beam`]
+           List of Beam objects.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This method takes a design and beam ids, and gets their corresponding ``Beam`` objects.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: convert_color_to_hex(color: str | tuple[float, float, float] | tuple[float, float, float, float]) -> str
+
+   
+   Get the hex string color from input formats.
+
+
+   :Parameters:
+
+       **color** : :class:`python:str` | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`] | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`, :class:`python:float`]
+           Color to set the body to. This can be a string representing a color name
+           or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+
+
+   :Returns:
+
+       :class:`python:str`
+           The hex code string for the color, formatted #rrggbbaa.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: convert_opacity_to_hex(opacity: float) -> str
+
+   
+   Get the hex string from an opacity value.
+
+
+   :Parameters:
+
+       **opacity** : :class:`python:float`
+           Opacity to set body to. Must be in the range [0, 1].
+
+
+
+   :Returns:
+
+       :obj:`The` :obj:`hex` :obj:`code` :obj:`for` :obj:`the` :obj:`opacity` :obj:`formatted` #aa
+           ..
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_COLOR
+   :value: '#D6F7D1'
+
+
+
+

@@ -1,0 +1,332 @@
+
+
+
+
+Face
+====
+
+.. py:class:: Face(id: str, surface_type: SurfaceType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.client.GrpcClient)
+   :canonical: ansys.geometry.core.designer.face.Face
+
+
+
+
+Represents a single face of a body within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Face
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~face_normal`
+            - Get the normal direction to the face evaluated at certain UV coordinates.
+          * - :py:attr:`~face_point`
+            - Get a point of the face evaluated at certain UV coordinates.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - Face ID.
+          * - :py:attr:`~body`
+            - Body that the face belongs to.
+          * - :py:attr:`~area`
+            - Calculated area of the face.
+          * - :py:attr:`~surface_type`
+            - Surface type of the face.
+          * - :py:attr:`~edges`
+            - List of all edges of the face.
+          * - :py:attr:`~loops`
+            - List of all loops of the face.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.face import Face
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.face.Face.id
+   :type: str
+
+
+   
+   Face ID.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: body
+   :canonical: ansys.geometry.core.designer.face.Face.body
+   :type: Body
+
+
+   
+   Body that the face belongs to.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.designer.face.Face.area
+   :type: pint.Quantity
+
+
+   
+   Calculated area of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: surface_type
+   :canonical: ansys.geometry.core.designer.face.Face.surface_type
+   :type: SurfaceType
+
+
+   
+   Surface type of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: edges
+   :canonical: ansys.geometry.core.designer.face.Face.edges
+   :type: beartype.typing.List[ansys.geometry.core.designer.edge.Edge]
+
+
+   
+   List of all edges of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: loops
+   :canonical: ansys.geometry.core.designer.face.Face.loops
+   :type: beartype.typing.List[FaceLoop]
+
+
+   
+   List of all loops of the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: face_normal(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Get the normal direction to the face evaluated at certain UV coordinates.
+
+
+   :Parameters:
+
+       **u** : :class:`python:float`, default: 0.5
+           First coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+       **v** : :class:`python:float`, default: 0.5
+           Second coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           :class:`UnitVector3D` object evaluated at the given U and V coordinates.
+           This :class:`UnitVector3D` object is perpendicular to the surface at the
+           given UV coordinates.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   To properly use this method, you must handle UV coordinates. Thus, you must
+   know how these relate to the underlying Geometry service. It is an advanced
+   method for Geometry experts only.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:method:: face_point(u: float = 0.5, v: float = 0.5) -> ansys.geometry.core.math.point.Point3D
+
+   
+   Get a point of the face evaluated at certain UV coordinates.
+
+
+   :Parameters:
+
+       **u** : :class:`python:float`, default: 0.5
+           First coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+       **v** : :class:`python:float`, default: 0.5
+           Second coordinate of the 2D representation of a surface in UV space.
+           The default is ``0.5``, which is the center of the surface.
+
+   :Returns:
+
+       :obj:`Point3D`
+           :class:`Point3D`
+           object evaluated at the given UV coordinates.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   To properly use this method, you must handle UV coordinates. Thus, you must
+   know how these relate to the underlying Geometry service. It is an advanced
+   method for Geometry experts only.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

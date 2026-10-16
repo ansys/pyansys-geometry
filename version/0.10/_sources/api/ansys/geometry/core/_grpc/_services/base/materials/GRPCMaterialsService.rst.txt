@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`GRPCMaterialsService`
+=============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.materials.GRPCMaterialsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Materials service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GRPCMaterialsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~add_material`
+            - Add material to the service design.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.materials import GRPCMaterialsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: add_material(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Add material to the service design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

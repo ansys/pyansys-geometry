@@ -1,0 +1,122 @@
+
+
+
+
+
+
+:class:`GRPCCommandsScriptServiceV1`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.commands_script.GRPCCommandsScriptServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.commands_script.GRPCCommandsScriptService`
+
+
+   
+   Commands Script service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   Commands Script service. It is specifically designed for the v1 version
+   of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCCommandsScriptServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run_script_file`
+            - Run a Scripting API script file.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.commands_script import GRPCCommandsScriptServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: run_script_file(**kwargs) -> dict
+
+   
+   Run a Scripting API script file.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

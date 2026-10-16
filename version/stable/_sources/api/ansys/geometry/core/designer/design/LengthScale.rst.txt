@@ -1,0 +1,136 @@
+
+
+
+
+
+
+:class:`LengthScale`
+====================
+
+
+.. py:class:: ansys.geometry.core.designer.design.LengthScale
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides supported length scales for designs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: LengthScale
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~UNSPECIFIED`
+            - 
+          * - :py:attr:`~SMALL`
+            - 
+          * - :py:attr:`~STANDARD`
+            - 
+          * - :py:attr:`~LARGE`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__str__`
+            - Represent object in string format.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.design import LengthScale
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: UNSPECIFIED
+   :value: 'UNSPECIFIED'
+
+
+.. py:attribute:: SMALL
+   :value: 'SMALL'
+
+
+.. py:attribute:: STANDARD
+   :value: 'STANDARD'
+
+
+.. py:attribute:: LARGE
+   :value: 'LARGE'
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __str__()
+
+   
+   Represent object in string format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

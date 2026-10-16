@@ -1,0 +1,107 @@
+
+
+
+
+
+
+:class:`GRPCMeasurementToolsService`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.measurement_tools.GRPCMeasurementToolsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Measurement tools service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: GRPCMeasurementToolsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~min_distance_between_objects`
+            - Calculate the minimum distance between two objects.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.measurement_tools import GRPCMeasurementToolsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: min_distance_between_objects(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Calculate the minimum distance between two objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
