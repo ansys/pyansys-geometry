@@ -591,13 +591,10 @@ class GeometryPlotter(PlotterInterface):
         items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
-        merge_faces = None
-        if "merge_faces" in plotting_options:
-            merge_faces = plotting_options["merge_faces"]
-            plotting_options.pop("merge_faces", None)
-        elif "merge_bodies" in plotting_options:
-            merge_faces = plotting_options["merge_bodies"]
-            plotting_options.pop("merge_bodies", None)
+        merge_faces = plotting_options.pop("merge_faces", None)
+        merge_bodies = plotting_options.pop("merge_bodies", None)
+        if merge_faces is None:
+            merge_faces = merge_bodies
 
         if "merge_component" in plotting_options:
             merge_component = plotting_options["merge_component"]
