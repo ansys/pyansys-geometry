@@ -533,7 +533,7 @@ def launch_modeler_with_spaceclaim_and_pimlight(
     "launch_modeler_with_dms", "use launch_modeler_with_dms instead", "0.17.2", "0.19.0"
 )
 @deprecated(
-    message="launch_modeler_with_geometry_service is deprecated, use launch_modeler_with_dms.", 
+    message="launch_modeler_with_geometry_service is deprecated, use launch_modeler_with_dms.",
     category=None,
 )
 def launch_modeler_with_geometry_service(
