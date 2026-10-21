@@ -2438,8 +2438,7 @@ class Component:
             if use_service_colors is not None
             else pyansys_geometry.USE_SERVICE_COLORS
         )
-        if merge_faces is None:
-            merge_faces = not use_service_colors
+
         # If picking is enabled, we should not merge the component
         if allow_picking:
             # This blocks the user from selecting the component itself
