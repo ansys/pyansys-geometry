@@ -292,6 +292,7 @@ class GeometryPlotter(PlotterInterface):
             Whether to merge the body into a single mesh. When ``True``, the
             individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
+            Using service colors with unmerged faces requires Ansys 25R2 or later.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
@@ -318,12 +319,15 @@ class GeometryPlotter(PlotterInterface):
             body_opacity = body.opacity
             if not merge:
                 faces = body.faces
-                colors = body._grpc_client.services.faces.get_colors(
-                    ids=[face.id for face in faces]
-                ).get("colors")
-                for face in faces:
-                    color = colors.get(face.id)
-                    face._color = mcolors.to_hex(color, keep_alpha=True) if color else DEFAULT_COLOR
+                if body._grpc_client.backend_version >= (25, 2, 0):
+                    colors = body._grpc_client.services.faces.get_colors(
+                        ids=[face.id for face in faces]
+                    ).get("colors")
+                    for face in faces:
+                        color = colors.get(face.id)
+                        face._color = (
+                            mcolors.to_hex(color, keep_alpha=True) if color else DEFAULT_COLOR
+                        )
                 for face in faces:
                     face_color = face.color
                     if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
