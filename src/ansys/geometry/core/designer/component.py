@@ -2363,7 +2363,7 @@ class Component:
         ----------
         merge_component : bool, default: True
             Whether to merge the component into a single dataset. By default, ``True``.
-            Performance improved. When ``True``, all the bodies of the component are effectively
+            Performance improved. When ``True``, all the faces of the component are effectively
             merged into a single dataset. If ``False``, the individual bodies are kept separate.
         merge_bodies : bool, default: True
             Deprecated alias for ``merge_faces``. Deprecated in version 0.18.2 and
