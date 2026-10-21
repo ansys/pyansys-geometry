@@ -87,6 +87,39 @@ IMAGE_RESULTS_DIR = Path(Path(__file__).parent, "image_cache", "results")
 
 
 @skip_no_xserver
+@pytest.mark.parametrize(
+    "merge_option, merge",
+    [("merge_faces", True), ("merge_faces", False), ("merge_bodies", True)],
+)
+def test_plot_service_colors_merge_faces(modeler: Modeler, tmp_path, merge_option, merge):
+    """Preserve face colors or use body colors when merging, including the deprecated alias."""
+    design = modeler.create_design("ServiceColorsMergeFaces")
+    body = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    body.color = "#0000ff80"
+    body.faces[0].color = "#ff000040"
+    plotter = GeometryPlotter(use_service_colors=True)
+    options = {merge_option: merge}
+    plotter.plot(design, **options)
+    scene = plotter.backend.pv_interface.scene
+    actors = [actor for actor in scene.actors.values() if isinstance(actor, pv.Actor)]
+    assert len(actors) == (1 if merge else 6)
+    assert {pv.Color(actor.prop.color).hex_rgb for actor in actors} == (
+        {"#0000ff"} if merge else {"#0000ff", "#ff0000"}
+    )
+    assert {actor.prop.opacity for actor in actors} == (
+        {128 / 255} if merge else {128 / 255, 64 / 255}
+    )
+    scene.close()
+    screenshot = tmp_path / "service_colors.png"
+    design.plot(use_service_colors=True, screenshot=str(screenshot), **options)
+    if merge_option == "merge_bodies":
+        positional_screenshot = tmp_path / "positional.png"
+        design.plot(False, merge, str(positional_screenshot), None, True)
+        assert positional_screenshot.exists()
+    assert screenshot.exists()
+
+
+@skip_no_xserver
 def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
     """Testing out clipping plane, adding body edges and face,
     and if body is suppressed to an existing plotter"""
