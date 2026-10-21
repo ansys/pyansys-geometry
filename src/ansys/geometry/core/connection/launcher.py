@@ -44,9 +44,9 @@ from ansys.geometry.core.connection.docker_instance import (
 from ansys.geometry.core.connection.product_instance import prepare_and_start_backend
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.misc.checks import (
+    _build_deprecation_message,
     check_type,
     deprecated_argument,
-    deprecated_method,
     kwargs_passed_not_accepted,
 )
 
@@ -529,12 +529,14 @@ def launch_modeler_with_spaceclaim_and_pimlight(
 
 
 @kwargs_passed_not_accepted
-@deprecated_method(
-    "launch_modeler_with_dms", "use launch_modeler_with_dms instead", "0.17.2", "0.19.0"
-)
 @deprecated(
-    message="launch_modeler_with_geometry_service is deprecated, use launch_modeler_with_dms.", 
-    category=None,
+    _build_deprecation_message(
+        "launch_modeler_with_geometry_service",
+        alternative="launch_modeler_with_dms",
+        info="use launch_modeler_with_dms instead",
+        version="0.17.2",
+        remove="0.19.0",
+    ),
 )
 def launch_modeler_with_geometry_service(
     version: str | int | None = None,
