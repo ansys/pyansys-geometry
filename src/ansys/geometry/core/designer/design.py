@@ -27,7 +27,7 @@ from pathlib import Path
 from typing import Union
 
 import numpy as np
-from pint import Quantity, UndefinedUnitError
+from pint import DefinitionSyntaxError, Quantity, UndefinedUnitError
 
 from ansys.geometry.core._grpc._version import GeometryApiProtos
 from ansys.geometry.core.connection.backend import BackendType
@@ -1570,6 +1570,7 @@ class Design(Component):
                 try:
                     mp_quantity = Quantity(property.get("value"), property.get("units"))
                 except (
+                    DefinitionSyntaxError,
                     UndefinedUnitError,
                     TypeError,
                 ) as err:  # TODO: Errors coming from Quantity ctor because of unsupported units...
