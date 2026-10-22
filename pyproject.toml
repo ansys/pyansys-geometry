@@ -39,6 +39,7 @@ dependencies = [
   "scipy<2,>=1.7.3",
   "semver<4,>=3",
   "six>=1.16.0,<2",
+  "typing-extensions>=4.5; python_version<'3.13'",
 ]
 optional-dependencies.all = [
   "ansys-platform-instancemanagement>=1.0.3,<2",
@@ -71,7 +72,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # only available when a developer clones the repository and installs the package
 # for local development.
 dev = [
-  "pre-commit==4.6.2",
+  "pre-commit==4.7.0",
   "ty==0.0.89",
   { include-group = "doc" },
   { include-group = "tests" },

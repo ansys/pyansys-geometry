@@ -181,6 +181,12 @@ class GRPCFacesServiceV0(GRPCFacesService):
         # Return the response - formatted as a dictionary
         return {"color": response.color}
 
+    def get_colors(self, **kwargs) -> dict:  # noqa: D102
+        # Use the get_color method to retrieve colors for multiple faces
+        return {
+            "colors": {face_id: self.get_color(id=face_id)["color"] for face_id in kwargs["ids"]}
+        }
+
     @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type

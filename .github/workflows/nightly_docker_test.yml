@@ -176,7 +176,7 @@ jobs:
         env:
           USE_TRACKER: ${{ matrix.use-tracker }}
         run: |
-          uv run pytest -v --use-tracker=$env:USE_TRACKER
+          uv run pytest -v -W error::DeprecationWarning:ansys.geometry.core --use-tracker=$env:USE_TRACKER
 
       - name: Stop the Geometry service
         if: always()
@@ -266,7 +266,7 @@ jobs:
           checkout: false
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           group-dependencies-name: "tests"
-          pytest-extra-args: "--use-tracker=${{ matrix.use-tracker }}"
+          pytest-extra-args: "-W error::DeprecationWarning:ansys.geometry.core --use-tracker=${{ matrix.use-tracker }}"
 
       - name: Stop the Geometry service
         if: always()
