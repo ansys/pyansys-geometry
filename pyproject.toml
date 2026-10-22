@@ -39,6 +39,7 @@ dependencies = [
   "scipy<2,>=1.7.3",
   "semver<4,>=3",
   "six>=1.16.0,<2",
+  "typing-extensions>=4.5; python_version<'3.13'",
 ]
 optional-dependencies.all = [
   "ansys-platform-instancemanagement>=1.0.3,<2",
