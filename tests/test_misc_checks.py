@@ -895,7 +895,7 @@ def test_pmdb_export_options_automatic_facet_quality(field, value, quality):
     assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
     opts.plug_in_facet_quality = quality
     assert opts.plug_in_facet_quality is quality
-    
+
     opts = PMDBExportOptions(
         angular_deviation=Quantity(0, UNITS.degrees),
         geometry_deviation=Distance(0, UNITS.mm),
