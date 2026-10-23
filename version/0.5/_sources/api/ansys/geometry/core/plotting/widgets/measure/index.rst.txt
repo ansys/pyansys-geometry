@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``measure.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.measure
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: measure
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting.widgets.measure.MeasureWidget`
+            - Provides the measure widget for the PyAnsys Geometry ``Plotter`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> MeasureWidget</api/ansys/geometry/core/plotting/widgets/measure/MeasureWidget>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ruler widget for the PyAnsys Geometry plotter.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

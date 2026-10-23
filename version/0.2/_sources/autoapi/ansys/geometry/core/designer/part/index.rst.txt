@@ -1,0 +1,370 @@
+:py:mod:`ansys.geometry.core.designer.part`
+===========================================
+
+.. py:module:: ansys.geometry.core.designer.part
+
+.. autoapi-nested-parse::
+
+   Provides the ``Part`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.part.Part
+   ansys.geometry.core.designer.part.MasterComponent
+
+
+
+
+.. py:class:: Part(id: str, name: str, components: beartype.typing.List[MasterComponent], bodies: beartype.typing.List[ansys.geometry.core.designer.body.MasterBody])
+
+
+   
+   Represents a Part Master.
+
+   This class should not be accessed by users. Parts hold fundamental data of an assembly.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Unique identifier for this part.
+
+       **name** : :class:`python:str`
+           Name of this part.
+
+       **components** : :obj:`List`\[:obj:`MasterComponent`]
+           List of MasterComponent children that this Part contains.
+
+       **bodies** : :obj:`List`\[:obj:`MasterBody`]
+           List of MasterBody children that this Part contains. These are master bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: components
+      :type: beartype.typing.List[MasterComponent]
+
+      
+      ``MasterComponent`` children that this ``Part`` contains.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: bodies
+      :type: beartype.typing.List[ansys.geometry.core.designer.body.MasterBody]
+
+      
+      ``MasterBody`` children that this ``Part`` contains.
+
+      These are master bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``Part`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: MasterComponent(id: str, name: str, part: Part, transform: ansys.geometry.core.math.Matrix44 = IDENTITY_MATRIX44)
+
+
+   
+   Represents a Part Occurrence.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Unique identifier for this transformed part.
+
+       **name** : :class:`python:str`
+           Name of this transformed part.
+
+       **part** : :obj:`Part`
+           Reference to this transformed part's master part.
+
+       **transform** : :obj:`Matrix44`
+           4x4 transformation matrix from the master part.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This class should not be accessed by users.
+   MasterComponents hold fundamental data of an assembly. MasterComponents wrap Parts
+   by adding a transform matrix.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: occurrences
+      :type: beartype.typing.List[ansys.geometry.core.designer.component.Component]
+
+      
+      All occurrences of this component.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: part
+      :type: Part
+
+      
+      The master part of this transformed part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: transform
+      :type: ansys.geometry.core.math.Matrix44
+
+      
+      The 4x4 transformation matrix from the master part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``MasterComponent`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

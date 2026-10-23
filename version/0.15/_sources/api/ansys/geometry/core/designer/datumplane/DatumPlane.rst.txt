@@ -1,0 +1,303 @@
+
+
+
+
+
+
+:class:`DatumPlane`
+===================
+
+
+.. py:class:: ansys.geometry.core.designer.datumplane.DatumPlane(id: str, name: str, plane: ansys.geometry.core.math.plane.Plane, parent_component: ansys.geometry.core.designer.component.Component)
+
+   
+   Provides for creating datum planes in components.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the datum plane.
+
+       **name** : :class:`python:str`
+           User-defined label for the datum plane.
+
+       **plane** : :obj:`Plane`
+           Plane constituting the datum plane.
+
+       **parent_component** : :obj:`Component`
+           Parent component to place the new datum plane under within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DatumPlane
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~evaluate`
+            - Evaluate the plane at UV parametric coordinates.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the datum plane.
+          * - :py:attr:`~name`
+            - Name of the datum plane.
+          * - :py:attr:`~value`
+            - Plane constituting the datum plane.
+          * - :py:attr:`~parent_component`
+            - Parent component of the datum plane.
+          * - :py:attr:`~is_alive`
+            - Check if the datum plane is still present on the server.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the datum plane as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.datumplane import DatumPlane
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: value
+   :type: ansys.geometry.core.math.plane.Plane
+
+
+   
+   Plane constituting the datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Parent component of the datum plane.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Check if the datum plane is still present on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: evaluate(u: float, v: float) -> ansys.geometry.core.math.point.Point3D
+
+   
+   Evaluate the plane at UV parametric coordinates.
+
+   This method converts 2D parametric coordinates (u, v) to a 3D Cartesian point
+   on the plane using the parametric equation:
+   P(u, v) = origin + u * direction_x + v * direction_y
+
+   :Parameters:
+
+       **u** : :class:`python:float`
+           First parametric coordinate along the plane's x-direction.
+
+       **v** : :class:`python:float`
+           Second parametric coordinate along the plane's y-direction.
+
+
+
+   :Returns:
+
+       :obj:`Point3D`
+           3D Cartesian point on the plane at the given UV coordinates.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __repr__()
+
+   
+   Represent the datum plane as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

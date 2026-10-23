@@ -1,0 +1,171 @@
+
+
+
+
+
+
+:class:`PMDBMixedPartExportType`
+================================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBMixedPartExportType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the mixed-part export type used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBMixedPartExportType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NONE`
+            - 
+          * - :py:attr:`~SOLID`
+            - 
+          * - :py:attr:`~SHEET`
+            - 
+          * - :py:attr:`~WIRE`
+            - 
+          * - :py:attr:`~POINT`
+            - 
+          * - :py:attr:`~SOLID_SHEET`
+            - 
+          * - :py:attr:`~SOLID_WIRE`
+            - 
+          * - :py:attr:`~SOLID_POINT`
+            - 
+          * - :py:attr:`~SHEET_WIRE`
+            - 
+          * - :py:attr:`~SHEET_POINT`
+            - 
+          * - :py:attr:`~WIRE_POINT`
+            - 
+          * - :py:attr:`~SHEET_WIRE_POINT`
+            - 
+          * - :py:attr:`~SOLID_WIRE_POINT`
+            - 
+          * - :py:attr:`~SOLID_SHEET_POINT`
+            - 
+          * - :py:attr:`~SOLID_SHEET_WIRE`
+            - 
+          * - :py:attr:`~ALL`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBMixedPartExportType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NONE
+   :value: 0
+
+
+.. py:attribute:: SOLID
+   :value: 1
+
+
+.. py:attribute:: SHEET
+   :value: 2
+
+
+.. py:attribute:: WIRE
+   :value: 3
+
+
+.. py:attribute:: POINT
+   :value: 4
+
+
+.. py:attribute:: SOLID_SHEET
+   :value: 5
+
+
+.. py:attribute:: SOLID_WIRE
+   :value: 6
+
+
+.. py:attribute:: SOLID_POINT
+   :value: 7
+
+
+.. py:attribute:: SHEET_WIRE
+   :value: 8
+
+
+.. py:attribute:: SHEET_POINT
+   :value: 9
+
+
+.. py:attribute:: WIRE_POINT
+   :value: 10
+
+
+.. py:attribute:: SHEET_WIRE_POINT
+   :value: 11
+
+
+.. py:attribute:: SOLID_WIRE_POINT
+   :value: 12
+
+
+.. py:attribute:: SOLID_SHEET_POINT
+   :value: 13
+
+
+.. py:attribute:: SOLID_SHEET_WIRE
+   :value: 14
+
+
+.. py:attribute:: ALL
+   :value: 15
+
+
+
+
+
+

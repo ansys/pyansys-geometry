@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`FaceLoopType`
+=====================
+
+
+.. py:class:: ansys.geometry.core.designer.face.FaceLoopType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the face loop types supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: FaceLoopType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~INNER_LOOP`
+            - 
+          * - :py:attr:`~OUTER_LOOP`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.face import FaceLoopType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: INNER_LOOP
+   :value: 'INNER'
+
+
+.. py:attribute:: OUTER_LOOP
+   :value: 'OUTER'
+
+
+
+
+
+

@@ -1,0 +1,201 @@
+
+
+
+
+
+
+:class:`GRPCPointsServiceV1`
+============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.points.GRPCPointsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.points.GRPCPointsService`
+
+
+   
+   Points service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   points service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCPointsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_design_points`
+            - Create design points.
+          * - :py:attr:`~revolve_points`
+            - Revolve design points around an axis to create curves.
+          * - :py:attr:`~revolve_points_by_helix`
+            - Revolve design points around an axis in a helix shape to create curves.
+          * - :py:attr:`~sweep_points`
+            - Sweep design points along a trajectory to create curves.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+          * - :py:attr:`~edit_stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.points import GRPCPointsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+.. py:attribute:: edit_stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_design_points(**kwargs) -> dict
+
+   
+   Create design points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_points(**kwargs) -> dict
+
+   
+   Revolve design points around an axis to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_points_by_helix(**kwargs) -> dict
+
+   
+   Revolve design points around an axis in a helix shape to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: sweep_points(**kwargs) -> dict
+
+   
+   Sweep design points along a trajectory to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

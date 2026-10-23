@@ -1,0 +1,209 @@
+
+
+
+
+DesignPoint
+===========
+
+.. py:class:: DesignPoint(id: str, name: str, point: ansys.geometry.core.math.point.Point3D, parent_component: ansys.geometry.core.designer.component.Component)
+   :canonical: ansys.geometry.core.designer.designpoint.DesignPoint
+
+
+
+
+Provides for creating design points in components.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: DesignPoint
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the design point.
+          * - :py:attr:`~name`
+            - Name of the design point.
+          * - :py:attr:`~value`
+            - Value of the design point.
+          * - :py:attr:`~parent_component`
+            - Component node that the design point is under.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the design points as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.designpoint import DesignPoint
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.designpoint.DesignPoint.id
+   :type: str
+
+
+   
+   ID of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.designer.designpoint.DesignPoint.name
+   :type: str
+
+
+   
+   Name of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: value
+   :canonical: ansys.geometry.core.designer.designpoint.DesignPoint.value
+   :type: Point3D
+
+
+   
+   Value of the design point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :canonical: ansys.geometry.core.designer.designpoint.DesignPoint.parent_component
+   :type: beartype.typing.Union[ansys.geometry.core.designer.component.Component, None]
+
+
+   
+   Component node that the design point is under.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the design points as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

@@ -1,0 +1,178 @@
+
+
+
+
+
+
+The ``misc.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.math.misc
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: misc
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~get_two_circle_intersections`
+            - Get the intersection points of two circles.
+
+
+          * - :py:obj:`~intersect_interval`
+            - Find the intersection of two intervals.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides auxiliary math functions for PyAnsys Geometry.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: get_two_circle_intersections(x0: ansys.geometry.core.typing.Real, y0: ansys.geometry.core.typing.Real, r0: ansys.geometry.core.typing.Real, x1: ansys.geometry.core.typing.Real, y1: ansys.geometry.core.typing.Real, r1: ansys.geometry.core.typing.Real) -> tuple[tuple[ansys.geometry.core.typing.Real, ansys.geometry.core.typing.Real], tuple[ansys.geometry.core.typing.Real, ansys.geometry.core.typing.Real]] | None
+
+   
+   Get the intersection points of two circles.
+
+
+   :Parameters:
+
+       **x0** : :obj:`Real`
+           x coordinate of the first circle.
+
+       **y0** : :obj:`Real`
+           y coordinate of the first circle.
+
+       **r0** : :obj:`Real`
+           Radius of the first circle.
+
+       **x1** : :obj:`Real`
+           x coordinate of the second circle.
+
+       **y1** : :obj:`Real`
+           y coordinate of the second circle.
+
+       **r1** : :obj:`Real`
+           Radius of the second circle.
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:class:`python:tuple`\[:obj:`Real`, :obj:`Real`], :class:`python:tuple`\[:obj:`Real`, :obj:`Real`]] | :data:`python:None`
+           Intersection points of the two circles if they intersect.
+           The points are returned as ``((x3, y3), (x4, y4))``, where ``(x3, y3)`` and ``(x4, y4)``
+           are the intersection points of the two circles. If the circles do not
+           intersect, then ``None`` is returned.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This function is based on the following StackOverflow post:
+   https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles
+
+   That post is based on the following implementation:
+   https://paulbourke.net/geometry/circlesphere/
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: intersect_interval(first_min, second_min, first_max, second_max) -> tuple[bool, ansys.geometry.core.typing.Real, ansys.geometry.core.typing.Real]
+
+   
+   Find the intersection of two intervals.
+
+
+   :Parameters:
+
+       **first_min** : :obj:`Real`
+           The minimum value of the first interval.
+
+       **second_min** : :obj:`Real`
+           The minimum value of the second interval.
+
+       **first_max** : :obj:`Real`
+           The maximum value of the first interval.
+
+       **second_max** : :obj:`Real`
+           The maximum value of the second interval.
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:ref:`bool <python:bltin-boolean-values>`, :obj:`Real`, :obj:`Real`]
+           Tuple with a boolean to indicate whether the intervals intersect,
+           the minimum value of the intersection interval,
+           and the maximum value of the intersection interval.
+           If they do not intersect, then the boolean is False and the other values are 0.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

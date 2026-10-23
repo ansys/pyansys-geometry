@@ -1,0 +1,122 @@
+
+
+
+
+
+
+The ``tools`` package
+=========================
+
+.. py:module:: ansys.geometry.core.tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: tools
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.check_geometry`
+            - Module for repair tool message.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.measurement_tools`
+            - Provides tools for measurement.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.prepare_tools`
+            - Provides tools for preparing geometry for use with simulation.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.problem_areas`
+            - The problem area definition.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.repair_tool_message`
+            - Module for repair tool message.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.repair_tools`
+            - Provides tools for repairing bodies.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.unsupported`
+            - Unsupported functions for the PyAnsys Geometry library.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> check_geometry</api/ansys/geometry/core/tools/check_geometry/index>
+    <span class="nf nf-fa-file"></span> measurement_tools</api/ansys/geometry/core/tools/measurement_tools/index>
+    <span class="nf nf-fa-file"></span> prepare_tools</api/ansys/geometry/core/tools/prepare_tools/index>
+    <span class="nf nf-fa-file"></span> problem_areas</api/ansys/geometry/core/tools/problem_areas/index>
+    <span class="nf nf-fa-file"></span> repair_tool_message</api/ansys/geometry/core/tools/repair_tool_message/index>
+    <span class="nf nf-fa-file"></span> repair_tools</api/ansys/geometry/core/tools/repair_tools/index>
+    <span class="nf nf-fa-file"></span> unsupported</api/ansys/geometry/core/tools/unsupported/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry tools subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

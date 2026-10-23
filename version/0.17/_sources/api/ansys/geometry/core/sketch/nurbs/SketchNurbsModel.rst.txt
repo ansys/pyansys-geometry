@@ -1,0 +1,147 @@
+
+
+
+
+
+
+:class:`SketchNurbsModel`
+=========================
+
+
+.. py:class:: ansys.geometry.core.sketch.nurbs.SketchNurbsModel(/, **data: Any)
+
+   Bases: :py:obj:`pydantic.BaseModel`
+
+
+   
+   Pydantic model for NURBS sketch curve data.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Pure data model — no file I/O. All orchestration (reading the JSON,
+   building the geometry) lives in ``SketchNurbs.from_json`` /
+   ``SketchNurbs.to_json``.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SketchNurbsModel
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~effective_weights`
+            - Weights to use, defaulting to all-1.0 if not provided.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~type`
+            - 
+          * - :py:attr:`~degree`
+            - 
+          * - :py:attr:`~knots`
+            - 
+          * - :py:attr:`~control_points`
+            - 
+          * - :py:attr:`~weights`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.nurbs import SketchNurbsModel
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: type
+   :type:  Literal['sketch_nurbs']
+   :value: 'sketch_nurbs'
+
+
+.. py:attribute:: degree
+   :type:  int
+   :value: None
+
+
+.. py:attribute:: knots
+   :type:  list[float]
+
+.. py:attribute:: control_points
+   :type:  list[tuple[float, float]]
+
+.. py:attribute:: weights
+   :type:  Optional[list[float]]
+   :value: None
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: effective_weights() -> list[float]
+
+   
+   Weights to use, defaulting to all-1.0 if not provided.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

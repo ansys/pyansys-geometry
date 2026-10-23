@@ -1,0 +1,66 @@
+:py:mod:`ansys.geometry.core.typing`
+====================================
+
+.. py:module:: ansys.geometry.core.typing
+
+.. autoapi-nested-parse::
+
+   Provides the PyGeometry ``typing`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+.. py:data:: Real
+
+   
+   Type used to refer to both integers and floats as possible values.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: RealSequence
+
+   
+   Type used to refer to ``Real`` types as a ``Sequence``.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   :class:`numpy.ndarrays <numpy.ndarray>` are also accepted because they are
+   the overlaying data structure behind most PyGeometry objects.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
