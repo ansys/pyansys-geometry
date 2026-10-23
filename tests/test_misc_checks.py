@@ -825,7 +825,7 @@ def test_pmdb_export_options_custom_values():
     assert opts.max_facet_size.value.m_as(UNITS.m) == 0.5
     assert opts.named_selection is True
     assert opts.parameter_processing_type is PMDBImportParameterType.ALL
-    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.FINE
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
     assert opts.process_enclosure_and_symmetry is True
     assert opts.reader_save_part is True
     assert opts.target_application is PMDBTargetApplication.FLUENTMESHING
@@ -867,6 +867,52 @@ def test_pmdb_export_options_measurements():
         PMDBExportOptions(geometry_deviation=Quantity(1.0, UNITS.degrees))
     with pytest.raises(TypeError):
         PMDBExportOptions(max_facet_size="1.0")
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("angular_deviation", Quantity(5, UNITS.degrees)),
+        ("geometry_deviation", Quantity(1, UNITS.mm)),
+        ("max_facet_size", Quantity(2, UNITS.mm)),
+    ],
+)
+@pytest.mark.parametrize("quality", list(PMDBPlugInFacetQuality))
+def test_pmdb_export_options_automatic_facet_quality(field, value, quality):
+    """Test automatic facet quality, zero controls, and valid and invalid field edits."""
+    opts = PMDBExportOptions(**{field: value}, plug_in_facet_quality=quality)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+
+    opts = PMDBExportOptions(plug_in_facet_quality=quality)
+    setattr(opts, field, value)
+    expected_type = Angle if field == "angular_deviation" else Distance
+    assert isinstance(getattr(opts, field), expected_type)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+    opts.plug_in_facet_quality = quality
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+
+    setattr(opts, field, 0.0)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+    opts.plug_in_facet_quality = quality
+    assert opts.plug_in_facet_quality is quality
+    
+    opts = PMDBExportOptions(
+        angular_deviation=Quantity(0, UNITS.degrees),
+        geometry_deviation=Distance(0, UNITS.mm),
+        max_facet_size=0,
+        plug_in_facet_quality=quality,
+    )
+    assert opts.plug_in_facet_quality is quality
+
+    opts.angular_deviation = 0.0
+    opts.geometry_deviation = Quantity(0, UNITS.mm)
+    opts.max_facet_size = Distance(0, UNITS.meter)
+    assert opts.plug_in_facet_quality is quality
+
+    opts = PMDBExportOptions(angular_deviation=0.1, geometry_deviation=0.001)
+    opts.angular_deviation = 0
+    opts.plug_in_facet_quality = PMDBPlugInFacetQuality.FINE
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
 
 
 def test_pmdb_export_options_enum_values():

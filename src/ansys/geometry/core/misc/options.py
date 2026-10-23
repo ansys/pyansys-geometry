@@ -379,8 +379,13 @@ class PMDBExportOptions:
         Whether to export named selections.
     parameter_processing_type : PMDBImportParameterType, default: PMDBImportParameterType.NONE
         The type of parameters to process.
-    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.NONE
+    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.SOURCE
         The facet quality setting for plug-in readers.
+        Automatically set to ``USER_DEFINED`` when ``angular_deviation``,
+        ``geometry_deviation``, or ``max_facet_size`` is nonzero, including after
+        field assignment. Custom controls override any supplied preset.
+        Resetting all controls to zero does not restore the previous preset;
+        a preset must then be assigned explicitly.
     process_enclosure_and_symmetry : bool, default: False
         Whether to process enclosure and symmetry.
     reader_save_part : bool, default: False
@@ -435,11 +440,21 @@ class PMDBExportOptions:
     process_surface_bodies: bool = True
     process_line_bodies: bool = True
 
-    def __post_init__(self):
-        """Normalize measurement fields to ``Distance`` and ``Angle`` objects."""
-        self.angular_deviation = _to_measurement(self.angular_deviation, Angle)
-        self.geometry_deviation = _to_measurement(self.geometry_deviation, Distance)
-        self.max_facet_size = _to_measurement(self.max_facet_size, Distance)
+    def __setattr__(self, name: str, value: object) -> None:
+        """Normalize custom controls and select user-defined facet quality."""
+        if name == "angular_deviation":
+            value = _to_measurement(value, Angle)
+        elif name in ("geometry_deviation", "max_facet_size"):
+            value = _to_measurement(value, Distance)
+
+        object.__setattr__(self, name, value)
+        controls = ("angular_deviation", "geometry_deviation", "max_facet_size")
+        if name in (*controls, "plug_in_facet_quality") and any(
+            self.__dict__[control].value.magnitude != 0
+            for control in controls
+            if control in self.__dict__
+        ):
+            object.__setattr__(self, "plug_in_facet_quality", PMDBPlugInFacetQuality.USER_DEFINED)
 
 
 @_typechecked_dataclass
