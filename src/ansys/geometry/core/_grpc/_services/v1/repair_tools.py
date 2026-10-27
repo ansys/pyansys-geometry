@@ -266,7 +266,12 @@ class GRPCRepairToolsServiceV1(GRPCRepairToolsService):  # noqa: D102
         # Create the request - assumes all inputs are valid and of the proper type
         request = FindSplitEdgesRequest(
             body_or_face_ids=[build_grpc_id(item) for item in kwargs["bodies_or_faces"]],
-            distance=from_length_to_grpc_quantity(kwargs["length"]),
+            angle=from_angle_to_grpc_quantity(kwargs["angle"])
+            if kwargs["angle"] is not None
+            else None,
+            distance=from_length_to_grpc_quantity(kwargs["length"])
+            if kwargs["length"] is not None
+            else None,
             comprehensive=kwargs["comprehensive_result"],
         )
 

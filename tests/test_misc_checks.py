@@ -41,10 +41,10 @@ from ansys.geometry.core.misc import (
     check_type,
     check_type_equivalence,
     deprecated_argument,
-    deprecated_method,
     kwargs_passed_not_accepted,
     min_backend_version,
 )
+from ansys.geometry.core.misc.checks import _build_deprecation_message
 from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.options import (
     AnalysisType,
@@ -491,51 +491,33 @@ def test_min_version_backend():
         case_no_version(mock_object)
 
 
-def test_deprecated_method_decorator():
-    """Test the deprecated method decorator."""
-
-    class MockObject:
-        def __init__(self):
-            self._grpc_client = None
-
-        @staticmethod
-        @deprecated_method()
-        def deprecated_method_no_input():
-            return True
-
-        @staticmethod
-        @deprecated_method(info="This is some extra info.")
-        def deprecated_method_with_info():
-            return True
-
-        @staticmethod
-        @deprecated_method(
-            info="This is some extra info.",
-            alternative="new_method",
-            version="1.0.0",
-            remove="2.0.0",
-        )
-        def deprecated_method_with_info_and_alternate_and_versions():
-            return True
-
-    mock_object = MockObject()
-
-    # Ensure that the method is deprecated
-    with pytest.deprecated_call(match="The method 'deprecated_method_no_input' is deprecated."):
-        mock_object.deprecated_method_no_input()
-
-    with pytest.deprecated_call(
-        match="The method 'deprecated_method_with_info' is deprecated. This is some extra info."
-    ):
-        mock_object.deprecated_method_with_info()
-
-    with pytest.deprecated_call(
-        match="The method 'deprecated_method_with_info_and_alternate_and_versions' is deprecated."
-        " Use 'new_method' instead. This is some extra info."
-        " This method was deprecated in version 1.0.0."
-        " This method will be removed in version 2.0.0."
-    ):
-        mock_object.deprecated_method_with_info_and_alternate_and_versions()
+@pytest.mark.parametrize(
+    "metadata,expected_suffix",
+    [
+        ({}, ""),
+        ({"alternative": "new_method"}, " Use 'new_method' instead."),
+        ({"info": "This is some extra info."}, " This is some extra info."),
+        ({"version": "1.0.0"}, " This method was deprecated in version 1.0.0."),
+        ({"remove": "2.0.0"}, " This method will be removed in version 2.0.0."),
+        (
+            {
+                "alternative": "new_method",
+                "info": "This is some extra info.",
+                "version": "1.0.0",
+                "remove": "2.0.0",
+            },
+            " Use 'new_method' instead. This is some extra info."
+            " This method was deprecated in version 1.0.0."
+            " This method will be removed in version 2.0.0.",
+        ),
+        ({"alternative": "", "info": "", "version": "", "remove": ""}, ""),
+    ],
+)
+def test_build_deprecation_message(metadata, expected_suffix):
+    """Preserve the custom warning format for all optional metadata."""
+    assert _build_deprecation_message("old_method", **metadata) == (
+        "The method 'old_method' is deprecated." + expected_suffix
+    )
 
 
 def test_deprecated_argument_decorator():
@@ -732,12 +714,12 @@ def test_pmdb_export_options_defaults():
     assert opts.plane_prefixes == ""
     assert opts.coordinate_system_prefixes == ""
     assert opts.advanced_geom_processing is False
-    assert opts.angular_deviation == 0.0
+    assert opts.angular_deviation.value.m_as(UNITS.rad) == 0.0
     assert opts.attach_weight_class is PMDBAttachWeightClass.HEAVYWEIGHT
     assert opts.cad_associativity is False
     assert opts.cad_attribute_transfer is True
     assert opts.do_smart_update is False
-    assert opts.geometry_deviation == 0.0
+    assert opts.geometry_deviation.value.m_as(UNITS.m) == 0.0
     assert opts.process_coordinate_sys is True
     assert opts.process_planes is True
     assert opts.import_using_instances is True
@@ -745,7 +727,7 @@ def test_pmdb_export_options_defaults():
     assert opts.is_selective_update is False
     assert opts.material_properties is True
     assert opts.granta_material_properties is False
-    assert opts.max_facet_size == 0.0
+    assert opts.max_facet_size.value.m_as(UNITS.m) == 0.0
     assert opts.named_selection is True
     assert opts.parameter_processing_type is PMDBImportParameterType.ALL
     assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.SOURCE
@@ -809,12 +791,12 @@ def test_pmdb_export_options_custom_values():
     assert opts.plane_prefixes == "pl_"
     assert opts.coordinate_system_prefixes == "cs_"
     assert opts.advanced_geom_processing is True
-    assert opts.angular_deviation == 1.5
+    assert opts.angular_deviation.value.m_as(UNITS.rad) == 1.5
     assert opts.attach_weight_class is PMDBAttachWeightClass.LIGHTWEIGHT
     assert opts.cad_associativity is True
     assert opts.cad_attribute_transfer is True
     assert opts.do_smart_update is True
-    assert opts.geometry_deviation == 0.001
+    assert opts.geometry_deviation.value.m_as(UNITS.m) == 0.001
     assert opts.process_coordinate_sys is True
     assert opts.process_planes is True
     assert opts.import_using_instances is True
@@ -822,10 +804,10 @@ def test_pmdb_export_options_custom_values():
     assert opts.is_selective_update is True
     assert opts.material_properties is True
     assert opts.granta_material_properties is True
-    assert opts.max_facet_size == 0.5
+    assert opts.max_facet_size.value.m_as(UNITS.m) == 0.5
     assert opts.named_selection is True
     assert opts.parameter_processing_type is PMDBImportParameterType.ALL
-    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.FINE
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
     assert opts.process_enclosure_and_symmetry is True
     assert opts.reader_save_part is True
     assert opts.target_application is PMDBTargetApplication.FLUENTMESHING
@@ -834,6 +816,85 @@ def test_pmdb_export_options_custom_values():
     assert opts.process_solid_bodies is True
     assert opts.process_surface_bodies is True
     assert opts.process_line_bodies is True
+
+
+def test_pmdb_export_options_measurements():
+    """Test that PMDBExportOptions measurement fields accept Real, Quantity and measurements."""
+    # Quantity inputs
+    opts = PMDBExportOptions(
+        angular_deviation=Quantity(5.0, UNITS.degrees),
+        geometry_deviation=Quantity(1.0, UNITS.mm),
+        max_facet_size=Quantity(10.0, UNITS.mm),
+    )
+    assert isinstance(opts.angular_deviation, Angle)
+    assert isinstance(opts.geometry_deviation, Distance)
+    assert isinstance(opts.max_facet_size, Distance)
+    assert opts.angular_deviation.value.m_as(UNITS.degrees) == pytest.approx(5.0)
+    assert opts.geometry_deviation.value.m_as(UNITS.m) == pytest.approx(0.001)
+    assert opts.max_facet_size.value.m_as(UNITS.m) == pytest.approx(0.01)
+
+    # Measurement inputs are kept as-is
+    angle = Angle(0.2, UNITS.radian)
+    distance = Distance(2.0, UNITS.cm)
+    opts = PMDBExportOptions(
+        angular_deviation=angle, geometry_deviation=distance, max_facet_size=distance
+    )
+    assert opts.angular_deviation is angle
+    assert opts.geometry_deviation is distance
+    assert opts.max_facet_size is distance
+    # Invalid dimensions or types are rejected
+    with pytest.raises(TypeError):
+        PMDBExportOptions(angular_deviation=Quantity(1.0, UNITS.m))
+    with pytest.raises(TypeError):
+        PMDBExportOptions(geometry_deviation=Quantity(1.0, UNITS.degrees))
+    with pytest.raises(TypeError):
+        PMDBExportOptions(max_facet_size="1.0")
+
+
+@pytest.mark.parametrize(
+    "field, value",
+    [
+        ("angular_deviation", Quantity(5, UNITS.degrees)),
+        ("geometry_deviation", Quantity(1, UNITS.mm)),
+        ("max_facet_size", Quantity(2, UNITS.mm)),
+    ],
+)
+@pytest.mark.parametrize("quality", list(PMDBPlugInFacetQuality))
+def test_pmdb_export_options_automatic_facet_quality(field, value, quality):
+    """Test automatic facet quality, zero controls, and valid and invalid field edits."""
+    opts = PMDBExportOptions(**{field: value}, plug_in_facet_quality=quality)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+
+    opts = PMDBExportOptions(plug_in_facet_quality=quality)
+    setattr(opts, field, value)
+    expected_type = Angle if field == "angular_deviation" else Distance
+    assert isinstance(getattr(opts, field), expected_type)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+    opts.plug_in_facet_quality = quality
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+
+    setattr(opts, field, 0.0)
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
+    opts.plug_in_facet_quality = quality
+    assert opts.plug_in_facet_quality is quality
+
+    opts = PMDBExportOptions(
+        angular_deviation=Quantity(0, UNITS.degrees),
+        geometry_deviation=Distance(0, UNITS.mm),
+        max_facet_size=0,
+        plug_in_facet_quality=quality,
+    )
+    assert opts.plug_in_facet_quality is quality
+
+    opts.angular_deviation = 0.0
+    opts.geometry_deviation = Quantity(0, UNITS.mm)
+    opts.max_facet_size = Distance(0, UNITS.meter)
+    assert opts.plug_in_facet_quality is quality
+
+    opts = PMDBExportOptions(angular_deviation=0.1, geometry_deviation=0.001)
+    opts.angular_deviation = 0
+    opts.plug_in_facet_quality = PMDBPlugInFacetQuality.FINE
+    assert opts.plug_in_facet_quality is PMDBPlugInFacetQuality.USER_DEFINED
 
 
 def test_pmdb_export_options_enum_values():

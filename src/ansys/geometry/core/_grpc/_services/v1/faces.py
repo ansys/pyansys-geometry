@@ -191,6 +191,17 @@ class GRPCFacesServiceV1(GRPCFacesService):
         return {"color": color}
 
     @protect_grpc
+    def get_colors(self, **kwargs) -> dict:  # noqa: D102
+        # Create the request - assumes all inputs are valid and of the proper type
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(face_id) for face_id in kwargs["ids"]])
+
+        # Call the gRPC service
+        response = self.stub.GetColor(request=request)
+
+        # Return the response - formatted as a dictionary
+        return {"colors": dict(response.colors)}
+
+    @protect_grpc
     def get_bounding_box(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.design.designmessages_pb2 import (
             GetBoundingBoxRequest,

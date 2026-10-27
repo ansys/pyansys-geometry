@@ -44,7 +44,6 @@ from ansys.geometry.core.misc.checks import (
     check_type_all_elements_in_iterable,
     check_type_equivalence,
     deprecated_argument,
-    deprecated_method,
     graphics_required,
     kwargs_passed_not_accepted,
     min_backend_version,

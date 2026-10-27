@@ -475,16 +475,19 @@ def min_backend_version(major: int, minor: int, service_pack: int):
     return backend_version_decorator
 
 
-def deprecated_method(
+def _build_deprecation_message(
+    method_name: str,
     alternative: str | None = None,
     info: str | None = None,
     version: str | None = None,
     remove: str | None = None,
-):
-    """Decorate a method as deprecated.
+) -> str:
+    """Build a method deprecation message for the ``deprecated`` decorator.
 
     Parameters
     ----------
+    method_name : str
+        Name of the deprecated method.
     alternative : str, default: None
         Alternative method to use. If provided, the warning message will
         include the alternative method.
@@ -494,26 +497,29 @@ def deprecated_method(
         Version where the method was deprecated.
     remove : str, default: None
         Version where the method will be removed.
+
+    Returns
+    -------
+    str
+        Message including any supplied replacement, information, and versions.
+
+    Notes
+    -----
+    Pass the result as the positional message argument to ``warnings.deprecated``
+    (or ``typing_extensions.deprecated`` on Python 3.12). Generated messages retain
+    runtime warnings and metadata, but some type checkers, including ty, do not
+    recognize them for static deprecation diagnostics.
     """
-
-    def deprecated_decorator(method: _F) -> _F:
-        @functools.wraps(method)
-        def wrapper(*args, **kwargs):
-            msg = f"The method '{method.__name__}' is deprecated."
-            if alternative:
-                msg += f" Use '{alternative}' instead."
-            if info:
-                msg += f" {info}"
-            if version:
-                msg += f" This method was deprecated in version {version}."
-            if remove:
-                msg += f" This method will be removed in version {remove}."
-            warnings.warn(msg, DeprecationWarning)
-            return method(*args, **kwargs)
-
-        return wrapper  # type: ignore[return-value]
-
-    return deprecated_decorator
+    msg = f"The method '{method_name}' is deprecated."
+    if alternative:
+        msg += f" Use '{alternative}' instead."
+    if info:
+        msg += f" {info}"
+    if version:
+        msg += f" This method was deprecated in version {version}."
+    if remove:
+        msg += f" This method will be removed in version {remove}."
+    return msg
 
 
 def deprecated_argument(
