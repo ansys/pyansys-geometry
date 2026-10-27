@@ -208,7 +208,7 @@ class BodySelection(TypedSelection):
         ----------
         min : Volume | Quantity | Real, default: 0
             Minimum volume (inclusive).
-        max : Volume | Quantity | Real, optional
+        max : Volume | Quantity | Real, default: None
             Maximum volume (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -237,7 +237,7 @@ class BodySelection(TypedSelection):
         ----------
         min : Area | Quantity | Real, default: 0
             Minimum surface area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -412,7 +412,7 @@ class BodySelection(TypedSelection):
         ----------
         min : Volume | Quantity | Real, default: 0
             Minimum volume (inclusive).
-        max : Volume | Quantity | Real, optional
+        max : Volume | Quantity | Real, default: None
             Maximum volume (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -472,7 +472,7 @@ class BodySelection(TypedSelection):
         ----------
         min : Area | Quantity | Real, default: 0
             Minimum surface area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -532,7 +532,7 @@ class BodySelection(TypedSelection):
         ----------
         min : int, default: 0
             Minimum face count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum face count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -590,7 +590,7 @@ class BodySelection(TypedSelection):
         ----------
         min : int, default: 0
             Minimum edge count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum edge count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -648,7 +648,7 @@ class BodySelection(TypedSelection):
         ----------
         min : int, default: 0
             Minimum loop count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum loop count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -709,7 +709,7 @@ class BodySelection(TypedSelection):
             The surface type to count per body.
         min : int, default: 0
             Minimum count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -741,7 +741,7 @@ class BodySelection(TypedSelection):
             The curve type to count per body.
         min : int, default: 0
             Minimum count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum count (inclusive). If not provided, no upper bound is applied.
 
         Returns

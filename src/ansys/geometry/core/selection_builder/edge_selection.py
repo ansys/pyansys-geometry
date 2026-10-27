@@ -145,7 +145,7 @@ class EdgeSelection(TypedSelection):
         ----------
         min : Real | Quantity | Distance, default: 0
             Minimum edge length (in mm if a plain number).
-        max : Real, Quantity, or Distance, optional
+        max : Real | Quantity | Distance, default: None
             Maximum edge length. If ``None``, no upper bound is applied.
 
         Returns
@@ -311,7 +311,7 @@ class EdgeSelection(TypedSelection):
         ----------
         min : Real | Quantity | Distance, default: 0
             Minimum edge length (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real | Quantity | Distance, default: None
             Maximum edge length. If ``None``, no upper bound is applied.
 
         Returns

@@ -148,7 +148,7 @@ class FaceSelection(TypedSelection):
         ----------
         min : Area | Quantity | Real, default: 0
             Minimum area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -323,7 +323,7 @@ class FaceSelection(TypedSelection):
         ----------
         min : Area | Quantity | Real, default: 0
             Minimum area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -383,7 +383,7 @@ class FaceSelection(TypedSelection):
         ----------
         min : Distance | Quantity | Real, default: 0
             Minimum perimeter (inclusive).
-        max : Distance | Quantity | Real, optional
+        max : Distance | Quantity | Real, default: None
             Maximum perimeter (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -443,7 +443,7 @@ class FaceSelection(TypedSelection):
         ----------
         min : int, default: 0
             Minimum edge count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum edge count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -501,7 +501,7 @@ class FaceSelection(TypedSelection):
         ----------
         min : int, default: 0
             Minimum loop count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum loop count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -562,7 +562,7 @@ class FaceSelection(TypedSelection):
             The curve type to count per face.
         min : int, default: 0
             Minimum count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum count (inclusive). If not provided, no upper bound is applied.
 
         Returns
