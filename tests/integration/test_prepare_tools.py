@@ -439,4 +439,3 @@ def test_suppress_topology(modeler: Modeler):
 
     # Test empty call
     assert not modeler.prepare_tools.suppress_topology([])
-
