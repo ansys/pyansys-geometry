@@ -490,9 +490,9 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
         )
 
         # Call the gRPC service
-        response = self.stub.SuppressTopologies(request).response_data[0]
+        response = self.stub.SuppressTopologies(request)
 
         # Return the response - formatted as a dictionary
         return {
-            "success": response.success
+            "success": response.command_response.success
         }
