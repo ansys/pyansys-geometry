@@ -73,7 +73,7 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.7.0",
-  "ty==0.0.90",
+  "ty==0.0.91",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
@@ -90,7 +90,7 @@ doc = [
   "pdf2image==1.17.0",
   "quarto-cli==1.10.19",
   "sphinx==9.1.1",
-  "sphinx-autodoc-typehints==3.13.10",
+  "sphinx-autodoc-typehints==3.17.2",
   "sphinx-copybutton==0.5.2",
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
