@@ -275,6 +275,19 @@ class GeometryPlotter(PlotterInterface):
             edge_plot_list.append(edge_plot)
         body_plot.edges = edge_plot_list
 
+    @staticmethod
+    def _get_visible_bodies(bodies: list[Body]) -> list[Body | MasterBody]:
+        """Filter suppressed bodies and batch visibility queries for plotting."""
+        if not bodies:
+            return []
+        client = bodies[0]._grpc_client
+        if client.backend_version >= (27, 1, 0):
+            response = client.services.bodies.get_visibility(ids=[body.id for body in bodies])
+            if not response["success"]:
+                raise GeometryRuntimeError("Could not retrieve body visibility for plotting.")
+            return [body for body in bodies if response["result"][body.id]]
+        return bodies
+
     def add_body(
         self,
         body: Body,
@@ -297,13 +310,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        try:
-            if body.is_suppressed or not body.is_visible:
-                return
-        except GeometryRuntimeError:  # pragma: no cover
-            # For backward compatibility with older versions of PyAnsys Geometry
-            # Inserted in 25R2
-            pass
+        # If the body's visibility is False, skip adding it to the scene.
+        if not self._get_visible_bodies([body]):
+            return
 
         excluded_faces = (
             {face.id for face in body.faces if face.id in exclude_ids} if exclude_ids else set()
@@ -430,7 +439,13 @@ class GeometryPlotter(PlotterInterface):
                 )
                 return
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            dataset = component.tessellate()
+            datasets = self._tessellate_visible_component(component)
+            if not datasets:
+                return
+            ugrid = pv.MultiBlock(datasets).combine()
+            if not ugrid.n_points:
+                return
+            dataset = pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
             component_polydata = MeshObjectPlot(component, dataset)
             self.plot(component_polydata, **plotting_options)
         else:
@@ -440,6 +455,17 @@ class GeometryPlotter(PlotterInterface):
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
+
+    def _tessellate_visible_component(self, component: Component) -> list[pv.MultiBlock]:
+        """Tessellate visible bodies without changing public tessellation behavior."""
+        if not component.is_alive:
+            return []
+        datasets = [
+            body.tessellate(merge=False) for body in self._get_visible_bodies(component.bodies)
+        ]
+        for child in component.components:
+            datasets.extend(self._tessellate_visible_component(child))
+        return datasets
 
     def add_component_by_body(
         self,

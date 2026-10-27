@@ -512,14 +512,14 @@ class GRPCBodyServiceV1(GRPCBodyService):
         from ansys.api.discovery.v1.commonmessages_pb2 import MultipleEntitiesRequest
 
         # Create the request with MultipleEntitiesRequest
-        request = MultipleEntitiesRequest(ids=[build_grpc_id(kwargs["id"])])
+        request = MultipleEntitiesRequest(ids=[build_grpc_id(id) for id in kwargs["ids"]])
 
         # Call the gRPC service
         response = self.stub.GetVisibility(request=request)
 
         # Return the response - formatted as a dictionary
         return {
-            "result": response.result[kwargs["id"]],
+            "result": (dict(response.result)),
             "success": response.command_response.success,
         }
 
