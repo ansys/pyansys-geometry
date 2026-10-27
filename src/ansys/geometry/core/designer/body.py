@@ -2350,8 +2350,7 @@ class Body(IBody):
             else pyansys_geometry.USE_SERVICE_COLORS
         )
 
-        # Add to plotting options as well... to be used by the plotter if necessary
-        plotting_options["merge_bodies"] = merge
+        plotting_options["merge_faces"] = merge
 
         # In case that service colors are requested, merge will be ignored.
         # An info message will be issued to the user.
@@ -2359,10 +2358,12 @@ class Body(IBody):
             self._template._grpc_client.log.info(
                 "Ignoring 'merge' option since 'use_service_colors' is set to True."
             )
-            plotting_options["merge_bodies"] = False
+            plotting_options["merge_faces"] = False
 
         mesh_object = (
-            self if use_service_colors else MeshObjectPlot(self, self.tessellate(merge=merge))
+            self
+            if use_service_colors
+            else MeshObjectPlot(self, self.tessellate(merge=plotting_options["merge_faces"]))
         )
         pl = GeometryPlotter(use_trame=use_trame, use_service_colors=use_service_colors)
         pl.plot(mesh_object, **plotting_options)

@@ -9,6 +9,95 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.18.2 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.2>`_ - October 12, 2026
+=============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Added geometry_imprint option for share_topology methods
+          - `#3162 <https://github.com/ansys/pyansys-geometry/pull/3162>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Avoid reading installed folders unnecessarily
+          - `#3152 <https://github.com/ansys/pyansys-geometry/pull/3152>`_
+
+        * - Body id search + default transport mode
+          - `#3156 <https://github.com/ansys/pyansys-geometry/pull/3156>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump vtk from 9.7.0 to 9.7.1
+          - `#3154 <https://github.com/ansys/pyansys-geometry/pull/3154>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.13.7 to 3.13.8 in the docs-deps group
+          - `#3158 <https://github.com/ansys/pyansys-geometry/pull/3158>`_
+
+        * - Bump jupytext from 1.19.5 to 1.19.6 in the docs-deps group
+          - `#3164 <https://github.com/ansys/pyansys-geometry/pull/3164>`_
+
+        * - Bump sphinx-autodoc-typehints from 3.13.8 to 3.13.9 in the docs-deps group across 1 directory
+          - `#3168 <https://github.com/ansys/pyansys-geometry/pull/3168>`_
+
+        * - Bump quarto-cli from 1.10.18 to 1.10.19
+          - `#3169 <https://github.com/ansys/pyansys-geometry/pull/3169>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update CHANGELOG for v0.18.1
+          - `#3149 <https://github.com/ansys/pyansys-geometry/pull/3149>`_
+
+        * - Bump https://github.com/python-jsonschema/check-jsonschema from 0.38.0 to 0.38.2 in the pre-commit-hooks group
+          - `#3153 <https://github.com/ansys/pyansys-geometry/pull/3153>`_
+
+        * - Bump the actions group with 3 updates
+          - `#3155 <https://github.com/ansys/pyansys-geometry/pull/3155>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.8 to 0.16.9 in the pre-commit-hooks group
+          - `#3157 <https://github.com/ansys/pyansys-geometry/pull/3157>`_
+
+        * - Bump skitionek/notify-microsoft-teams from 1.3.2 to 1.3.3 in the actions group
+          - `#3160 <https://github.com/ansys/pyansys-geometry/pull/3160>`_
+
+        * - Rework \`split_body\` arguments and warnings
+          - `#3163 <https://github.com/ansys/pyansys-geometry/pull/3163>`_
+
+        * - Bump https://github.com/astral-sh/ruff-pre-commit from v0.16.9 to 0.16.10 in the pre-commit-hooks group
+          - `#3167 <https://github.com/ansys/pyansys-geometry/pull/3167>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Accept 0 as a valid problem area id in repair tools tests
+          - `#3150 <https://github.com/ansys/pyansys-geometry/pull/3150>`_
+
+
 `0.18.1 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.1>`_ - September 29, 2026
 ===============================================================================================
 
