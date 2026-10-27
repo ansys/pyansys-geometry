@@ -199,14 +199,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_bodies_with_volume(
         self,
-        min: Union[Volume, "Quantity", Real],
+        min: Union[Volume, "Quantity", Real] = 0,
         max: Union[Volume, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose volume falls within a range.
 
         Parameters
         ----------
-        min : Volume | Quantity | Real
+        min : Volume | Quantity | Real, default: 0
             Minimum volume (inclusive).
         max : Volume | Quantity | Real, optional
             Maximum volume (inclusive). If not provided, no upper bound is applied.
@@ -228,14 +228,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_bodies_with_surface_area(
         self,
-        min: Union[Area, "Quantity", Real],
+        min: Union[Area, "Quantity", Real] = 0,
         max: Union[Area, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Return bodies whose surface area falls within a range.
 
         Parameters
         ----------
-        min : Area | Quantity | Real
+        min : Area | Quantity | Real, default: 0
             Minimum surface area (inclusive).
         max : Area | Quantity | Real, optional
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
@@ -403,14 +403,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_volume(
         self,
-        min: Union[Volume, "Quantity", Real],
+        min: Union[Volume, "Quantity", Real] = 0,
         max: Union[Volume, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Filter bodies whose volume falls within a range.
 
         Parameters
         ----------
-        min : Volume | Quantity | Real
+        min : Volume | Quantity | Real, default: 0
             Minimum volume (inclusive).
         max : Volume | Quantity | Real, optional
             Maximum volume (inclusive). If not provided, no upper bound is applied.
@@ -463,14 +463,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_surface_area(
         self,
-        min: Union[Area, "Quantity", Real],
+        min: Union[Area, "Quantity", Real] = 0,
         max: Union[Area, "Quantity", Real, None] = None,
     ) -> "BodySelection":
         """Filter bodies whose surface area falls within a range.
 
         Parameters
         ----------
-        min : Area | Quantity | Real
+        min : Area | Quantity | Real, default: 0
             Minimum surface area (inclusive).
         max : Area | Quantity | Real, optional
             Maximum surface area (inclusive). If not provided, no upper bound is applied.
@@ -523,14 +523,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_face_count(
         self,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "BodySelection":
         """Filter bodies whose face count falls within a range.
 
         Parameters
         ----------
-        min : int
+        min : int, default: 0
             Minimum face count (inclusive).
         max : int, optional
             Maximum face count (inclusive). If not provided, no upper bound is applied.
@@ -581,14 +581,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_edge_count(
         self,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "BodySelection":
         """Filter bodies whose edge count falls within a range.
 
         Parameters
         ----------
-        min : int
+        min : int, default: 0
             Minimum edge count (inclusive).
         max : int, optional
             Maximum edge count (inclusive). If not provided, no upper bound is applied.
@@ -639,14 +639,14 @@ class BodySelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_bodies_by_loop_count(
         self,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "BodySelection":
         """Filter bodies whose loop count falls within a range.
 
         Parameters
         ----------
-        min : int
+        min : int, default: 0
             Minimum loop count (inclusive).
         max : int, optional
             Maximum loop count (inclusive). If not provided, no upper bound is applied.
@@ -698,7 +698,7 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_number_surfaces(
         self,
         surface_type: SurfaceType,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "BodySelection":
         """Filter bodies by the count of a specific surface type they contain.
@@ -707,7 +707,7 @@ class BodySelection(TypedSelection):
         ----------
         surface_type : SurfaceType
             The surface type to count per body.
-        min : int
+        min : int, default: 0
             Minimum count (inclusive).
         max : int, optional
             Maximum count (inclusive). If not provided, no upper bound is applied.
@@ -730,7 +730,7 @@ class BodySelection(TypedSelection):
     def filter_bodies_by_number_curves(
         self,
         curve_type: CurveType,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "BodySelection":
         """Filter bodies by the count of a specific curve type they contain.
@@ -739,7 +739,7 @@ class BodySelection(TypedSelection):
         ----------
         curve_type : CurveType
             The curve type to count per body.
-        min : int
+        min : int, default: 0
             Minimum count (inclusive).
         max : int, optional
             Maximum count (inclusive). If not provided, no upper bound is applied.
