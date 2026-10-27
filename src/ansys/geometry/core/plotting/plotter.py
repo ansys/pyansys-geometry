@@ -277,7 +277,7 @@ class GeometryPlotter(PlotterInterface):
 
     @staticmethod
     def _get_visible_bodies(bodies: list[Body]) -> list[Body | MasterBody]:
-        """Filter suppressed bodies and batch visibility queries for plotting."""
+        """Filter visibility for plotting."""
         if not bodies:
             return []
         client = bodies[0]._grpc_client
