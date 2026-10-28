@@ -187,6 +187,12 @@ class FaceSelection(TypedSelection):
         -------
         FaceSelection
             Faces whose X-location is within the specified range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all faces.
         """
         min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
         max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
@@ -220,6 +226,12 @@ class FaceSelection(TypedSelection):
         -------
         FaceSelection
             Faces whose Y-location is within the specified range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all faces.
         """
         min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
         max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None
@@ -253,6 +265,12 @@ class FaceSelection(TypedSelection):
         -------
         FaceSelection
             Faces whose Z-location is within the specified range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all faces.
         """
         min = (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
         max = (max if isinstance(max, Distance) else Distance(max)) if max is not None else None

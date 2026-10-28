@@ -186,6 +186,12 @@ class EdgeSelection(TypedSelection):
         -------
         EdgeSelection
             Edges within the specified X-location range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all edges.
         """
         min_dist = (
             (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
@@ -223,6 +229,12 @@ class EdgeSelection(TypedSelection):
         -------
         EdgeSelection
             Edges within the specified Y-location range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all edges.
         """
         min_dist = (
             (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
@@ -260,6 +272,12 @@ class EdgeSelection(TypedSelection):
         -------
         EdgeSelection
             Edges within the specified Z-location range.
+
+        Notes
+        -----
+        A ``None`` minimum or maximum is treated as negative or positive
+        infinity, respectively. If both are ``None``, no location limit is
+        applied and the result may include all edges.
         """
         min_dist = (
             (min if isinstance(min, Distance) else Distance(min)) if min is not None else None
