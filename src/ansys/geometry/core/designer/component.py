@@ -2318,7 +2318,7 @@ class Component:
         _recursive_call: bool, default: False
             Internal flag to indicate if this method is being called recursively.
             Not to be used by the user.
-        
+
         Returns
         -------
         ~pyvista.PolyData, list[~pyvista.MultiBlock]
