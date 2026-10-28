@@ -136,16 +136,16 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_edges_with_length(
         self,
-        min: Union[Real, "Quantity", Distance],
+        min: Union[Real, "Quantity", Distance] = 0,
         max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Return edges whose length falls within a range.
 
         Parameters
         ----------
-        min : Real, Quantity, or Distance
+        min : Real | Quantity | Distance, default: 0
             Minimum edge length (in mm if a plain number).
-        max : Real, Quantity, or Distance, optional
+        max : Real | Quantity | Distance, default: None
             Maximum edge length. If ``None``, no upper bound is applied.
 
         Returns
@@ -320,16 +320,16 @@ class EdgeSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_edges_by_length(
         self,
-        min: Union[Real, "Quantity", Distance],
+        min: Union[Real, "Quantity", Distance] = 0,
         max: Union[Real, "Quantity", Distance, None] = None,
     ) -> "EdgeSelection":
         """Filter edges by length range.
 
         Parameters
         ----------
-        min : Real or Quantity
+        min : Real | Quantity | Distance, default: 0
             Minimum edge length (in mm if a plain number).
-        max : Real or Quantity, optional
+        max : Real | Quantity | Distance, default: None
             Maximum edge length. If ``None``, no upper bound is applied.
 
         Returns

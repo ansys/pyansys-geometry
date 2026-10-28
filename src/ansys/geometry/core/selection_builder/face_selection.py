@@ -139,16 +139,16 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def get_faces_with_area(
         self,
-        min: Union[Area, "Quantity", Real],
+        min: Union[Area, "Quantity", Real] = 0,
         max: Union[Area, "Quantity", Real, None] = None,
     ) -> "FaceSelection":
         """Return faces whose area falls within a range.
 
         Parameters
         ----------
-        min : Area | Quantity | Real
+        min : Area | Quantity | Real, default: 0
             Minimum area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -332,16 +332,16 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_faces_by_area(
         self,
-        min: Union[Area, "Quantity", Real],
+        min: Union[Area, "Quantity", Real] = 0,
         max: Union[Area, "Quantity", Real, None] = None,
     ) -> "FaceSelection":
         """Filter faces whose area falls within a range.
 
         Parameters
         ----------
-        min : Area | Quantity | Real
+        min : Area | Quantity | Real, default: 0
             Minimum area (inclusive).
-        max : Area | Quantity | Real, optional
+        max : Area | Quantity | Real, default: None
             Maximum area (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -392,16 +392,16 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_faces_by_perimeter(
         self,
-        min: Union[Distance, "Quantity", Real],
+        min: Union[Distance, "Quantity", Real] = 0,
         max: Union[Distance, "Quantity", Real, None] = None,
     ) -> "FaceSelection":
         """Filter faces whose perimeter falls within a range.
 
         Parameters
         ----------
-        min : Distance | Quantity | Real
+        min : Distance | Quantity | Real, default: 0
             Minimum perimeter (inclusive).
-        max : Distance | Quantity | Real, optional
+        max : Distance | Quantity | Real, default: None
             Maximum perimeter (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -452,16 +452,16 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_faces_by_edge_count(
         self,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "FaceSelection":
         """Filter faces whose edge count falls within a range.
 
         Parameters
         ----------
-        min : int
+        min : int, default: 0
             Minimum edge count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum edge count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -510,16 +510,16 @@ class FaceSelection(TypedSelection):
     @min_backend_version(27, 1, 0)
     def filter_faces_by_loop_count(
         self,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "FaceSelection":
         """Filter faces whose loop count falls within a range.
 
         Parameters
         ----------
-        min : int
+        min : int, default: 0
             Minimum loop count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum loop count (inclusive). If not provided, no upper bound is applied.
 
         Returns
@@ -569,7 +569,7 @@ class FaceSelection(TypedSelection):
     def filter_faces_by_number_curves(
         self,
         curve_type: CurveType,
-        min: int,
+        min: int = 0,
         max: int = None,
     ) -> "FaceSelection":
         """Filter faces by the count of a specific curve type they contain.
@@ -578,9 +578,9 @@ class FaceSelection(TypedSelection):
         ----------
         curve_type : CurveType
             The curve type to count per face.
-        min : int
+        min : int, default: 0
             Minimum count (inclusive).
-        max : int, optional
+        max : int, default: None
             Maximum count (inclusive). If not provided, no upper bound is applied.
 
         Returns
