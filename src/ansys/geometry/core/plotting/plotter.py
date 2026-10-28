@@ -66,7 +66,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, get_visible_bodies
 from ansys.geometry.core.misc.checks import deprecated_argument
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
@@ -297,13 +297,9 @@ class GeometryPlotter(PlotterInterface):
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        try:
-            if body.is_suppressed:
-                return
-        except GeometryRuntimeError:  # pragma: no cover
-            # For backward compatibility with older versions of PyAnsys Geometry
-            # Inserted in 25R2
-            pass
+        # If the body's visibility is False, skip adding it to the scene.
+        if not get_visible_bodies([body]):
+            return
 
         excluded_faces = (
             {face.id for face in body.faces if face.id in exclude_ids} if exclude_ids else set()
@@ -421,6 +417,8 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         if merge_component:
+            if not component.is_alive:
+                return
             if exclude_ids:
                 self.add_component_by_body(
                     component,
@@ -430,7 +428,9 @@ class GeometryPlotter(PlotterInterface):
                 )
                 return
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            dataset = component.tessellate()
+            dataset = component.tessellate(include_hidden=False)
+            if not dataset.n_points:
+                return
             component_polydata = MeshObjectPlot(component, dataset)
             self.plot(component_polydata, **plotting_options)
         else:
