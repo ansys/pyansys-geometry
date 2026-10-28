@@ -422,3 +422,10 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
             f"Method '{self.__class__.__name__}.find_mappable_faces' is not "
             "implemented in this protofile version."
         )
+
+    @protect_grpc
+    def suppress_topology(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.suppress_topology' is not "
+            "implemented in this protofile version."
+        )

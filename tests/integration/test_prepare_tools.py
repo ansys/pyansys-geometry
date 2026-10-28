@@ -416,3 +416,26 @@ def test_detect_leaks(modeler: Modeler):
     caps = modeler.prepare_tools.detect_leaks([box.faces[-1]])
     assert all(isinstance(body, Body) for body in caps)
     assert len(caps) == 2
+
+
+def test_suppress_topology(modeler: Modeler):
+    """Test suppressing and unsuppressing edges of a box."""
+    design = modeler.create_design("SuppressTopologyTest")
+    box = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    assert len(box.edges) == 12
+
+    # Test suppressing a single face
+    assert modeler.prepare_tools.suppress_topology([box.edges[0]])
+    assert len(box.edges) == 12
+
+    # Test unsuppressing the same face
+    assert modeler.prepare_tools.suppress_topology([box.edges[0]], suppress=False)
+    assert len(box.edges) == 12
+
+    # Test suppressing multiple edges at once
+    assert modeler.prepare_tools.suppress_topology(box.edges[:3])
+    assert modeler.prepare_tools.suppress_topology(box.edges[:3], suppress=False)
+    assert len(box.edges) == 12
+
+    # Test empty call
+    assert not modeler.prepare_tools.suppress_topology([])
