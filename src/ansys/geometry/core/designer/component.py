@@ -2302,9 +2302,8 @@ class Component:
     def tessellate(
         self,
         tess_options: TessellationOptions | None = None,
-        _recursive_call: bool = False,
-        *,
         include_hidden: bool = True,
+        _recursive_call: bool = False,
     ) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
@@ -2312,14 +2311,14 @@ class Component:
         ----------
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
-        _recursive_call: bool, default: False
-            Internal flag to indicate if this method is being called recursively.
-            Not to be used by the user.
         include_hidden : bool, default: True
             Whether to include hidden bodies in this component and its subcomponents.
             When ``False``, only visible bodies are tessellated. Visibility filtering
             requires Ansys 27R1 or later; older backends include all bodies.
-
+        _recursive_call: bool, default: False
+            Internal flag to indicate if this method is being called recursively.
+            Not to be used by the user.
+        
         Returns
         -------
         ~pyvista.PolyData, list[~pyvista.MultiBlock]
