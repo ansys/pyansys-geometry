@@ -29,7 +29,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.beam import Beam
-    from ansys.geometry.core.designer.body import Body, MasterBody
+    from ansys.geometry.core.designer.body import Body
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
     from ansys.geometry.core.designer.datumplane import DatumPlane
@@ -51,7 +51,7 @@ except ModuleNotFoundError:
 
 def get_visible_bodies(bodies: list["Body"]) -> list["Body"]:
     """Filter visibility for plotting.
-    
+
     Parameters
     ----------
     bodies : list[Body]
