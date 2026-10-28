@@ -25,9 +25,11 @@
 from pathlib import Path
 from typing import TYPE_CHECKING, Union
 
+from ansys.geometry.core.errors import GeometryRuntimeError
+
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.beam import Beam
-    from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.body import Body, MasterBody
     from ansys.geometry.core.designer.component import Component
     from ansys.geometry.core.designer.coordinate_system import CoordinateSystem
     from ansys.geometry.core.designer.datumplane import DatumPlane
@@ -45,6 +47,30 @@ try:
     DEFAULT_COLOR = Color.DEFAULT.value
 except ModuleNotFoundError:
     DEFAULT_COLOR = "#D6F7D1"
+
+
+def get_visible_bodies(bodies: list["Body"]) -> list["Body"]:
+    """Filter visibility for plotting.
+    
+    Parameters
+    ----------
+    bodies : list[Body]
+        The list of body objects to filter based on visibility.
+
+    Returns
+    -------
+    list[Body]
+        The list of visible body objects.
+    """
+    if not bodies:
+        return []
+    client = bodies[0]._grpc_client
+    if client.backend_version >= (27, 1, 0):
+        response = client.services.bodies.get_visibility(ids=[body.id for body in bodies])
+        if not response["success"]:
+            raise GeometryRuntimeError("Could not retrieve body visibility for plotting.")
+        return [body for body in bodies if response["result"][body.id]]
+    return bodies
 
 
 def get_design_from_component(component: "Component") -> "Design":

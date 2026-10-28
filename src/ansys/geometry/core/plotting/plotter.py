@@ -66,7 +66,7 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, get_visible_bodies
 from ansys.geometry.core.misc.checks import deprecated_argument
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
@@ -275,19 +275,6 @@ class GeometryPlotter(PlotterInterface):
             edge_plot_list.append(edge_plot)
         body_plot.edges = edge_plot_list
 
-    @staticmethod
-    def _get_visible_bodies(bodies: list[Body]) -> list[Body | MasterBody]:
-        """Filter visibility for plotting."""
-        if not bodies:
-            return []
-        client = bodies[0]._grpc_client
-        if client.backend_version >= (27, 1, 0):
-            response = client.services.bodies.get_visibility(ids=[body.id for body in bodies])
-            if not response["success"]:
-                raise GeometryRuntimeError("Could not retrieve body visibility for plotting.")
-            return [body for body in bodies if response["result"][body.id]]
-        return bodies
-
     def add_body(
         self,
         body: Body,
@@ -311,7 +298,7 @@ class GeometryPlotter(PlotterInterface):
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         # If the body's visibility is False, skip adding it to the scene.
-        if not self._get_visible_bodies([body]):
+        if not get_visible_bodies([body]):
             return
 
         excluded_faces = (
@@ -430,6 +417,8 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         if merge_component:
+            if not component.is_alive:
+                return
             if exclude_ids:
                 self.add_component_by_body(
                     component,
@@ -439,13 +428,9 @@ class GeometryPlotter(PlotterInterface):
                 )
                 return
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            datasets = self._tessellate_visible_component(component)
-            if not datasets:
+            dataset = component.tessellate(include_hidden=False)
+            if not dataset.n_points:
                 return
-            ugrid = pv.MultiBlock(datasets).combine()
-            if not ugrid.n_points:
-                return
-            dataset = pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
             component_polydata = MeshObjectPlot(component, dataset)
             self.plot(component_polydata, **plotting_options)
         else:
@@ -455,17 +440,6 @@ class GeometryPlotter(PlotterInterface):
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
-
-    def _tessellate_visible_component(self, component: Component) -> list[pv.MultiBlock]:
-        """Tessellate visible bodies without changing public tessellation behavior."""
-        if not component.is_alive:
-            return []
-        datasets = [
-            body.tessellate(merge=False) for body in self._get_visible_bodies(component.bodies)
-        ]
-        for child in component.components:
-            datasets.extend(self._tessellate_visible_component(child))
-        return datasets
 
     def add_component_by_body(
         self,

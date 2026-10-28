@@ -161,6 +161,8 @@ def test_plot_component_visibility(modeler: Modeler, verify_image_cache):
         nested_body.is_visible = nested_visible
         body.is_visible = root_visible
         sibling_body.is_visible = root_visible
+        assert design.tessellate().n_cells == 48
+        assert design.tessellate(include_hidden=False).n_cells == expected_cells
         plotter = GeometryPlotter()
         scene = plotter.backend.pv_interface.scene
         plotter.plot(design)
@@ -173,6 +175,18 @@ def test_plot_component_visibility(modeler: Modeler, verify_image_cache):
             == expected_cells
         )
         plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, f"component_visibility_{step}.png"))
+
+    plotter = GeometryPlotter()
+    plotter.plot(design, merge_component=True)
+    assert (
+        sum(
+            pv.MultiBlock([actor.mapper.dataset]).combine().n_cells
+            for actor in plotter.backend.pv_interface.scene.actors.values()
+            if isinstance(actor, pv.Actor)
+        )
+        == 36
+    )
+    plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, "component_visibility_merged.png"))
 
 
 @skip_no_xserver
