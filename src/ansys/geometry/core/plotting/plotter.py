@@ -41,6 +41,7 @@ from ansys.tools.visualization_interface import (
     Plotter as PlotterInterface,
 )
 from ansys.tools.visualization_interface.backends.pyvista import PyVistaBackend
+from matplotlib import colors as mcolors
 import numpy as np
 from pygltflib.utils import gltf2glb
 import pyvista as pv
@@ -65,7 +66,8 @@ from ansys.geometry.core.errors import GeometryRuntimeError
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.frame import Frame
 from ansys.geometry.core.math.plane import Plane
-from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR
+from ansys.geometry.core.misc.auxiliary import DEFAULT_COLOR, get_visible_bodies
+from ansys.geometry.core.misc.checks import deprecated_argument
 from ansys.geometry.core.plotting.widgets import ShowDesignPoints
 from ansys.geometry.core.selection_builder.typed_selection import TypedSelection
 from ansys.geometry.core.shapes.curves import Curve
@@ -290,17 +292,14 @@ class GeometryPlotter(PlotterInterface):
             Whether to merge the body into a single mesh. When ``True``, the
             individual faces of the tessellation are merged. This
             preserves the number of triangles and only merges the topology.
+            Using service colors with unmerged faces requires Ansys 25R2 or later.
         **plotting_options : dict, default: None
             Keyword arguments. For allowable keyword arguments,
             see the :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
-        try:
-            if body.is_suppressed:
-                return
-        except GeometryRuntimeError:  # pragma: no cover
-            # For backward compatibility with older versions of PyAnsys Geometry
-            # Inserted in 25R2
-            pass
+        # If the body's visibility is False, skip adding it to the scene.
+        if not get_visible_bodies([body]):
+            return
 
         excluded_faces = (
             {face.id for face in body.faces if face.id in exclude_ids} if exclude_ids else set()
@@ -312,14 +311,24 @@ class GeometryPlotter(PlotterInterface):
             return
 
         if self.use_service_colors and "color" not in plotting_options:
-            faces = body.faces
             body_color = body.color
+            body_opacity = body.opacity
             if not merge:
+                faces = body.faces
+                if body._grpc_client.backend_version >= (25, 2, 0):
+                    colors = body._grpc_client.services.faces.get_colors(
+                        ids=[face.id for face in faces]
+                    ).get("colors")
+                    for face in faces:
+                        color = colors.get(face.id)
+                        face._color = (
+                            mcolors.to_hex(color, keep_alpha=True) if color else DEFAULT_COLOR
+                        )
                 for face in faces:
                     face_color = face.color
                     if face_color == DEFAULT_COLOR or face_color[0:7] == DEFAULT_COLOR.lower():
                         plotting_options["color"] = body_color
-                        plotting_options["opacity"] = body.opacity
+                        plotting_options["opacity"] = body_opacity
                     else:
                         plotting_options["color"] = face_color
                         plotting_options["opacity"] = face.opacity
@@ -328,7 +337,7 @@ class GeometryPlotter(PlotterInterface):
             else:
                 dataset = body.tessellate(merge=True)
                 plotting_options["color"] = body_color
-                plotting_options["opacity"] = body.opacity
+                plotting_options["opacity"] = body_opacity
                 self._backend.pv_interface.plot(dataset, **plotting_options)
                 return
 
@@ -408,6 +417,8 @@ class GeometryPlotter(PlotterInterface):
             :meth:`Plotter.add_mesh <pyvista.Plotter.add_mesh>` method.
         """
         if merge_component:
+            if not component.is_alive:
+                return
             if exclude_ids:
                 self.add_component_by_body(
                     component,
@@ -417,7 +428,9 @@ class GeometryPlotter(PlotterInterface):
                 )
                 return
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
-            dataset = component.tessellate()
+            dataset = component.tessellate(include_hidden=False)
+            if not dataset.n_points:
+                return
             component_polydata = MeshObjectPlot(component, dataset)
             self.plot(component_polydata, **plotting_options)
         else:
@@ -549,6 +562,9 @@ class GeometryPlotter(PlotterInterface):
             _ = self.plot(object, name_filter, **plotting_options)
 
     # Override add function from plotter
+    @deprecated_argument(
+        arg="merge_bodies", alternative="merge_faces", version="0.18.2", remove="0.20.0"
+    )
     def plot(
         self,
         plottable_object: Any,
@@ -579,11 +595,10 @@ class GeometryPlotter(PlotterInterface):
         items without writable ``color`` and ``id`` properties are skipped.
         """
         # Check for custom parameters in plotting_options
-        if "merge_bodies" in plotting_options:
-            merge_bodies = plotting_options["merge_bodies"]
-            plotting_options.pop("merge_bodies", None)
-        else:
-            merge_bodies = None
+        merge_faces = plotting_options.pop("merge_faces", None)
+        merge_bodies = plotting_options.pop("merge_bodies", None)
+        if merge_faces is None:
+            merge_faces = merge_bodies
 
         if "merge_component" in plotting_options:
             merge_component = plotting_options["merge_component"]
@@ -629,7 +644,7 @@ class GeometryPlotter(PlotterInterface):
         elif isinstance(plottable_object, (Body, MasterBody)):
             self.add_body(
                 plottable_object,
-                merge=merge_bodies,
+                merge=merge_faces,
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
@@ -639,7 +654,7 @@ class GeometryPlotter(PlotterInterface):
             self.add_component(
                 plottable_object,
                 merge_component=merge_component,
-                merge_bodies=merge_bodies,
+                merge_bodies=merge_faces,
                 exclude_ids=exclude_ids,
                 **plotting_options,
             )
@@ -650,7 +665,13 @@ class GeometryPlotter(PlotterInterface):
         ):
             self.add_sketch_polydata(plottable_object, **plotting_options)
         elif isinstance(plottable_object, list):
-            self.plot_iter(plottable_object, name_filter, **plotting_options)
+            self.plot_iter(
+                plottable_object,
+                name_filter,
+                merge_faces=merge_faces,
+                merge_component=merge_component,
+                **plotting_options,
+            )
         elif isinstance(plottable_object, MeshObjectPlot):
             self._backend.pv_interface.set_add_mesh_defaults(plotting_options)
             self._backend.pv_interface.plot(plottable_object, name_filter, **plotting_options)
@@ -725,17 +746,18 @@ class GeometryPlotter(PlotterInterface):
         )
         LOG.debug(
             "When calling export_glb, if you had previously set the plotting_options "
-            "'merge_bodies' or 'merge_component' to False, they will be ignored."
+            "'merge_faces' or 'merge_component' to False, they will be ignored."
         )
         plotting_options["merge_component"] = True
-        plotting_options["merge_bodies"] = True
+        plotting_options.pop("merge_bodies", None)
+        plotting_options["merge_faces"] = True
 
         if plotting_object is not None:
             self.plot(plotting_object, **plotting_options)
         else:
             LOG.warning(
                 "If you had previously added the objects to the plotter, "
-                "make sure that the options 'merge_bodies' and 'merge_component' "
+                "make sure that the options 'merge_faces' and 'merge_component' "
                 "are set to True, otherwise the export will not work as expected."
             )
 

@@ -109,3 +109,8 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
     def find_mappable_faces(self, **kwargs) -> dict:
         """Find mappable faces from the given set of faces."""
         pass
+
+    @abstractmethod
+    def suppress_topology(self, **kwargs) -> dict:
+        """Suppress or unsuppress the given topologies."""
+        pass
