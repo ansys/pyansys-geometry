@@ -117,7 +117,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup UV
-        uses: astral-sh/setup-uv@18d369b23da25a81e9458561248e1aafff6a70fa # v10.3.1
+        uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
           activate-environment: true
@@ -186,7 +186,7 @@ jobs:
           docker rm $env:GEO_CONT_NAME
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@78b3f572ad77dd4f53f9f97ba97957e4abac31fa # v1.3.3
+        uses: skitionek/notify-microsoft-teams@e7661ab77b77471f47be0180171bd4aca7994348 # v1.3.4
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
@@ -276,7 +276,7 @@ jobs:
           docker rm ${GEO_CONT_NAME}
 
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@78b3f572ad77dd4f53f9f97ba97957e4abac31fa # v1.3.3
+        uses: skitionek/notify-microsoft-teams@e7661ab77b77471f47be0180171bd4aca7994348 # v1.3.4
         if: failure()
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
