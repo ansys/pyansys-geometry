@@ -78,7 +78,7 @@ dev = [
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.11.0",
+  "ansys-sphinx-theme[autoapi]==1.12.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.6",

@@ -472,7 +472,7 @@ provides-extras = ["all", "graphics", "usd"]
 [package.metadata.requires-dev]
 dev = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.11.0" },
+    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
@@ -515,7 +515,7 @@ dev = [
 ]
 doc = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.11.0" },
+    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.0" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
@@ -621,7 +621,7 @@ wheels = [
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.11.0"
+version = "1.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "importlib-metadata" },
@@ -631,9 +631,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "sphinx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f2/4c/60c0704874713fe7683c08e01c9e95cf8a3e921e9a4f268de2509ab6d3cd/ansys_sphinx_theme-1.11.0.tar.gz", hash = "sha256:76bdb71d805a8104d483a91666a358411607184c942362fbaf0d65693fa16352", size = 1162113, upload-time = "2026-09-02T09:30:37.356Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c5/bb/ac6f1ed9340c66eaecde0e863cb345f5c86f19c771a91ca9a4ea048bd3e8/ansys_sphinx_theme-1.12.0.tar.gz", hash = "sha256:59f2008526314d0eb0905960bb9f2a460b9e08959c3f1fb1ef59a18893d58991", size = 1210065, upload-time = "2026-10-22T13:46:22.24Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5d/ef/b7bdb2c67e92eacbdf2997fe91cd9a4a3339e91373e2e9afc6e0bfab1ef6/ansys_sphinx_theme-1.11.0-py3-none-any.whl", hash = "sha256:a388fd4adb3e385f95ca927659c41165cb37631aa698aec7b7812338131d463c", size = 1667793, upload-time = "2026-09-02T09:30:35.425Z" },
+    { url = "https://files.pythonhosted.org/packages/ba/4c/d635ed66bbff74159df486f19f961151f2b0adb06c10d73991057c9b5baf/ansys_sphinx_theme-1.12.0-py3-none-any.whl", hash = "sha256:9dedca8982fc5650166d9238fbb91d7e6b0bc5430e35cebe98c04ee0c99c0632", size = 1717696, upload-time = "2026-10-22T13:46:20.16Z" },
 ]
 
 [package.optional-dependencies]
