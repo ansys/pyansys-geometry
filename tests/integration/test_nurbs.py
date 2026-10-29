@@ -36,7 +36,6 @@ from ansys.geometry.core.math import (
     Point3D,
 )
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.plotting.plotter import GeometryPlotter
 from ansys.geometry.core.shapes.box_uv import BoxUV
 from ansys.geometry.core.shapes.curves.circle import Circle
 from ansys.geometry.core.shapes.curves.line import Line
