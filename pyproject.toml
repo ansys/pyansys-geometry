@@ -73,12 +73,12 @@ urls.Source = "https://github.com/ansys/pyansys-geometry"
 # for local development.
 dev = [
   "pre-commit==4.7.0",
-  "ty==0.0.91",
+  "ty==0.0.92",
   { include-group = "doc" },
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.11.0",
+  "ansys-sphinx-theme[autoapi]==1.12.0",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.6",
