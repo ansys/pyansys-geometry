@@ -78,7 +78,7 @@ dev = [
   { include-group = "tests" },
 ]
 doc = [
-  "ansys-sphinx-theme[autoapi]==1.12.0",
+  "ansys-sphinx-theme[autoapi]==1.12.1",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
   "jupytext==1.19.6",
@@ -90,7 +90,7 @@ doc = [
   "pdf2image==1.17.0",
   "quarto-cli==1.10.19",
   "sphinx==9.1.1",
-  "sphinx-autodoc-typehints==3.17.2",
+  "sphinx-autodoc-typehints==3.17.3",
   "sphinx-copybutton==0.5.2",
   "sphinx-jinja==2.0.2",
   { include-group = "general-all" },
