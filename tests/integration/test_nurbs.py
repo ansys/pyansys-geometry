@@ -427,8 +427,8 @@ def test_create_surface_from_nurbs_sketch(modeler: Modeler):
         tag="nurbs_sketch",
     )
     sketch.segment(
-        start=Point2D([0, -1]),
-        end=Point2D([0, 2]),
+        start=Point2D([0, 1]),
+        end=Point2D([0, 0]),
         tag="segment_1",
     )
 
