@@ -1,0 +1,123 @@
+
+
+
+
+
+
+:class:`PMDBPlugInFacetQuality`
+===============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBPlugInFacetQuality
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the plug-in facet quality used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBPlugInFacetQuality
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NONE`
+            - 
+          * - :py:attr:`~VERY_COARSE`
+            - 
+          * - :py:attr:`~COARSE`
+            - 
+          * - :py:attr:`~NORMAL`
+            - 
+          * - :py:attr:`~FINE`
+            - 
+          * - :py:attr:`~VERY_FINE`
+            - 
+          * - :py:attr:`~SOURCE`
+            - 
+          * - :py:attr:`~USER_DEFINED`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBPlugInFacetQuality
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NONE
+   :value: 0
+
+
+.. py:attribute:: VERY_COARSE
+   :value: 1
+
+
+.. py:attribute:: COARSE
+   :value: 2
+
+
+.. py:attribute:: NORMAL
+   :value: 3
+
+
+.. py:attribute:: FINE
+   :value: 4
+
+
+.. py:attribute:: VERY_FINE
+   :value: 5
+
+
+.. py:attribute:: SOURCE
+   :value: 6
+
+
+.. py:attribute:: USER_DEFINED
+   :value: 7
+
+
+
+
+
+

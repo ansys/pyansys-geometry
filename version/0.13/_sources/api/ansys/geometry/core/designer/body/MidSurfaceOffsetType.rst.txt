@@ -1,0 +1,105 @@
+
+
+
+
+
+
+:class:`MidSurfaceOffsetType`
+=============================
+
+
+.. py:class:: ansys.geometry.core.designer.body.MidSurfaceOffsetType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for mid-surface offsets supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: MidSurfaceOffsetType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~MIDDLE`
+            - 
+          * - :py:attr:`~TOP`
+            - 
+          * - :py:attr:`~BOTTOM`
+            - 
+          * - :py:attr:`~VARIABLE`
+            - 
+          * - :py:attr:`~CUSTOM`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.body import MidSurfaceOffsetType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: MIDDLE
+   :value: 0
+
+
+.. py:attribute:: TOP
+   :value: 1
+
+
+.. py:attribute:: BOTTOM
+   :value: 2
+
+
+.. py:attribute:: VARIABLE
+   :value: 3
+
+
+.. py:attribute:: CUSTOM
+   :value: 4
+
+
+
+
+
+

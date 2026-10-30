@@ -1,0 +1,415 @@
+
+
+
+
+
+
+:class:`GRPCFacesService`
+=========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.faces.GRPCFacesService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Faces service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCFacesService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_surface`
+            - Get the surface of a face.
+          * - :py:attr:`~get_box_uv`
+            - Get the UV box of a face.
+          * - :py:attr:`~get_area`
+            - Get the area of a face.
+          * - :py:attr:`~get_edges`
+            - Get the edges of a face.
+          * - :py:attr:`~get_vertices`
+            - Get the vertices of a face.
+          * - :py:attr:`~get_loops`
+            - Get the loops of a face.
+          * - :py:attr:`~get_color`
+            - Get the color of a face.
+          * - :py:attr:`~get_bounding_box`
+            - Get the bounding box of a face.
+          * - :py:attr:`~set_color`
+            - Set the color of a face.
+          * - :py:attr:`~get_normal`
+            - Get the normal of a face.
+          * - :py:attr:`~evaluate`
+            - Evaluate a face at a given parameter.
+          * - :py:attr:`~create_iso_parametric_curve`
+            - Create an iso-parametric curve on a face.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.faces import GRPCFacesService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_surface(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the surface of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_box_uv(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the UV box of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_area(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the area of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the edges of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_vertices(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the vertices of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_loops(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the loops of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the color of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bounding_box(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the bounding box of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_color(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set the color of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_normal(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get the normal of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Evaluate a face at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_iso_parametric_curve(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create an iso-parametric curve on a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

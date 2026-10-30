@@ -1,0 +1,256 @@
+
+
+
+
+
+
+:class:`Box`
+============
+
+
+.. py:class:: ansys.geometry.core.sketch.box.Box(center: ansys.geometry.core.math.point.Point2D, width: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, height: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, angle: pint.Quantity | ansys.geometry.core.misc.measurements.Angle | ansys.geometry.core.typing.Real = 0)
+
+   Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+
+   
+   Provides for modeling a box.
+
+
+   :Parameters:
+
+       **center: Point2D**
+           Center point of the box.
+
+       **width** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Width of the box.
+
+       **height** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Height of the box.
+
+       **angle** : :obj:`~pint.Quantity` | :obj:`Angle` | :obj:`Real`, default: 0
+           Placement angle for orientation alignment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Box
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center point of the box.
+          * - :py:attr:`~width`
+            - Width of the box.
+          * - :py:attr:`~height`
+            - Height of the box.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the box.
+          * - :py:attr:`~area`
+            - Area of the box.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.box import Box
+
+Property detail
+---------------
+
+.. py:property:: center
+   :type: ansys.geometry.core.math.point.Point2D
+
+
+   
+   Center point of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: width
+   :type: pint.Quantity
+
+
+   
+   Width of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :type: pint.Quantity
+
+
+   
+   Height of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :type: pint.Quantity
+
+
+   
+   Area of the box.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global cartesian coordinate system.
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

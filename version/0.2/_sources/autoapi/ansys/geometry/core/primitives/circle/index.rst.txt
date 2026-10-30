@@ -1,0 +1,705 @@
+:py:mod:`ansys.geometry.core.primitives.circle`
+===============================================
+
+.. py:module:: ansys.geometry.core.primitives.circle
+
+.. autoapi-nested-parse::
+
+   Provides the ``Circle`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.circle.Circle
+   ansys.geometry.core.primitives.circle.CircleEvaluation
+
+
+
+
+.. py:class:: Circle(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.Point3D], radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_Z)
+
+
+   
+   Provides 3D ``Circle`` representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`]
+           Origin of the circle.
+
+       **radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Radius of the circle.
+
+       **reference** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           X-axis direction.
+
+       **axis** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Origin of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: radius
+      :type: pint.Quantity
+
+      
+      Radius of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: diameter
+      :type: pint.Quantity
+
+      
+      Diameter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: perimeter
+      :type: pint.Quantity
+
+      
+      Perimeter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: area
+      :type: pint.Quantity
+
+      
+      Area of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_x
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      X-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_y
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Y-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_z
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Z-direction of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Circle) -> bool
+
+      
+      Equals operator for the ``Circle`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> CircleEvaluation
+
+      
+      Evaluate the circle at the given parameter.
+
+
+      :Parameters:
+
+          **parameter** : :obj:`Real`
+              The parameter at which to evaluate the circle.
+
+      :Returns:
+
+          :obj:`CircleEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transformed_copy(matrix: ansys.geometry.core.math.Matrix44) -> Circle
+
+      
+      Create a transformed copy of the circle based on a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The transformation matrix to apply to the circle.
+
+      :Returns:
+
+          :obj:`Circle`
+              A new circle that is the transformed copy of the original circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: mirrored_copy() -> Circle
+
+      
+      Create a mirrored copy of the circle along the y-axis.
+
+
+
+      :Returns:
+
+          :obj:`Circle`
+              A new circle that is a mirrored copy of the original circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_point(point: ansys.geometry.core.math.Point3D) -> CircleEvaluation
+
+      
+      Project a point onto the circle and return its ``CircleEvaluation``.
+
+
+      :Parameters:
+
+          **point** : :obj:`Point3D`
+              The point to project onto the circle.
+
+      :Returns:
+
+          :obj:`CircleEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_coincident_circle(other: Circle) -> bool
+
+      
+      Determine if this circle is coincident with another.
+
+
+      :Parameters:
+
+          **other** : :obj:`Circle`
+              The circle to determine coincidence with.
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              Returns true if this circle is coincident with the other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+      
+      Return the parametrization of a ``Circle`` instance.
+
+      The parameter of a circle specifies the clockwise angle around the axis (right
+      hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
+
+
+      :Returns:
+
+          :obj:`Parameterization`
+              Information about how a circle is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: CircleEvaluation(circle: Circle, parameter: ansys.geometry.core.typing.Real)
+
+
+   Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+   
+   Provides ``Circle`` evaluation at a certain parameter.
+
+
+   :Parameters:
+
+       **circle: ~ansys.geometry.core.primitives.circle.Circle**
+           The ``Circle`` object to be evaluated.
+
+       **parameter: Real**
+           The parameter at which the ``Circle`` evaluation is requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: circle
+      :type: Circle
+
+      
+      The circle being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+
+      
+      The position of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Point3D`
+              The point that lies on the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tangent() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The tangent of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The tangent unit vector to the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normal() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The normal to the circle.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The normal unit vector to the circle at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: first_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The first derivative of the evaluation.
+
+      The first derivative is in the direction of the tangent and has a
+      magnitude equal to the velocity (rate of change of position) at that
+      point.
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The first derivative of this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: second_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative of this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: curvature() -> ansys.geometry.core.typing.Real
+
+      
+      The curvature of the circle.
+
+
+
+      :Returns:
+
+          :obj:`Real`
+              The curvature of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

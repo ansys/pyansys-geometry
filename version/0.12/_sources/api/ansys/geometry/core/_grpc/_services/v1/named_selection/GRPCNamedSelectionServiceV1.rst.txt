@@ -1,0 +1,181 @@
+
+
+
+
+
+
+:class:`GRPCNamedSelectionServiceV1`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.named_selection.GRPCNamedSelectionServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.named_selection.GRPCNamedSelectionService`
+
+
+   
+   Named Selection service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   Named Selection service. It is specifically designed for the v1 version
+   of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: GRPCNamedSelectionServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_named_selection`
+            - Get the named selection by its id.
+          * - :py:attr:`~create_named_selection`
+            - Create a named selection.
+          * - :py:attr:`~delete_named_selection`
+            - Delete a named selection by id.
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.named_selection import GRPCNamedSelectionServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_named_selection(**kwargs)
+   :abstractmethod:
+
+
+   
+   Get the named selection by its id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_named_selection(**kwargs)
+   :abstractmethod:
+
+
+   
+   Create a named selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: delete_named_selection(**kwargs)
+   :abstractmethod:
+
+
+   
+   Delete a named selection by id.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

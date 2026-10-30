@@ -1,0 +1,250 @@
+
+
+
+
+
+
+:class:`GRPCModelToolsServiceV1`
+================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.model_tools.GRPCModelToolsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.model_tools.GRPCModelToolsService`
+
+
+   
+   Model tools service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   model tools service. It is specifically designed for the v1 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+
+
+.. py:currentmodule:: GRPCModelToolsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~chamfer`
+            - Create a chamfer on the specified edges of a body.
+          * - :py:attr:`~fillet`
+            - Create a fillet on the specified edges of a body.
+          * - :py:attr:`~full_fillet`
+            - Create a full fillet on the specified edges of a body.
+          * - :py:attr:`~move_rotate`
+            - Rotate the specified entities.
+          * - :py:attr:`~move_translate`
+            - Translate the specified entities.
+          * - :py:attr:`~create_sketch_line`
+            - Create a sketch line in the design.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.model_tools import GRPCModelToolsServiceV1
+
+
+
+Method detail
+-------------
+
+.. py:method:: chamfer(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a chamfer on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: fillet(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a fillet on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: full_fillet(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a full fillet on the specified edges of a body.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_rotate(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Rotate the specified entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: move_translate(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Translate the specified entities.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sketch_line(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create a sketch line in the design.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

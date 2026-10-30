@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`SectionAnchorType`
+==========================
+
+
+.. py:class:: ansys.geometry.core.designer.beam.SectionAnchorType(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the section anchor types supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SectionAnchorType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~CENTROID`
+            - 
+          * - :py:attr:`~SHEAR_CENTER`
+            - 
+          * - :py:attr:`~ANCHOR_LOCATION`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.beam import SectionAnchorType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: CENTROID
+   :value: 0
+
+
+.. py:attribute:: SHEAR_CENTER
+   :value: 1
+
+
+.. py:attribute:: ANCHOR_LOCATION
+   :value: 2
+
+
+
+
+
+

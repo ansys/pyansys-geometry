@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``local_instance.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.connection.local_instance
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: local_instance
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~LocalDockerInstance`
+            - Instantiates a Geometry service as a local Docker container.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~GeometryContainers`
+            - Provides an enum holding the available Geometry services.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 LocalDockerInstance<LocalDockerInstance>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ GeometryContainers<GeometryContainers>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for connecting to a local Docker container with the Geometry service.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

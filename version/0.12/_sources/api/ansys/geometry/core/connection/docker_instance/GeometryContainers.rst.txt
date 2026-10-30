@@ -1,0 +1,159 @@
+
+
+
+
+
+
+:class:`GeometryContainers`
+===========================
+
+
+.. py:class:: ansys.geometry.core.connection.docker_instance.GeometryContainers(*args, **kwds)
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides an enum holding the available Geometry services.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GeometryContainers
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~CORE_WINDOWS_LATEST`
+            - 
+          * - :py:attr:`~CORE_LINUX_LATEST`
+            - 
+          * - :py:attr:`~CORE_WINDOWS_LATEST_UNSTABLE`
+            - 
+          * - :py:attr:`~CORE_LINUX_LATEST_UNSTABLE`
+            - 
+          * - :py:attr:`~WINDOWS_LATEST`
+            - 
+          * - :py:attr:`~WINDOWS_LATEST_UNSTABLE`
+            - 
+          * - :py:attr:`~WINDOWS_24_1`
+            - 
+          * - :py:attr:`~WINDOWS_24_2`
+            - 
+          * - :py:attr:`~WINDOWS_25_1`
+            - 
+          * - :py:attr:`~WINDOWS_25_2`
+            - 
+          * - :py:attr:`~CORE_WINDOWS_25_2`
+            - 
+          * - :py:attr:`~CORE_LINUX_25_2`
+            - 
+          * - :py:attr:`~CORE_WINDOWS_26_1`
+            - 
+          * - :py:attr:`~CORE_LINUX_26_1`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.docker_instance import GeometryContainers
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: CORE_WINDOWS_LATEST
+   :value: (0, 'windows', 'core-windows-latest')
+
+
+.. py:attribute:: CORE_LINUX_LATEST
+   :value: (1, 'linux', 'core-linux-latest')
+
+
+.. py:attribute:: CORE_WINDOWS_LATEST_UNSTABLE
+   :value: (2, 'windows', 'core-windows-latest-unstable')
+
+
+.. py:attribute:: CORE_LINUX_LATEST_UNSTABLE
+   :value: (3, 'linux', 'core-linux-latest-unstable')
+
+
+.. py:attribute:: WINDOWS_LATEST
+   :value: (4, 'windows', 'windows-latest')
+
+
+.. py:attribute:: WINDOWS_LATEST_UNSTABLE
+   :value: (5, 'windows', 'windows-latest-unstable')
+
+
+.. py:attribute:: WINDOWS_24_1
+   :value: (6, 'windows', 'windows-24.1')
+
+
+.. py:attribute:: WINDOWS_24_2
+   :value: (7, 'windows', 'windows-24.2')
+
+
+.. py:attribute:: WINDOWS_25_1
+   :value: (8, 'windows', 'windows-25.1')
+
+
+.. py:attribute:: WINDOWS_25_2
+   :value: (9, 'windows', 'windows-25.2')
+
+
+.. py:attribute:: CORE_WINDOWS_25_2
+   :value: (10, 'windows', 'core-windows-25.2')
+
+
+.. py:attribute:: CORE_LINUX_25_2
+   :value: (11, 'linux', 'core-linux-25.2')
+
+
+.. py:attribute:: CORE_WINDOWS_26_1
+   :value: (10, 'windows', 'core-windows-26.1')
+
+
+.. py:attribute:: CORE_LINUX_26_1
+   :value: (11, 'linux', 'core-linux-26.1')
+
+
+
+
+
+

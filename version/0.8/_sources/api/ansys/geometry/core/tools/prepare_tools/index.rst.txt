@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``prepare_tools.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core.tools.prepare_tools
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: prepare_tools
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.tools.prepare_tools.PrepareTools`
+            - Prepare tools for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> PrepareTools</api/ansys/geometry/core/tools/prepare_tools/PrepareTools>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides tools for preparing geometry for use with simulation.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

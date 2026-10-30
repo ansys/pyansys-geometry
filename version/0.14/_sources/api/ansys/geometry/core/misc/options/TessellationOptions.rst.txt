@@ -1,0 +1,228 @@
+
+
+
+
+
+
+:class:`TessellationOptions`
+============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.TessellationOptions(surface_deviation: ansys.geometry.core.typing.Real, angle_deviation: ansys.geometry.core.typing.Real, max_aspect_ratio: ansys.geometry.core.typing.Real = 0.0, max_edge_length: ansys.geometry.core.typing.Real = 0.0, watertight: bool = False)
+
+   
+   Provides options for getting tessellation.
+
+
+   :Parameters:
+
+       **surface_deviation** : :obj:`Real`
+           The maximum deviation from the true surface position.
+
+       **angle_deviation** : :obj:`Real`
+           The maximum deviation from the true surface normal, in radians.
+
+       **max_aspect_ratio** : :obj:`Real`, default=0.0
+           The maximum aspect ratio of facets.
+
+       **max_edge_length** : :obj:`Real`, default=0.0
+           The maximum facet edge length.
+
+       **watertight** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether triangles on opposite sides of an edge should match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: TessellationOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~surface_deviation`
+            - Surface Deviation.
+          * - :py:attr:`~angle_deviation`
+            - Angle deviation.
+          * - :py:attr:`~max_aspect_ratio`
+            - Maximum aspect ratio.
+          * - :py:attr:`~max_edge_length`
+            - Maximum edge length.
+          * - :py:attr:`~watertight`
+            - Watertight.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import TessellationOptions
+
+Property detail
+---------------
+
+.. py:property:: surface_deviation
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Surface Deviation.
+
+   The maximum deviation from the true surface position.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle_deviation
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Angle deviation.
+
+   The maximum deviation from the true surface normal, in radians.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_aspect_ratio
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Maximum aspect ratio.
+
+   The maximum aspect ratio of facets.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: max_edge_length
+   :type: ansys.geometry.core.typing.Real
+
+
+   
+   Maximum edge length.
+
+   The maximum facet edge length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: watertight
+   :type: bool
+
+
+   
+   Watertight.
+
+   Whether triangles on opposite sides of an edge should match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

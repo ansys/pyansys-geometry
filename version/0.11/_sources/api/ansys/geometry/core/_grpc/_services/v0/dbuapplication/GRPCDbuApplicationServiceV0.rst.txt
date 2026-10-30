@@ -1,0 +1,122 @@
+
+
+
+
+
+
+:class:`GRPCDbuApplicationServiceV0`
+====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.dbuapplication.GRPCDbuApplicationServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.dbuapplication.GRPCDbuApplicationService`
+
+
+   
+   DBU Application service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   DBU Application service. It is specifically designed for the v0 version
+   of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCDbuApplicationServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~run_script`
+            - Run a Scripting API script.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.dbuapplication import GRPCDbuApplicationServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: run_script(**kwargs) -> dict
+
+   
+   Run a Scripting API script.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

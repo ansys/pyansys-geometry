@@ -1,0 +1,232 @@
+
+
+
+
+
+
+:class:`Parameter`
+==================
+
+
+.. py:class:: ansys.geometry.core.parameters.parameter.Parameter(id: int, name: str, dimension_type: ParameterType, dimension_value: pint.Quantity | ansys.geometry.core.typing.Real)
+
+   
+   Represents a parameter.
+
+
+   :Parameters:
+
+       **id** : :class:`python:int`
+           Unique ID for the parameter.
+
+       **name** : :class:`python:str`
+           Name of the parameter.
+
+       **dimension_type** : :obj:`ParameterType`
+           Type of the parameter.
+
+       **dimension_value** : :obj:`Quantity` | :obj:`Real`
+           Value of the parameter. If a Real, it will be assigned default units
+           based on the dimension_type.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: Parameter
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~name`
+            - Get the name of the parameter.
+          * - :py:attr:`~dimension_value`
+            - Get the value of the parameter.
+          * - :py:attr:`~dimension_type`
+            - Get the type of the parameter.
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - 
+
+
+   .. tab-item:: Static methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~convert_quantity_to_server_units`
+            - Convert a Quantity to a Real value using appropriate units.
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.parameters.parameter import Parameter
+
+Property detail
+---------------
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Get the name of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dimension_value
+   :type: pint.Quantity
+
+
+   
+   Get the value of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dimension_type
+   :type: ParameterType
+
+
+   
+   Get the type of the parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: id
+
+
+
+Method detail
+-------------
+
+.. py:method:: convert_quantity_to_server_units(value: pint.Quantity, dimension_type: ParameterType) -> ansys.geometry.core.typing.Real
+   :staticmethod:
+
+
+   
+   Convert a Quantity to a Real value using appropriate units.
+
+
+   :Parameters:
+
+       **value** : :obj:`Quantity`
+           The value to convert.
+
+       **dimension_type** : :obj:`ParameterType`
+           The dimension type to determine the appropriate unit.
+
+
+
+   :Returns:
+
+       :obj:`Real`
+           The value in default server units.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

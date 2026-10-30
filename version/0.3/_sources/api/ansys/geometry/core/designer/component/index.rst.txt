@@ -1,0 +1,99 @@
+
+
+
+
+
+The ``component.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.designer.component
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: component
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Component`
+            - Provides for creating and managing a component.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~SharedTopologyType`
+            - Enum for the component shared topologies available in the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Component<Component>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    ≔ SharedTopologyType<SharedTopologyType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing components.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+
