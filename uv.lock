@@ -472,7 +472,7 @@ provides-extras = ["all", "graphics", "usd"]
 [package.metadata.requires-dev]
 dev = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.0" },
+    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.1" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
@@ -507,7 +507,7 @@ dev = [
     { name = "semver", specifier = "==3.1.0" },
     { name = "six", specifier = "==1.17.0" },
     { name = "sphinx", specifier = "==9.1.1" },
-    { name = "sphinx-autodoc-typehints", specifier = "==3.17.2" },
+    { name = "sphinx-autodoc-typehints", specifier = "==3.17.3" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "ty", specifier = "==0.0.92" },
@@ -515,7 +515,7 @@ dev = [
 ]
 doc = [
     { name = "ansys-platform-instancemanagement", specifier = "==1.2.0" },
-    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.0" },
+    { name = "ansys-sphinx-theme", extras = ["autoapi"], specifier = "==1.12.1" },
     { name = "ansys-tools-common", specifier = "==0.5.3" },
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
@@ -545,7 +545,7 @@ doc = [
     { name = "semver", specifier = "==3.1.0" },
     { name = "six", specifier = "==1.17.0" },
     { name = "sphinx", specifier = "==9.1.1" },
-    { name = "sphinx-autodoc-typehints", specifier = "==3.17.2" },
+    { name = "sphinx-autodoc-typehints", specifier = "==3.17.3" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "vtk", specifier = "==9.7.1" },
@@ -621,7 +621,7 @@ wheels = [
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.12.0"
+version = "1.12.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "importlib-metadata" },
@@ -631,9 +631,9 @@ dependencies = [
     { name = "pyyaml" },
     { name = "sphinx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/bb/ac6f1ed9340c66eaecde0e863cb345f5c86f19c771a91ca9a4ea048bd3e8/ansys_sphinx_theme-1.12.0.tar.gz", hash = "sha256:59f2008526314d0eb0905960bb9f2a460b9e08959c3f1fb1ef59a18893d58991", size = 1210065, upload-time = "2026-10-22T13:46:22.24Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/51/d1/04a618bbdbed17ca7411e341954893167f7f7223e461e9bdc8468a36f8d4/ansys_sphinx_theme-1.12.1.tar.gz", hash = "sha256:33180f5f8e6b1cafcd4e0fc67fe4522ce1f17e5ad49c1eac7d93ec7788fe00c7", size = 1212362, upload-time = "2026-10-26T08:28:44.693Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ba/4c/d635ed66bbff74159df486f19f961151f2b0adb06c10d73991057c9b5baf/ansys_sphinx_theme-1.12.0-py3-none-any.whl", hash = "sha256:9dedca8982fc5650166d9238fbb91d7e6b0bc5430e35cebe98c04ee0c99c0632", size = 1717696, upload-time = "2026-10-22T13:46:20.16Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/d7/0265fc0320393f1258af7043118a39b61d051ca555f0fad902a6a5020b79/ansys_sphinx_theme-1.12.1-py3-none-any.whl", hash = "sha256:a355cc7cdb8253411eb8ceeed642bd483b48e82fc4672a36758edf3e38c87b4b", size = 1718857, upload-time = "2026-10-26T08:28:43.045Z" },
 ]
 
 [package.optional-dependencies]
@@ -4313,15 +4313,15 @@ wheels = [
 
 [[package]]
 name = "sphinx-autodoc-typehints"
-version = "3.17.2"
+version = "3.17.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "sphinx" },
     { name = "typing-extensions", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9c/fa/c967fd665cc102c90338a90292aba336f852ee6f9b3477ffe4da565edb11/sphinx_autodoc_typehints-3.17.2.tar.gz", hash = "sha256:de41ed4001f4818bb6d37c22fd10ee44a93e6c8e945c6c7e3984e28a9df87d1c", size = 570767, upload-time = "2026-10-17T18:30:30.923Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/5b/8c/2ab7bd22aa2988c9e4f4791688d6de24a00395afbd5d7dffa16b35db81fb/sphinx_autodoc_typehints-3.17.3.tar.gz", hash = "sha256:bb61ba0e2ab46e24631b0cc6ea0818176d6218a35225e0e632586e8dffc4ff4d", size = 510825, upload-time = "2026-10-27T07:00:16.582Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/78/d4/8fc500ff2fafe8a6e1847abd8b1072494dc1a5f136f8e890e973db7de4eb/sphinx_autodoc_typehints-3.17.2-py3-none-any.whl", hash = "sha256:b0ad1f96503d69b63c2a1c043f12e2a727c9549e6503d4adbf2125dbf5ff50ed", size = 140285, upload-time = "2026-10-17T18:30:28.728Z" },
+    { url = "https://files.pythonhosted.org/packages/83/9e/ab4db759c0a8dbc37aef2993976db7874bb2bde5f719d3c5b3448022f0d3/sphinx_autodoc_typehints-3.17.3-py3-none-any.whl", hash = "sha256:a87c08a7fe562a50557d1be6715bd47d403c23a7ead932dfc96de709b8a2b8ba", size = 140276, upload-time = "2026-10-27T07:00:14.696Z" },
 ]
 
 [[package]]
