@@ -38,6 +38,20 @@ if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.math.vector import UnitVector3D
 
 
+def _typechecked_dataclass(cls):
+    """Create a dataclass whose generated ``__init__`` supports runtime type checking."""
+    cls = dataclass(cls)
+    cls.__init__ = check_input_types(cls.__init__)
+    return cls
+
+
+def _to_measurement(value, measurement_type: Distance | Angle):
+    """Convert a ``Real`` or ``Quantity`` to the given measurement type, preserving ``None``."""
+    if value is None or isinstance(value, measurement_type):
+        return value
+    return measurement_type(value)
+
+
 @dataclass
 class ImportOptions:
     """Import options when opening a file.
@@ -104,6 +118,7 @@ class ImportOptionsDefinitions:
         return {k: str(v) for k, v in asdict(self).items()}
 
 
+@_typechecked_dataclass
 class TessellationOptions:
     """Provides options for getting tessellation.
 
@@ -114,7 +129,7 @@ class TessellationOptions:
         If a Real is provided, it is assumed to be in the default length unit.
     angle_deviation : Angle | Quantity | Real
         The maximum deviation from the true surface normal.
-        If a Real is provided, it is assumed to be in radians.
+        If a Real is provided, it is assumed to be in the default angle unit.
     curve_deviation : Distance | Quantity | Real, default=0.0
         The maximum deviation from the true curve position.
         If a Real is provided, it is assumed to be in the default length unit.
@@ -126,84 +141,22 @@ class TessellationOptions:
         Whether triangles on opposite sides of an edge should match.
     """
 
-    @check_input_types
-    def __init__(
-        self,
-        surface_deviation: Distance | Quantity | Real,
-        angle_deviation: Angle | Quantity | Real,
-        curve_deviation: Distance | Quantity | Real = 0.0,
-        max_aspect_ratio: Real = 0.0,
-        max_edge_length: Distance | Quantity | Real = 0.0,
-        watertight: bool = False,
-    ):
-        """Initialize ``TessellationOptions`` class."""
-        # Convert inputs to Distance and Angle objects
-        self._surface_deviation = (
-            surface_deviation
-            if isinstance(surface_deviation, Distance)
-            else Distance(surface_deviation)
-        )
-        self._angle_deviation = (
-            angle_deviation if isinstance(angle_deviation, Angle) else Angle(angle_deviation)
-        )
-        self._curve_deviation = (
-            curve_deviation if isinstance(curve_deviation, Distance) else Distance(curve_deviation)
-        )
-        self._max_aspect_ratio = max_aspect_ratio
-        self._max_edge_length = (
-            max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
-        )
-        self._watertight = watertight
+    surface_deviation: Distance | Quantity | Real
+    angle_deviation: Angle | Quantity | Real
+    curve_deviation: Distance | Quantity | Real = 0.0
+    max_aspect_ratio: Real = 0.0
+    max_edge_length: Distance | Quantity | Real = 0.0
+    watertight: bool = False
 
-    @property
-    def surface_deviation(self) -> Distance:
-        """Surface Deviation.
-
-        The maximum deviation from the true surface position.
-        """
-        return self._surface_deviation
-
-    @property
-    def angle_deviation(self) -> Angle:
-        """Angle deviation.
-
-        The maximum deviation from the true surface normal.
-        """
-        return self._angle_deviation
-
-    @property
-    def curve_deviation(self) -> Distance:
-        """Curve deviation.
-
-        The maximum deviation from the true curve position.
-        """
-        return self._curve_deviation
-
-    @property
-    def max_aspect_ratio(self) -> Real:
-        """Maximum aspect ratio.
-
-        The maximum aspect ratio of facets.
-        """
-        return self._max_aspect_ratio
-
-    @property
-    def max_edge_length(self) -> Distance:
-        """Maximum edge length.
-
-        The maximum facet edge length.
-        """
-        return self._max_edge_length
-
-    @property
-    def watertight(self) -> bool:
-        """Watertight.
-
-        Whether triangles on opposite sides of an edge should match.
-        """
-        return self._watertight
+    def __post_init__(self):
+        """Normalize measurement fields to ``Distance`` and ``Angle`` objects."""
+        self.surface_deviation = _to_measurement(self.surface_deviation, Distance)
+        self.angle_deviation = _to_measurement(self.angle_deviation, Angle)
+        self.curve_deviation = _to_measurement(self.curve_deviation, Distance)
+        self.max_edge_length = _to_measurement(self.max_edge_length, Distance)
 
 
+@_typechecked_dataclass
 class RayfireOptions:
     """Additional options for ray fire operations.
 
@@ -232,108 +185,24 @@ class RayfireOptions:
         Whether to request secondary hits for the ray fire operation.
     """
 
-    @check_input_types
-    def __init__(
-        self,
-        radius: Distance | Quantity | Real,
-        direction: "UnitVector3D",
-        max_distance: Distance | Quantity | Real,
-        min_distance: Distance | Quantity | Real,
-        tight_tolerance: bool = False,
-        pick_back_faces: bool = False,
-        max_hits: int = 0,
-        request_params: bool = False,
-        request_secondary: bool = False,
-    ):
-        """Initialize ``RayfireOptions`` class."""
-        # Convert inputs to Distance objects
-        self._radius = radius if isinstance(radius, Distance) else Distance(radius)
-        self._direction = direction
-        self._max_distance = (
-            max_distance if isinstance(max_distance, Distance) else Distance(max_distance)
-        )
-        self._min_distance = (
-            min_distance if isinstance(min_distance, Distance) else Distance(min_distance)
-        )
-        self._tight_tolerance = tight_tolerance
-        self._pick_back_faces = pick_back_faces
-        self._max_hits = max_hits
-        self._request_params = request_params
-        self._request_secondary = request_secondary
+    radius: Distance | Quantity | Real
+    direction: "UnitVector3D"
+    max_distance: Distance | Quantity | Real
+    min_distance: Distance | Quantity | Real
+    tight_tolerance: bool = False
+    pick_back_faces: bool = False
+    max_hits: int = 0
+    request_params: bool = False
+    request_secondary: bool = False
 
-    @property
-    def radius(self) -> Distance:
-        """Radius.
-
-        The radius of the ray.
-        """
-        return self._radius
-
-    @property
-    def direction(self) -> "UnitVector3D":
-        """Direction.
-
-        The direction for the ray to be fired in.
-        """
-        return self._direction
-
-    @property
-    def max_distance(self) -> Distance:
-        """Maximum distance.
-
-        The maximum distance the ray should travel.
-        """
-        return self._max_distance
-
-    @property
-    def min_distance(self) -> Distance:
-        """Minimum distance.
-
-        The minimum distance the ray should travel.
-        """
-        return self._min_distance
-
-    @property
-    def tight_tolerance(self) -> bool:
-        """Tight tolerance.
-
-        Whether to use a tight tolerance for the ray fire operation.
-        """
-        return self._tight_tolerance
-
-    @property
-    def pick_back_faces(self) -> bool:
-        """Pick back faces.
-
-        Whether to pick back faces during the ray fire operation.
-        """
-        return self._pick_back_faces
-
-    @property
-    def max_hits(self) -> int:
-        """Maximum hits.
-
-        The maximum number of hits the ray should register.
-        """
-        return self._max_hits
-
-    @property
-    def request_params(self) -> bool:
-        """Request parameters.
-
-        Whether to request additional parameters for the ray fire operation.
-        """
-        return self._request_params
-
-    @property
-    def request_secondary(self) -> bool:
-        """Request secondary.
-
-        Whether to request secondary hits for the ray fire operation.
-        """
-        return self._request_secondary
+    def __post_init__(self):
+        """Normalize measurement fields to ``Distance`` objects."""
+        self.radius = _to_measurement(self.radius, Distance)
+        self.max_distance = _to_measurement(self.max_distance, Distance)
+        self.min_distance = _to_measurement(self.min_distance, Distance)
 
 
+@_typechecked_dataclass
 class FMDExportOptions:
     """Provides options for FMD export.
 
@@ -345,7 +214,7 @@ class FMDExportOptions:
         Must be between 0.00003 m and 0.002 m.
     angle : Angle | Quantity | Real
         The maximum deviation from the true surface normal.
-        If a Real is provided, it is assumed to be in radians.
+        If a Real is provided, it is assumed to be in the default angle unit.
         Must be between 0.05 degrees (≈ 8.727e-4 rad) and 30 degrees (≈ 0.5236 rad).
     aspect_ratio : int, default=-3
         The maximum aspect ratio of facets.
@@ -353,64 +222,26 @@ class FMDExportOptions:
         The maximum facet edge length.
     """
 
-    @check_input_types
-    def __init__(
-        self,
-        deviation: Distance | Quantity | Real,
-        angle: Angle | Quantity | Real,
-        aspect_ratio: int = -3,
-        max_edge_length: Distance | Quantity | Real = 0.0,
-    ):
-        """Initialize ``FMDExportOptions`` class."""
-        # Convert inputs to Distance and Angle objects
-        self._deviation = deviation if isinstance(deviation, Distance) else Distance(deviation)
-        _dev_m = self._deviation.value.m_as("m")
+    deviation: Distance | Quantity | Real
+    angle: Angle | Quantity | Real
+    aspect_ratio: int = -3
+    max_edge_length: Distance | Quantity | Real = 0.0
+
+    def __post_init__(self):
+        """Normalize measurement fields and validate their ranges."""
+        self.deviation = _to_measurement(self.deviation, Distance)
+        _dev_m = self.deviation.value.m_as("m")
         if not (0.00003 <= _dev_m <= 0.002):
             raise ValueError(f"deviation must be between 0.00003 m and 0.002 m, got {_dev_m} m.")
 
-        self._angle = angle if isinstance(angle, Angle) else Angle(angle)
-        _ang_deg = self._angle.value.m_as("degree")
+        self.angle = _to_measurement(self.angle, Angle)
+        _ang_deg = self.angle.value.m_as("degree")
         if not (0.05 <= _ang_deg <= 30.0):
             raise ValueError(
                 f"angle must be between 0.05 degrees and 30 degrees, got {_ang_deg:.6f} degrees."
             )
 
-        self._aspect_ratio = aspect_ratio
-        self._max_edge_length = (
-            max_edge_length if isinstance(max_edge_length, Distance) else Distance(max_edge_length)
-        )
-
-    @property
-    def deviation(self) -> Distance:
-        """Deviation.
-
-        The maximum deviation from the true surface position.
-        """
-        return self._deviation
-
-    @property
-    def angle(self) -> Angle:
-        """Angle.
-
-        The maximum deviation from the true surface normal.
-        """
-        return self._angle
-
-    @property
-    def aspect_ratio(self) -> int:
-        """Aspect ratio.
-
-        The maximum aspect ratio of facets.
-        """
-        return self._aspect_ratio
-
-    @property
-    def max_edge_length(self) -> Distance:
-        """Maximum edge length.
-
-        The maximum facet edge length.
-        """
-        return self._max_edge_length
+        self.max_edge_length = _to_measurement(self.max_edge_length, Distance)
 
 
 @unique
@@ -513,8 +344,9 @@ class PMDBExportOptions:
         Prefixes used to filter coordinate systems for export.
     advanced_geom_processing : bool, default: False
         Whether to enable advanced geometry processing.
-    angular_deviation : float, default: 0.0
-        Angular deviation for faceting (in degrees).
+    angular_deviation : Angle | Quantity | Real, default: 0.0
+        Angular deviation for faceting.
+        If a Real is provided, it is assumed to be in the default angle unit.
     attach_weight_class : PMDBAttachWeightClass, default: PMDBAttachWeightClass.HEAVYWEIGHT
         The weight class for the attachment.
     cad_associativity : bool, default: False
@@ -523,8 +355,9 @@ class PMDBExportOptions:
         Whether to transfer CAD attributes.
     do_smart_update : bool, default: False
         Whether to perform a smart update.
-    geometry_deviation : float, default: 0.0
-        Geometry deviation for faceting (in meters).
+    geometry_deviation : Distance | Quantity | Real, default: 0.0
+        Geometry deviation for faceting.
+        If a Real is provided, it is assumed to be in the default length unit.
     process_coordinate_sys : bool, default: False
         Whether to process coordinate systems.
     process_planes : bool, default: False
@@ -539,14 +372,20 @@ class PMDBExportOptions:
         Whether to include material properties.
     granta_material_properties : bool, default: False
         Whether to include Granta material properties.
-    max_facet_size : float, default: 0.0
-        Maximum facet size (in meters). Zero means no limit.
+    max_facet_size : Distance | Quantity | Real, default: 0.0
+        Maximum facet size. Zero means no limit.
+        If a Real is provided, it is assumed to be in the default length unit.
     named_selection : bool, default: False
         Whether to export named selections.
     parameter_processing_type : PMDBImportParameterType, default: PMDBImportParameterType.NONE
         The type of parameters to process.
-    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.NONE
+    plug_in_facet_quality : PMDBPlugInFacetQuality, default: PMDBPlugInFacetQuality.SOURCE
         The facet quality setting for plug-in readers.
+        Automatically set to ``USER_DEFINED`` when ``angular_deviation``,
+        ``geometry_deviation``, or ``max_facet_size`` is nonzero, including after
+        field assignment. Custom controls override any supplied preset.
+        Resetting all controls to zero does not restore the previous preset;
+        a preset must then be assigned explicitly.
     process_enclosure_and_symmetry : bool, default: False
         Whether to process enclosure and symmetry.
     reader_save_part : bool, default: False
@@ -575,12 +414,12 @@ class PMDBExportOptions:
     plane_prefixes: str = ""
     coordinate_system_prefixes: str = ""
     advanced_geom_processing: bool = False
-    angular_deviation: float = 0.0
+    angular_deviation: Angle | Quantity | Real = 0.0
     attach_weight_class: PMDBAttachWeightClass = PMDBAttachWeightClass.HEAVYWEIGHT
     cad_associativity: bool = False
     cad_attribute_transfer: bool = True
     do_smart_update: bool = False
-    geometry_deviation: float = 0.0
+    geometry_deviation: Distance | Quantity | Real = 0.0
     process_coordinate_sys: bool = True
     process_planes: bool = True
     import_using_instances: bool = True
@@ -588,7 +427,7 @@ class PMDBExportOptions:
     is_selective_update: bool = False
     material_properties: bool = True
     granta_material_properties: bool = False
-    max_facet_size: float = 0.0
+    max_facet_size: Distance | Quantity | Real = 0.0
     named_selection: bool = True
     parameter_processing_type: PMDBImportParameterType = PMDBImportParameterType.ALL
     plug_in_facet_quality: PMDBPlugInFacetQuality = PMDBPlugInFacetQuality.SOURCE
@@ -601,7 +440,24 @@ class PMDBExportOptions:
     process_surface_bodies: bool = True
     process_line_bodies: bool = True
 
+    def __setattr__(self, name: str, value: object) -> None:
+        """Normalize custom controls and select user-defined facet quality."""
+        if name == "angular_deviation":
+            value = _to_measurement(value, Angle)
+        elif name in ("geometry_deviation", "max_facet_size"):
+            value = _to_measurement(value, Distance)
 
+        object.__setattr__(self, name, value)
+        controls = ("angular_deviation", "geometry_deviation", "max_facet_size")
+        if name in (*controls, "plug_in_facet_quality") and any(
+            self.__dict__[control].value.magnitude != 0
+            for control in controls
+            if control in self.__dict__
+        ):
+            object.__setattr__(self, "plug_in_facet_quality", PMDBPlugInFacetQuality.USER_DEFINED)
+
+
+@_typechecked_dataclass
 class VolumeExtractOptions:
     """Provides options for volume extraction.
 
@@ -624,82 +480,14 @@ class VolumeExtractOptions:
         Detect leaks in the model before extraction.
     """
 
-    @check_input_types
-    def __init__(
-        self,
-        create_shared_topology: bool | None = None,
-        imprint_capping_edges: bool | None = None,
-        merge_created_volume: bool | None = None,
-        seed_point: SurfaceEvaluation | None = None,
-        tolerance: Distance | Quantity | Real | None = None,
-        create_capping_surfaces: bool | None = None,
-        detect_leaks: bool | None = None,
-    ):
-        """Initialize ``VolumeExtractOptions`` class."""
-        self._create_shared_topology = create_shared_topology
-        self._imprint_capping_edges = imprint_capping_edges
-        self._merge_created_volume = merge_created_volume
-        self._seed_point = seed_point
-        self._tolerance = (
-            tolerance
-            if tolerance is None or isinstance(tolerance, Distance)
-            else Distance(tolerance)
-        )
-        self._create_capping_surfaces = create_capping_surfaces
-        self._detect_leaks = detect_leaks
+    create_shared_topology: bool | None = None
+    imprint_capping_edges: bool | None = None
+    merge_created_volume: bool | None = None
+    seed_point: SurfaceEvaluation | None = None
+    tolerance: Distance | Quantity | Real | None = None
+    create_capping_surfaces: bool | None = None
+    detect_leaks: bool | None = None
 
-    @property
-    def create_shared_topology(self) -> bool | None:
-        """Create shared topology.
-
-        Create shared topology between capping surfaces and the seed body.
-        """
-        return self._create_shared_topology
-
-    @property
-    def imprint_capping_edges(self) -> bool | None:
-        """Imprint capping edges.
-
-        Imprint capping edges onto the seed body.
-        """
-        return self._imprint_capping_edges
-
-    @property
-    def merge_created_volume(self) -> bool | None:
-        """Merge created volume.
-
-        Merge the created volume into the existing model.
-        """
-        return self._merge_created_volume
-
-    @property
-    def seed_point(self) -> SurfaceEvaluation | None:
-        """Seed point.
-
-        Seed point on the surface from which to extract the volume.
-        """
-        return self._seed_point
-
-    @property
-    def tolerance(self) -> Distance | None:
-        """Tolerance.
-
-        Tolerance for volume extraction.
-        """
-        return self._tolerance
-
-    @property
-    def create_capping_surfaces(self) -> bool | None:
-        """Create capping surfaces.
-
-        Create capping surfaces to close open regions.
-        """
-        return self._create_capping_surfaces
-
-    @property
-    def detect_leaks(self) -> bool | None:
-        """Detect leaks.
-
-        Detect leaks in the model before extraction.
-        """
-        return self._detect_leaks
+    def __post_init__(self):
+        """Normalize the tolerance to a ``Distance`` object."""
+        self.tolerance = _to_measurement(self.tolerance, Distance)

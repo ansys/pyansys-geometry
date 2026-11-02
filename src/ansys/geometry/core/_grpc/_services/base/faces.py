@@ -76,6 +76,11 @@ class GRPCFacesService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_colors(self, **kwargs) -> dict:
+        """Get the colors of multiple faces."""
+        pass
+
+    @abstractmethod
     def get_bounding_box(self, **kwargs) -> dict:
         """Get the bounding box of a face."""
         pass

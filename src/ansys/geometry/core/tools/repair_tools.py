@@ -117,7 +117,7 @@ class RepairTools:
         bodies : list[Body]
             List of bodies that split edges are investigated on.
         angle : Angle | ~pint.Quantity | Real
-            The maximum angle between edges. By default, None.
+            The minimum angle between edges. By default, None.
         length : Distance | ~pint.Quantity | Real
             The maximum length of the edges. By default, None.
 
@@ -680,8 +680,8 @@ class RepairTools:
     def find_and_fix_split_edges(
         self,
         bodies: list["Body"],
-        angle: Angle | pint.Quantity | Real = 0.0,
-        length: Distance | pint.Quantity | Real = 0.0,
+        angle: Angle | pint.Quantity | Real | None = None,
+        length: Distance | pint.Quantity | Real | None = None,
         comprehensive_result: bool = False,
     ) -> RepairToolMessage:
         """Find and fix the split edge problem areas.
@@ -693,9 +693,9 @@ class RepairTools:
         bodies : list[Body]
             List of bodies that split edges are investigated on.
         angle : Angle | ~pint.Quantity | Real, optional
-            The maximum angle between edges. By default, 0.0.
+            The minimum angle between edges. By default, None, which uses the backend default.
         length : Distance | ~pint.Quantity | Real, optional
-            The maximum length of the edges. By default, 0.0.
+            The maximum length of the edges. By default, None, which uses the backend default.
         comprehensive_result : bool, optional
             Whether to fix all problem areas individually.
             By default, False.
@@ -712,8 +712,10 @@ class RepairTools:
         from ansys.geometry.core.designer.body import Body
 
         check_type_all_elements_in_iterable(bodies, Body)
-        check_type(angle, (Angle, pint.Quantity, Real))
-        check_type(length, (Distance, pint.Quantity, Real))
+        if angle is not None:
+            check_type(angle, (Angle, pint.Quantity, Real))
+        if length is not None:
+            check_type(length, (Distance, pint.Quantity, Real))
         check_type(comprehensive_result, bool)
 
         if not bodies:
@@ -725,8 +727,10 @@ class RepairTools:
         parent_design = get_design_from_body(bodies[0])
 
         # Convert the measurement objects
-        angle = angle if isinstance(angle, Angle) else Angle(angle)
-        length = length if isinstance(length, Distance) else Distance(length)
+        if angle is not None:
+            angle = angle if isinstance(angle, Angle) else Angle(angle)
+        if length is not None:
+            length = length if isinstance(length, Distance) else Distance(length)
 
         response = self._grpc_client.services.repair_tools.find_and_fix_split_edges(
             bodies_or_faces=body_ids,

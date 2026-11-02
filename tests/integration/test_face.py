@@ -38,6 +38,22 @@ from ansys.geometry.core.sketch import Sketch
 from .conftest import FILES_DIR
 
 
+def test_face_get_colors(modeler: Modeler):
+    """Retrieve assigned face colors and alpha through the real versioned service."""
+    design = modeler.create_design("FaceColors")
+    body = design.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    faces = body.faces[:2]
+    faces[0].color = "#ff000080"
+    faces[1].color = "#00ff00ff"
+    service = modeler.client.services.faces
+    colors = service.get_colors(ids=[face.id for face in faces])["colors"]
+    assert {face_id: color.lower() for face_id, color in colors.items()} == {
+        faces[0].id: "#ff000080",
+        faces[1].id: "#00ff00ff",
+    }
+    assert service.get_colors(ids=[]) == {"colors": {}}
+
+
 def _face_for_unit_tests(*, face_id: str = "face-1", backend_version=(27, 1, 0)):
     grpc_client = Mock()
     grpc_client.backend_version = backend_version
