@@ -501,7 +501,7 @@ dev = [
     { name = "pytest-pyvista", specifier = "==0.3.3" },
     { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
     { name = "pyyaml", specifier = "==6.0.3" },
-    { name = "quarto-cli", specifier = "==1.10.19" },
+    { name = "quarto-cli", specifier = "==1.10.20" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
     { name = "semver", specifier = "==3.1.0" },
@@ -539,7 +539,7 @@ doc = [
     { name = "pydantic", specifier = "==2.14.1" },
     { name = "pygltflib", specifier = "==1.16.5" },
     { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
-    { name = "quarto-cli", specifier = "==1.10.19" },
+    { name = "quarto-cli", specifier = "==1.10.20" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
     { name = "semver", specifier = "==3.1.0" },
@@ -3920,14 +3920,14 @@ wheels = [
 
 [[package]]
 name = "quarto-cli"
-version = "1.10.19"
+version = "1.10.20"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jupyter" },
     { name = "nbclient" },
     { name = "wheel" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c5/c5/193d705f17e5aa8d81c5f493044914ca0ccae81b0e90c408dc8355935bcf/quarto_cli-1.10.19.tar.gz", hash = "sha256:e4b14f3aeb38ea536672428a402c413c962bd4ba9d0b9805f416779226eb53e2", size = 4690, upload-time = "2026-10-06T09:09:20.387Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f3/c0/5763b494061cc2f157bb281ab169252a6be4d78fba0440bf8a5ef578b253/quarto_cli-1.10.20.tar.gz", hash = "sha256:c336e307f7b973d3047dfbe6e2f7987af4daa37c1a240a32af4580b29253e831", size = 4802, upload-time = "2026-10-30T11:26:49.045Z" }
 
 [[package]]
 name = "referencing"
