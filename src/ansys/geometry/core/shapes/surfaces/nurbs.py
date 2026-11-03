@@ -35,6 +35,7 @@ from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Z
 from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
+from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.shapes.parameterization import (
     Interval,
     Parameterization,
@@ -196,7 +197,7 @@ class NURBSSurface(Surface):
     @property
     def control_points(self) -> list[Point3D]:
         """Get the control points of the NURBS surface."""
-        return [Point3D(pt) for pt in self._nurbs_surface.ctrlpts]
+        return [Point3D(pt, UNITS.m) for pt in self._nurbs_surface.ctrlpts]
 
     @property
     def degree_u(self) -> int:
@@ -392,9 +393,9 @@ class NURBSSurface(Surface):
             degree_v=model.degree_v,
             knots_u=model.knots_u,
             knots_v=model.knots_v,
-            control_points=[Point3D(pt) for pt in model.control_points],
+            control_points=[Point3D(pt, UNITS.m) for pt in model.control_points],
             weights=model.weights,
-            origin=Point3D(model.origin) if model.origin is not None else ZERO_POINT3D,
+            origin=Point3D(model.origin, UNITS.m) if model.origin is not None else ZERO_POINT3D,
             reference=(
                 UnitVector3D(model.reference) if model.reference is not None else UNITVECTOR3D_X
             ),
@@ -696,7 +697,7 @@ class NURBSSurfaceEvaluation(SurfaceEvaluation):
         Point3D
             Point on the surface at this evaluation.
         """
-        return Point3D(self._derivatives[0][0])
+        return Point3D(self._derivatives[0][0], UNITS.m)
 
     @cached_property
     def normal(self) -> UnitVector3D:
