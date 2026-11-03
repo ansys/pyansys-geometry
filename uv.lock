@@ -499,7 +499,7 @@ dev = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.2" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "quarto-cli", specifier = "==1.10.20" },
     { name = "requests", specifier = "==2.34.2" },
@@ -538,7 +538,7 @@ doc = [
     { name = "protobuf", specifier = "==7.36.2" },
     { name = "pydantic", specifier = "==2.14.1" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.2" },
     { name = "quarto-cli", specifier = "==1.10.20" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -565,7 +565,7 @@ general-all = [
     { name = "protobuf", specifier = "==7.36.2" },
     { name = "pydantic", specifier = "==2.14.1" },
     { name = "pygltflib", specifier = "==1.16.5" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.2" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
     { name = "semver", specifier = "==3.1.0" },
@@ -590,7 +590,7 @@ tests = [
     { name = "pytest", specifier = "==9.1.1" },
     { name = "pytest-cov", specifier = "==7.1.0" },
     { name = "pytest-pyvista", specifier = "==0.3.3" },
-    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.1" },
+    { name = "pyvista", extras = ["jupyter"], specifier = "==0.49.2" },
     { name = "pyyaml", specifier = "==6.0.3" },
     { name = "requests", specifier = "==2.34.2" },
     { name = "scipy", specifier = "==1.18.1" },
@@ -3743,7 +3743,7 @@ wheels = [
 
 [[package]]
 name = "pyvista"
-version = "0.49.1"
+version = "0.49.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cyclopts" },
@@ -3757,9 +3757,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "vtk" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/1f/77d43ddf04d8fb7703bc125a6546d6300657f56464c76c18550aa0c991f4/pyvista-0.49.1.tar.gz", hash = "sha256:e3a37f2330ce9d2d680a153ac08fea2bd900aa59d13db46da8f64c92896ddd8e", size = 2705888, upload-time = "2026-10-11T16:53:05.078Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/9b/6ae34b3fcde3ab8e4e59d4727ef6733ed938e8ad5b3ec05655f1e0cd296d/pyvista-0.49.2.tar.gz", hash = "sha256:24cf548b15a375ddb0952bda5ea0ae4948006c7ab724cd676c420f8e04b3718d", size = 2707024, upload-time = "2026-10-28T22:24:34.54Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0e/48/39c762c55cb110aa1bd72cebbcc927c1a481f5bd17db4cab86933ce03578/pyvista-0.49.1-py3-none-any.whl", hash = "sha256:e4bd78c829051207e885281c45d03280dcde25445e1885c0824518ea7849b1c8", size = 2734000, upload-time = "2026-10-11T16:53:02.571Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/72/0d1da868fc241bb2ab930ff9b802bbc17a1df7e9f36565769a978d052dbf/pyvista-0.49.2-py3-none-any.whl", hash = "sha256:63f78495b30e146c9d1debeca7fa44c7a3935cc9f9ded8638b809ef955fc167a", size = 2734789, upload-time = "2026-10-28T22:24:32.607Z" },
 ]
 
 [package.optional-dependencies]
