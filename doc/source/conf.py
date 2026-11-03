@@ -90,7 +90,7 @@ def get_release_prefix_url():
             return "https://github.com/ansys/pyansys-geometry/releases/latest/download", "dev"
         else:
             # Just point to the latest version
-            version = json.loads(content)["name"]
+            version = json.loads(content)["tag_name"]
             return f"https://github.com/ansys/pyansys-geometry/releases/download/{version}", version
     else:
         version = f"v{__version__}"
