@@ -33,7 +33,7 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
 from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
