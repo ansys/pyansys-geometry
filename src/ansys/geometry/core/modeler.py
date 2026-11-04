@@ -26,6 +26,7 @@ import logging
 from pathlib import Path
 import tempfile
 from typing import TYPE_CHECKING, Optional
+import uuid
 
 from grpc import Channel
 
@@ -703,14 +704,18 @@ class Modeler:
             If the script fails to run.
         """
         with tempfile.TemporaryDirectory() as temp_dir:
-            script_path = Path(temp_dir) / "script.py"
+            script_path = Path(temp_dir) / f"script_{uuid.uuid4()}.py"
             script_path.write_text(script, encoding="utf-8")
-            return self.run_script_file(
-                file_path=script_path,
-                script_args=script_args,
-                import_design=import_design,
-                api_version=api_version,
-            )
+            upload_archive = Path(tempfile.gettempdir()) / f"{script_path.stem}.zip"
+            try:
+                return self.run_script_file(
+                    file_path=script_path,
+                    script_args=script_args,
+                    import_design=import_design,
+                    api_version=api_version,
+                )
+            finally:
+                upload_archive.unlink(missing_ok=True)
 
     @property
     def repair_tools(self) -> RepairTools:
