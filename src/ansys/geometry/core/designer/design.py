@@ -619,7 +619,7 @@ class Design(Component):
         self, location: Path | str | None = None, write_body_facets: bool = False
     ) -> Path:
         """Export the design to a DISCO file.
-        
+
         Parameters
         ----------
         location : ~pathlib.Path | str, optional
@@ -627,7 +627,7 @@ class Design(Component):
             in the current working directory.
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
-        
+
         Returns
         -------
         ~pathlib.Path
@@ -635,10 +635,10 @@ class Design(Component):
         """
         # Define the file location
         file_location = self.__build_export_file_location(location, "dsco")
-        
+
         # Export the design to a DISCO file
         self.download(file_location, DesignFileFormat.DISCO, write_body_facets)
-        
+
         # Return the file location
         return file_location
 
