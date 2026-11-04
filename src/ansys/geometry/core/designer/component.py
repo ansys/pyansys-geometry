@@ -894,7 +894,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(25, 1, 0)
-    def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
+    def create_sphere(self, name: str, center: Point3D, radius: Real | Quantity | Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
 
         Parameters
@@ -903,7 +903,7 @@ class Component:
             Body name.
         center : Point3D
             Center point of the sphere.
-        radius : Distance
+        radius : Real | Quantity | Distance
             Radius of the sphere.
 
         Returns
