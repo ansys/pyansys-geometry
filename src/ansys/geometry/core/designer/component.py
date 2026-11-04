@@ -915,6 +915,8 @@ class Component:
         --------
         This method is only available starting on Ansys release 25R1.
         """
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
             name=name, parent=self.id, center=center, radius=radius
