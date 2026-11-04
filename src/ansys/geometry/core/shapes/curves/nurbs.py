@@ -34,6 +34,7 @@ from scipy.integrate import quad
 from ansys.geometry.core.math import Matrix44, Point3D
 from ansys.geometry.core.math.vector import Vector3D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
+from ansys.geometry.core.misc.measurements import UNITS
 from ansys.geometry.core.shapes.curves.curve import Curve
 from ansys.geometry.core.shapes.curves.curve_evaluation import CurveEvaluation
 from ansys.geometry.core.shapes.parameterization import (
@@ -155,7 +156,7 @@ class NURBSCurve(Curve):
     @property
     def control_points(self) -> list[Point3D]:
         """Get the control points of the curve."""
-        return [Point3D(point) for point in self._nurbs_curve.ctrlpts]
+        return [Point3D(point, UNITS.m) for point in self._nurbs_curve.ctrlpts]
 
     @property
     def degree(self) -> int:
@@ -280,7 +281,7 @@ class NURBSCurve(Curve):
         # Construct the NURBSCurve object
         nurbs_curve = cls()
         nurbs_curve._nurbs_curve.degree = curve.degree
-        nurbs_curve._nurbs_curve.ctrlpts = [Point3D(entry) for entry in curve.ctrlpts]
+        nurbs_curve._nurbs_curve.ctrlpts = [Point3D(entry, UNITS.m) for entry in curve.ctrlpts]
         nurbs_curve._nurbs_curve.knotvector = curve.knotvector
         nurbs_curve._nurbs_curve.weights = curve.weights
 
@@ -296,7 +297,7 @@ class NURBSCurve(Curve):
     def _curve_from_model(cls, model: NURBSCurveModel) -> "NURBSCurve":
         """Build a NURBSCurve from an already-validated NURBSCurveModel."""
         return cls.from_control_points(
-            control_points=[Point3D(pt) for pt in model.control_points],
+            control_points=[Point3D(pt, UNITS.m) for pt in model.control_points],
             degree=model.degree,
             knots=model.knots,
             weights=model.effective_weights(),
@@ -435,7 +436,7 @@ class NURBSCurve(Curve):
         for point in self._nurbs_curve.ctrlpts:
             # Transform the control point using the transformation matrix
             transformed_point = matrix @ np.array([*point, 1])
-            control_points.append(Point3D(transformed_point[:3]))
+            control_points.append(Point3D(transformed_point[:3], UNITS.m))
 
         return NURBSCurve.from_control_points(
             control_points,
@@ -574,7 +575,7 @@ class NURBSCurveEvaluation(CurveEvaluation):
     @cached_property
     def position(self) -> Point3D:
         """Position of the evaluation."""
-        return Point3D(self._point_eval)
+        return Point3D(self._point_eval, UNITS.m)
 
     @cached_property
     def first_derivative(self) -> Vector3D:
