@@ -24,7 +24,13 @@
 
 from enum import Enum, unique
 from pathlib import Path
+import sys
 from typing import Union
+
+if sys.version_info >= (3, 13):
+    from warnings import deprecated
+else:
+    from typing_extensions import deprecated
 
 import numpy as np
 from pint import DefinitionSyntaxError, Quantity, UndefinedUnitError
@@ -61,6 +67,7 @@ from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
 from ansys.geometry.core.misc.auxiliary import prepare_file_for_server_upload
 from ansys.geometry.core.misc.checks import (
+    _build_deprecation_message,
     check_input_types,
     ensure_design_is_active,
     min_backend_version,
@@ -108,6 +115,7 @@ class DesignFileFormat(Enum):
     PMDB = "PMDB"
     STRIDE = "STRIDE"
     DISCO = "DISCO"
+    DSCO = "DSCO"
     INVALID = "INVALID"
 
     def __str__(self):
@@ -125,7 +133,7 @@ DESIGN_FILE_FORMAT_EXTENSIONS = {
     DesignFileFormat.IGES: ["igs"],
     DesignFileFormat.PMDB: ["pmdb"],
     DesignFileFormat.STRIDE: ["stride"],
-    DesignFileFormat.DISCO: ["dsco"],
+    DesignFileFormat.DSCO: ["dsco"],
     DesignFileFormat.INVALID: ["INVALID"],
 }
 
@@ -589,11 +597,29 @@ class Design(Component):
         # Return the file location
         return file_location
 
+    @deprecated(
+        _build_deprecation_message(
+            "export_to_disco",
+            alternative="export_to_dsco",
+            info="use export_to_dsco instead",
+            version="0.18.3",
+            remove="0.20.0",
+        )
+    )
     def export_to_disco(
         self, location: Path | str | None = None, write_body_facets: bool = False
     ) -> Path:
         """Export the design to a DISCO file.
 
+        This is a deprecated method. Use ``export_to_dsco()`` instead.
+        """
+        return self.export_to_dsco(location, write_body_facets)
+
+    def export_to_dsco(
+        self, location: Path | str | None = None, write_body_facets: bool = False
+    ) -> Path:
+        """Export the design to a DISCO file.
+        
         Parameters
         ----------
         location : ~pathlib.Path | str, optional
@@ -601,7 +627,7 @@ class Design(Component):
             in the current working directory.
         write_body_facets : bool, default: False
             Option to write body facets into the saved file. SCDOCX and DISCO only, 26R1 and later.
-
+        
         Returns
         -------
         ~pathlib.Path
@@ -609,10 +635,10 @@ class Design(Component):
         """
         # Define the file location
         file_location = self.__build_export_file_location(location, "dsco")
-
+        
         # Export the design to a DISCO file
         self.download(file_location, DesignFileFormat.DISCO, write_body_facets)
-
+        
         # Return the file location
         return file_location
 
