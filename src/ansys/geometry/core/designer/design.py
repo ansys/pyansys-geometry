@@ -133,6 +133,7 @@ DESIGN_FILE_FORMAT_EXTENSIONS = {
     DesignFileFormat.IGES: ["igs"],
     DesignFileFormat.PMDB: ["pmdb"],
     DesignFileFormat.STRIDE: ["stride"],
+    DesignFileFormat.DISCO: ["dsco"],
     DesignFileFormat.DSCO: ["dsco"],
     DesignFileFormat.INVALID: ["INVALID"],
 }
@@ -518,6 +519,7 @@ class Design(Component):
             DesignFileFormat.IGES,
             DesignFileFormat.PMDB,
             DesignFileFormat.DISCO,
+            DesignFileFormat.DSCO,
             DesignFileFormat.SCDOCX,
             DesignFileFormat.STRIDE,
         ]:
@@ -602,8 +604,8 @@ class Design(Component):
             "export_to_disco",
             alternative="export_to_dsco",
             info="use export_to_dsco instead",
-            version="0.18.3",
-            remove="0.20.0",
+            version="0.19.0",
+            remove="0.21.0",
         )
     )
     def export_to_disco(
