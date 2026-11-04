@@ -1239,12 +1239,12 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
         # curve will be a line
         pass
 
-    radius = curve.radius.value_in_geometry_units
-    major_radius = curve.major_radius.value_in_geometry_units
-    minor_radius = curve.minor_radius.value_in_geometry_units
-    if radius != 0:
+    radius = from_grpc_quantity_to_distance(curve.radius)
+    major_radius = from_grpc_quantity_to_distance(curve.major_radius)
+    minor_radius = from_grpc_quantity_to_distance(curve.minor_radius)
+    if radius.value.m != 0:
         result = Circle(origin, radius, reference, axis)
-    elif major_radius != 0 and minor_radius != 0:
+    elif major_radius.value.m != 0 and minor_radius.value.m != 0:
         result = Ellipse(origin, major_radius, minor_radius, reference, axis)
     elif curve.nurbs_curve.nurbs_data.degree != 0:
         result = from_grpc_nurbs_curve_to_nurbs_curve(curve.nurbs_curve)
@@ -1406,12 +1406,16 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     origin = from_grpc_point_to_point3d(surface.origin)
     axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
     reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
-    radius = surface.radius.value_in_geometry_units
-    major_radius = surface.major_radius.value_in_geometry_units
-    minor_radius = surface.minor_radius.value_in_geometry_units
+    radius = Distance(surface.radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH)
+    major_radius = Distance(
+        surface.major_radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH
+    )
+    minor_radius = Distance(
+        surface.minor_radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH
+    )
 
     if surface_type == SurfaceType.SURFACETYPE_CONE:
-        result = Cone(origin, radius, surface.half_angle.value_in_geometry_units, reference, axis)
+        result = Cone(origin, radius, from_grpc_angle_to_angle(surface.half_angle), reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
         result = Cylinder(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_SPHERE:

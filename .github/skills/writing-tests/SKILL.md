@@ -22,6 +22,7 @@ Leverage the pytest fixtures available for handling modeler sessions.
 Write test code to test code in a detailed way. For example, if the code alters a face, test the before and after area of the face.
 Document briefly what the test is doing through a docstring.
 If the code to be tested has paths that raise errors, test those scenarios.
+Avoid using mocks or monkeypatching if possible. Attempt to test in a true environment with real objects and interactions.
 
 ### Step 3: Run the test and verify results
 Change directory into the pyansys-geometry directory.
