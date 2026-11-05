@@ -518,7 +518,7 @@ class Design(Component):
                     format=format,
                     write_body_facets=write_body_facets,
                     backend_version=self._grpc_client.backend_version,
-                    filename=file_location,
+                    filepath=file_location,
                     fmd_options=fmd_options,
                     pmdb_options=pmdb_options,
                 )
