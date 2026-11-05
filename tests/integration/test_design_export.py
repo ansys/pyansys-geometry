@@ -222,18 +222,18 @@ def test_export_to_stride(modeler: Modeler, tmp_path_factory: pytest.TempPathFac
     _checker_method(design_read, design, False)
 
 
-def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_export_to_dsco(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to dsco format."""
-    skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
+    skip_if_spaceclaim(modeler, test_export_to_dsco.__name__, "disco export")
     # Create a demo design
     design = _create_demo_design(modeler)
 
     # Define the location and expected file location
-    location = tmp_path_factory.mktemp("test_export_to_disco")
+    location = tmp_path_factory.mktemp("test_export_to_dsco")
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    design.export_to_disco(location)
+    design.export_to_dsco(location)
 
     # Check the exported file
     assert file_location.exists()
@@ -245,19 +245,19 @@ def test_export_to_disco(modeler: Modeler, tmp_path_factory: pytest.TempPathFact
     _checker_method(design_read, design, True)
 
 
-def test_export_to_disco_with_facets(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
+def test_export_to_dsco_with_facets(modeler: Modeler, tmp_path_factory: pytest.TempPathFactory):
     """Test exporting a design to dsco format with facets only available in 261"""
-    skip_if_spaceclaim(modeler, test_export_to_disco.__name__, "disco export")
+    skip_if_spaceclaim(modeler, test_export_to_dsco_with_facets.__name__, "disco export")
 
     # Create a demo design
     design = _create_demo_design(modeler)
 
     # Define the location and expected file location
-    location = tmp_path_factory.mktemp("test_export_to_disco")
+    location = tmp_path_factory.mktemp("test_export_to_dsco")
     file_location = location / f"{design.name}.dsco"
 
     # Export to dsco
-    design.export_to_disco(location, write_body_facets=True)
+    design.export_to_dsco(location, write_body_facets=True)
 
     # Checking file size to ensure facets are exported
 

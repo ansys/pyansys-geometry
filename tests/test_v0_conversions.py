@@ -790,6 +790,8 @@ def test_from_grpc_backend_type_to_backend_type_invalid():
     [
         (DesignFileFormat.STEP, GRPCPartExportFormat.PARTEXPORTFORMAT_STEP),
         (DesignFileFormat.IGES, GRPCPartExportFormat.PARTEXPORTFORMAT_IGES),
+        (DesignFileFormat.DISCO, GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO),
+        (DesignFileFormat.DSCO, GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO),
     ],
 )
 def test_from_design_file_format_to_grpc_part_export_format_valid(

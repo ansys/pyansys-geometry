@@ -24,7 +24,9 @@
 
 import logging
 from pathlib import Path
+import tempfile
 from typing import TYPE_CHECKING, Optional
+import uuid
 
 from grpc import Channel
 
@@ -662,6 +664,58 @@ class Modeler:
             return response.get("values"), self.read_existing_design()
         else:
             return response.get("values"), None
+
+    def run_script(
+        self,
+        script: str,
+        script_args: dict[str, str] | None = None,
+        import_design: bool = False,
+        api_version: int | str | ApiVersions | None = None,
+    ) -> tuple[dict[str, str], Optional["Design"]]:
+        """Run a Python script provided as a string.
+
+        The script is written to a temporary ``.py`` file and executed using
+        :meth:`run_script_file`.
+
+        Parameters
+        ----------
+        script : str
+            Python script source code.
+        script_args : dict[str, str], optional
+            Arguments to pass to the script. The script receives them in a
+            dictionary named ``argsDict``. By default, ``None``.
+        import_design : bool, optional
+            Whether to refresh the current design from the service. By default,
+            ``False``.
+        api_version : int | str | ApiVersions, optional
+            The scripting API version to use. By default, ``None``.
+
+        Returns
+        -------
+        dict[str, str]
+            Values returned from the script.
+        Design, optional
+            Up-to-date current design. This is only returned if
+            ``import_design=True``.
+
+        Raises
+        ------
+        GeometryRuntimeError
+            If the script fails to run.
+        """
+        with tempfile.TemporaryDirectory() as temp_dir:
+            script_path = Path(temp_dir) / f"script_{uuid.uuid4()}.py"
+            script_path.write_text(script, encoding="utf-8")
+            upload_archive = Path(tempfile.gettempdir()) / f"{script_path.stem}.zip"
+            try:
+                return self.run_script_file(
+                    file_path=script_path,
+                    script_args=script_args,
+                    import_design=import_design,
+                    api_version=api_version,
+                )
+            finally:
+                upload_archive.unlink(missing_ok=True)
 
     @property
     def repair_tools(self) -> RepairTools:
