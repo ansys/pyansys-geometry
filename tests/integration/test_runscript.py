@@ -54,6 +54,24 @@ def test_python_simple_script(modeler: Modeler):
     assert pattern_doc.match(result["design"])
 
 
+def test_python_inline_script(modeler: Modeler):
+    """Run multiline Python source and verify arguments are usable in calculations."""
+    values, design = modeler.run_script(
+        """
+length = int(argsDict["length"])
+width = int(argsDict["width"])
+result = {
+    "area": str(length * width),
+    "dimensions": str(length) + "x" + str(width),
+}
+""",
+        script_args={"length": "6", "width": "7"},
+    )
+
+    assert values == {"area": "42", "dimensions": "6x7"}
+    assert design is None
+
+
 def test_python_simple_script_ignore_api_version(
     modeler: Modeler, caplog: pytest.LogCaptureFixture
 ):
