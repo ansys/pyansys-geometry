@@ -58,7 +58,7 @@ from ansys.geometry.core.designer.face import Face
 from ansys.geometry.core.designer.part import MasterComponent, Part
 from ansys.geometry.core.designer.selection import NamedSelection
 from ansys.geometry.core.designer.vertex import Vertex
-from ansys.geometry.core.errors import GeometryRuntimeError
+from ansys.geometry.core.errors import GeometryExitedError, GeometryRuntimeError
 from ansys.geometry.core.materials.material import Material
 from ansys.geometry.core.materials.property import MaterialProperty, MaterialPropertyType
 from ansys.geometry.core.math.constants import UNITVECTOR3D_X, UNITVECTOR3D_Y, ZERO_POINT3D
@@ -532,7 +532,7 @@ class Design(Component):
                     fmd_options=fmd_options,
                     pmdb_options=pmdb_options,
                 )
-            except Exception:
+            except GeometryExitedError:
                 self._grpc_client.log.warning(
                     f"Failed to download the file in {format} format."
                     " Attempting to stream download."
