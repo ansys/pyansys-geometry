@@ -1369,7 +1369,7 @@ def from_design_file_format_to_grpc_part_export_format(
         return GRPCPartExportFormat.PARTEXPORTFORMAT_PMDB
     elif design_file_format == DesignFileFormat.STRIDE:
         return GRPCPartExportFormat.PARTEXPORTFORMAT_STRIDE
-    elif design_file_format == DesignFileFormat.DISCO:
+    elif design_file_format in [DesignFileFormat.DISCO, DesignFileFormat.DSCO]:
         return GRPCPartExportFormat.PARTEXPORTFORMAT_DISCO
     else:
         return None
