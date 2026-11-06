@@ -1,0 +1,653 @@
+
+
+
+
+
+The ``launcher.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.connection.launcher
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: launcher
+.. tab-set::
+
+
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~launch_modeler`
+            - Start the ``Modeler`` interface for PyAnsys Geometry.
+
+
+          * - :py:attr:`~launch_remote_modeler`
+            - Start the Geometry service remotely using the PIM API.
+
+
+          * - :py:attr:`~launch_local_modeler`
+            - Start the Geometry service locally using the ``LocalDockerInstance`` class.
+
+
+          * - :py:attr:`~launch_modeler_with_discovery_and_pimlight`
+            - Start Ansys Discovery remotely using the PIM API.
+
+
+          * - :py:attr:`~launch_modeler_with_geometry_service_and_pimlight`
+            - Start the Geometry service remotely using the PIM API.
+
+
+          * - :py:attr:`~launch_modeler_with_spaceclaim_and_pimlight`
+            - Start Ansys SpaceClaim remotely using the PIM API.
+
+
+          * - :py:attr:`~launch_modeler_with_geometry_service`
+            - Start the Geometry service locally using the ``ProductInstance`` class.
+
+
+          * - :py:attr:`~launch_modeler_with_discovery`
+            - Start Ansys Discovery locally using the ``ProductInstance`` class.
+
+
+          * - :py:attr:`~launch_modeler_with_spaceclaim`
+            - Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for connecting to instances of the Geometry service.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+
+
+.. py:function:: launch_modeler(**kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the ``Modeler`` interface for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for the launching methods. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+           keywords might be unused.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Pythonic interface for geometry modeling.
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Launch the Geometry service.
+
+   >>> from ansys.geometry.core import launch_modeler
+   >>> modeler = launch_modeler()
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_remote_modeler(version: beartype.typing.Optional[str] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service remotely using the PIM API.
+
+   When calling this method, you must ensure that you are in an
+   environment where `PyPIM <https://github.com/ansys/pypim>`_ is
+   configured. You can use the
+   :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+   method to check if it is configured.
+
+   :Parameters:
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version of the Geometry service to run in the three-digit format.
+           For example, "232". If you do not specify the version, the server
+           chooses the version.
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for the launching methods. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+           keywords might be unused.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Instance of the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_local_modeler(port: int = DEFAULT_PORT, connect_to_existing_service: bool = True, restart_if_existing_service: bool = False, name: beartype.typing.Optional[str] = None, image: beartype.typing.Optional[ansys.geometry.core.connection.local_instance.GeometryContainers] = None, **kwargs: beartype.typing.Optional[beartype.typing.Dict]) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service locally using the ``LocalDockerInstance`` class.
+
+   When calling this method, a Geometry service (as a local Docker container)
+   is started. By default, if a container with the Geometry service already exists
+   at the given port, it connects to it. Otherwise, it tries to launch its own
+   service.
+
+   :Parameters:
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Localhost port to deploy the Geometry service on or the
+           the ``Modeler`` interface to connect to (if it is already deployed). By default,
+           the value is the one for the ``DEFAULT_PORT`` connection parameter.
+
+       **connect_to_existing_service** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:True`
+           Whether the ``Modeler`` interface should connect to a Geometry
+           service already deployed at the specified port.
+
+       **restart_if_existing_service** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the Geometry service (which is already running)
+           should be restarted when attempting connection.
+
+       **name** : :obj:`Optional`\[:class:`python:str`], default: :data:`python:None`
+           Name of the Docker container to deploy. The default is ``None``,
+           in which case Docker assigns it a random name.
+
+       **image** : :obj:`Optional`\[:obj:`GeometryContainers`], default: :data:`python:None`
+           The Geometry service Docker image to deploy. The default is ``None``,
+           in which case the ``LocalDockerInstance`` class identifies the OS of your
+           Docker engine and deploys the latest version of the Geometry service for
+           that OS.
+
+       **\*\*kwargs** : :class:`python:dict`, default: :data:`python:None`
+           Keyword arguments for the launching methods. For allowable keyword arguments, see the
+           :func:`launch_remote_modeler` and :func:`launch_local_modeler` methods. Some of these
+           keywords might be unused.
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_discovery_and_pimlight(version: beartype.typing.Optional[str] = None) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start Ansys Discovery remotely using the PIM API.
+
+   When calling this method, you must ensure that you are in an
+   environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
+   You can use the :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+   method to check if it is configured.
+
+   :Parameters:
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version of Discovery to run in the three-digit format.
+           For example, "232". If you do not specify the version, the server
+           chooses the version.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Instance of Modeler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_geometry_service_and_pimlight(version: beartype.typing.Optional[str] = None) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service remotely using the PIM API.
+
+   When calling this method, you must ensure that you are in an
+   environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
+   You can use the :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+   method to check if it is configured.
+
+   :Parameters:
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version of the Geometry service to run in the three-digit format.
+           For example, "232". If you do not specify the version, the server
+           chooses the version.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Instance of Modeler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_spaceclaim_and_pimlight(version: beartype.typing.Optional[str] = None) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start Ansys SpaceClaim remotely using the PIM API.
+
+   When calling this method, you must ensure that you are in an
+   environment where `PyPIM <https://github.com/ansys/pypim>`_ is configured.
+   You can use the :func:`pypim.is_configured <ansys.platform.instancemanagement.is_configured>`
+   method to check if it is configured.
+
+   :Parameters:
+
+       **version** : :class:`python:str`, default: :data:`python:None`
+           Version of SpaceClaim to run in the three-digit format.
+           For example, "232". If you do not specify the version, the server
+           chooses the version.
+
+   :Returns:
+
+       :obj:`ansys.geometry.core.modeler.Modeler`
+           Instance of Modeler.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_geometry_service(host: str = 'localhost', port: int = None, enable_trace: bool = False, log_level: int = 2, timeout: int = 60) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the Geometry service locally using the ``ProductInstance`` class.
+
+   When calling this method, a standalone Geometry service is started.
+   By default, if an endpoint is specified (by defining `host` and `port` parameters)
+   but the endpoint is not available, the startup will fail. Otherwise, it will try to
+   launch its own service.
+
+   :Parameters:
+
+       **host: str, optional**
+           IP address at which the Geometry service will be deployed. By default,
+           its value will be ``localhost``.
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Port at which the Geometry service will be deployed. By default, its
+           value will be ``None``.
+
+       **enable_trace** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Boolean enabling the logs trace on the Geometry service console window.
+           By default its value is ``False``.
+
+       **log_level** : :class:`python:int`, :obj:`optional`
+           Backend's log level from 0 to 3:
+           
+           * ``0``: Chatterbox
+           * ``1``: Debug
+           * ``2``: Warning
+           * ``3``: Error
+           
+           The default is ``2`` (Warning).
+
+       **timeout** : :class:`python:int`, :obj:`optional`
+           Timeout for starting the backend startup process. The default is 60.
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+   :Raises:
+
+       :obj:`ConnectionError`
+           If the specified endpoint is already in use, a connection
+           error will be raised.
+
+       :obj:`SystemError`
+           If there is not an Ansys product 23.2 version or later installed
+           a SystemError will be raised.
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Starting a geometry service with the default parameters and getting back a ``Modeler``
+   object:
+
+   >>> from ansys.geometry.core import launch_modeler_with_geometry_service
+   >>> modeler = launch_modeler_with_geometry_service()
+
+   Starting a geometry service, on address ``10.171.22.44``, port ``5001``, with chatty
+   logs, traces enabled and a ``300`` seconds timeout:
+
+   >>> from ansys.geometry.core import launch_modeler_with_geometry_service
+   >>> modeler = launch_modeler_with_geometry_service(host="10.171.22.44",
+       port=5001,
+       log_level=0,
+       enable_trace= True,
+       timeout=300)
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_discovery(product_version: int = None, host: str = 'localhost', port: int = None, log_level: int = 2, api_version: ansys.geometry.core.connection.backend.ApiVersions = ApiVersions.LATEST, timeout: int = 150)
+
+   
+   Start Ansys Discovery locally using the ``ProductInstance`` class.
+
+   .. note::
+
+      Support for Ansys Discovery is restricted to Ansys 24.1 onwards.
+
+   When calling this method, a standalone Discovery session is started.
+   By default, if an endpoint is specified (by defining `host` and `port` parameters)
+   but the endpoint is not available, the startup will fail. Otherwise, it will try to
+   launch its own service.
+
+   :Parameters:
+
+       **product_version: int, optional**
+           The product version to be started. Goes from v23.2.1 to
+           the latest. Default is ``None``.
+           If a specific product version is requested but not installed locally,
+           a SystemError will be raised.
+           
+           **Ansys products versions and their corresponding int values:**
+           
+           * ``241`` : Ansys 24R1
+
+       **host: str, optional**
+           IP address at which the Discovery session will be deployed. By default,
+           its value will be ``localhost``.
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Port at which the Geometry service will be deployed. By default, its
+           value will be ``None``.
+
+       **log_level** : :class:`python:int`, :obj:`optional`
+           Backend's log level from 0 to 3:
+           
+           * ``0``: Chatterbox
+           * ``1``: Debug
+           * ``2``: Warning
+           * ``3``: Error
+           
+           The default is ``2`` (Warning).
+
+       **api_version: ApiVersions, optional**
+           The backend's API version to be used at runtime. Goes from API v21 to
+           the latest. Default is ``ApiVersions.LATEST``.
+
+       **timeout** : :class:`python:int`, :obj:`optional`
+           Timeout for starting the backend startup process. The default is 150.
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+   :Raises:
+
+       :obj:`ConnectionError`
+           If the specified endpoint is already in use, a connection error will be raised.
+
+       SystemError:
+           If there is not an Ansys product 23.2 version or later installed
+           or if a specific product's version is requested but not installed locally then
+           a SystemError will be raised.
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Starting an Ansys Discovery session with the default parameters and getting back a ``Modeler``
+   object:
+
+   >>> from ansys.geometry.core import launch_modeler_with_discovery
+   >>> modeler = launch_modeler_with_discovery()
+
+   Starting an Ansys Discovery V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+   with chatty logs, using API v231 and a ``300`` seconds timeout:
+
+   >>> from ansys.geometry.core import launch_modeler_with_discovery
+   >>> modeler = launch_modeler_with_discovery(product_version = 232,
+       host="10.171.22.44",
+       port=5001,
+       log_level=0,
+       api_version= 231,
+       timeout=300)
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:function:: launch_modeler_with_spaceclaim(product_version: int = None, host: str = 'localhost', port: int = None, log_level: int = 2, api_version: ansys.geometry.core.connection.backend.ApiVersions = ApiVersions.LATEST, timeout: int = 150)
+
+   
+   Start Ansys SpaceClaim locally using the ``ProductInstance`` class.
+
+   When calling this method, a standalone SpaceClaim session is started.
+   By default, if an endpoint is specified (by defining `host` and `port` parameters)
+   but the endpoint is not available, the startup will fail. Otherwise, it will try to
+   launch its own service.
+
+   :Parameters:
+
+       **product_version: int, optional**
+           The product version to be started. Goes from v23.2.1 to
+           the latest. Default is ``None``.
+           If a specific product version is requested but not installed locally,
+           a SystemError will be raised.
+           
+           **Ansys products versions and their corresponding int values:**
+           
+           * ``232`` : Ansys 23R2 SP1
+           * ``241`` : Ansys 24R1
+
+       **host: str, optional**
+           IP address at which the SpaceClaim session will be deployed. By default,
+           its value will be ``localhost``.
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Port at which the Geometry service will be deployed. By default, its
+           value will be ``None``.
+
+       **log_level** : :class:`python:int`, :obj:`optional`
+           Backend's log level from 0 to 3:
+           
+           *  ``0``: Chatterbox
+           *  ``1``: Debug
+           *  ``2``: Warning
+           *  ``3``: Error
+           
+           The default is ``2`` (Warning).
+
+       **api_version: ApiVersions, optional**
+           The backend's API version to be used at runtime. Goes from API v21 to
+           the latest. Default is ``ApiVersions.LATEST``.
+
+       **timeout** : :class:`python:int`, :obj:`optional`
+           Timeout for starting the backend startup process. The default is 150.
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+   :Raises:
+
+       :obj:`ConnectionError`
+           If the specified endpoint is already in use, a connection error will be raised.
+
+       :obj:`SystemError`
+           If there is not an Ansys product 23.2 version or later installed
+           or if a specific product's version is requested but not installed locally then
+           a SystemError will be raised.
+
+
+
+
+
+
+   .. rubric:: Examples
+
+   Starting an Ansys SpaceClaim session with the default parameters and get back a ``Modeler``
+   object:
+
+   >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
+   >>> modeler = launch_modeler_with_spaceclaim()
+
+   Starting an Ansys SpaceClaim V 23.2 session, on address ``10.171.22.44``, port ``5001``,
+   with chatty logs, using API v231 and a ``300`` seconds timeout:
+
+   >>> from ansys.geometry.core import launch_modeler_with_spaceclaim
+   >>> modeler = launch_modeler_with_spaceclaim(product_version = 232,
+       host="10.171.22.44",
+       port=5001,
+       log_level=0,
+       api_version= 231,
+       timeout=300)
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

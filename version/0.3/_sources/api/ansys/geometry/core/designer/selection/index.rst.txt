@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``selection.py`` module
+===========================
+
+.. py:module:: ansys.geometry.core.designer.selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~NamedSelection`
+            - Represents a single named selection within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 NamedSelection<NamedSelection>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating a named selection.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

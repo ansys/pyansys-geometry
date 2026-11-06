@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`StringFilterType`
+=========================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.StringFilterType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the string filter types supported.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: StringFilterType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~STRINGFILTERTYPE_TEXT`
+            - 
+          * - :py:attr:`~STRINGFILTERTYPE_WILDCARD`
+            - 
+          * - :py:attr:`~STRINGFILTERTYPE_REGULAREXPRESSION`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import StringFilterType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: STRINGFILTERTYPE_TEXT
+   :value: 0
+
+
+.. py:attribute:: STRINGFILTERTYPE_WILDCARD
+   :value: 1
+
+
+.. py:attribute:: STRINGFILTERTYPE_REGULAREXPRESSION
+   :value: 2
+
+
+
+
+
+

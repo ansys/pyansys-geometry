@@ -1,0 +1,194 @@
+:py:mod:`ansys.geometry.core.primitives.curve_evaluation`
+=========================================================
+
+.. py:module:: ansys.geometry.core.primitives.curve_evaluation
+
+.. autoapi-nested-parse::
+
+   Provides the ``CurveEvaluation`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation
+
+
+
+
+.. py:class:: CurveEvaluation(parameter: ansys.geometry.core.typing.Real = None)
+
+
+   
+   Provides result class when evaluating a curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: parameter
+      :type: ansys.geometry.core.typing.Real
+      :abstractmethod:
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_set() -> bool
+
+      
+      Return whether or not the parameter has been set.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+      :abstractmethod:
+
+      
+      The position of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: first_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The first derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: second_derivative() -> ansys.geometry.core.math.Vector3D
+      :abstractmethod:
+
+      
+      The second derivative of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: curvature() -> ansys.geometry.core.typing.Real
+      :abstractmethod:
+
+      
+      The curvature of the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,135 @@
+
+
+
+
+
+
+:class:`GRPCDrivingDimensionsService`
+=====================================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.driving_dimensions.GRPCDrivingDimensionsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Driving Dimension service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+.. py:currentmodule:: GRPCDrivingDimensionsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_parameters`
+            - Get driving dimensions.
+          * - :py:attr:`~set_parameter`
+            - Set driving dimensions.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.driving_dimensions import GRPCDrivingDimensionsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_all_parameters(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get driving dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_parameter(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Set driving dimensions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``edge_selection.py`` module
+================================
+
+.. py:module:: ansys.geometry.core._grpc._services.base.edge_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.base.edge_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.base.edge_selection.GRPCEdgeSelectionService`
+            - Edge Selection service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCEdgeSelectionService</api/ansys/geometry/core/_grpc/_services/base/edge_selection/GRPCEdgeSelectionService>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Edge Selection service abstraction layer.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

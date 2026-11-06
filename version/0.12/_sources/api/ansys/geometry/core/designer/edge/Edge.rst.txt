@@ -1,0 +1,395 @@
+
+
+
+
+
+
+:class:`Edge`
+=============
+
+
+.. py:class:: ansys.geometry.core.designer.edge.Edge(id: str, curve_type: CurveType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.client.GrpcClient, is_reversed: bool = False)
+
+   
+   Represents a single edge of a body within the design assembly.
+
+   This class synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the body.
+
+       **curve_type** : :obj:`CurveType`
+           Type of curve that the edge forms.
+
+       **body** : :obj:`Body`
+           Parent body that the edge constructs.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+       **is_reversed** : :ref:`bool <python:bltin-boolean-values>`
+           Direction of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: Edge
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the edge.
+          * - :py:attr:`~body`
+            - Body of the edge.
+          * - :py:attr:`~is_reversed`
+            - Flag indicating if the edge is reversed.
+          * - :py:attr:`~shape`
+            - Underlying trimmed curve of the edge.
+          * - :py:attr:`~length`
+            - Calculated length of the edge.
+          * - :py:attr:`~curve_type`
+            - Curve type of the edge.
+          * - :py:attr:`~faces`
+            - Faces that contain the edge.
+          * - :py:attr:`~vertices`
+            - Vertices that define the edge.
+          * - :py:attr:`~start`
+            - Start point of the edge.
+          * - :py:attr:`~end`
+            - End point of the edge.
+          * - :py:attr:`~bounding_box`
+            - Bounding box of the edge.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.edge import Edge
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: body
+   :type: ansys.geometry.core.designer.body.Body
+
+
+   
+   Body of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_reversed
+   :type: bool
+
+
+   
+   Flag indicating if the edge is reversed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: shape
+   :type: ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve
+
+
+   
+   Underlying trimmed curve of the edge.
+
+   If the edge is reversed, its shape is the ``ReversedTrimmedCurve`` type, which swaps the
+   start and end points of the curve and handles parameters to allow evaluation as if the
+   curve is not reversed.
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: pint.Quantity
+
+
+   
+   Calculated length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: curve_type
+   :type: CurveType
+
+
+   
+   Curve type of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: faces
+   :type: list[ansys.geometry.core.designer.face.Face]
+
+
+   
+   Faces that contain the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: vertices
+   :type: list[ansys.geometry.core.designer.vertex.Vertex]
+
+
+   
+   Vertices that define the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Start point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   End point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: bounding_box
+   :type: ansys.geometry.core.math.bbox.BoundingBox
+
+
+   
+   Bounding box of the edge.
+
+
+
+
+
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

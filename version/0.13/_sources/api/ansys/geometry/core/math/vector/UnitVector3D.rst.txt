@@ -1,0 +1,121 @@
+
+
+
+
+
+
+:class:`UnitVector3D`
+=====================
+
+
+.. py:class:: ansys.geometry.core.math.vector.UnitVector3D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+   Bases: :py:obj:`Vector3D`
+
+
+   
+   Provides for creating and managing a 3D unit vector.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Vector3D`
+           * 1D :class:`numpy.ndarray <numpy.ndarray>` class with shape(X,)
+           * Vector3D
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: UnitVector3D
+
+Overview
+--------
+
+.. tab-set::
+
+
+   .. tab-item:: Constructors
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_points`
+            - Create a 3D unit vector from two distinct 3D points.
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.vector import UnitVector3D
+
+
+
+Method detail
+-------------
+
+.. py:method:: from_points(point_a: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, point_b: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D)
+   :classmethod:
+
+
+   
+   Create a 3D unit vector from two distinct 3D points.
+
+
+   :Parameters:
+
+       **point_a** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+           class representing the first point.
+
+       **point_b** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           :class:`Point3D <ansys.geometry.core.math.point.Point3D>`
+           class representing the second point.
+
+
+
+   :Returns:
+
+       :obj:`UnitVector3D`
+           3D unit vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

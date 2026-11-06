@@ -1,0 +1,38 @@
+
+
+
+
+DummyGear
+=========
+
+.. py:class:: DummyGear(origin: ansys.geometry.core.math.point.Point2D, outer_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], n_teeth: int)
+   :canonical: ansys.geometry.core.sketch.gears.DummyGear
+
+
+
+Bases: :py:obj:`Gear`
+
+Provides the dummy class for sketching gears.
+
+
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.gears import DummyGear
+
+
+
+
+

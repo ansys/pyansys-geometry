@@ -1,0 +1,87 @@
+
+
+
+
+
+
+:class:`ExportIdData`
+=====================
+
+
+.. py:class:: ansys.geometry.core.tools.unsupported.ExportIdData
+
+   
+   Data for exporting persistent ids.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ExportIdData
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~moniker`
+            - 
+          * - :py:attr:`~id_type`
+            - 
+          * - :py:attr:`~value`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.unsupported import ExportIdData
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: moniker
+   :type:  str
+
+.. py:attribute:: id_type
+   :type:  PersistentIdType
+
+.. py:attribute:: value
+   :type:  str
+
+
+
+
+

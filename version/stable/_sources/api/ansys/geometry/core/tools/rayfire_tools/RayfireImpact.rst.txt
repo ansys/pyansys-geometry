@@ -1,0 +1,207 @@
+
+
+
+
+
+
+:class:`RayfireImpact`
+======================
+
+
+.. py:class:: ansys.geometry.core.tools.rayfire_tools.RayfireImpact(point: ansys.geometry.core.math.point.Point3D, body_id: str = None, face_id: str = None, u: float = None, v: float = None)
+
+   
+   Class representing rayfire impacts.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RayfireImpact
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~point`
+            - The point of impact.
+          * - :py:attr:`~body_id`
+            - The ID of the body impacted.
+          * - :py:attr:`~face_id`
+            - The ID of the face impacted.
+          * - :py:attr:`~u`
+            - The U coordinate of the impact on the face.
+          * - :py:attr:`~v`
+            - The V coordinate of the impact on the face.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.rayfire_tools import RayfireImpact
+
+Property detail
+---------------
+
+.. py:property:: point
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   The point of impact.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: body_id
+   :type: str
+
+
+   
+   The ID of the body impacted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: face_id
+   :type: str
+
+
+   
+   The ID of the face impacted.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: u
+   :type: float
+
+
+   
+   The U coordinate of the impact on the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: v
+   :type: float
+
+
+   
+   The V coordinate of the impact on the face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

@@ -1,0 +1,216 @@
+
+
+
+
+
+The ``defaults.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.connection.defaults
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: defaults
+.. tab-set::
+
+
+
+
+
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~DEFAULT_HOST`
+            - Default for the HOST name.
+
+
+          * - :py:attr:`~DEFAULT_PORT`
+            - Default for the HOST port.
+
+
+          * - :py:attr:`~MAX_MESSAGE_LENGTH`
+            - Default for the gRPC maximum message length.
+
+
+          * - :py:attr:`~GEOMETRY_SERVICE_DOCKER_IMAGE`
+            - Default for the Geometry service Docker image location.
+
+
+          * - :py:attr:`~DEFAULT_PIM_CONFIG`
+            - Default for the PIM configuration when running PIM Light.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module providing default connection parameters.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: DEFAULT_HOST
+
+   
+   Default for the HOST name.
+
+   By default, PyAnsys Geometry searches for the environment variable ``ANSRV_GEO_HOST``,
+   and if this variable does not exist, PyAnsys Geometry uses ``127.0.0.1`` as the host.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_PORT
+   :type: int
+
+   
+   Default for the HOST port.
+
+   By default, PyAnsys Geometry searches for the environment variable ``ANSRV_GEO_PORT``,
+   and if this variable does not exist, PyAnsys Geometry uses ``50051`` as the port.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: MAX_MESSAGE_LENGTH
+
+   
+   Default for the gRPC maximum message length.
+
+   By default, PyAnsys Geometry searches for the environment variable
+   ``PYGEOMETRY_MAX_MESSAGE_LENGTH``, and if this variable does not exist,
+   it uses ``256Mb`` as the maximum message length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: GEOMETRY_SERVICE_DOCKER_IMAGE
+   :value: 'ghcr.io/ansys/geometry'
+
+   
+   Default for the Geometry service Docker image location.
+
+   Tag is dependent on what OS service is requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_PIM_CONFIG
+
+   
+   Default for the PIM configuration when running PIM Light.
+
+   This parameter is only to be used when PIM Light is being run.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

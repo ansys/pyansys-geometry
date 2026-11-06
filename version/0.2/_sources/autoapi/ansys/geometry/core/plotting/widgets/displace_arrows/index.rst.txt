@@ -1,0 +1,144 @@
+:py:mod:`ansys.geometry.core.plotting.widgets.displace_arrows`
+==============================================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.displace_arrows
+
+.. autoapi-nested-parse::
+
+   Displacement arrows widget for PyVista plotter.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.widgets.displace_arrows.CameraPanDirection
+   ansys.geometry.core.plotting.widgets.displace_arrows.DisplacementArrow
+
+
+
+
+.. py:class:: CameraPanDirection
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   Enumerate with the possible movement directions of the camera.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: XUP
+      :value: (0, 'upxarrow.png', (5, 170))
+
+      
+
+   .. py:attribute:: XDOWN
+      :value: (1, 'downarrow.png', (5, 130))
+
+      
+
+   .. py:attribute:: YUP
+      :value: (2, 'upyarrow.png', (35, 170))
+
+      
+
+   .. py:attribute:: YDOWN
+      :value: (3, 'downarrow.png', (35, 130))
+
+      
+
+   .. py:attribute:: ZUP
+      :value: (4, 'upzarrow.png', (65, 170))
+
+      
+
+   .. py:attribute:: ZDOWN
+      :value: (5, 'downarrow.png', (65, 130))
+
+      
+
+
+.. py:class:: DisplacementArrow(plotter: pyvista.Plotter, direction: CameraPanDirection)
+
+
+   Bases: :py:obj:`ansys.geometry.core.plotting.widgets.button.Button`
+
+   
+   Defines which arrow you will draw and what it will do.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`Plotter`
+           Plotter on which the buttons will be drawn.
+
+       **direction** : :obj:`CameraPanDirection`
+           Direction on which the camera will move.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:method:: callback(state: bool) -> None
+
+      
+      Move the camera in the direction that the button was defined.
+
+
+      :Parameters:
+
+          **state** : :ref:`bool <python:bltin-boolean-values>`
+              Inherited from PyVista. State of the button, true if active. Unused
+              in this case.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

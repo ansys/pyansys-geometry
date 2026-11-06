@@ -1,0 +1,1755 @@
+
+
+
+
+
+
+:class:`FaceSelection`
+======================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.face_selection.FaceSelection(design: ansys.geometry.core.designer.design.Design, grpc_client: ansys.geometry.core.connection.client.GrpcClient, items: list[ansys.geometry.core.designer.face.Face] = None)
+
+   Bases: :py:obj:`ansys.geometry.core.selection_builder.typed_selection.TypedSelection`
+
+
+   
+   A builder for creating a face selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: FaceSelection
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_faces`
+            - Return all visible faces in the active document.
+          * - :py:attr:`~get_all_faces`
+            - Return all faces in the active document.
+          * - :py:attr:`~get_faces_from_named_selection`
+            - Return faces belonging to a named selection.
+          * - :py:attr:`~get_faces_with_area`
+            - Return faces whose area falls within a range.
+          * - :py:attr:`~get_faces_with_x_location`
+            - Return faces whose X-location centroid falls within a range.
+          * - :py:attr:`~get_faces_with_y_location`
+            - Return faces whose Y-location centroid falls within a range.
+          * - :py:attr:`~get_faces_with_z_location`
+            - Return faces whose Z-location centroid falls within a range.
+          * - :py:attr:`~get_faces_with_color`
+            - Return faces that match a specific color.
+          * - :py:attr:`~invert_face_selection`
+            - Return all faces not in the given selection.
+          * - :py:attr:`~filter_faces_by_area`
+            - Filter faces whose area falls within a range.
+          * - :py:attr:`~filter_faces_max_area`
+            - Return the face with the maximum area from the selection.
+          * - :py:attr:`~filter_faces_min_area`
+            - Return the face with the minimum area from the selection.
+          * - :py:attr:`~filter_faces_by_perimeter`
+            - Filter faces whose perimeter falls within a range.
+          * - :py:attr:`~filter_faces_max_perimeter`
+            - Return the face with the maximum perimeter from the selection.
+          * - :py:attr:`~filter_faces_min_perimeter`
+            - Return the face with the minimum perimeter from the selection.
+          * - :py:attr:`~filter_faces_by_edge_count`
+            - Filter faces whose edge count falls within a range.
+          * - :py:attr:`~filter_faces_max_edge_count`
+            - Return the face with the maximum edge count from the selection.
+          * - :py:attr:`~filter_faces_min_edge_count`
+            - Return the face with the minimum edge count from the selection.
+          * - :py:attr:`~filter_faces_by_loop_count`
+            - Filter faces whose loop count falls within a range.
+          * - :py:attr:`~filter_faces_max_loop_count`
+            - Return the face with the maximum loop count from the selection.
+          * - :py:attr:`~filter_faces_min_loop_count`
+            - Return the face with the minimum loop count from the selection.
+          * - :py:attr:`~filter_faces_by_number_curves`
+            - Filter faces by the count of a specific curve type they contain.
+          * - :py:attr:`~filter_faces_max_number_curves`
+            - Return the face with the most curves of a given type.
+          * - :py:attr:`~filter_faces_min_number_curves`
+            - Return the face with the fewest curves of a given type.
+          * - :py:attr:`~filter_faces_containing_curve_types`
+            - Filter faces that contain specific curve types.
+          * - :py:attr:`~filter_faces_by_color`
+            - Filter faces that match a specific color.
+          * - :py:attr:`~filter_faces_area_percentile`
+            - Filter faces by area percentile relative to the selection.
+          * - :py:attr:`~filter_faces_perimeter_percentile`
+            - Filter faces by perimeter percentile relative to the selection.
+          * - :py:attr:`~filter_faces_edge_count_percentile`
+            - Filter faces by edge count percentile relative to the selection.
+          * - :py:attr:`~filter_faces_loop_count_percentile`
+            - Filter faces by loop count percentile relative to the selection.
+          * - :py:attr:`~filter_faces_by_number_curves_percentile`
+            - Filter faces by the percentile of a curve type count relative to the selection.
+          * - :py:attr:`~extend_to_same_area`
+            - Extend the selection with faces that have the same area.
+          * - :py:attr:`~extend_to_same_number_of_edges`
+            - Extend the selection with faces that have the same number of edges.
+          * - :py:attr:`~extend_to_same_number_of_loops`
+            - Extend the selection with faces that have the same number of loops.
+          * - :py:attr:`~extend_to_same_color`
+            - Extend the selection with faces that share the same color.
+          * - :py:attr:`~extend_to_coincident`
+            - Extend the selection with faces that are coincident to the selection.
+          * - :py:attr:`~extend_to_coaxial_faces`
+            - Extend the selection with faces that are coaxial to the selection.
+          * - :py:attr:`~order_faces_by_area`
+            - Return faces sorted by area in ascending order.
+          * - :py:attr:`~order_faces_by_perimeter`
+            - Return faces sorted by perimeter in ascending order.
+          * - :py:attr:`~order_faces_by_edge_count`
+            - Return faces sorted by edge count in ascending order.
+          * - :py:attr:`~order_faces_by_loop_count`
+            - Return faces sorted by loop count in ascending order.
+          * - :py:attr:`~order_faces_by_number_curves`
+            - Return faces sorted by the count of a given curve type in ascending order.
+          * - :py:attr:`~group_faces_by_area`
+            - Group faces by area.
+          * - :py:attr:`~group_faces_by_perimeter`
+            - Group faces by perimeter.
+          * - :py:attr:`~group_faces_by_body`
+            - Group faces by their parent body.
+          * - :py:attr:`~group_faces_by_edge_count`
+            - Group faces by edge count.
+          * - :py:attr:`~group_faces_by_loop_count`
+            - Group faces by loop count.
+          * - :py:attr:`~group_faces_by_color`
+            - Group faces by color.
+          * - :py:attr:`~group_faces_by_coincident`
+            - Group faces by coincidence.
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__add__`
+            - Return a new selection that is the union of this selection and another.
+          * - :py:attr:`~__sub__`
+            - Return a new selection that is the difference of this selection and another.
+          * - :py:attr:`~__and__`
+            - Return a new selection that is the intersection of this selection and another.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.face_selection import FaceSelection
+
+
+
+Method detail
+-------------
+
+.. py:method:: __add__(other: FaceSelection) -> FaceSelection
+
+   
+   Return a new selection that is the union of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __sub__(other: FaceSelection) -> FaceSelection
+
+   
+   Return a new selection that is the difference of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __and__(other: FaceSelection) -> FaceSelection
+
+   
+   Return a new selection that is the intersection of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_visible_faces() -> FaceSelection
+
+   
+   Return all visible faces in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           All visible faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_faces() -> FaceSelection
+
+   
+   Return all faces in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           All faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_from_named_selection(name: str) -> FaceSelection
+
+   
+   Return faces belonging to a named selection.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name of the named selection to match.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces belonging to the matched named selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_area(min: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Return faces whose area falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`
+           Minimum area (inclusive).
+
+       **max** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum area (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose area is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_x_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Return faces whose X-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum X-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum X-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose X-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_y_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Return faces whose Y-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum Y-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum Y-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose Y-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_z_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Return faces whose Z-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum Z-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum Z-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose Z-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_faces_with_color(color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]) -> FaceSelection
+
+   
+   Return faces that match a specific color.
+
+
+   :Parameters:
+
+       **color** : :class:`python:str` | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`] | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`, :class:`python:float`]
+           Color to match. This can be a string representing a color name
+           or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces with the specified color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_face_selection(scope: ansys.geometry.core.selection_builder.selection_builder.InvertTopologyScope = InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL) -> FaceSelection
+
+   
+   Return all faces not in the given selection.
+
+
+   :Parameters:
+
+       **scope** : :obj:`InvertTopologyScope`, default: :obj:`InvertTopologyScope.INVERTTOPOLOGYSCOPE_ALL`
+           Whether to invert within visible faces or all faces.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces that are the inverse of the input selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_area(min: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Filter faces whose area falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`
+           Minimum area (inclusive).
+
+       **max** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum area (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose area is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_area() -> FaceSelection
+
+   
+   Return the face with the maximum area from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the maximum area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_area() -> FaceSelection
+
+   
+   Return the face with the minimum area from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the minimum area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_perimeter(min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> FaceSelection
+
+   
+   Filter faces whose perimeter falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Minimum perimeter (inclusive).
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum perimeter (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose perimeter is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_perimeter() -> FaceSelection
+
+   
+   Return the face with the maximum perimeter from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the maximum perimeter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_perimeter() -> FaceSelection
+
+   
+   Return the face with the minimum perimeter from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the minimum perimeter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_edge_count(min: int, max: int = None) -> FaceSelection
+
+   
+   Filter faces whose edge count falls within a range.
+
+
+   :Parameters:
+
+       **min** : :class:`python:int`
+           Minimum edge count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum edge count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose edge count is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_edge_count() -> FaceSelection
+
+   
+   Return the face with the maximum edge count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the maximum edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_edge_count() -> FaceSelection
+
+   
+   Return the face with the minimum edge count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the minimum edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_loop_count(min: int, max: int = None) -> FaceSelection
+
+   
+   Filter faces whose loop count falls within a range.
+
+
+   :Parameters:
+
+       **min** : :class:`python:int`
+           Minimum loop count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum loop count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces whose loop count is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_loop_count() -> FaceSelection
+
+   
+   Return the face with the maximum loop count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the maximum loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_loop_count() -> FaceSelection
+
+   
+   Return the face with the minimum loop count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the minimum loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType, min: int, max: int = None) -> FaceSelection
+
+   
+   Filter faces by the count of a specific curve type they contain.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per face.
+
+       **min** : :class:`python:int`
+           Minimum count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces with a matching count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_max_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType) -> FaceSelection
+
+   
+   Return the face with the most curves of a given type.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per face.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the maximum count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_min_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType) -> FaceSelection
+
+   
+   Return the face with the fewest curves of a given type.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per face.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Face with the minimum count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_containing_curve_types(curve_type: ansys.geometry.core.designer.edge.CurveType, exclusive: bool = False) -> FaceSelection
+
+   
+   Filter faces that contain specific curve types.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           Curve type that the face must contain.
+
+       **exclusive** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           If ``True``, the face must contain *only* the specified curve type.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces containing the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_color(color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]) -> FaceSelection
+
+   
+   Filter faces that match a specific color.
+
+
+   :Parameters:
+
+       **color** : :class:`python:str` | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`] | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`, :class:`python:float`]
+           Color to match. This can be a string representing a color name
+           or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces with the specified color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_area_percentile(min_percentile: float, max_percentile: float) -> FaceSelection
+
+   
+   Filter faces by area percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces within the specified area percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_perimeter_percentile(min_percentile: float, max_percentile: float) -> FaceSelection
+
+   
+   Filter faces by perimeter percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces within the specified perimeter percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_edge_count_percentile(min_percentile: float, max_percentile: float) -> FaceSelection
+
+   
+   Filter faces by edge count percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces within the specified edge count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_loop_count_percentile(min_percentile: float, max_percentile: float) -> FaceSelection
+
+   
+   Filter faces by loop count percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces within the specified loop count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_faces_by_number_curves_percentile(curve_type: ansys.geometry.core.designer.edge.CurveType, min_percentile: float, max_percentile: float) -> FaceSelection
+
+   
+   Filter faces by the percentile of a curve type count relative to the selection.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per face.
+
+       **min_percentile** : :class:`python:float`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :class:`python:float`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces within the percentile range for the curve type count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_area(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that have the same area.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional faces with matching areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_edges(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that have the same number of edges.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional faces with the same edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_loops(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that have the same number of loops.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional faces with the same loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_color(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that share the same color.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional faces with matching colors.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coincident(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that are coincident to the selection.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional coincident faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_coaxial_faces(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> FaceSelection
+
+   
+   Extend the selection with faces that are coaxial to the selection.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all faces or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Input faces plus additional coaxial faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_area() -> FaceSelection
+
+   
+   Return faces sorted by area in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces ordered from smallest to largest area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_perimeter() -> FaceSelection
+
+   
+   Return faces sorted by perimeter in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces ordered from smallest to largest perimeter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_edge_count() -> FaceSelection
+
+   
+   Return faces sorted by edge count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces ordered from fewest to most edges.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_loop_count() -> FaceSelection
+
+   
+   Return faces sorted by loop count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces ordered from fewest to most loops.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_faces_by_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType) -> FaceSelection
+
+   
+   Return faces sorted by the count of a given curve type in ascending order.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per face.
+
+
+
+   :Returns:
+
+       :obj:`FaceSelection`
+           Faces ordered from fewest to most curves of the given type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_area() -> list[FaceSelection]
+
+   
+   Group faces by area.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups with the same area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_perimeter() -> list[FaceSelection]
+
+   
+   Group faces by perimeter.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups with the same perimeter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_body() -> list[FaceSelection]
+
+   
+   Group faces by their parent body.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups by parent body.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_edge_count() -> list[FaceSelection]
+
+   
+   Group faces by edge count.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups with the same edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_loop_count() -> list[FaceSelection]
+
+   
+   Group faces by loop count.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups with the same loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_color() -> list[FaceSelection]
+
+   
+   Group faces by color.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups sharing the same color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_faces_by_coincident() -> list[FaceSelection]
+
+   
+   Group faces by coincidence.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`FaceSelection`]
+           Faces partitioned into groups of coincident faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

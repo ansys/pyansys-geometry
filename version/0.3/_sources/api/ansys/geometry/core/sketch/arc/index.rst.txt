@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``arc.py`` module
+=====================
+
+.. py:module:: ansys.geometry.core.sketch.arc
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: arc
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Arc`
+            - Provides for modeling an arc.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Arc<Arc>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing an arc.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

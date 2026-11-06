@@ -1,0 +1,91 @@
+---
+jupytext:
+  text_representation:
+    extension: .mystnb
+    format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.14.1
+kernelspec:
+  display_name: Python 3 (ipykernel)
+  language: python
+  name: python3
+---
+
+# Miscellaneous: Example template
+
+This example serves as a template for creating new examples in the documentation.
+It shows developers how to structure their code and comments for clarity and consistency.
+It also provides a basic outline for importing necessary modules, initializing the modeler,
+performing operations, and closing the modeler.
+
+It is important to follow the conventions and formatting used in this example to ensure that
+the documentation is easy to read and understandable.
+
+## Example imports
+
+Perform the required imports for this example.
+This section should include all necessary imports for the example to run correctly.
+
+```{code-cell} ipython3
+# Imports
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.math import Point2D
+from ansys.geometry.core.sketch import Sketch
+```
+
+## Initialize the modeler
+
+```{code-cell} ipython3
+# Initialize the modeler for this example notebook
+m = launch_modeler()
+print(m)
+```
+
+## Body of your example
+
+Developers can add their code here to perform the desired operations.
+This section should include comments and explanations to explain what the code is doing.
+
+### Example section: Initialize a design
+
+Create a design named ``example-design``.
+
+```{code-cell} ipython3
+# Initialize the example design
+design = m.create_design("example-design")
+```
+
+### Example section: Include images
+
+This section demonstrates how to include static images in the documentation.
+You should place these images in the ``doc/source/_static/`` directory.
+
+You can then reference images in the documentation using the following syntax:
+
+![image](../../_static/thumbnails/101_getting_started.png){align=center}
+
+
+### Example section: Create a sketch and plot it
+
+This section demonstrates how to create a sketch and plot it.
+
+```{code-cell} ipython3
+sketch = Sketch()
+sketch.box(Point2D([0, 0]), 10, 10)
+sketch.plot()
+```
+
+### Example section: Extrude the sketch and create a body
+This section demonstrates how to extrude the sketch and create a body.
+
+```{code-cell} ipython3
+design.extrude_sketch(f"BoxBody", sketch, distance=10)
+design.plot()
+```
+
+## Close the modeler
+
+```{code-cell} ipython3
+# Close the modeler
+m.close()
+```

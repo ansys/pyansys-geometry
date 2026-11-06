@@ -1,0 +1,134 @@
+:py:mod:`ansys.geometry.core.plotting.widgets.widget`
+=====================================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets.widget
+
+.. autoapi-nested-parse::
+
+   Module containing the abstract implementation of Plotter widgets.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.plotting.widgets.widget.PlotterWidget
+
+
+
+
+.. py:class:: PlotterWidget(plotter: pyvista.Plotter)
+
+
+   Bases: :py:obj:`abc.ABC`
+
+   
+   Abstract class for Plotter widgets.
+
+
+   :Parameters:
+
+       **plotter** : :obj:`~pyvista.Plotter`
+           The Plotter instance to which the widget will be added.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   These widgets are intended to be used with PyVista plotter objects.
+   More specifically, the way in which this abstraction has been build
+   is such that they are easily integrable with PyGeometry's own Plotter
+   class.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: plotter
+      :type: pyvista.Plotter
+
+      
+      The Plotter object to which the widget is assigned.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: callback(state) -> None
+      :abstractmethod:
+
+      
+      General callback function for PlotterWidget objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: update() -> None
+      :abstractmethod:
+
+      
+      General update function for PlotterWidget objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``edge_selection.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.selection_builder.edge_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.selection_builder.edge_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.edge_selection.EdgeSelection`
+            - A builder for creating an edge selection.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> EdgeSelection</api/ansys/geometry/core/selection_builder/edge_selection/EdgeSelection>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating an edge selection.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

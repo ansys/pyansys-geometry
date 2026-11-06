@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``surface.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.surface
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.surface.Surface`
+            - Provides the abstract base class for a 3D surface.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Surface</api/ansys/geometry/core/shapes/surfaces/surface/Surface>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ``Surface`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

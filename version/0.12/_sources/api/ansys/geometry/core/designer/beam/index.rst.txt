@@ -1,0 +1,135 @@
+
+
+
+
+
+
+The ``beam.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.designer.beam
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: beam
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.BeamProfile`
+            - Represents a single beam profile organized within the design assembly.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.BeamCircularProfile`
+            - Represents a single circular beam profile.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.BeamCrossSectionInfo`
+            - Represents the cross-section information for a beam.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.BeamProperties`
+            - Represents the properties of a beam.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.Beam`
+            - Represents a simplified solid body with an assigned 2D cross-section.
+
+
+
+    .. tab-item:: Enums
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.BeamType`
+            - Provides values for the beam types supported.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.beam.SectionAnchorType`
+            - Provides values for the section anchor types supported.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BeamProfile</api/ansys/geometry/core/designer/beam/BeamProfile>
+    <span class="nf nf-cod-symbol_class"></span> BeamCircularProfile</api/ansys/geometry/core/designer/beam/BeamCircularProfile>
+    <span class="nf nf-cod-symbol_class"></span> BeamCrossSectionInfo</api/ansys/geometry/core/designer/beam/BeamCrossSectionInfo>
+    <span class="nf nf-cod-symbol_class"></span> BeamProperties</api/ansys/geometry/core/designer/beam/BeamProperties>
+    <span class="nf nf-cod-symbol_class"></span> Beam</api/ansys/geometry/core/designer/beam/Beam>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_enum"></span> BeamType</api/ansys/geometry/core/designer/beam/BeamType>
+    <span class="nf nf-cod-symbol_enum"></span> SectionAnchorType</api/ansys/geometry/core/designer/beam/SectionAnchorType>
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating and managing a beam.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

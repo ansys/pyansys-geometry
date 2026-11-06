@@ -1,0 +1,83 @@
+
+
+
+
+
+
+The ``face_selection.py`` module
+================================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.face_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v0.face_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.face_selection.GRPCFaceSelectionServiceV0`
+            - Face Selection service for gRPC communication with the Geometry server (v0).
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCFaceSelectionServiceV0</api/ansys/geometry/core/_grpc/_services/v0/face_selection/GRPCFaceSelectionServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the Face Selection service implementation for v0.
+
+The FaceSelection service does not exist in the v0 proto API.
+All methods raise ``NotImplementedError``.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,239 @@
+
+
+
+
+
+
+:class:`SketchEdge`
+===================
+
+
+.. py:class:: ansys.geometry.core.sketch.edge.SketchEdge
+
+   
+   Provides for modeling edges forming sketched shapes.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: SketchEdge
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plane_change`
+            - Redefine the plane containing ``SketchEdge`` objects.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~start`
+            - Starting point of the edge.
+          * - :py:attr:`~end`
+            - Ending point of the edge.
+          * - :py:attr:`~length`
+            - Length of the edge.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.edge import SketchEdge
+
+Property detail
+---------------
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point2D
+
+   :abstractmethod:
+
+
+   
+   Starting point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point2D
+
+   :abstractmethod:
+
+
+   
+   Ending point of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: pint.Quantity
+
+   :abstractmethod:
+
+
+   
+   Length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :type: pyvista.PolyData
+
+   :abstractmethod:
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: plane_change(plane: ansys.geometry.core.math.plane.Plane) -> None
+
+   
+   Redefine the plane containing ``SketchEdge`` objects.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Desired new plane that is to contain the sketched edge.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This implies that their 3D definition might suffer changes. By default, this
+   metho does nothing. It is required to be implemented in child ``SketchEdge``
+   classes.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

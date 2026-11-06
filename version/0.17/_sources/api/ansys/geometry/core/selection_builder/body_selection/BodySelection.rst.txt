@@ -1,0 +1,2388 @@
+
+
+
+
+
+
+:class:`BodySelection`
+======================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.body_selection.BodySelection(design: ansys.geometry.core.designer.design.Design, grpc_client: ansys.geometry.core.connection.client.GrpcClient, items: list[ansys.geometry.core.designer.body.Body] = None)
+
+   Bases: :py:obj:`ansys.geometry.core.selection_builder.typed_selection.TypedSelection`
+
+
+   
+   A builder for creating a body selection.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: BodySelection
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_all_visible_bodies`
+            - Return all visible bodies in the active document.
+          * - :py:attr:`~get_all_bodies`
+            - Return all bodies in the active document.
+          * - :py:attr:`~get_all_surface_bodies`
+            - Return all surface bodies in the active document.
+          * - :py:attr:`~get_all_solid_bodies`
+            - Return all solid bodies in the active document.
+          * - :py:attr:`~get_bodies_from_named_selection`
+            - Return bodies belonging to a named selection.
+          * - :py:attr:`~get_bodies_with_name`
+            - Return bodies whose name matches a filter.
+          * - :py:attr:`~get_bodies_with_volume`
+            - Return bodies whose volume falls within a range.
+          * - :py:attr:`~get_bodies_with_surface_area`
+            - Return bodies whose surface area falls within a range.
+          * - :py:attr:`~get_bodies_with_x_location`
+            - Return bodies whose X-location centroid falls within a range.
+          * - :py:attr:`~get_bodies_with_y_location`
+            - Return bodies whose Y-location centroid falls within a range.
+          * - :py:attr:`~get_bodies_with_z_location`
+            - Return bodies whose Z-location centroid falls within a range.
+          * - :py:attr:`~get_bodies_with_color`
+            - Return bodies that match a specific color.
+          * - :py:attr:`~invert_body_selection`
+            - Return all bodies not in the given selection.
+          * - :py:attr:`~filter_bodies_by_volume`
+            - Filter bodies whose volume falls within a range.
+          * - :py:attr:`~filter_bodies_max_volume`
+            - Return the body with the maximum volume from the selection.
+          * - :py:attr:`~filter_bodies_min_volume`
+            - Return the body with the minimum volume from the selection.
+          * - :py:attr:`~filter_bodies_by_surface_area`
+            - Filter bodies whose surface area falls within a range.
+          * - :py:attr:`~filter_bodies_max_surface_area`
+            - Return the body with the maximum surface area from the selection.
+          * - :py:attr:`~filter_bodies_min_surface_area`
+            - Return the body with the minimum surface area from the selection.
+          * - :py:attr:`~filter_bodies_by_face_count`
+            - Filter bodies whose face count falls within a range.
+          * - :py:attr:`~filter_bodies_max_face_count`
+            - Return the body with the maximum face count from the selection.
+          * - :py:attr:`~filter_bodies_min_face_count`
+            - Return the body with the minimum face count from the selection.
+          * - :py:attr:`~filter_bodies_by_edge_count`
+            - Filter bodies whose edge count falls within a range.
+          * - :py:attr:`~filter_bodies_max_edge_count`
+            - Return the body with the maximum edge count from the selection.
+          * - :py:attr:`~filter_bodies_min_edge_count`
+            - Return the body with the minimum edge count from the selection.
+          * - :py:attr:`~filter_bodies_by_loop_count`
+            - Filter bodies whose loop count falls within a range.
+          * - :py:attr:`~filter_bodies_max_loop_count`
+            - Return the body with the maximum loop count from the selection.
+          * - :py:attr:`~filter_bodies_min_loop_count`
+            - Return the body with the minimum loop count from the selection.
+          * - :py:attr:`~filter_bodies_by_number_surfaces`
+            - Filter bodies by the count of a specific surface type they contain.
+          * - :py:attr:`~filter_bodies_by_number_curves`
+            - Filter bodies by the count of a specific curve type they contain.
+          * - :py:attr:`~filter_bodies_max_number_surfaces`
+            - Return the body with the most surfaces of a given type.
+          * - :py:attr:`~filter_bodies_max_number_curves`
+            - Return the body with the most curves of a given type.
+          * - :py:attr:`~filter_bodies_min_number_surfaces`
+            - Return the body with the fewest surfaces of a given type.
+          * - :py:attr:`~filter_bodies_min_number_curves`
+            - Return the body with the fewest curves of a given type.
+          * - :py:attr:`~filter_bodies_by_number_surfaces_percentile`
+            - Filter bodies by the percentile of a surface type count relative to the selection.
+          * - :py:attr:`~filter_bodies_by_number_curves_percentile`
+            - Filter bodies by the percentile of a curve type count relative to the selection.
+          * - :py:attr:`~filter_bodies_by_color`
+            - Filter bodies that match a specific color.
+          * - :py:attr:`~filter_bodies_by_name`
+            - Filter bodies whose name matches a filter.
+          * - :py:attr:`~filter_bodies_containing_surface_types`
+            - Filter bodies that contain specific surface types.
+          * - :py:attr:`~filter_bodies_containing_curve_types`
+            - Filter bodies that contain specific curve types.
+          * - :py:attr:`~filter_bodies_volume_percentile`
+            - Filter bodies by volume percentile relative to the selection.
+          * - :py:attr:`~filter_bodies_surface_area_percentile`
+            - Filter bodies by surface area percentile relative to the selection.
+          * - :py:attr:`~filter_bodies_face_count_percentile`
+            - Filter bodies by face count percentile relative to the selection.
+          * - :py:attr:`~filter_bodies_edge_count_percentile`
+            - Filter bodies by edge count percentile relative to the selection.
+          * - :py:attr:`~filter_bodies_loop_count_percentile`
+            - Filter bodies by loop count percentile relative to the selection.
+          * - :py:attr:`~filter_surface_bodies`
+            - Keep only surface bodies from the selection.
+          * - :py:attr:`~filter_solid_bodies`
+            - Keep only solid bodies from the selection.
+          * - :py:attr:`~extend_to_same_volume`
+            - Extend the selection with bodies that have the same volume.
+          * - :py:attr:`~extend_to_same_surface_area`
+            - Extend the selection with bodies that have the same surface area.
+          * - :py:attr:`~extend_to_same_number_of_faces`
+            - Extend the selection with bodies that have the same number of faces.
+          * - :py:attr:`~extend_to_same_number_of_edges`
+            - Extend the selection with bodies that have the same number of edges.
+          * - :py:attr:`~extend_to_same_color`
+            - Extend the selection with bodies that share the same color.
+          * - :py:attr:`~extend_to_same_name`
+            - Extend the selection with bodies that share the same name.
+          * - :py:attr:`~extend_nearby_bodies`
+            - Extend the selection with bodies within a given distance.
+          * - :py:attr:`~order_bodies_by_volume`
+            - Return bodies sorted by volume in ascending order.
+          * - :py:attr:`~order_bodies_by_surface_area`
+            - Return bodies sorted by surface area in ascending order.
+          * - :py:attr:`~order_bodies_by_face_count`
+            - Return bodies sorted by face count in ascending order.
+          * - :py:attr:`~order_bodies_by_edge_count`
+            - Return bodies sorted by edge count in ascending order.
+          * - :py:attr:`~order_bodies_by_loop_count`
+            - Return bodies sorted by loop count in ascending order.
+          * - :py:attr:`~order_bodies_by_number_of_surfaces`
+            - Return bodies sorted by total surface count in ascending order.
+          * - :py:attr:`~order_bodies_by_number_of_curves`
+            - Return bodies sorted by total curve count in ascending order.
+          * - :py:attr:`~group_bodies_by_volume`
+            - Group bodies by volume.
+          * - :py:attr:`~group_bodies_by_surface_area`
+            - Group bodies by surface area.
+          * - :py:attr:`~group_bodies_by_face_count`
+            - Group bodies by face count.
+          * - :py:attr:`~group_bodies_by_edge_count`
+            - Group bodies by edge count.
+          * - :py:attr:`~group_bodies_by_loop_count`
+            - Group bodies by loop count.
+          * - :py:attr:`~group_bodies_by_color`
+            - Group bodies by color.
+          * - :py:attr:`~group_bodies_by_name`
+            - Group bodies by name.
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__add__`
+            - Return a new selection that is the union of this selection and another.
+          * - :py:attr:`~__sub__`
+            - Return a new selection that is the difference of this selection and another.
+          * - :py:attr:`~__and__`
+            - Return a new selection that is the intersection of this selection and another.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.body_selection import BodySelection
+
+
+
+Method detail
+-------------
+
+.. py:method:: __add__(other: BodySelection) -> BodySelection
+
+   
+   Return a new selection that is the union of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __sub__(other: BodySelection) -> BodySelection
+
+   
+   Return a new selection that is the difference of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: __and__(other: BodySelection) -> BodySelection
+
+   
+   Return a new selection that is the intersection of this selection and another.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_visible_bodies() -> BodySelection
+
+   
+   Return all visible bodies in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           All visible bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_bodies() -> BodySelection
+
+   
+   Return all bodies in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           All bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_surface_bodies() -> BodySelection
+
+   
+   Return all surface bodies in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           All surface bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_all_solid_bodies() -> BodySelection
+
+   
+   Return all solid bodies in the active document.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           All solid bodies.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_from_named_selection(name: str) -> BodySelection
+
+   
+   Return bodies belonging to a named selection.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name (or pattern) of the named selection to match.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies belonging to the matched named selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_name(name: str, filter_type: ansys.geometry.core.selection_builder.selection_builder.StringFilterType = StringFilterType.STRINGFILTERTYPE_TEXT, ignore_case: bool = False) -> BodySelection
+
+   
+   Return bodies whose name matches a filter.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name pattern to match against body names.
+
+       **filter_type** : :obj:`StringFilterType`, default: :obj:`StringFilterType.STRINGFILTERTYPE_TEXT`
+           String filter type.
+
+       **ignore_case** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the name match is case-insensitive.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose name matches the filter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_volume(min: Union[ansys.geometry.core.misc.measurements.Volume, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Volume, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Return bodies whose volume falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Volume` | :obj:`Quantity` | :obj:`Real`
+           Minimum volume (inclusive).
+
+       **max** : :obj:`Volume` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum volume (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose volume is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_surface_area(min: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Return bodies whose surface area falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`
+           Minimum surface area (inclusive).
+
+       **max** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum surface area (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose surface area is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_x_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Return bodies whose X-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum X-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum X-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose X-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_y_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Return bodies whose Y-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum Y-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum Y-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose Y-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_z_location(range_type: ansys.geometry.core.selection_builder.selection_builder.RangeType = RangeType.RANGETYPE_INTERSECT, min: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None, max: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Return bodies whose Z-location centroid falls within a range.
+
+
+   :Parameters:
+
+       **range_type** : :obj:`RangeType`, default: :obj:`RangeType.RANGETYPE_INTERSECT`
+           Range type specifier.
+
+       **min** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Minimum Z-location. If not provided, no lower bound is applied.
+
+       **max** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum Z-location. If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose Z-location is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bodies_with_color(color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]) -> BodySelection
+
+   
+   Return bodies that match a specific color.
+
+
+   :Parameters:
+
+       **color** : :class:`python:str` | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`] | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`, :class:`python:float`]
+           Color to set the body to. This can be a string representing a color name
+           or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies with the specified color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: invert_body_selection(scope: ansys.geometry.core.selection_builder.selection_builder.InvertScope = InvertScope.INVERTSCOPE_VISIBLE) -> BodySelection
+
+   
+   Return all bodies not in the given selection.
+
+
+   :Parameters:
+
+       **scope** : :obj:`InvertScope`, default: :obj:`InvertScope.INVERTSCOPE_VISIBLE`
+           Whether to invert within visible bodies or all bodies.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies that are the inverse of the input selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_volume(min: Union[ansys.geometry.core.misc.measurements.Volume, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Volume, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Filter bodies whose volume falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Volume` | :obj:`Quantity` | :obj:`Real`
+           Minimum volume (inclusive).
+
+       **max** : :obj:`Volume` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum volume (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose volume is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_volume() -> BodySelection
+
+   
+   Return the body with the maximum volume from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum volume.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_volume() -> BodySelection
+
+   
+   Return the body with the minimum volume from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum volume.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_surface_area(min: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real], max: Union[ansys.geometry.core.misc.measurements.Area, pint.Quantity, numbers.Real, None] = None) -> BodySelection
+
+   
+   Filter bodies whose surface area falls within a range.
+
+
+   :Parameters:
+
+       **min** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`
+           Minimum surface area (inclusive).
+
+       **max** : :obj:`Area` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           Maximum surface area (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose surface area is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_surface_area() -> BodySelection
+
+   
+   Return the body with the maximum surface area from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum surface area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_surface_area() -> BodySelection
+
+   
+   Return the body with the minimum surface area from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum surface area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_face_count(min: int, max: int = None) -> BodySelection
+
+   
+   Filter bodies whose face count falls within a range.
+
+
+   :Parameters:
+
+       **min** : :class:`python:int`
+           Minimum face count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum face count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose face count is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_face_count() -> BodySelection
+
+   
+   Return the body with the maximum face count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum face count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_face_count() -> BodySelection
+
+   
+   Return the body with the minimum face count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum face count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_edge_count(min: int, max: int = None) -> BodySelection
+
+   
+   Filter bodies whose edge count falls within a range.
+
+
+   :Parameters:
+
+       **min** : :class:`python:int`
+           Minimum edge count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum edge count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose edge count is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_edge_count() -> BodySelection
+
+   
+   Return the body with the maximum edge count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_edge_count() -> BodySelection
+
+   
+   Return the body with the minimum edge count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_loop_count(min: int, max: int = None) -> BodySelection
+
+   
+   Filter bodies whose loop count falls within a range.
+
+
+   :Parameters:
+
+       **min** : :class:`python:int`
+           Minimum loop count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum loop count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose loop count is within the specified range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_loop_count() -> BodySelection
+
+   
+   Return the body with the maximum loop count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_loop_count() -> BodySelection
+
+   
+   Return the body with the minimum loop count from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_surfaces(surface_type: ansys.geometry.core.designer.face.SurfaceType, min: int, max: int = None) -> BodySelection
+
+   
+   Filter bodies by the count of a specific surface type they contain.
+
+
+   :Parameters:
+
+       **surface_type** : :obj:`SurfaceType`
+           The surface type to count per body.
+
+       **min** : :class:`python:int`
+           Minimum count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies with a matching count of the specified surface type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType, min: int, max: int = None) -> BodySelection
+
+   
+   Filter bodies by the count of a specific curve type they contain.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per body.
+
+       **min** : :class:`python:int`
+           Minimum count (inclusive).
+
+       **max** : :class:`python:int`, :obj:`optional`
+           Maximum count (inclusive). If not provided, no upper bound is applied.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies with a matching count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_number_surfaces(surface_type: ansys.geometry.core.designer.face.SurfaceType) -> BodySelection
+
+   
+   Return the body with the most surfaces of a given type.
+
+
+   :Parameters:
+
+       **surface_type** : :obj:`SurfaceType`
+           The surface type to count per body.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum count of the specified surface type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_max_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType) -> BodySelection
+
+   
+   Return the body with the most curves of a given type.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per body.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the maximum count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_number_surfaces(surface_type: ansys.geometry.core.designer.face.SurfaceType) -> BodySelection
+
+   
+   Return the body with the fewest surfaces of a given type.
+
+
+   :Parameters:
+
+       **surface_type** : :obj:`SurfaceType`
+           The surface type to count per body.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum count of the specified surface type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_min_number_curves(curve_type: ansys.geometry.core.designer.edge.CurveType) -> BodySelection
+
+   
+   Return the body with the fewest curves of a given type.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per body.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Body with the minimum count of the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_surfaces_percentile(surface_type: ansys.geometry.core.designer.face.SurfaceType, min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by the percentile of a surface type count relative to the selection.
+
+
+   :Parameters:
+
+       **surface_type** : :obj:`SurfaceType`
+           The surface type to count per body.
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the percentile range for the surface type count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_number_curves_percentile(curve_type: ansys.geometry.core.designer.edge.CurveType, min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by the percentile of a curve type count relative to the selection.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           The curve type to count per body.
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the percentile range for the curve type count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_color(color: Union[str, tuple[float, float, float], tuple[float, float, float, float]]) -> BodySelection
+
+   
+   Filter bodies that match a specific color.
+
+
+   :Parameters:
+
+       **color** : :class:`python:str` | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`] | :class:`python:tuple`\[:class:`python:float`, :class:`python:float`, :class:`python:float`, :class:`python:float`]
+           Color to match. This can be a string representing a color name
+           or a tuple of RGB values in the range [0, 1] (RGBA) or [0, 255] (pure RGB).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies with the specified color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_by_name(name: str, filter_type: ansys.geometry.core.selection_builder.selection_builder.StringFilterType = StringFilterType.STRINGFILTERTYPE_TEXT, ignore_case: bool = False) -> BodySelection
+
+   
+   Filter bodies whose name matches a filter.
+
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           Name pattern to match.
+
+       **filter_type** : :obj:`StringFilterType`, default: :obj:`StringFilterType.STRINGFILTERTYPE_TEXT`
+           String filter type.
+
+       **ignore_case** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether the name match is case-insensitive.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies whose name matches the filter.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_containing_surface_types(surface_type: ansys.geometry.core.designer.face.SurfaceType, exclusive: bool = False) -> BodySelection
+
+   
+   Filter bodies that contain specific surface types.
+
+
+   :Parameters:
+
+       **surface_type** : :obj:`SurfaceType`
+           Surface type that the body must contain.
+
+       **exclusive** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           If ``True``, the body must contain *only* the specified surface type.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies containing the specified surface type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_containing_curve_types(curve_type: ansys.geometry.core.designer.edge.CurveType, exclusive: bool = False) -> BodySelection
+
+   
+   Filter bodies that contain specific curve types.
+
+
+   :Parameters:
+
+       **curve_type** : :obj:`CurveType`
+           Curve type that the body must contain.
+
+       **exclusive** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           If ``True``, the body must contain *only* the specified curve type.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies containing the specified curve type.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_volume_percentile(min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by volume percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the specified volume percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_surface_area_percentile(min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by surface area percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the specified surface area percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_face_count_percentile(min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by face count percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the specified face count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_edge_count_percentile(min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by edge count percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the specified edge count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_bodies_loop_count_percentile(min_percentile: numbers.Real, max_percentile: numbers.Real) -> BodySelection
+
+   
+   Filter bodies by loop count percentile relative to the selection.
+
+
+   :Parameters:
+
+       **min_percentile** : :obj:`Real`
+           Minimum percentile threshold (0–100).
+
+       **max_percentile** : :obj:`Real`
+           Maximum percentile threshold (0–100).
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies within the specified loop count percentile range.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_surface_bodies() -> BodySelection
+
+   
+   Keep only surface bodies from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Only the surface bodies from the input selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: filter_solid_bodies() -> BodySelection
+
+   
+   Keep only solid bodies from the selection.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Only the solid bodies from the input selection.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_volume(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that have the same volume.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with matching volumes.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_surface_area(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that have the same surface area.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with matching surface areas.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_faces(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that have the same number of faces.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with the same face count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_number_of_edges(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that have the same number of edges.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with the same edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_color(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that share the same color.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with matching colors.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_to_same_name(scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies that share the same name.
+
+
+   :Parameters:
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies with matching names.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extend_nearby_bodies(distance: Union[ansys.geometry.core.misc.measurements.Distance, pint.Quantity, numbers.Real], scope: ansys.geometry.core.selection_builder.selection_builder.ExtendScope = ExtendScope.EXTENDSCOPE_ALL) -> BodySelection
+
+   
+   Extend the selection with bodies within a given distance.
+
+
+   :Parameters:
+
+       **distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum proximity distance.
+
+       **scope** : :obj:`ExtendScope`, default: :obj:`ExtendScope.EXTENDSCOPE_ALL`
+           Whether to search all bodies or only visible ones.
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Input bodies plus additional bodies within the specified distance.
+
+
+
+
+
+
+   .. warning::
+
+       This is not currently supported for CoreService backends.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_volume() -> BodySelection
+
+   
+   Return bodies sorted by volume in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from smallest to largest volume.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_surface_area() -> BodySelection
+
+   
+   Return bodies sorted by surface area in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from smallest to largest surface area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_face_count() -> BodySelection
+
+   
+   Return bodies sorted by face count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from fewest to most faces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_edge_count() -> BodySelection
+
+   
+   Return bodies sorted by edge count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from fewest to most edges.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_loop_count() -> BodySelection
+
+   
+   Return bodies sorted by loop count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from fewest to most loops.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_number_of_surfaces() -> BodySelection
+
+   
+   Return bodies sorted by total surface count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from fewest to most surfaces.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: order_bodies_by_number_of_curves() -> BodySelection
+
+   
+   Return bodies sorted by total curve count in ascending order.
+
+
+
+
+
+   :Returns:
+
+       :obj:`BodySelection`
+           Bodies ordered from fewest to most curves.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_volume() -> list[BodySelection]
+
+   
+   Group bodies by volume.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups of equal volume.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_surface_area() -> list[BodySelection]
+
+   
+   Group bodies by surface area.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups of equal surface area.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_face_count() -> list[BodySelection]
+
+   
+   Group bodies by face count.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups with the same face count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_edge_count() -> list[BodySelection]
+
+   
+   Group bodies by edge count.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups with the same edge count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_loop_count() -> list[BodySelection]
+
+   
+   Group bodies by loop count.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups with the same loop count.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_color() -> list[BodySelection]
+
+   
+   Group bodies by color.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups sharing the same color.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: group_bodies_by_name() -> list[BodySelection]
+
+   
+   Group bodies by name.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`BodySelection`]
+           Bodies partitioned into groups sharing the same name.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

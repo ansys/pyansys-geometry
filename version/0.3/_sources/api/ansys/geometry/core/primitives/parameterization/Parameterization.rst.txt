@@ -1,0 +1,181 @@
+
+
+
+
+Parameterization
+================
+
+.. py:class:: Parameterization(form: ParamForm, type: ParamType, interval: Interval)
+   :canonical: ansys.geometry.core.primitives.parameterization.Parameterization
+
+
+
+
+Parameterization class describes the parameters of a specific geometry.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Parameterization
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~form`
+            - The form of the parameterization.
+          * - :py:attr:`~type`
+            - The type of the parameterization.
+          * - :py:attr:`~interval`
+            - The interval of the parameterization.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the ``Parameterization`` as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.primitives.parameterization import Parameterization
+
+
+Property detail
+---------------
+.. py:property:: form
+   :canonical: ansys.geometry.core.primitives.parameterization.Parameterization.form
+   :type: ParamForm
+
+
+   
+   The form of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: type
+   :canonical: ansys.geometry.core.primitives.parameterization.Parameterization.type
+   :type: ParamType
+
+
+   
+   The type of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: interval
+   :canonical: ansys.geometry.core.primitives.parameterization.Parameterization.interval
+   :type: Interval
+
+
+   
+   The interval of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the ``Parameterization`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

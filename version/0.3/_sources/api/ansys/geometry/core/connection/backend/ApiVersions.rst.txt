@@ -1,0 +1,88 @@
+
+
+
+
+ApiVersions
+===========
+
+.. py:class:: ApiVersions
+   :canonical: ansys.geometry.core.connection.backend.ApiVersions
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum for all the compatibles API versions.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: ApiVersions
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~V_21`
+            - 
+          * - :py:attr:`~V_22`
+            - 
+          * - :py:attr:`~V_231`
+            - 
+          * - :py:attr:`~V_232`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.backend import ApiVersions
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: V_21
+   :value: 21
+
+   
+
+.. py:attribute:: V_22
+   :value: 22
+
+   
+
+.. py:attribute:: V_231
+   :value: 231
+
+   
+
+.. py:attribute:: V_232
+   :value: 232
+
+   
+
+
+

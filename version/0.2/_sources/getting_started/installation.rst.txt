@@ -1,0 +1,118 @@
+Installation
+############
+
+This page assumes that you want to install PyGeometry in developer mode so that
+you can modify the source and enhance it. You can install PyGeometry from PyPI
+or from the `PyGeometry`_ repository on GitHub.
+
+Package dependencies
+--------------------
+
+PyGeometry is supported on Python version 3.8 and later. As indicated in
+`Moving to require Python 3 <https://python3statement.org/>`_, previous
+versions of Python are no longer supported.
+
+PyGeometry dependencies are automatically checked when packages are installed.
+These projects are required dependencies for PyGeometry:
+
+* `ansys-api-geometry <https://pypi.org/project/ansys-api-geometry/>`_ - Used for supplying gRPC code generated from Protobuf files.
+* `NumPy <https://pypi.org/project/numpy/>`_ - Used for data array access.
+* `Pint <https://pypi.org/project/Pint/>`_ - Used for measurement units.
+* `PyVista <https://pypi.org/project/pyvista/>`_ - Used for interactive 3D plotting.
+* `SciPy <https://pypi.org/project/scipy/>`_ - Used for geometric transformations.
+
+PyPI
+----
+
+Before installing PyGeometry, make sure you have the latest version of
+`pip`_ with:
+
+   .. code:: bash
+
+      python -m pip install -U pip
+
+Then, install PyGeometry with:
+
+   .. code:: bash
+
+      python -m pip install ansys-geometry-core
+
+.. caution::
+
+    PyGeometry is hosted in a private PyPI repository. You must provide the following
+    index URL to the private PyPI repository:
+
+    ``https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/``
+
+    If access to this package registry is needed, email `pyansys.core@ansys.com <mailto:pyansys.core@ansys.com>`_
+    to request access. The PyAnsys team can provide you a read-only token to be inserted in ``${PRIVATE_PYPI_ACCESS_TOKEN}``.
+    Once you have obtained this token, run this command:
+
+    .. code:: bash
+
+        pip install ansys-geometry-core --index-url=https://${PRIVATE_PYPI_ACCESS_TOKEN}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
+
+
+GitHub
+------
+
+You can install the latest release from the `PyGeometry`_ repository on GitHub:
+
+   .. code:: bash
+
+      git clone https://github.com/ansys/pygeometry
+      cd pygeometry
+      pip install -e .
+
+You can verify your development installation by running:
+
+   .. code:: bash
+
+      tox
+
+Install in offline mode
+-----------------------
+
+If you lack an internet connection on your installation machine (or you do not have access to the
+private Ansys PyPI packages repository), you should install PyGeometry by downloading the wheelhouse
+archive from the `Releases Page <https://github.com/ansys/pygeometry/releases>`_ for your
+corresponding machine architecture.
+
+Each wheelhouse archive contains all the Python wheels necessary to install PyGeometry from scratch on Windows,
+Linux, and MacOS from Python 3.8 to 3.11. You can install this on an isolated system with a fresh Python
+installation or on a virtual environment.
+
+For example, on Linux with Python 3.8, unzip the wheelhouse archive and install it with:
+
+.. code:: bash
+
+    unzip ansys-geometry-core-v0.2.10-wheelhouse-Linux-3.8.zip wheelhouse
+    pip install ansys-geometry-core -f wheelhouse --no-index --upgrade --ignore-installed
+
+If you're on Windows with Python 3.9, unzip to a wheelhouse directory and install using the same command as preceding.
+
+Consider installing using a `virtual environment <https://docs.python.org/3/library/venv.html>`_.
+
+Verify your installation
+------------------------
+
+Check the :class:`Modeler() <ansys.geometry.core.modeler()>` connection with:
+
+.. code:: pycon
+
+    >>> from ansys.geometry.core import Modeler
+    >>> modeler = Modeler()
+    >>> print(modeler)
+
+    Ansys Geometry Modeler (0x205c5c17d90)
+
+    Ansys Geometry Modeler Client (0x205c5c16e00)
+    Target:     localhost:652
+    Connection: Healthy
+
+If you see a response from the server, you can start using PyGeometry as a service.
+For more information on the PyGeometry interface, see :ref:`User guide <ref_user_guide>`.
+
+.. LINKS AND REFERENCES
+.. _pip: https://pypi.org/project/pip/
+.. _PyGeometry: https://github.com/ansys/pygeometry
