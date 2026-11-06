@@ -9,6 +9,98 @@ This document contains the release notes for the PyAnsys Geometry project.
 
 .. towncrier release notes start
 
+`0.18.4 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.4>`_ - November 05, 2026
+==============================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add run_script method to run string scripts
+          - `#3238 <https://github.com/ansys/pyansys-geometry/pull/3238>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Scale nurbs properties to proper units
+          - `#3232 <https://github.com/ansys/pyansys-geometry/pull/3232>`_
+
+        * - \`create_sphere\` radius arguments
+          - `#3237 <https://github.com/ansys/pyansys-geometry/pull/3237>`_
+
+        * - Filepath keyword to download_export
+          - `#3242 <https://github.com/ansys/pyansys-geometry/pull/3242>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump quarto-cli from 1.10.19 to 1.10.20
+          - `#3226 <https://github.com/ansys/pyansys-geometry/pull/3226>`_
+
+        * - Bump ty from 0.0.92 to 0.0.95
+          - `#3227 <https://github.com/ansys/pyansys-geometry/pull/3227>`_
+
+        * - Bump the docs-deps group across 1 directory with 3 updates
+          - `#3228 <https://github.com/ansys/pyansys-geometry/pull/3228>`_
+
+        * - Bump pyvista from 0.49.1 to 0.49.2
+          - `#3229 <https://github.com/ansys/pyansys-geometry/pull/3229>`_
+
+        * - Bump the grpc-deps group with 2 updates
+          - `#3234 <https://github.com/ansys/pyansys-geometry/pull/3234>`_
+
+        * - Bump pydantic from 2.14.1 to 2.14.2
+          - `#3235 <https://github.com/ansys/pyansys-geometry/pull/3235>`_
+
+        * - Bump pytest from 9.1.1 to 9.2.0
+          - `#3239 <https://github.com/ansys/pyansys-geometry/pull/3239>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump docker/login-action from 4.6.0 to 4.7.0 in the actions group
+          - `#3223 <https://github.com/ansys/pyansys-geometry/pull/3223>`_
+
+        * - Update CHANGELOG for v0.18.3
+          - `#3224 <https://github.com/ansys/pyansys-geometry/pull/3224>`_
+
+        * - Bump skitionek/notify-microsoft-teams from 1.3.4 to 1.3.5 in the actions group across 1 directory
+          - `#3231 <https://github.com/ansys/pyansys-geometry/pull/3231>`_
+
+        * - Bump astral-sh/setup-uv from 10.3.2 to 10.3.3 in the actions group
+          - `#3240 <https://github.com/ansys/pyansys-geometry/pull/3240>`_
+
+        * - Use dsco as file format
+          - `#3241 <https://github.com/ansys/pyansys-geometry/pull/3241>`_
+
+
+  .. tab-item:: Test
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Adjust asserts for backend changes
+          - `#3217 <https://github.com/ansys/pyansys-geometry/pull/3217>`_
+
+
 `0.18.3 <https://github.com/ansys/pyansys-geometry/releases/tag/v0.18.3>`_ - November 02, 2026
 ==============================================================================================
 
