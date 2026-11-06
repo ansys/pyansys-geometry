@@ -186,6 +186,10 @@ jobs:
             backend-version: "26.1"
             windows-runner: "windows-2025"
             proto-version: "v1"
+          - image-tag: "core-windows-27.1"
+            backend-version: "27.1"
+            windows-runner: "windows-2025"
+            proto-version: "v1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
