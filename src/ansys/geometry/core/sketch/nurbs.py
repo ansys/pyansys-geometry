@@ -33,7 +33,8 @@ from pydantic import BaseModel, Field, ValidationError, model_validator
 from ansys.geometry.core.logger import LOG
 from ansys.geometry.core.math.point import Point2D
 from ansys.geometry.core.misc.checks import check_input_types, graphics_required
-from ansys.geometry.core.misc.measurements import DEFAULT_UNITS, Angle, Distance
+from ansys.geometry.core.misc.measurements import Angle, Distance
+from ansys.geometry.core.misc.units import UNITS
 from ansys.geometry.core.sketch.edge import SketchEdge
 from ansys.geometry.core.typing import Real
 
@@ -152,7 +153,7 @@ class SketchNurbs(SketchEdge):
     @property
     def control_points(self) -> list[Point2D]:
         """Get the control points of the curve."""
-        return [Point2D(point) for point in self._nurbs_curve.ctrlpts]
+        return [Point2D(point, UNITS.m) for point in self._nurbs_curve.ctrlpts]
 
     @property
     def degree(self) -> int:
@@ -172,12 +173,12 @@ class SketchNurbs(SketchEdge):
     @property
     def start(self) -> Point2D:
         """Get the start point of the curve."""
-        return Point2D(self._nurbs_curve.evaluate_single(0.0))
+        return Point2D(self._nurbs_curve.evaluate_single(0.0), UNITS.m)
 
     @property
     def end(self) -> Point2D:
         """Get the end point of the curve."""
-        return Point2D(self._nurbs_curve.evaluate_single(1.0))
+        return Point2D(self._nurbs_curve.evaluate_single(1.0), UNITS.m)
 
     @property
     @graphics_required
@@ -274,7 +275,7 @@ class SketchNurbs(SketchEdge):
         # Construct the NURBSCurve object
         nurbs_curve = cls()
         nurbs_curve._nurbs_curve.degree = curve.degree
-        nurbs_curve._nurbs_curve.ctrlpts = [Point2D(entry) for entry in curve.ctrlpts]
+        nurbs_curve._nurbs_curve.ctrlpts = [Point2D(entry, UNITS.m) for entry in curve.ctrlpts]
         nurbs_curve._nurbs_curve.knotvector = curve.knotvector
         nurbs_curve._nurbs_curve.weights = curve.weights
 
@@ -332,7 +333,7 @@ class SketchNurbs(SketchEdge):
     def _curve_from_model(cls, model: SketchNurbsModel) -> "SketchNurbs":
         """Build a SketchNurbs from an already-validated SketchNurbsModel."""
         return cls.from_control_points(
-            control_points=[Point2D(pt) for pt in model.control_points],
+            control_points=[Point2D(pt, UNITS.m) for pt in model.control_points],
             degree=model.degree,
             knots=model.knots,
             weights=model.effective_weights(),
@@ -479,11 +480,11 @@ class SketchNurbs(SketchEdge):
         # ------------------------------------------------------------------
         a = (
             major_radius if isinstance(major_radius, Distance) else Distance(major_radius)
-        ).value.m_as(DEFAULT_UNITS.LENGTH)
+        ).value.m_as(UNITS.m)
 
         b = (
             minor_radius if isinstance(minor_radius, Distance) else Distance(minor_radius)
-        ).value.m_as(DEFAULT_UNITS.LENGTH)
+        ).value.m_as(UNITS.m)
 
         # Angles are stored in base unit (radians) inside Angle._value
         theta0 = (start_angle if isinstance(start_angle, Angle) else Angle(start_angle))._value

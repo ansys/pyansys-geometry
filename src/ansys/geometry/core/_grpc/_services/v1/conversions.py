@@ -606,12 +606,12 @@ def from_pmdb_options_to_grpc_pmdb_options(
         plane_prefixes=options.plane_prefixes,
         coordinate_system_prefixes=options.coordinate_system_prefixes,
         advanced_geom_processing=options.advanced_geom_processing,
-        angular_deviation=options.angular_deviation,
+        angular_deviation=options.angular_deviation.value.m_as(DEFAULT_UNITS.SERVER_ANGLE),
         attach_weight_class=options.attach_weight_class.value,
         cad_associativity=options.cad_associativity,
         cad_attribute_transfer=options.cad_attribute_transfer,
         do_smart_update=options.do_smart_update,
-        geometry_deviation=options.geometry_deviation,
+        geometry_deviation=options.geometry_deviation.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         process_coordinate_sys=options.process_coordinate_sys,
         process_planes=options.process_planes,
         import_using_instances=options.import_using_instances,
@@ -619,7 +619,7 @@ def from_pmdb_options_to_grpc_pmdb_options(
         is_selective_update=options.is_selective_update,
         material_properties=options.material_properties,
         granta_material_properties=options.granta_material_properties,
-        max_facet_size=options.max_facet_size,
+        max_facet_size=options.max_facet_size.value.m_as(DEFAULT_UNITS.SERVER_LENGTH),
         named_selection=options.named_selection,
         parameter_processing_type=options.parameter_processing_type.value,
         plug_in_facet_quality=options.plug_in_facet_quality.value,
@@ -1239,12 +1239,12 @@ def from_grpc_curve_to_curve(curve: GRPCCurveGeometry) -> "Curve":
         # curve will be a line
         pass
 
-    radius = curve.radius.value_in_geometry_units
-    major_radius = curve.major_radius.value_in_geometry_units
-    minor_radius = curve.minor_radius.value_in_geometry_units
-    if radius != 0:
+    radius = from_grpc_quantity_to_distance(curve.radius)
+    major_radius = from_grpc_quantity_to_distance(curve.major_radius)
+    minor_radius = from_grpc_quantity_to_distance(curve.minor_radius)
+    if radius.value.m != 0:
         result = Circle(origin, radius, reference, axis)
-    elif major_radius != 0 and minor_radius != 0:
+    elif major_radius.value.m != 0 and minor_radius.value.m != 0:
         result = Ellipse(origin, major_radius, minor_radius, reference, axis)
     elif curve.nurbs_curve.nurbs_data.degree != 0:
         result = from_grpc_nurbs_curve_to_nurbs_curve(curve.nurbs_curve)
@@ -1406,12 +1406,16 @@ def from_grpc_surface_to_surface(surface: GRPCSurface, surface_type: "SurfaceTyp
     origin = from_grpc_point_to_point3d(surface.origin)
     axis = UnitVector3D([surface.axis.x, surface.axis.y, surface.axis.z])
     reference = UnitVector3D([surface.reference.x, surface.reference.y, surface.reference.z])
-    radius = surface.radius.value_in_geometry_units
-    major_radius = surface.major_radius.value_in_geometry_units
-    minor_radius = surface.minor_radius.value_in_geometry_units
+    radius = Distance(surface.radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH)
+    major_radius = Distance(
+        surface.major_radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH
+    )
+    minor_radius = Distance(
+        surface.minor_radius.value_in_geometry_units, DEFAULT_UNITS.SERVER_LENGTH
+    )
 
     if surface_type == SurfaceType.SURFACETYPE_CONE:
-        result = Cone(origin, radius, surface.half_angle.value_in_geometry_units, reference, axis)
+        result = Cone(origin, radius, from_grpc_angle_to_angle(surface.half_angle), reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_CYLINDER:
         result = Cylinder(origin, radius, reference, axis)
     elif surface_type == SurfaceType.SURFACETYPE_SPHERE:
@@ -1569,7 +1573,7 @@ def from_design_file_format_to_grpc_file_export_format(
         return GRPCFileFormat.FILEFORMAT_PMDB
     elif design_file_format == DesignFileFormat.STRIDE:
         return GRPCFileFormat.FILEFORMAT_STRIDE
-    elif design_file_format == DesignFileFormat.DISCO:
+    elif design_file_format in [DesignFileFormat.DISCO, DesignFileFormat.DSCO]:
         return GRPCFileFormat.FILEFORMAT_DISCO
     else:
         return None

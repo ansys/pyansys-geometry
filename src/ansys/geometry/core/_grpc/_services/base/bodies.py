@@ -116,6 +116,16 @@ class GRPCBodyService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def get_visibility(self, **kwargs) -> dict:
+        """Get the visibility of a body."""
+        pass
+
+    @abstractmethod
+    def set_visibility(self, **kwargs) -> dict:
+        """Set the visibility of a body."""
+        pass
+
+    @abstractmethod
     def get_faces(self, **kwargs) -> dict:
         """Get the faces of a body."""
         pass

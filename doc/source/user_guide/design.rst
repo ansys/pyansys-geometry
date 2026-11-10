@@ -159,7 +159,7 @@ current working directory using the design name as the filename.
     path = design.export_to_pmdb()
 
     # Export as DISCO
-    path = design.export_to_disco()
+    path = design.export_to_dsco()
 
     # Export as STRIDE
     path = design.export_to_stride()

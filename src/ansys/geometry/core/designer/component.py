@@ -54,7 +54,7 @@ from ansys.geometry.core.math.matrix import Matrix44
 from ansys.geometry.core.math.plane import Plane
 from ansys.geometry.core.math.point import Point3D
 from ansys.geometry.core.math.vector import UnitVector3D, Vector3D
-from ansys.geometry.core.misc.auxiliary import get_design_from_component
+from ansys.geometry.core.misc.auxiliary import get_design_from_component, get_visible_bodies
 from ansys.geometry.core.misc.checks import (
     check_input_types,
     check_nurbs_compatibility,
@@ -894,7 +894,7 @@ class Component:
     @check_input_types
     @ensure_design_is_active
     @min_backend_version(25, 1, 0)
-    def create_sphere(self, name: str, center: Point3D, radius: Distance) -> Body:
+    def create_sphere(self, name: str, center: Point3D, radius: Real | Quantity | Distance) -> Body:
         """Create a sphere body defined by the center point and the radius.
 
         Parameters
@@ -903,7 +903,7 @@ class Component:
             Body name.
         center : Point3D
             Center point of the sphere.
-        radius : Distance
+        radius : Real | Quantity | Distance
             Radius of the sphere.
 
         Returns
@@ -915,6 +915,8 @@ class Component:
         --------
         This method is only available starting on Ansys release 25R1.
         """
+        radius = radius if isinstance(radius, Distance) else Distance(radius)
+
         self._grpc_client.log.debug(f"Creating a sphere body on {self.id}.")
         response = self._grpc_client.services.bodies.create_sphere_body(
             name=name, parent=self.id, center=center, radius=radius
@@ -2300,7 +2302,10 @@ class Component:
 
     @graphics_required
     def tessellate(
-        self, tess_options: TessellationOptions | None = None, _recursive_call: bool = False
+        self,
+        tess_options: TessellationOptions | None = None,
+        include_hidden: bool = True,
+        _recursive_call: bool = False,
     ) -> Union["PolyData", list["MultiBlock"]]:
         """Tessellate the component.
 
@@ -2308,6 +2313,10 @@ class Component:
         ----------
         tess_options : TessellationOptions | None, default: None
             A set of options to determine the tessellation quality.
+        include_hidden : bool, default: True
+            Whether to include hidden bodies in this component and its subcomponents.
+            When ``False``, only visible bodies are tessellated. Visibility filtering
+            requires Ansys 27R1 or later; older backends include all bodies.
         _recursive_call: bool, default: False
             Internal flag to indicate if this method is being called recursively.
             Not to be used by the user.
@@ -2322,8 +2331,9 @@ class Component:
         import pyvista as pv
 
         # Tessellate the bodies in this component
+        bodies = self.bodies if include_hidden else get_visible_bodies(self.bodies)
         datasets: list["MultiBlock"] = [
-            body.tessellate(merge=False, tess_options=tess_options) for body in self.bodies
+            body.tessellate(merge=False, tess_options=tess_options) for body in bodies
         ]
 
         # Now, go recursively inside its subcomponents (with no arguments) and
@@ -2331,7 +2341,13 @@ class Component:
         for comp in self._components:
             if not comp.is_alive:
                 continue
-            datasets.extend(comp.tessellate(tess_options=tess_options, _recursive_call=True))
+            datasets.extend(
+                comp.tessellate(
+                    tess_options=tess_options,
+                    _recursive_call=True,
+                    include_hidden=include_hidden,
+                )
+            )
 
         # Convert to polydata as it's slightly faster than extract surface
         # plus this method is only for visualizing the component as a whole (no
@@ -2339,6 +2355,8 @@ class Component:
         if _recursive_call:
             return datasets
         else:
+            if not datasets:
+                return pv.PolyData()
             ugrid = pv.MultiBlock(datasets).combine()
             return pv.PolyData(var_inp=ugrid.points, faces=ugrid.cells)
 

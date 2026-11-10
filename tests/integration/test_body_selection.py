@@ -122,6 +122,10 @@ def test_get_bodies_with_volume(modeler: Modeler):
 
     assert len(volume_bodies.items) == 2
 
+    max_only = sel_builder.bodies.get_bodies_with_volume(max=300)
+    min_zero = sel_builder.bodies.get_bodies_with_volume(min=0, max=300)
+    assert {body.id for body in max_only.items} == {body.id for body in min_zero.items}
+
 
 def test_get_bodies_with_surface_area(modeler: Modeler):
     """Verify that get_bodies_with_surface_area returns bodies within a surface area range."""
@@ -197,6 +201,10 @@ def test_filter_bodies_by_volume(modeler: Modeler):
     result_no_max = all_bodies.filter_bodies_by_volume(200)
     assert len(result_no_max.items) == 13
 
+    max_only = all_bodies.filter_bodies_by_volume(max=300)
+    min_zero = all_bodies.filter_bodies_by_volume(min=0, max=300)
+    assert {body.id for body in max_only.items} == {body.id for body in min_zero.items}
+
 
 def test_filter_bodies_max_volume(modeler: Modeler):
     """Verify that filter_bodies_max_volume returns bodies with the largest volume."""
@@ -267,6 +275,10 @@ def test_filter_bodies_by_face_count(modeler: Modeler):
     # Bodies with >= 6 faces: Solid×1 + Top×2 + BaseBody×2
     result_min_only = all_bodies.filter_bodies_by_face_count(6)
     assert len(result_min_only.items) == 5
+
+    max_only = all_bodies.filter_bodies_by_face_count(max=3)
+    min_zero = all_bodies.filter_bodies_by_face_count(min=0, max=3)
+    assert {body.id for body in max_only.items} == {body.id for body in min_zero.items}
 
 
 def test_filter_bodies_max_face_count(modeler: Modeler):

@@ -53,7 +53,7 @@ def _build_manifest(tmp_path: Path, dll_path: str | Path) -> Path:
     dll_path : str | Path
         Path to the DLL *as seen by the server process*.  For a local server
         this is the host absolute path; for a Docker container this is the
-        container-internal path (e.g. ``/test-files/TestRemotePlugin.dll``).
+        container-internal path (e.g. ``/test-files/TestRemotePlugin271.dll``).
     """
     content = (
         '<?xml version="1.0" encoding="utf-8" ?>\n'
@@ -89,14 +89,16 @@ def test_load_addin_and_run_methods(modeler: Modeler, tmp_path: Path):
     # In CI the pipeline copies test files into the container with ``docker cp``
     # and sets ANSYS_GEOMETRY_TEST_FILES to the container-internal destination.
     # For a local server the env var is absent and the host path is used instead.
+    backend_version = modeler.client.backend_version
+    dll_name = f"TestRemotePlugin{backend_version.major}{backend_version.minor}.dll"
     container_test_files = os.getenv("ANSYS_GEOMETRY_TEST_FILES")
     if container_test_files is not None:
-        dll_path = f"{container_test_files}/TestRemotePlugin.dll"
+        dll_path = f"{container_test_files}/{dll_name}"
         # If Windows, change to backslashes
         if len(container_test_files) >= 2 and container_test_files[1] == ":":
             dll_path = dll_path.replace("/", "\\")
     else:
-        dll_path = str((FILES_DIR / "TestRemotePlugin.dll").resolve())
+        dll_path = str((FILES_DIR / dll_name).resolve())
 
     addin_path = "TestRemotePlugin.RemotePluginAddin"
 

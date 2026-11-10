@@ -120,6 +120,76 @@ def test_plot_service_colors_merge_faces(modeler: Modeler, tmp_path, merge_optio
 
 
 @skip_no_xserver
+def test_plot_body_visibility(modeler: Modeler, verify_image_cache):
+    """Respect body occurrence visibility without hiding another instance."""
+    design = modeler.create_design("BodyVisibilityPlot")
+    component = design.add_component("Original")
+    body = component.extrude_sketch("Box", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    instance_body = design.add_component("Instance", component).bodies[0]
+
+    for step, visible in enumerate((True, False, True)):
+        body.is_visible = visible
+        assert body.is_visible is visible
+        assert instance_body.is_visible
+        plotter = GeometryPlotter()
+        scene = plotter.backend.pv_interface.scene
+        plotter.plot(body)
+        assert sum(
+            pv.MultiBlock([actor.mapper.dataset]).combine().n_cells
+            for actor in scene.actors.values()
+            if isinstance(actor, pv.Actor)
+        ) == (12 if visible else 0)
+        plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, f"body_visibility_{step}.png"))
+
+
+@skip_no_xserver
+def test_plot_component_visibility(modeler: Modeler, verify_image_cache):
+    """Filter hidden bodies recursively, including an entirely hidden component."""
+    design = modeler.create_design("ComponentVisibilityPlot")
+    body = design.extrude_sketch("RootBox", Sketch().box(Point2D([0, 0]), 1, 1), 1)
+    component = design.add_component("Component")
+    child_body = component.extrude_sketch("ChildBox", Sketch().box(Point2D([2, 0]), 1, 1), 1)
+    sibling_body = component.extrude_sketch("SiblingBox", Sketch().box(Point2D([6, 0]), 1, 1), 1)
+    nested_body = component.add_component("Nested").extrude_sketch(
+        "NestedBox", Sketch().box(Point2D([4, 0]), 1, 1), 1
+    )
+    child_body.is_visible = False
+
+    for step, (nested_visible, root_visible, expected_cells) in enumerate(
+        ((True, True, 36), (False, True, 24), (False, False, 0), (True, True, 36))
+    ):
+        nested_body.is_visible = nested_visible
+        body.is_visible = root_visible
+        sibling_body.is_visible = root_visible
+        assert design.tessellate().n_cells == 48
+        assert design.tessellate(include_hidden=False).n_cells == expected_cells
+        plotter = GeometryPlotter()
+        scene = plotter.backend.pv_interface.scene
+        plotter.plot(design)
+        assert (
+            sum(
+                pv.MultiBlock([actor.mapper.dataset]).combine().n_cells
+                for actor in scene.actors.values()
+                if isinstance(actor, pv.Actor)
+            )
+            == expected_cells
+        )
+        plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, f"component_visibility_{step}.png"))
+
+    plotter = GeometryPlotter()
+    plotter.plot(design, merge_component=True)
+    assert (
+        sum(
+            pv.MultiBlock([actor.mapper.dataset]).combine().n_cells
+            for actor in plotter.backend.pv_interface.scene.actors.values()
+            if isinstance(actor, pv.Actor)
+        )
+        == 36
+    )
+    plotter.show(screenshot=Path(IMAGE_RESULTS_DIR, "component_visibility_merged.png"))
+
+
+@skip_no_xserver
 def test_adding_to_plotter(modeler: Modeler, verify_image_cache):
     """Testing out clipping plane, adding body edges and face,
     and if body is suppressed to an existing plotter"""
