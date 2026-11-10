@@ -8,6 +8,8 @@ AddIn
 [Bb]oolean
 (?i)beartype
 BeartypeCallHintParamViolation
+build_api
+build_examples
 (?i)check
 [Cc]onda
 (?i)dependabot
@@ -15,13 +17,19 @@ Direct API
 Dockerfile
 (?i)docker
 dockerized
+download_links
+endfor
+endif
 Fluent API
 (?i)geometry
 Geometry service
 Geometry models
 (?i)github
 GitHub Container Registry
+header_update_levels
+linux_container
 namespace
+os_name
 PMDB
 Polydata
 PROTO
@@ -38,4 +46,5 @@ subpackage
 Synopsys
 synopsys
 uv
+windows_container
 launch_modeler_with_.*
