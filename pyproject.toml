@@ -115,7 +115,7 @@ general-all = [
   "scipy==1.18.1",
   "semver==3.1.0",
   "six==1.17.0",
-  "vtk==9.7.1",
+  "vtk==9.7.2",
 ]
 tests = [
   { include-group = "general-all" },
