@@ -200,6 +200,69 @@ class GRPCPrepareToolsServiceV1(GRPCPrepareToolsService):
         }
 
     @protect_grpc
+    def find_and_fix_imprint(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import (
+            FixImprintOptions,
+            FixImprintRequest,
+        )
+
+        request = FixImprintRequest(
+            options=FixImprintOptions(
+                tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
+                search_curves=kwargs["search_curves"],
+                search_faces=kwargs["search_faces"],
+                search_edges=kwargs["search_edges"],
+                instance_type=kwargs["instance_type"].value,
+            ),
+        )
+        response = self.stub.FixImprint(request)
+
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialize_tracked_command_response(
+                response.tracked_command_response
+            ),
+        }
+
+    @protect_grpc
+    def share_topology_create(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import ShareTopologyCreateRequest
+
+        request = ShareTopologyCreateRequest(
+            tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
+            preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
+        )
+        response = self.stub.ShareTopologyCreate(request)
+
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialize_tracked_command_response(
+                response.tracked_command_response
+            ),
+        }
+
+    @protect_grpc
+    def share_topology_create_named_selection(self, **kwargs) -> dict:  # noqa: D102
+        from ansys.api.discovery.v1.operations.prepare_pb2 import (
+            ShareTopologyCreateNamedSelectionRequest,
+        )
+
+        request = ShareTopologyCreateNamedSelectionRequest(
+            tolerance=from_measurement_to_server_length(kwargs["tolerance"]),
+            preserve_instances=kwargs["preserve_instances"],
+            geometry_imprint=kwargs["geometry_imprint"],
+        )
+        response = self.stub.ShareTopologyCreateNamedSelection(request)
+
+        return {
+            "success": response.tracked_command_response.command_response.success,
+            "tracker_response": serialize_tracked_command_response(
+                response.tracked_command_response
+            ),
+        }
+
+    @protect_grpc
     def find_logos(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.discovery.v1.operations.prepare_pb2 import FindLogoOptions, FindLogosRequest
 
