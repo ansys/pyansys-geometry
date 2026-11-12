@@ -439,3 +439,29 @@ def test_suppress_topology(modeler: Modeler):
 
     # Test empty call
     assert not modeler.prepare_tools.suppress_topology([])
+
+
+def test_find_and_fix_imprint(modeler: Modeler):
+    """Test imprint repair using a geometry file to be supplied."""
+    design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
+    assert len(design.get_all_bodies()[1].edges) == 12
+
+    assert modeler.prepare_tools.find_and_fix_imprint(design) is True
+    assert len(design.get_all_bodies()[1].edges) == 13
+
+
+def test_share_topology_create(modeler: Modeler):
+    """Test shared topology creation using a geometry file to be supplied."""
+    design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
+
+    assert modeler.prepare_tools.share_topology_create(design) is True
+
+
+def test_share_topology_create_named_selection(modeler: Modeler):
+    """Test shared topology named selections using a geometry file to be supplied."""
+    design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
+    assert len(design.named_selections) == 0
+
+    assert modeler.prepare_tools.share_topology_create_named_selection(design) is True
+    assert len(design.named_selections) == 1
+    assert len(design.named_selections[0].faces) == 1

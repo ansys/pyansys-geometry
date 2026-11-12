@@ -424,7 +424,7 @@ class PrepareTools:
     def find_and_fix_imprint(
         self,
         design: "Design",
-        tol: Distance | Quantity | Real | None = None,
+        tol: Distance | Quantity | Real = 0.0,
         search_curves: bool = True,
         search_faces: bool = True,
         search_edges: bool = True,
@@ -456,7 +456,7 @@ class PrepareTools:
         -----
         This method requires Ansys release 27R2 or later and the v1 protocol.
         """
-        tol = tol if isinstance(tol, Distance) else Distance(tol) if tol is not None else None
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
         response = self._grpc_client._services.prepare_tools.find_and_fix_imprint(
             tolerance=tol,
             search_curves=search_curves,
