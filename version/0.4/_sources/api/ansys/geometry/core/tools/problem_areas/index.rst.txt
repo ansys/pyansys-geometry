@@ -1,0 +1,128 @@
+
+
+
+
+
+The ``problem_areas.py`` module
+===============================
+
+.. py:module:: ansys.geometry.core.tools.problem_areas
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: problem_areas
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ProblemArea`
+            - Represents problem areas.
+
+
+          * - :py:attr:`~DuplicateFaceProblemAreas`
+            - Provides duplicate face problem area definition.
+
+
+          * - :py:attr:`~MissingFaceProblemAreas`
+            - Provides missing face problem area definition.
+
+
+          * - :py:attr:`~InexactEdgeProblemAreas`
+            - Represents an inexact edge problem area with unique identifier and associated edges.
+
+
+          * - :py:attr:`~ExtraEdgeProblemAreas`
+            - Represents a extra edge problem area with unique identifier and associated edges.
+
+
+          * - :py:attr:`~SmallFaceProblemAreas`
+            - Represents a small face problem area with unique identifier and associated faces.
+
+
+          * - :py:attr:`~SplitEdgeProblemAreas`
+            - Represents a split edge problem area with unique identifier and associated edges.
+
+
+          * - :py:attr:`~StitchFaceProblemAreas`
+            - Represents a stitch face problem area with unique identifier and associated faces.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 ProblemArea<ProblemArea>
+    🝆 DuplicateFaceProblemAreas<DuplicateFaceProblemAreas>
+    🝆 MissingFaceProblemAreas<MissingFaceProblemAreas>
+    🝆 InexactEdgeProblemAreas<InexactEdgeProblemAreas>
+    🝆 ExtraEdgeProblemAreas<ExtraEdgeProblemAreas>
+    🝆 SmallFaceProblemAreas<SmallFaceProblemAreas>
+    🝆 SplitEdgeProblemAreas<SplitEdgeProblemAreas>
+    🝆 StitchFaceProblemAreas<StitchFaceProblemAreas>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+The problem area definition.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

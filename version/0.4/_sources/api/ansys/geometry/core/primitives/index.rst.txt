@@ -1,0 +1,136 @@
+
+
+
+
+
+The ``primitives`` package 
+==============================
+
+.. py:module:: ansys.geometry.core.primitives
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: primitives
+.. tab-set::
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.circle`
+            - Provides for creating and managing a circle.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.cone`
+            - Provides for creating and managing a cone.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.curve_evaluation`
+            - Provides for creating and managing a curve.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.cylinder`
+            - Provides for creating and managing a cylinder.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.ellipse`
+            - Provides for creating and managing an ellipse.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.line`
+            - Provides for creating and managing a line.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.parameterization`
+            - Provides the parametrization-related classes.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.sphere`
+            - Provides for creating and managing a sphere.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.surface_evaluation`
+            - Provides for evaluating a surface.
+
+
+          * - :py:attr:`~ansys.geometry.core.primitives.torus`
+            - Provides for creating and managing a torus.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 circle<circle/index.rst>
+    🗎 cone<cone/index.rst>
+    🗎 curve_evaluation<curve_evaluation/index.rst>
+    🗎 cylinder<cylinder/index.rst>
+    🗎 ellipse<ellipse/index.rst>
+    🗎 line<line/index.rst>
+    🗎 parameterization<parameterization/index.rst>
+    🗎 sphere<sphere/index.rst>
+    🗎 surface_evaluation<surface_evaluation/index.rst>
+    🗎 torus<torus/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry primitives subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

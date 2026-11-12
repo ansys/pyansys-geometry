@@ -1,0 +1,48 @@
+:py:mod:`ansys.geometry.core.plotting`
+======================================
+
+.. py:module:: ansys.geometry.core.plotting
+
+.. autoapi-nested-parse::
+
+   
+   Provides the PyGeometry ``plotting`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   widgets/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   plotter/index.rst
+   trame_gui/index.rst
+
+

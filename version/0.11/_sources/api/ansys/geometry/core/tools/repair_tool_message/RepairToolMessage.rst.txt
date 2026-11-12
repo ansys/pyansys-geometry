@@ -1,0 +1,207 @@
+
+
+
+
+
+
+:class:`RepairToolMessage`
+==========================
+
+
+.. py:class:: ansys.geometry.core.tools.repair_tool_message.RepairToolMessage(success: bool, created_bodies: list[str], modified_bodies: list[str], deleted_bodies: list[str] = None, craeted_components: list[str] = None, modified_components: list[str] = None, deleted_components: list[str] = None, found: int = -1, repaired: int = -1)
+
+   
+   Provides return message for the repair tool methods.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: RepairToolMessage
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~success`
+            - The success of the repair operation.
+          * - :py:attr:`~created_bodies`
+            - The list of the created bodies after the repair operation.
+          * - :py:attr:`~modified_bodies`
+            - The list of the modified bodies after the repair operation.
+          * - :py:attr:`~found`
+            - Number of problem areas found for the repair operation.
+          * - :py:attr:`~repaired`
+            - Number of problem areas repaired during the repair operation.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
+
+Property detail
+---------------
+
+.. py:property:: success
+   :type: bool
+
+
+   
+   The success of the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: created_bodies
+   :type: list[str]
+
+
+   
+   The list of the created bodies after the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: modified_bodies
+   :type: list[str]
+
+
+   
+   The list of the modified bodies after the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: found
+   :type: int
+
+
+   
+   Number of problem areas found for the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: repaired
+   :type: int
+
+
+   
+   Number of problem areas repaired during the repair operation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+

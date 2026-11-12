@@ -1,0 +1,88 @@
+
+
+
+
+GeometryContainers
+==================
+
+.. py:class:: GeometryContainers
+   :canonical: ansys.geometry.core.connection.local_instance.GeometryContainers
+
+
+
+Bases: :py:obj:`enum.Enum`
+
+Provides an enum holding the available Geometry services.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: GeometryContainers
+.. tab-set::
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~WINDOWS_LATEST`
+            - 
+          * - :py:attr:`~LINUX_LATEST`
+            - 
+          * - :py:attr:`~WINDOWS_LATEST_UNSTABLE`
+            - 
+          * - :py:attr:`~LINUX_LATEST_UNSTABLE`
+            - 
+      
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.connection.local_instance import GeometryContainers
+
+
+
+Attribute detail
+----------------
+.. py:attribute:: WINDOWS_LATEST
+   :value: (0, 'windows', 'windows-latest')
+
+   
+
+.. py:attribute:: LINUX_LATEST
+   :value: (1, 'linux', 'linux-latest')
+
+   
+
+.. py:attribute:: WINDOWS_LATEST_UNSTABLE
+   :value: (2, 'windows', 'windows-latest-unstable')
+
+   
+
+.. py:attribute:: LINUX_LATEST_UNSTABLE
+   :value: (3, 'linux', 'linux-latest-unstable')
+
+   
+
+
+

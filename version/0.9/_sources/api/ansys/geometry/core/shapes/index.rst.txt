@@ -1,0 +1,120 @@
+
+
+
+
+
+
+The ``shapes`` package
+==========================
+
+.. py:module:: ansys.geometry.core.shapes
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: shapes
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.curves`
+            - Provides the PyAnsys Geometry ``curves`` subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces`
+            - Provides the PyAnsys Geometry ``surface`` subpackage.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.box_uv`
+            - Provides the ``BoxUV`` class.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.parameterization`
+            - Provides the parametrization-related classes.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> curves</api/ansys/geometry/core/shapes/curves/index>
+    <span class="nf nf-md-package"></span> surfaces</api/ansys/geometry/core/shapes/surfaces/index>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> box_uv</api/ansys/geometry/core/shapes/box_uv/index>
+    <span class="nf nf-fa-file"></span> parameterization</api/ansys/geometry/core/shapes/parameterization/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry ``geometry`` subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

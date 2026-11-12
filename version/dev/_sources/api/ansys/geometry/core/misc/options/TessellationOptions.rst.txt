@@ -1,0 +1,169 @@
+
+
+
+
+
+
+:class:`TessellationOptions`
+============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.TessellationOptions
+
+   
+   Provides options for getting tessellation.
+
+
+   :Parameters:
+
+       **surface_deviation** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface position.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **angle_deviation** : :obj:`Angle` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface normal.
+           If a Real is provided, it is assumed to be in the default angle unit.
+
+       **curve_deviation** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, default=0.0
+           The maximum deviation from the true curve position.
+           If a Real is provided, it is assumed to be in the default length unit.
+
+       **max_aspect_ratio** : :obj:`Real`, default=0.0
+           The maximum aspect ratio of facets.
+
+       **max_edge_length** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, default=0.0
+           The maximum facet edge length.
+
+       **watertight** : :ref:`bool <python:bltin-boolean-values>`, default=False
+           Whether triangles on opposite sides of an edge should match.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: TessellationOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~surface_deviation`
+            - 
+          * - :py:attr:`~angle_deviation`
+            - 
+          * - :py:attr:`~curve_deviation`
+            - 
+          * - :py:attr:`~max_aspect_ratio`
+            - 
+          * - :py:attr:`~max_edge_length`
+            - 
+          * - :py:attr:`~watertight`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__post_init__`
+            - Normalize measurement fields to ``Distance`` and ``Angle`` objects.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import TessellationOptions
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: surface_deviation
+   :type:  ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real
+
+.. py:attribute:: angle_deviation
+   :type:  ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real
+
+.. py:attribute:: curve_deviation
+   :type:  ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real
+   :value: 0.0
+
+
+.. py:attribute:: max_aspect_ratio
+   :type:  ansys.geometry.core.typing.Real
+   :value: 0.0
+
+
+.. py:attribute:: max_edge_length
+   :type:  ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real
+   :value: 0.0
+
+
+.. py:attribute:: watertight
+   :type:  bool
+   :value: False
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __post_init__()
+
+   
+   Normalize measurement fields to ``Distance`` and ``Angle`` objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

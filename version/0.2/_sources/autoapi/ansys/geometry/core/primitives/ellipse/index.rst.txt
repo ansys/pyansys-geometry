@@ -1,0 +1,782 @@
+:py:mod:`ansys.geometry.core.primitives.ellipse`
+================================================
+
+.. py:module:: ansys.geometry.core.primitives.ellipse
+
+.. autoapi-nested-parse::
+
+   Provides the ``Ellipse`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.ellipse.Ellipse
+   ansys.geometry.core.primitives.ellipse.EllipseEvaluation
+
+
+
+
+.. py:class:: Ellipse(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.Point3D], major_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], minor_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_Z)
+
+
+   
+   Provides 3D ``Ellipse`` representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`]
+           Origin of the ellipse.
+
+       **major_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Major radius of the ellipse.
+
+       **minor_radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Minor radius of the ellipse.
+
+       **reference** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           X-axis direction.
+
+       **axis** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Origin of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: major_radius
+      :type: pint.Quantity
+
+      
+      Major radius of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: minor_radius
+      :type: pint.Quantity
+
+      
+      Minor radius of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_x
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      X-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_y
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Y-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_z
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Z-direction of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: eccentricity
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Eccentricity of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: linear_eccentricity
+      :type: pint.Quantity
+
+      
+      Linear eccentricity of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      The linear eccentricity is the distance from the center to the focus.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: semi_latus_rectum
+      :type: pint.Quantity
+
+      
+      Return the semi-latus rectum of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: perimeter
+      :type: pint.Quantity
+
+      
+      Perimeter of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: area
+      :type: pint.Quantity
+
+      
+      Area of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Ellipse) -> bool
+
+      
+      Equals operator for the ``Ellipse`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: mirrored_copy() -> Ellipse
+
+      
+      Create a mirrored copy of the ellipse along the y-axis.
+
+
+
+      :Returns:
+
+          :obj:`Ellipse`
+              A new ellipse that is a mirrored copy of the original ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: evaluate(parameter: ansys.geometry.core.typing.Real) -> EllipseEvaluation
+
+      
+      Evaluate the ellipse at the given parameter.
+
+
+      :Parameters:
+
+          **parameter** : :obj:`Real`
+              The parameter at which to evaluate the ellipse.
+
+      :Returns:
+
+          :obj:`EllipseEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_point(point: ansys.geometry.core.math.Point3D) -> EllipseEvaluation
+
+      
+      Project a point onto the ellipse and return its ``EllipseEvaluation``.
+
+
+      :Parameters:
+
+          **point** : :obj:`Point3D`
+              The point to project onto the ellipse.
+
+      :Returns:
+
+          :obj:`EllipseEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_coincident_ellipse(other: Ellipse) -> bool
+
+      
+      Determine if this ellipse is coincident with another.
+
+
+      :Parameters:
+
+          **other** : :obj:`Ellipse`
+              The ellipse to determine coincidence with.
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              Returns ``True`` if this ellipse is coincident with the other.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transformed_copy(matrix: ansys.geometry.core.math.Matrix44) -> Ellipse
+
+      
+      Create a transformed copy of the ellipse based on a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The transformation matrix to apply to the ellipse.
+
+      :Returns:
+
+          :obj:`Ellipse`
+              A new ellipse that is the transformed copy of the original ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+      
+      Return the parametrization of an ``Ellipse`` instance.
+
+      The parameter of an ellipse specifies the clockwise angle around the axis (right
+      hand corkscrew law), with a zero parameter at `dir_x` and a period of 2*pi.
+
+
+      :Returns:
+
+          :obj:`Parameterization`
+              Information about how an ellipse is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: EllipseEvaluation(ellipse: Ellipse, parameter: ansys.geometry.core.typing.Real)
+
+
+   Bases: :py:obj:`ansys.geometry.core.primitives.curve_evaluation.CurveEvaluation`
+
+   
+   Provides ``Ellipse`` evaluation at a certain parameter.
+
+
+   :Parameters:
+
+       **ellipse: ~ansys.geometry.core.primitives.ellipse.Ellipse**
+           The ``Ellipse`` object to be evaluated.
+
+       **parameter: float, int**
+           The parameter at which the ``Ellipse`` evaluation is requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: ellipse
+      :type: Ellipse
+
+      
+      The ellipse being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parameter
+      :type: ansys.geometry.core.typing.Real
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+
+      
+      The position of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Point3D`
+              The point that lies on the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: tangent() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The tangent of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The tangent unit vector to the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normal() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The normal of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The normal unit vector to the ellipse at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: first_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The first derivative of the evaluation.
+
+      The first derivative is in the direction of the tangent and has a magnitude
+      equal to the velocity (rate of change of position) at that point.
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The first derivative of this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: second_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative of this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: curvature() -> ansys.geometry.core.typing.Real
+
+      
+      The curvature of the ellipse.
+
+
+
+      :Returns:
+
+          :obj:`Real`
+              The curvature of the ellipse.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

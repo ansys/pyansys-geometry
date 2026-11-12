@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``datum_lines.py`` module
+=============================
+
+.. py:module:: ansys.geometry.core._grpc._services.v0.datum_lines
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core._grpc._services.v0.datum_lines
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core._grpc._services.v0.datum_lines.GRPCDatumLinesServiceV0`
+            - Datum lines service for gRPC communication with the Geometry server.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> GRPCDatumLinesServiceV0</api/ansys/geometry/core/_grpc/_services/v0/datum_lines/GRPCDatumLinesServiceV0>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the datum lines service implementation for v0.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

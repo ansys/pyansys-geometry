@@ -1,0 +1,103 @@
+
+
+
+
+
+
+:class:`SingletonMeta`
+======================
+
+
+.. py:class:: ansys.geometry.core.misc.measurements.SingletonMeta
+
+   Bases: :py:obj:`type`
+
+
+   
+   Provides a thread-safe implementation of a singleton design pattern.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: SingletonMeta
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__call__`
+            - Return a single instance of the class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import SingletonMeta
+
+
+
+Method detail
+-------------
+
+.. py:method:: __call__(*args, **kwargs)
+
+   
+   Return a single instance of the class.
+
+   Possible changes to the value of the ``__init__`` argument do not affect the
+   returned instance.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

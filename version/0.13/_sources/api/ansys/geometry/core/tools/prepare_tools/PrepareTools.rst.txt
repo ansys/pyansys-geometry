@@ -1,0 +1,572 @@
+
+
+
+
+
+
+:class:`PrepareTools`
+=====================
+
+
+.. py:class:: ansys.geometry.core.tools.prepare_tools.PrepareTools(grpc_client: ansys.geometry.core.connection.GrpcClient, _internal_use: bool = False)
+
+   
+   Prepare tools for PyAnsys Geometry.
+
+
+   :Parameters:
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **_internal_use** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Internal flag to prevent direct instantiation by users.
+           This parameter is for internal use only.
+
+
+
+
+
+
+
+   :Raises:
+
+       :obj:`GeometryRuntimeError`
+           If the class is instantiated directly by users instead of through the modeler.
+
+
+
+
+   .. rubric:: Notes
+
+   This class should not be instantiated directly. Use
+   ``modeler.prepare_tools`` instead.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PrepareTools
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~extract_volume_from_faces`
+            - Extract a volume from input faces.
+          * - :py:attr:`~extract_volume_from_edge_loops`
+            - Extract a volume from input edge loops.
+          * - :py:attr:`~remove_rounds`
+            - Remove rounds from geometry.
+          * - :py:attr:`~share_topology`
+            - Share topology between the chosen bodies.
+          * - :py:attr:`~enhanced_share_topology`
+            - Share topology between the chosen bodies.
+          * - :py:attr:`~find_logos`
+            - Detect logos in geometry.
+          * - :py:attr:`~find_and_remove_logos`
+            - Detect and remove logos in geometry.
+          * - :py:attr:`~detect_helixes`
+            - Detect helixes in the given bodies.
+          * - :py:attr:`~create_box_enclosure`
+            - Create box enclosure around the given bodies.
+          * - :py:attr:`~create_cylinder_enclosure`
+            - Create cylinder enclosure around the given bodies.
+          * - :py:attr:`~create_sphere_enclosure`
+            - Create sphere enclosure around the given bodies.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.prepare_tools import PrepareTools
+
+
+
+Method detail
+-------------
+
+.. py:method:: extract_volume_from_faces(sealing_faces: list[ansys.geometry.core.designer.face.Face], inside_faces: list[ansys.geometry.core.designer.face.Face]) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input faces.
+
+   Creates a volume (typically a flow volume) from a list of faces that seal the volume
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_faces** : :class:`python:list`\[:obj:`Face`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :class:`python:list`\[:obj:`Face`]
+           List of faces that define the interior of the solid.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extract_volume_from_edge_loops(sealing_edges: list[ansys.geometry.core.designer.edge.Edge], inside_faces: list[ansys.geometry.core.designer.face.Face] = None) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Extract a volume from input edge loops.
+
+   Creates a volume (typically a flow volume) from a list of edge loops that seal the volume.
+   and one or more faces that define the wetted surface (inside faces of the solid).
+
+   :Parameters:
+
+       **sealing_edges** : :class:`python:list`\[:obj:`Edge`]
+           List of faces that seal the volume.
+
+       **inside_faces** : :class:`python:list`\[:obj:`Face`], :obj:`optional`
+           List of faces that define the interior of the solid (not always necessary).
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: remove_rounds(faces: list[ansys.geometry.core.designer.face.Face], auto_shrink: bool = False) -> bool
+
+   
+   Remove rounds from geometry.
+
+   Tries to remove rounds from geometry. Faces to be removed are input to the method.
+
+   :Parameters:
+
+       **round_faces** : :class:`python:list`\[:obj:`Face`]
+           List of rounds faces to be removed
+
+       **auto_shrink** : :ref:`bool <python:bltin-boolean-values>`, default: :data:`python:False`
+           Whether to shrink the geometry after removing rounds. Fills in the gaps
+           left by the removed rounds.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if successful, ``False`` if failed.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: share_topology(bodies: list[ansys.geometry.core.designer.body.Body], tol: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 0.0, preserve_instances: bool = False) -> bool
+
+   
+   Share topology between the chosen bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to share topology between.
+
+       **tol** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum distance between bodies.
+
+       **preserve_instances** : :ref:`bool <python:bltin-boolean-values>`
+           Whether instances are preserved.
+
+
+
+   :Returns:
+
+       :ref:`bool <python:bltin-boolean-values>`
+           ``True`` if successful, ``False`` if failed.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 24R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: enhanced_share_topology(bodies: list[ansys.geometry.core.designer.body.Body], tol: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 0.0, preserve_instances: bool = False) -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Share topology between the chosen bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to share topology between.
+
+       **tol** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           Maximum distance between bodies.
+
+       **preserve_instances** : :ref:`bool <python:bltin-boolean-values>`
+           Whether instances are preserved.
+
+
+
+   :Returns:
+
+       :obj:`RepairToolMessage`
+           Message containing number of problem areas found/fixed, created and/or modified bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_logos(bodies: list[ansys.geometry.core.designer.body.Body] = None, min_height: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = None, max_height: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = None) -> ansys.geometry.core.tools.problem_areas.LogoProblemArea
+
+   
+   Detect logos in geometry.
+
+   Detects logos, using a list of bodies if provided.
+   The logos are returned as a list of faces.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], :obj:`optional`
+           List of bodies where logos should be detected
+
+       **min_height** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           The minimum height when searching for logos
+
+       **max_height: Distance | Quantity | Real, optional**
+           The minimum height when searching for logos
+
+
+
+   :Returns:
+
+       :obj:`LogoProblemArea`
+           Problem area with logo faces.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: find_and_remove_logos(bodies: list[ansys.geometry.core.designer.body.Body] = None, min_height: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = None, max_height: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = None) -> bool
+
+   
+   Detect and remove logos in geometry.
+
+   Detects and remove logos, using a list of bodies if provided.
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`], :obj:`optional`
+           List of bodies where logos should be detected and removed.
+
+       **min_height** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, :obj:`optional`
+           The minimum height when searching for logos
+
+       **max_height: Distance | Quantity | Real, optional**
+           The maximum height when searching for logos
+
+
+
+   :Returns:
+
+       :obj:`Boolean` :obj:`value` :obj:`indicating` :obj:`whether` :obj:`the` :obj:`operation` :obj:`was` successful.
+           ..
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 25R2.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: detect_helixes(bodies: list[ansys.geometry.core.designer.body.Body], min_radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 0.0, max_radius: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 100.0, fit_radius_error: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real = 0.01) -> dict[ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve, list[ansys.geometry.core.designer.edge.Edge]]
+
+   
+   Detect helixes in the given bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to detect helixes in.
+
+       **min_radius** : :obj:`Distance`, :obj:`Quantity`, :obj:`or` :obj:`Real`, default: 0.0
+           Minimum radius of the helix to be detected.
+
+       **max_radius** : :obj:`Distance`, :obj:`Quantity`, :obj:`or` :obj:`Real`, default: 1e6
+           Maximum radius of the helix to be detected.
+
+       **fit_radius_error** : :obj:`Distance`, :obj:`Quantity`, :obj:`or` :obj:`Real`, default: 0.01
+           Maximum fit radius error of the helix to be detected.
+
+
+
+   :Returns:
+
+       :class:`python:dict`
+           Dictionary with key "helixes" containing a list of detected helixes.
+           Each helix is represented as a dictionary with keys "trimmed_curve" and "edges".
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_box_enclosure(bodies: list[ansys.geometry.core.designer.body.Body], x_low: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, x_high: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, y_low: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, y_high: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, z_low: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, z_high: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, enclosure_options: EnclosureOptions) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Create box enclosure around the given bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to create enclosure around.
+
+       **x_low** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The lowest distance from the bodies in the x direction.
+
+       **x_high** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The highest distance from the bodies in the x direction.
+
+       **y_low** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The lowest distance from the bodies in the y direction.
+
+       **y_high** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The highest distance from the bodies in the y direction.
+
+       **z_low** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The lowest distance from the bodies in the z direction.
+
+       **z_high** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The highest distance from the bodies in the z direction.
+
+       **enclosure_options** : :obj:`EnclosureOptions`
+           Options that define how the enclosure is included in the design.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_cylinder_enclosure(bodies: list[ansys.geometry.core.designer.body.Body], axial_distance_low: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, axial_distance_high: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, radial_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, enclosure_options: EnclosureOptions) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Create cylinder enclosure around the given bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to create enclosure around.
+
+       **axial_distance_low** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The lowest axial distance from the bodies.
+
+       **axial_distance_high** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The highest axial distance from the bodies.
+
+       **radial_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The radial distance from the bodies.
+
+       **enclosure_options** : :obj:`EnclosureOptions`
+           Options that define how the enclosure is included in the design.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_sphere_enclosure(bodies: list[ansys.geometry.core.designer.body.Body], radial_distance: ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real, enclosure_options: EnclosureOptions) -> list[ansys.geometry.core.designer.body.Body]
+
+   
+   Create sphere enclosure around the given bodies.
+
+
+   :Parameters:
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies to create enclosure around.
+
+       **radial_distance** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The radial distance from the bodies.
+
+       **enclosure_options** : :obj:`EnclosureOptions`
+           Options that define how the enclosure is included in the design.
+
+
+
+   :Returns:
+
+       :class:`python:list`\[:obj:`Body`]
+           List of created bodies.
+
+
+
+
+
+
+   .. warning::
+
+       This method is only available starting on Ansys release 26R1.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

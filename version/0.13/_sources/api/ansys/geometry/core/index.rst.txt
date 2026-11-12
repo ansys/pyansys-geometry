@@ -1,0 +1,368 @@
+
+
+
+
+
+
+The ``ansys.geometry.core`` library
+===================================
+
+.. py:module:: ansys.geometry.core
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: core
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection`
+            - PyAnsys Geometry connection subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.designer`
+            - PyAnsys Geometry designer subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.materials`
+            - PyAnsys Geometry materials subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.math`
+            - PyAnsys Geometry math subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.misc`
+            - Provides the PyAnsys Geometry miscellaneous subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.parameters`
+            - PyAnsys Geometry parameters subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.plotting`
+            - Provides the PyAnsys Geometry plotting subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes`
+            - Provides the PyAnsys Geometry ``geometry`` subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.sketch`
+            - PyAnsys Geometry sketch subpackage.
+
+
+          * - :py:obj:`~ansys.geometry.core.tools`
+            - PyAnsys Geometry tools subpackage.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.errors`
+            - Provides PyAnsys Geometry-specific errors.
+
+
+          * - :py:obj:`~ansys.geometry.core.logger`
+            - Provides a general framework for logging in PyAnsys Geometry.
+
+
+          * - :py:obj:`~ansys.geometry.core.modeler`
+            - Provides for interacting with the Geometry service.
+
+
+          * - :py:obj:`~ansys.geometry.core.typing`
+            - Provides typing of values for PyAnsys Geometry.
+
+
+
+
+
+
+
+
+    .. tab-item:: Attributes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~__version__`
+            - PyAnsys Geometry version.
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~USE_SERVICE_COLORS`
+            - Global constant for checking whether to use service colors for plotting
+
+
+          * - :py:obj:`~DISABLE_MULTIPLE_DESIGN_CHECK`
+            - Deprecated constant. Use ``DISABLE_ACTIVE_DESIGN_CHECK`` instead.
+
+
+          * - :py:obj:`~DISABLE_ACTIVE_DESIGN_CHECK`
+            - Global constant for disabling the ``ensure_design_is_active`` check.
+
+
+          * - :py:obj:`~DOCUMENTATION_BUILD`
+            - Global flag for the documentation to use the proper PyVista Jupyter backend.
+
+
+          * - :py:obj:`~USE_TRACKER_TO_UPDATE_DESIGN`
+            - Global constant for checking whether to use the tracker to update designs.
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-md-package"></span> connection</api/ansys/geometry/core/connection/index>
+    <span class="nf nf-md-package"></span> designer</api/ansys/geometry/core/designer/index>
+    <span class="nf nf-md-package"></span> materials</api/ansys/geometry/core/materials/index>
+    <span class="nf nf-md-package"></span> math</api/ansys/geometry/core/math/index>
+    <span class="nf nf-md-package"></span> misc</api/ansys/geometry/core/misc/index>
+    <span class="nf nf-md-package"></span> parameters</api/ansys/geometry/core/parameters/index>
+    <span class="nf nf-md-package"></span> plotting</api/ansys/geometry/core/plotting/index>
+    <span class="nf nf-md-package"></span> shapes</api/ansys/geometry/core/shapes/index>
+    <span class="nf nf-md-package"></span> sketch</api/ansys/geometry/core/sketch/index>
+    <span class="nf nf-md-package"></span> tools</api/ansys/geometry/core/tools/index>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-fa-file"></span> errors</api/ansys/geometry/core/errors/index>
+    <span class="nf nf-fa-file"></span> logger</api/ansys/geometry/core/logger/index>
+    <span class="nf nf-fa-file"></span> modeler</api/ansys/geometry/core/modeler/index>
+    <span class="nf nf-fa-file"></span> typing</api/ansys/geometry/core/typing/index>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+PyAnsys Geometry is a Python wrapper for the Ansys Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:data:: USE_SERVICE_COLORS
+   :type:  bool
+   :value: False
+
+
+   
+   Global constant for checking whether to use service colors for plotting
+   purposes. If set to False, the default colors will be used (speed gain).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DISABLE_MULTIPLE_DESIGN_CHECK
+   :type:  bool
+   :value: True
+
+
+   
+   Deprecated constant. Use ``DISABLE_ACTIVE_DESIGN_CHECK`` instead.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DISABLE_ACTIVE_DESIGN_CHECK
+   :type:  bool
+   :value: False
+
+
+   
+   Global constant for disabling the ``ensure_design_is_active`` check.
+
+   Only set this to false if you are sure you want to disable this check
+   and your objects will always exist on the server side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DOCUMENTATION_BUILD
+   :type:  bool
+
+   
+   Global flag for the documentation to use the proper PyVista Jupyter backend.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: USE_TRACKER_TO_UPDATE_DESIGN
+   :type:  bool
+   :value: False
+
+
+   
+   Global constant for checking whether to use the tracker to update designs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: __version__
+
+   
+   PyAnsys Geometry version.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

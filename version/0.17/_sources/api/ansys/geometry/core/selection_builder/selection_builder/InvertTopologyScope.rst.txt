@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`InvertTopologyScope`
+============================
+
+
+.. py:class:: ansys.geometry.core.selection_builder.selection_builder.InvertTopologyScope
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the scope of selection topology inversion.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InvertTopologyScope
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~INVERTTOPOLOGYSCOPE_ALL`
+            - 
+          * - :py:attr:`~INVERTTOPOLOGYSCOPE_BODY`
+            - 
+          * - :py:attr:`~INVERTTOPOLOGYSCOPE_VISIBLE`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.selection_builder.selection_builder import InvertTopologyScope
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: INVERTTOPOLOGYSCOPE_ALL
+   :value: 0
+
+
+.. py:attribute:: INVERTTOPOLOGYSCOPE_BODY
+   :value: 1
+
+
+.. py:attribute:: INVERTTOPOLOGYSCOPE_VISIBLE
+   :value: 2
+
+
+
+
+
+

@@ -1,0 +1,351 @@
+
+
+
+
+
+
+:class:`DesignCurve`
+====================
+
+
+.. py:class:: ansys.geometry.core.designer.designcurve.DesignCurve(id: str, name: str, length: ansys.geometry.core.misc.measurements.Distance, start: ansys.geometry.core.math.point.Point3D, end: ansys.geometry.core.math.point.Point3D, grpc_client: ansys.geometry.core.connection.client.GrpcClient, parent_component: ansys.geometry.core.designer.component.Component)
+
+   
+   Represents a standalone curve within the design assembly.
+
+   Unlike edges, which are always attached to a body, a ``DesignCurve`` is a free-standing
+   curve object that lives directly under the root design object or a component in the design tree.
+   These are typically created by operations such as revolving design points.
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the curve.
+
+       **name** : :class:`python:str`
+           User-defined label for the curve.
+
+       **length** : :obj:`Distance`
+           Length of the curve.
+
+       **start** : :obj:`Point3D`
+           Start point of the curve.
+
+       **end** : :obj:`Point3D`
+           End point of the curve.
+
+       **grpc_client** : :obj:`GrpcClient`
+           gRPC client for communicating with the server.
+
+       **parent_component** : :obj:`Component`
+           Parent component that the curve belongs to in the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: DesignCurve
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the design curve.
+          * - :py:attr:`~name`
+            - Name of the design curve.
+          * - :py:attr:`~parent_component`
+            - Parent component of the design curve.
+          * - :py:attr:`~is_alive`
+            - Flag indicating whether the design curve is still present on the server.
+          * - :py:attr:`~shape`
+            - Underlying trimmed curve geometry of the design curve.
+          * - :py:attr:`~length`
+            - Calculated length of the design curve.
+          * - :py:attr:`~start`
+            - Start point of the design curve.
+          * - :py:attr:`~end`
+            - End point of the design curve.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the design curve as a string.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.designcurve import DesignCurve
+
+Property detail
+---------------
+
+.. py:property:: id
+   :type: str
+
+
+   
+   ID of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :type: str
+
+
+   
+   Name of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parent_component
+   :type: ansys.geometry.core.designer.component.Component
+
+
+   
+   Parent component of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: is_alive
+   :type: bool
+
+
+   
+   Flag indicating whether the design curve is still present on the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: shape
+   :type: ansys.geometry.core.shapes.curves.trimmed_curve.TrimmedCurve
+
+
+   
+   Underlying trimmed curve geometry of the design curve.
+
+   The shape is fetched from the server on first access and then cached.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :type: ansys.geometry.core.misc.measurements.Distance
+
+
+   
+   Calculated length of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Start point of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   End point of the design curve.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the design curve as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

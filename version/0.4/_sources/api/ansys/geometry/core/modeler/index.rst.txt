@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``modeler.py`` module
+=========================
+
+.. py:module:: ansys.geometry.core.modeler
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: modeler
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~Modeler`
+            - Provides for interacting with an open session of the Geometry service.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 Modeler<Modeler>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for interacting with the Geometry service.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

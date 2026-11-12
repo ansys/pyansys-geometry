@@ -1,0 +1,970 @@
+
+
+
+
+
+
+The ``product_instance.py`` module
+==================================
+
+.. py:module:: ansys.geometry.core.connection.product_instance
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: product_instance
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.connection.product_instance.ProductInstance`
+            - ``ProductInstance`` class.
+
+
+
+
+
+    .. tab-item:: Functions
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~prepare_and_start_backend`
+            - Start the requested service locally using the ``ProductInstance`` class.
+
+
+          * - :py:obj:`~get_available_port`
+            - Return an available port to be used.
+
+
+
+
+    .. tab-item:: Constants
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~WINDOWS_GEOMETRY_SERVICE_FOLDER`
+            - Default Geometry Service's folder name into the unified installer (DMS).
+
+
+          * - :py:obj:`~CORE_GEOMETRY_SERVICE_FOLDER`
+            - Default Geometry Service's folder name into the unified installer (Core Service).
+
+
+          * - :py:obj:`~DISCOVERY_FOLDER`
+            - Default Discovery's folder name into the unified installer.
+
+
+          * - :py:obj:`~SPACECLAIM_FOLDER`
+            - Default SpaceClaim's folder name into the unified installer.
+
+
+          * - :py:obj:`~ADDINS_SUBFOLDER`
+            - Default global Addins's folder name into the unified installer.
+
+
+          * - :py:obj:`~BACKEND_SUBFOLDER`
+            - Default backend's folder name into the ``ADDINS_SUBFOLDER`` folder.
+
+
+          * - :py:obj:`~MANIFEST_FILENAME`
+            - Default backend's add-in filename.
+
+
+          * - :py:obj:`~GEOMETRY_SERVICE_EXE`
+            - The Windows Geometry Service's filename (DMS).
+
+
+          * - :py:obj:`~CORE_GEOMETRY_SERVICE_EXE`
+            - The Windows Geometry Service's filename (Core Service).
+
+
+          * - :py:obj:`~DISCOVERY_EXE`
+            - The Ansys Discovery's filename.
+
+
+          * - :py:obj:`~SPACECLAIM_EXE`
+            - The Ansys SpaceClaim's filename.
+
+
+          * - :py:obj:`~BACKEND_LOG_LEVEL_VARIABLE`
+            - The backend's log level environment variable for local start.
+
+
+          * - :py:obj:`~BACKEND_TRACE_VARIABLE`
+            - The backend's enable trace environment variable for local start.
+
+
+          * - :py:obj:`~BACKEND_HOST_VARIABLE`
+            - The backend's ip address environment variable for local start.
+
+
+          * - :py:obj:`~BACKEND_PORT_VARIABLE`
+            - The backend's port number environment variable for local start.
+
+
+          * - :py:obj:`~BACKEND_LOGS_FOLDER_VARIABLE`
+            - The backend's logs folder path to be used.
+
+
+          * - :py:obj:`~BACKEND_API_VERSION_VARIABLE`
+            - The backend's api version environment variable for local start.
+
+
+          * - :py:obj:`~BACKEND_SPACECLAIM_OPTIONS`
+            - The additional argument for local Ansys Discovery start.
+
+
+          * - :py:obj:`~BACKEND_ADDIN_MANIFEST_ARGUMENT`
+            - The argument to specify the backend's add-in manifest file's path.
+
+
+          * - :py:obj:`~BACKEND_SPACECLAIM_HIDDEN`
+            - The argument to hide SpaceClaim's UI on the backend.
+
+
+          * - :py:obj:`~BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY`
+            - SpaceClaim hidden backend's environment variable key.
+
+
+          * - :py:obj:`~BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE`
+            - SpaceClaim hidden backend's environment variable value.
+
+
+          * - :py:obj:`~BACKEND_DISCOVERY_HIDDEN`
+            - The argument to hide Discovery's UI on the backend.
+
+
+          * - :py:obj:`~BACKEND_SPLASH_OFF`
+            - The argument to specify the backend's add-in manifest file's path.
+
+
+          * - :py:obj:`~ANSYS_GEOMETRY_SERVICE_ROOT`
+            - Local Geometry Service install location. This is for GeometryService and CoreGeometryService.
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> ProductInstance</api/ansys/geometry/core/connection/product_instance/ProductInstance>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module containing the ``ProductInstance`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+Module detail
+-------------
+
+.. py:function:: prepare_and_start_backend(backend_type: ansys.geometry.core.connection.backend.BackendType, version: str | int = None, host: str = 'localhost', port: int = None, enable_trace: bool = False, api_version: ansys.geometry.core.connection.backend.ApiVersions = ApiVersions.LATEST, timeout: int = 150, manifest_path: str = None, hidden: bool = False, server_log_level: int = 2, client_log_level: int = logging.INFO, server_logs_folder: str = None, client_log_file: str = None, specific_minimum_version: int = None, product_version: int | None = None) -> ansys.geometry.core.modeler.Modeler
+
+   
+   Start the requested service locally using the ``ProductInstance`` class.
+
+   When calling this method, a standalone service or product session is started.
+   By default, if an endpoint is specified (by defining `host` and `port` parameters)
+   but the endpoint is not available, the startup will fail. Otherwise, it will try to
+   launch its own service.
+
+   :Parameters:
+
+       **version** : :class:`python:str` | :class:`python:int`, :obj:`optional`
+           The product version to be started. Goes from v24.1 to
+           the latest. Default is ``None``.
+           If a specific product version is requested but not installed locally,
+           a SystemError will be raised.
+
+       **host: str, optional**
+           IP address at which the Geometry service will be deployed. By default,
+           its value will be ``localhost``.
+
+       **port** : :class:`python:int`, :obj:`optional`
+           Port at which the Geometry service will be deployed. By default, its
+           value will be ``None``.
+
+       **enable_trace** : :ref:`bool <python:bltin-boolean-values>`, :obj:`optional`
+           Boolean enabling the logs trace on the Geometry service console window.
+           By default its value is ``False``.
+
+       **api_version: ``ApiVersions``, optional**
+           The backend's API version to be used at runtime. Goes from API v21 to
+           the latest. Default is ``ApiVersions.LATEST``.
+
+       **timeout** : :class:`python:int`, :obj:`optional`
+           Timeout for starting the backend startup process. The default is 150.
+
+       **manifest_path** : :class:`python:str`, :obj:`optional`
+           Used to specify a manifest file path for the ApiServerAddin. This way,
+           it is possible to run an ApiServerAddin from a version an older product
+           version. Only applicable for Ansys Discovery and Ansys SpaceClaim.
+
+       **hidden** : :obj:`starts` :obj:`the` :obj:`product` :obj:`hiding` :obj:`its` UI. :obj:`Default` :obj:`is` ``False``.
+           ..
+
+       **server_log_level** : :class:`python:int`, :obj:`optional`
+           Backend's log level from 0 to 3:
+               0: Chatterbox
+               1: Debug
+               2: Warning
+               3: Error
+           
+           The default is ``2`` (Warning).
+
+       **client_log_level** : :class:`python:int`, :obj:`optional`
+           Logging level to apply to the client. By default, INFO level is used.
+           Use the logging module's levels: DEBUG, INFO, WARNING, ERROR, CRITICAL.
+
+       **server_logs_folder** : :class:`python:str`, :obj:`optional`
+           Sets the backend's logs folder path. If nothing is defined,
+           the backend will use its default path.
+
+       **client_log_file** : :class:`python:str`, :obj:`optional`
+           Sets the client's log file path. If nothing is defined,
+           the client will log to the console.
+
+       **specific_minimum_version** : :class:`python:int`, :obj:`optional`
+           Sets a specific minimum version to be checked. If this is not defined,
+           the minimum version will be set to 24.1.0.
+
+       **product_version: ``int``, optional**
+           The product version to be started. Deprecated, use `version` instead.
+
+
+
+   :Returns:
+
+       :obj:`Modeler`
+           Instance of the Geometry service.
+
+
+
+
+   :Raises:
+
+       :obj:`ConnectionError`
+           If the specified endpoint is already in use, a connection error will be raised.
+
+       :obj:`SystemError`
+           If there is not an Ansys product 24.1 version or later installed
+           or if a specific product's version is requested but not installed locally then
+           a SystemError will be raised.
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:function:: get_available_port() -> int
+
+   
+   Return an available port to be used.
+
+
+
+
+
+   :Returns:
+
+       :class:`python:int`
+           The available port.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: WINDOWS_GEOMETRY_SERVICE_FOLDER
+   :value: 'GeometryService'
+
+
+   
+   Default Geometry Service's folder name into the unified installer (DMS).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: CORE_GEOMETRY_SERVICE_FOLDER
+   :value: 'GeometryService'
+
+
+   
+   Default Geometry Service's folder name into the unified installer (Core Service).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DISCOVERY_FOLDER
+   :value: 'Discovery'
+
+
+   
+   Default Discovery's folder name into the unified installer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: SPACECLAIM_FOLDER
+   :value: 'scdm'
+
+
+   
+   Default SpaceClaim's folder name into the unified installer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ADDINS_SUBFOLDER
+   :value: 'Addins'
+
+
+   
+   Default global Addins's folder name into the unified installer.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SUBFOLDER
+   :value: 'ApiServer'
+
+
+   
+   Default backend's folder name into the ``ADDINS_SUBFOLDER`` folder.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: MANIFEST_FILENAME
+   :value: 'Presentation.ApiServerAddIn.Manifest.xml'
+
+
+   
+   Default backend's add-in filename.
+
+   To be used only for local start of Ansys Discovery or Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: GEOMETRY_SERVICE_EXE
+   :value: 'Presentation.ApiServerDMS.exe'
+
+
+   
+   The Windows Geometry Service's filename (DMS).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: CORE_GEOMETRY_SERVICE_EXE
+   :value: 'Presentation.ApiServerCoreService.exe'
+
+
+   
+   The Windows Geometry Service's filename (Core Service).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DISCOVERY_EXE
+   :value: 'Discovery.exe'
+
+
+   
+   The Ansys Discovery's filename.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: SPACECLAIM_EXE
+   :value: 'SpaceClaim.exe'
+
+
+   
+   The Ansys SpaceClaim's filename.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_LOG_LEVEL_VARIABLE
+   :value: 'LOG_LEVEL'
+
+
+   
+   The backend's log level environment variable for local start.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_TRACE_VARIABLE
+   :value: 'ENABLE_TRACE'
+
+
+   
+   The backend's enable trace environment variable for local start.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_HOST_VARIABLE
+   :value: 'API_ADDRESS'
+
+
+   
+   The backend's ip address environment variable for local start.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_PORT_VARIABLE
+   :value: 'API_PORT'
+
+
+   
+   The backend's port number environment variable for local start.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_LOGS_FOLDER_VARIABLE
+   :value: 'ANS_DSCO_REMOTE_LOGS_FOLDER'
+
+
+   
+   The backend's logs folder path to be used.
+
+   Only applicable to the Ansys Geometry Service.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_API_VERSION_VARIABLE
+   :value: 'API_VERSION'
+
+
+   
+   The backend's api version environment variable for local start.
+
+   To be used only with Ansys Discovery and Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SPACECLAIM_OPTIONS
+   :value: '--spaceclaim-options'
+
+
+   
+   The additional argument for local Ansys Discovery start.
+
+   To be used only with Ansys Discovery.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_ADDIN_MANIFEST_ARGUMENT
+   :value: '/ADDINMANIFESTFILE='
+
+
+   
+   The argument to specify the backend's add-in manifest file's path.
+
+   To be used only with Ansys Discovery and Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SPACECLAIM_HIDDEN
+   :value: '/Headless=True'
+
+
+   
+   The argument to hide SpaceClaim's UI on the backend.
+
+   To be used only with Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SPACECLAIM_HIDDEN_ENVVAR_KEY
+   :value: 'SPACECLAIM_MODE'
+
+
+   
+   SpaceClaim hidden backend's environment variable key.
+
+   To be used only with Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SPACECLAIM_HIDDEN_ENVVAR_VALUE
+   :value: '2'
+
+
+   
+   SpaceClaim hidden backend's environment variable value.
+
+   To be used only with Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_DISCOVERY_HIDDEN
+   :value: '--hidden'
+
+
+   
+   The argument to hide Discovery's UI on the backend.
+
+   To be used only with Ansys Discovery.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BACKEND_SPLASH_OFF
+   :value: '/Splash=False'
+
+
+   
+   The argument to specify the backend's add-in manifest file's path.
+
+   To be used only with Ansys Discovery and Ansys SpaceClaim.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: ANSYS_GEOMETRY_SERVICE_ROOT
+   :value: 'ANSYS_GEOMETRY_SERVICE_ROOT'
+
+
+   
+   Local Geometry Service install location. This is for GeometryService and CoreGeometryService.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+

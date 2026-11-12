@@ -1,0 +1,701 @@
+
+
+
+
+
+
+:class:`GRPCFacesServiceV0`
+===========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v0.faces.GRPCFacesServiceV0(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.faces.GRPCFacesService`
+
+
+   
+   Faces service for gRPC communication with the Geometry server.
+
+   This class provides methods to interact with the Geometry server's
+   faces service. It is specifically designed for the v0 version of the
+   Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCFacesServiceV0
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_surface`
+            - Get the surface of a face.
+          * - :py:attr:`~get_box_uv`
+            - Get the UV box of a face.
+          * - :py:attr:`~get_area`
+            - Get the area of a face.
+          * - :py:attr:`~get_edges`
+            - Get the edges of a face.
+          * - :py:attr:`~get_vertices`
+            - Get the vertices of a face.
+          * - :py:attr:`~get_loops`
+            - Get the loops of a face.
+          * - :py:attr:`~get_color`
+            - Get the color of a face.
+          * - :py:attr:`~get_bounding_box`
+            - Get the bounding box of a face.
+          * - :py:attr:`~set_color`
+            - Set the color of a face.
+          * - :py:attr:`~get_normal`
+            - Get the normal of a face.
+          * - :py:attr:`~evaluate`
+            - Evaluate a face at a given parameter.
+          * - :py:attr:`~create_iso_parametric_curve`
+            - Create an iso-parametric curve on a face.
+          * - :py:attr:`~extrude_faces`
+            - Extrude a selection of faces.
+          * - :py:attr:`~extrude_faces_up_to`
+            - Extrude a selection of faces up to another object.
+          * - :py:attr:`~offset_faces_set_radius`
+            - Offset a selection of faces by a given radius.
+          * - :py:attr:`~revolve_faces`
+            - Revolve a selection of faces around an axis.
+          * - :py:attr:`~revolve_faces_up_to`
+            - Revolve a selection of faces around an axis up to another object.
+          * - :py:attr:`~revolve_faces_by_helix`
+            - Revolve a selection of faces around an axis by a helix.
+          * - :py:attr:`~replace_faces`
+            - Replace a selection of faces with new faces.
+          * - :py:attr:`~thicken_faces`
+            - Thicken a selection of faces.
+          * - :py:attr:`~draft_faces`
+            - Draft a selection of faces.
+          * - :py:attr:`~get_round_info`
+            - Get round information for a selection of faces.
+          * - :py:attr:`~offset_faces`
+            - Offset a selection of faces.
+          * - :py:attr:`~setup_offset_relationship`
+            - Set up an offset relationship between two faces.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+          * - :py:attr:`~commands_stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v0.faces import GRPCFacesServiceV0
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+.. py:attribute:: commands_stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_surface(**kwargs) -> dict
+
+   
+   Get the surface of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_box_uv(**kwargs) -> dict
+
+   
+   Get the UV box of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_area(**kwargs) -> dict
+
+   
+   Get the area of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_edges(**kwargs) -> dict
+
+   
+   Get the edges of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_vertices(**kwargs) -> dict
+
+   
+   Get the vertices of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_loops(**kwargs) -> dict
+
+   
+   Get the loops of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_color(**kwargs) -> dict
+
+   
+   Get the color of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_bounding_box(**kwargs) -> dict
+
+   
+   Get the bounding box of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: set_color(**kwargs) -> dict
+
+   
+   Set the color of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_normal(**kwargs) -> dict
+
+   
+   Get the normal of a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(**kwargs) -> dict
+
+   
+   Evaluate a face at a given parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: create_iso_parametric_curve(**kwargs) -> dict
+
+   
+   Create an iso-parametric curve on a face.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_faces(**kwargs) -> dict
+
+   
+   Extrude a selection of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: extrude_faces_up_to(**kwargs) -> dict
+
+   
+   Extrude a selection of faces up to another object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: offset_faces_set_radius(**kwargs) -> dict
+
+   
+   Offset a selection of faces by a given radius.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces(**kwargs) -> dict
+
+   
+   Revolve a selection of faces around an axis.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces_up_to(**kwargs) -> dict
+
+   
+   Revolve a selection of faces around an axis up to another object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_faces_by_helix(**kwargs) -> dict
+
+   
+   Revolve a selection of faces around an axis by a helix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: replace_faces(**kwargs) -> dict
+
+   
+   Replace a selection of faces with new faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: thicken_faces(**kwargs) -> dict
+
+   
+   Thicken a selection of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: draft_faces(**kwargs) -> dict
+
+   
+   Draft a selection of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_round_info(**kwargs) -> dict
+
+   
+   Get round information for a selection of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: offset_faces(**kwargs) -> dict
+
+   
+   Offset a selection of faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: setup_offset_relationship(**kwargs) -> dict
+
+   
+   Set up an offset relationship between two faces.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

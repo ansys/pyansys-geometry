@@ -1,0 +1,102 @@
+
+
+
+
+UnitVector2D
+============
+
+.. py:class:: UnitVector2D(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+   :canonical: ansys.geometry.core.math.vector.UnitVector2D
+
+
+
+Bases: :py:obj:`Vector2D`
+
+Provides for creating and managing a 3D unit vector.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: UnitVector2D
+.. tab-set::
+
+
+    .. tab-item:: Constructors
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~from_points`
+            - Create a 2D unit vector from two distinct 2D points.
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.vector import UnitVector2D
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: from_points(point_a: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D], point_b: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.point.Point2D])
+   :classmethod:
+
+   
+   Create a 2D unit vector from two distinct 2D points.
+
+
+   :Parameters:
+
+       **point_a** : :obj:`Point2D`
+           :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+           class representing the first point.
+
+       **point_b** : :obj:`Point2D`
+           :class:`Point2D <ansys.geometry.core.math.point.Point2D>`
+           class representing the second point.
+
+   :Returns:
+
+       :obj:`UnitVector2D`
+           2D unit vector from ``point_a`` to ``point_b``.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
