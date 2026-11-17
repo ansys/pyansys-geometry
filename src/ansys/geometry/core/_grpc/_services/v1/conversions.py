@@ -387,6 +387,7 @@ def from_grpc_material_property_to_material_property(
     try:
         mp_quantity = pint.Quantity(material_property.value, material_property.units)
     except (
+        pint.DefinitionSyntaxError,
         pint.UndefinedUnitError,
         TypeError,
     ):
