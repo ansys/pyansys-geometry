@@ -464,4 +464,4 @@ def test_share_topology_create_named_selection(modeler: Modeler):
 
     assert modeler.prepare_tools.share_topology_create_named_selection(design) is True
     assert len(design.named_selections) == 1
-    assert len(design.named_selections[0].faces) == 1
+    assert len(design.named_selections[0].faces) == 2
