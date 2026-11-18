@@ -1,0 +1,56 @@
+name: Auto release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: "Type of release"
+        type: choice
+        required: true
+        default: minor
+        options:
+          - minor
+          - major
+          - patch
+          - patch-cherry-pick
+      cherry_pick_commits:
+        description: "Comma-separated commit SHAs, required for patch-cherry-pick"
+        type: string
+        required: false
+        default: ""
+
+jobs:
+  autorelease:
+    name: "Auto release"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: "Run hk-autorelease"
+        id: autorelease
+        uses: ansys/actions/hk-autorelease@5a91d7c2c4da2e86f2b3b62ba62daad189a6b77c # v11.2.0
+        with:
+          release-type: ${{ inputs.release_type }}
+          version-source: "pyproject"
+          version-location: "pyproject.toml"
+          lock-file-tool: "uv"
+          cherry-pick-commits: ${{ inputs.cherry_pick_commits }}
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          bot-username: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
+          bot-email: ${{ secrets.PYANSYS_CI_BOT_EMAIL }}
+
+      - name: "Show outputs"
+        env:
+          NEW_VERSION: ${{ steps.autorelease.outputs.new-version }}
+          NEW_DEV_VERSION: ${{ steps.autorelease.outputs.new-dev-version }}
+          RELEASE_BRANCH: ${{ steps.autorelease.outputs.release-branch }}
+          DEV_VERSION_PR_URL: ${{ steps.autorelease.outputs.dev-version-pr-url }}
+        run: |
+          {
+            echo "### Auto release outputs"
+            echo "- new-version: \`${NEW_VERSION}\`"
+            echo "- new-dev-version: \`${NEW_DEV_VERSION}\`"
+            echo "- release-branch: \`${RELEASE_BRANCH}\`"
+            echo "- dev-version-pr-url: ${DEV_VERSION_PR_URL}"
+          } >> "${GITHUB_STEP_SUMMARY}"
