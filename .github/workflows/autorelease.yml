@@ -23,6 +23,8 @@ concurrency:
   group: autorelease
   cancel-in-progress: false
 
+permissions: {}
+
 jobs:
   autorelease:
     name: "Auto release"
