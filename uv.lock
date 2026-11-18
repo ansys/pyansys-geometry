@@ -477,7 +477,7 @@ dev = [
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
     { name = "docker", specifier = "==7.2.0" },
-    { name = "geomdl", specifier = "==5.4.0" },
+    { name = "geomdl", specifier = "==5.4.1" },
     { name = "grpcio", specifier = "==1.85.1" },
     { name = "grpcio-health-checking", specifier = "==1.85.1" },
     { name = "ipyvtklink", specifier = "==0.2.3" },
@@ -520,7 +520,7 @@ doc = [
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
     { name = "docker", specifier = "==7.2.0" },
-    { name = "geomdl", specifier = "==5.4.0" },
+    { name = "geomdl", specifier = "==5.4.1" },
     { name = "grpcio", specifier = "==1.85.1" },
     { name = "grpcio-health-checking", specifier = "==1.85.1" },
     { name = "ipyvtklink", specifier = "==0.2.3" },
@@ -556,7 +556,7 @@ general-all = [
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
     { name = "docker", specifier = "==7.2.0" },
-    { name = "geomdl", specifier = "==5.4.0" },
+    { name = "geomdl", specifier = "==5.4.1" },
     { name = "grpcio", specifier = "==1.85.1" },
     { name = "grpcio-health-checking", specifier = "==1.85.1" },
     { name = "matplotlib", specifier = "==3.11.2" },
@@ -578,7 +578,7 @@ tests = [
     { name = "ansys-tools-visualization-interface", extras = ["usd"], specifier = "==0.14.1" },
     { name = "beartype", specifier = "==0.23.1" },
     { name = "docker", specifier = "==7.2.0" },
-    { name = "geomdl", specifier = "==5.4.0" },
+    { name = "geomdl", specifier = "==5.4.1" },
     { name = "grpcio", specifier = "==1.85.1" },
     { name = "grpcio-health-checking", specifier = "==1.85.1" },
     { name = "matplotlib", specifier = "==3.11.2" },
@@ -1625,10 +1625,10 @@ wheels = [
 
 [[package]]
 name = "geomdl"
-version = "5.4.0"
+version = "5.4.1"
 source = { registry = "https://pypi.org/simple" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0c/7c/0160d6956236bbbd5f2fbe832110cf7237efa4c717bb888817b2a939a537/geomdl-5.4.0-py3-none-any.whl", hash = "sha256:026464f3caa87465928205aa014113f5134846d1f23d501127829cdba36f110f", size = 148012, upload-time = "2025-05-23T05:32:03.193Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/4b/04219528f830d0166cbd1759890c837a34ee55df62b612a3b7e69b833c7f/geomdl-5.4.1-py3-none-any.whl", hash = "sha256:99c0451c83909a69a13fc98c33edd4c2bbc673e1fa4486d938163f6be24e024c", size = 147999, upload-time = "2026-11-15T06:46:44.898Z" },
 ]
 
 [[package]]
