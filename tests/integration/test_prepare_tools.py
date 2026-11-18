@@ -446,7 +446,7 @@ def test_find_and_fix_imprint(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
     assert len(design.get_all_bodies()[1].edges) == 12
 
-    assert modeler.prepare_tools.find_and_fix_imprint(design) is True
+    assert modeler.prepare_tools.find_and_fix_imprint(design)
     assert len(design.get_all_bodies()[1].edges) == 13
 
 
@@ -462,6 +462,6 @@ def test_share_topology_create_named_selection(modeler: Modeler):
     design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
     assert len(design.named_selections) == 0
 
-    assert modeler.prepare_tools.share_topology_create_named_selection(design) is True
+    assert modeler.prepare_tools.share_topology_create_named_selection(design)
     assert len(design.named_selections) == 1
     assert len(design.named_selections[0].faces) == 2
