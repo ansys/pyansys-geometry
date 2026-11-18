@@ -19,13 +19,17 @@ on:
         required: false
         default: ""
 
+concurrency:
+  group: autorelease
+  cancel-in-progress: false
+
 jobs:
   autorelease:
     name: "Auto release"
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write # required: Create commits and push release tags to main branch
+      pull-requests: write # required: Create pull requests for version bump
     steps:
       - name: "Run hk-autorelease"
         id: autorelease
