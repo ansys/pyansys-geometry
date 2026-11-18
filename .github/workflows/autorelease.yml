@@ -28,7 +28,7 @@ jobs:
       pull-requests: write
     steps:
       - name: "Run hk-autorelease"
-        id: autorelease   
+        id: autorelease
         uses: ansys/actions/hk-autorelease@5a91d7c2c4da2e86f2b3b62ba62daad189a6b77c # v11.2.0
         with:
           release-type: ${{ inputs.release_type }}
