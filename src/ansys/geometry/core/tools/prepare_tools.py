@@ -46,7 +46,7 @@ from ansys.geometry.core.misc.checks import (
     min_backend_version,
 )
 from ansys.geometry.core.misc.measurements import Distance
-from ansys.geometry.core.misc.options import VolumeExtractOptions
+from ansys.geometry.core.misc.options import ImprintInstanceType, VolumeExtractOptions
 from ansys.geometry.core.shapes.curves.trimmed_curve import TrimmedCurve
 from ansys.geometry.core.tools.problem_areas import LogoProblemArea
 from ansys.geometry.core.tools.repair_tool_message import RepairToolMessage
@@ -54,6 +54,7 @@ from ansys.geometry.core.typing import Real
 
 if TYPE_CHECKING:  # pragma: no cover
     from ansys.geometry.core.designer.body import Body
+    from ansys.geometry.core.designer.design import Design
     from ansys.geometry.core.designer.edge import Edge
     from ansys.geometry.core.designer.face import Face
 
@@ -417,6 +418,150 @@ class PrepareTools:
             modified_bodies=response.get("modified_bodies_monikers"),
         )
         return message
+
+    @check_input_types
+    @min_backend_version(27, 2, 0)
+    def find_and_fix_imprint(
+        self,
+        design: "Design",
+        tol: Distance | Quantity | Real = 0.0,
+        search_curves: bool = True,
+        search_faces: bool = True,
+        search_edges: bool = True,
+        instance_type: ImprintInstanceType = ImprintInstanceType.IGNORE,
+    ) -> bool:
+        """Find and fix imprint problems in the entire active design.
+
+        Parameters
+        ----------
+        design : Design
+            The design in which to find and fix imprint problems.
+        tol : Distance | Quantity | Real, default: None
+            Maximum distance between items considered intersecting.
+        search_curves : bool, default: True
+            Whether to search curves.
+        search_faces : bool, default: True
+            Whether to search faces.
+        search_edges : bool, default: True
+            Whether to search edges.
+        instance_type : ImprintInstanceType, default: ImprintInstanceType.IGNORE
+            How imprinting handles instances.
+
+        Returns
+        -------
+        bool
+            Whether the operation succeeded.
+
+        Notes
+        -----
+        This method requires Ansys release 27R2 or later and the v1 protocol.
+        """
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
+        response = self._grpc_client._services.prepare_tools.find_and_fix_imprint(
+            tolerance=tol,
+            search_curves=search_curves,
+            search_faces=search_faces,
+            search_edges=search_edges,
+            instance_type=instance_type,
+        )
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            design._update_design_inplace()
+        else:
+            design._update_from_tracker(response.get("tracker_response"))
+        if not response.get("success"):
+            self._grpc_client.log.warning("Failed to find and fix imprint problems.")
+        return response.get("success")
+
+    @check_input_types
+    @min_backend_version(27, 2, 0)
+    def share_topology_create(
+        self,
+        design: "Design",
+        tol: Distance | Quantity | Real = 0.0,
+        preserve_instances: bool = False,
+        geometry_imprint: bool = False,
+    ) -> bool:
+        """Create shared topology throughout the active design.
+
+        Parameters
+        ----------
+        design : Design
+            The active design to operate on.
+        tol : Distance | Quantity | Real, default: 0.0
+            Maximum distance between items considered intersecting. Zero uses the
+            backend default. Real values use the default length unit.
+        preserve_instances : bool, default: False
+            Whether to preserve instances.
+        geometry_imprint : bool, default: False
+            Use geometry-based imprinting instead of facet-based imprinting.
+
+        Returns
+        -------
+        bool
+            Whether the operation succeeded.
+
+        Notes
+        -----
+        This method requires Ansys release 27R2 or later and the v1 protocol.
+        """
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
+        response = self._grpc_client._services.prepare_tools.share_topology_create(
+            tolerance=tol,
+            preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
+        )
+        if not pyansys_geom.USE_TRACKER_TO_UPDATE_DESIGN:
+            design._update_design_inplace()
+        else:
+            design._update_from_tracker(response.get("tracker_response"))
+        if not response.get("success"):
+            self._grpc_client.log.warning("Failed to create shared topology.")
+        return response.get("success")
+
+    @check_input_types
+    @min_backend_version(27, 2, 0)
+    def share_topology_create_named_selection(
+        self,
+        design: "Design",
+        tol: Distance | Quantity | Real = 0.0,
+        preserve_instances: bool = False,
+        geometry_imprint: bool = False,
+    ) -> bool:
+        """Create named selections for shared topology in the active design.
+
+        Parameters
+        ----------
+        design : Design
+            The active design to operate on.
+        tol : Distance | Quantity | Real, default: 0.0
+            Maximum distance between items considered intersecting. Zero uses the
+            backend default. Real values use the default length unit.
+        preserve_instances : bool, default: False
+            Whether to preserve instances.
+        geometry_imprint : bool, default: False
+            Use geometry-based imprinting instead of facet-based imprinting.
+
+        Returns
+        -------
+        bool
+            Whether the operation succeeded. Access the resulting named selections
+            through ``modeler.get_active_design().named_selections``.
+
+        Notes
+        -----
+        This method requires Ansys release 27R2 or later and the v1 protocol.
+        """
+        tol = tol if isinstance(tol, Distance) else Distance(tol)
+        response = self._grpc_client._services.prepare_tools.share_topology_create_named_selection(
+            tolerance=tol,
+            preserve_instances=preserve_instances,
+            geometry_imprint=geometry_imprint,
+        )
+        # Named selections are not included in tracked changes.
+        design._update_design_inplace()
+        if not response.get("success"):
+            self._grpc_client.log.warning("Failed to create shared topology named selections.")
+        return response.get("success")
 
     @check_input_types
     @min_backend_version(25, 2, 0)
