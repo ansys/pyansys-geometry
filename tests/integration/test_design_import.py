@@ -452,6 +452,32 @@ def test_design_import_cat5_2024(modeler: Modeler):
     assert len(design.bodies[0].faces) == 24
 
 
+def test_design_import_catia_named_selections_file(modeler: Modeler):
+    """Test importing CATIA publications and geometric sets as named selections."""
+    design = modeler.open_file(Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"))
+    assert not design._named_selections
+
+    options = ImportOptions(map_catia_sets_to_groups=True)
+    design = modeler.open_file(
+        Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
+    )
+
+    assert len(design._named_selections["Face"].faces) == 1
+    assert len(design._named_selections["Face1"].faces) == 1
+    assert len(design._named_selections["Open_body.1"].bodies) == 2
+
+
+def test_design_import_catia_named_selections_with_publications(modeler: Modeler):
+    """Test importing a CATIA V5 file with publications as named selection groups."""
+    options = ImportOptions(map_catia_sets_to_groups=True, publications_only_to_groups=True)
+    design = modeler.open_file(
+        Path(IMPORT_FILES_DIR, "SelectionSets.CATPart"), import_options=options
+    )
+    assert set(design._named_selections) == {"Face", "Face1"}
+    assert len(design._named_selections["Face"].faces) == 1
+    assert len(design._named_selections["Face1"].faces) == 1
+
+
 def test_design_import_cat6_2023(modeler: Modeler):
     """Test importing a CATIA V6 file."""
     skip_if_no_geometry_service(
