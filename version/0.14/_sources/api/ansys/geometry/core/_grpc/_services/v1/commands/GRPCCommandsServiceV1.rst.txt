@@ -1,0 +1,122 @@
+
+
+
+
+
+
+:class:`GRPCCommandsServiceV1`
+==============================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.v1.commands.GRPCCommandsServiceV1(channel: grpc.Channel)
+
+   Bases: :py:obj:`ansys.geometry.core._grpc._services.base.commands.GRPCCommandsService`
+
+
+   
+   Commands service for gRPC communication with the Geometry server.
+
+   This class provides methods to call commands in the
+   Geometry server using gRPC. It is specifically designed for the v1
+   version of the Geometry API.
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: GRPCCommandsServiceV1
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~set_name`
+            - Set the name of an object.
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~stub`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.v1.commands import GRPCCommandsServiceV1
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: stub
+
+
+
+Method detail
+-------------
+
+.. py:method:: set_name(**kwargs) -> dict
+
+   
+   Set the name of an object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

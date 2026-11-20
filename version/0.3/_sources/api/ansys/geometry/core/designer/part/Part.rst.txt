@@ -1,0 +1,210 @@
+
+
+
+
+Part
+====
+
+.. py:class:: Part(id: str, name: str, components: beartype.typing.List[MasterComponent], bodies: beartype.typing.List[ansys.geometry.core.designer.body.MasterBody])
+   :canonical: ansys.geometry.core.designer.part.Part
+
+
+
+
+Represents a part master.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Part
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the part.
+          * - :py:attr:`~name`
+            - Name of the part.
+          * - :py:attr:`~components`
+            - ``MasterComponent`` children that the part contains.
+          * - :py:attr:`~bodies`
+            - ``MasterBody`` children that the part contains.
+
+
+
+
+    .. tab-item:: Special methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__repr__`
+            - Represent the part as a string.
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.part import Part
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.part.Part.id
+   :type: str
+
+
+   
+   ID of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: name
+   :canonical: ansys.geometry.core.designer.part.Part.name
+   :type: str
+
+
+   
+   Name of the part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: components
+   :canonical: ansys.geometry.core.designer.part.Part.components
+   :type: beartype.typing.List[MasterComponent]
+
+
+   
+   ``MasterComponent`` children that the part contains.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: bodies
+   :canonical: ansys.geometry.core.designer.part.Part.bodies
+   :type: beartype.typing.List[ansys.geometry.core.designer.body.MasterBody]
+
+
+   
+   ``MasterBody`` children that the part contains.
+
+   These are master bodies.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: __repr__() -> str
+
+   
+   Represent the part as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

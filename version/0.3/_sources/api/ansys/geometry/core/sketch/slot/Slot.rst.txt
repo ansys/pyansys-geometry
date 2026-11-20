@@ -1,0 +1,235 @@
+
+
+
+
+Slot
+====
+
+.. py:class:: Slot(center: ansys.geometry.core.math.point.Point2D, width: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], height: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = 0)
+   :canonical: ansys.geometry.core.sketch.slot.Slot
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+Provides for modeling a 2D slot.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Slot
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center of the slot.
+          * - :py:attr:`~width`
+            - Width of the slot.
+          * - :py:attr:`~height`
+            - Height of the slot.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the slot.
+          * - :py:attr:`~area`
+            - Area of the slot.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.slot import Slot
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.slot.Slot.center
+   :type: Point2D
+
+
+   
+   Center of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: width
+   :canonical: ansys.geometry.core.sketch.slot.Slot.width
+   :type: pint.Quantity
+
+
+   
+   Width of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: height
+   :canonical: ansys.geometry.core.sketch.slot.Slot.height
+   :type: pint.Quantity
+
+
+   
+   Height of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.sketch.slot.Slot.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.sketch.slot.Slot.area
+   :type: pint.Quantity
+
+
+   
+   Area of the slot.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.slot.Slot.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

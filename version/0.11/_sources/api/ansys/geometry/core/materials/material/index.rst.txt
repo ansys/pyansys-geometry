@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``material.py`` module
+==========================
+
+.. py:module:: ansys.geometry.core.materials.material
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: material
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.materials.material.Material`
+            - Provides the data structure for a material.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Material</api/ansys/geometry/core/materials/material/Material>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the data structure for material and material properties.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``body_selection.py`` module
+================================
+
+.. py:module:: ansys.geometry.core.selection_builder.body_selection
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.selection_builder.body_selection
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.selection_builder.body_selection.BodySelection`
+            - A builder for creating a body selection.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BodySelection</api/ansys/geometry/core/selection_builder/body_selection/BodySelection>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for creating a body selection.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,812 @@
+:py:mod:`ansys.geometry.core.primitives.sphere`
+===============================================
+
+.. py:module:: ansys.geometry.core.primitives.sphere
+
+.. autoapi-nested-parse::
+
+   Provides the ``Sphere`` class.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.sphere.Sphere
+   ansys.geometry.core.primitives.sphere.SphereEvaluation
+
+
+
+
+.. py:class:: Sphere(origin: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.Point3D], radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.Distance, ansys.geometry.core.typing.Real], reference: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_X, axis: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence, ansys.geometry.core.math.UnitVector3D, ansys.geometry.core.math.Vector3D] = UNITVECTOR3D_Z)
+
+
+   
+   Provides 3D ``Sphere`` representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`Point3D`]
+           Origin of the sphere.
+
+       **radius** : :obj:`Union`\[:obj:`Quantity`, :obj:`Distance`, :obj:`Real`]
+           Radius of the sphere.
+
+       **reference** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           X-axis direction.
+
+       **axis** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`, :obj:`UnitVector3D`, :obj:`Vector3D`]
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: origin
+      :type: ansys.geometry.core.math.Point3D
+
+      
+      Origin of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: radius
+      :type: pint.Quantity
+
+      
+      Radius of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_x
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      X-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_y
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Y-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: dir_z
+      :type: ansys.geometry.core.math.UnitVector3D
+
+      
+      Z-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: surface_area
+      :type: pint.Quantity
+
+      
+      Surface area of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: volume
+      :type: pint.Quantity
+
+      
+      Volume of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Sphere) -> bool
+
+      
+      Equals operator for the ``Sphere`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transformed_copy(matrix: ansys.geometry.core.math.Matrix44) -> Sphere
+
+      
+      Create a transformed copy of the sphere based on a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The transformation matrix to apply to the sphere.
+
+      :Returns:
+
+          :obj:`Sphere`
+              A new sphere that is the transformed copy of the original sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: mirrored_copy() -> Sphere
+
+      
+      Create a mirrored copy of the sphere along the y-axis.
+
+
+
+      :Returns:
+
+          :obj:`Torus`
+              A new sphere that is a mirrored copy of the original sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: evaluate(parameter: ansys.geometry.core.primitives.parameterization.ParamUV) -> SphereEvaluation
+
+      
+      Evaluate the sphere at the given parameters.
+
+
+      :Parameters:
+
+          **parameter** : :obj:`ParamUV`
+              The parameters (u,v) at which to evaluate the sphere.
+
+      :Returns:
+
+          :obj:`SphereEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: project_point(point: ansys.geometry.core.math.Point3D) -> SphereEvaluation
+
+      
+      Project a point onto the sphere and return its ``SphereEvaluation``.
+
+
+      :Parameters:
+
+          **point** : :obj:`Point3D`
+              The point to project onto the sphere.
+
+      :Returns:
+
+          :obj:`SphereEvaluation`
+              The resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_u_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+      
+      Retrieve the U parameter parametrization conditions.
+
+      The U parameter specifies the longitude angle, increasing clockwise (East) about
+      `dir_z` (right hand corkscrew law). It has a zero parameter at `dir_x`, and a
+      period of 2*pi.
+
+
+      :Returns:
+
+          :obj:`Parameterization`
+              Information about how a sphere's u parameter is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_v_parameterization() -> ansys.geometry.core.primitives.parameterization.Parameterization
+
+      
+      Retrieve the V parameter parametrization conditions.
+
+      The V parameter specifies the latitude, increasing North, with a zero parameter
+      at the equator, and a range of [-pi/2, pi/2].
+
+
+      :Returns:
+
+          :obj:`Parameterization`
+              Information about how a sphere's v parameter is parameterized.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: SphereEvaluation(sphere: Sphere, parameter: ansys.geometry.core.primitives.parameterization.ParamUV)
+
+
+   Bases: :py:obj:`ansys.geometry.core.primitives.surface_evaluation.SurfaceEvaluation`
+
+   
+   Provides ``Sphere`` evaluation at certain parameters.
+
+
+   :Parameters:
+
+       **sphere: ~ansys.geometry.core.primitives.sphere.Sphere**
+           The ``Sphere`` object to be evaluated.
+
+       **parameter: ParamUV**
+           The parameters (u, v) at which the ``Sphere`` evaluation is requested.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: sphere
+      :type: Sphere
+
+      
+      The sphere being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parameter
+      :type: ansys.geometry.core.primitives.parameterization.ParamUV
+
+      
+      The parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: position() -> ansys.geometry.core.math.Point3D
+
+      
+      The position of the evaluation.
+
+
+
+      :Returns:
+
+          :obj:`Point3D`
+              The point that lies on the sphere at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: normal() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The normal to the surface.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The normal unit vector to the sphere at this evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: u_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The first derivative with respect to u.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The first derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: v_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The first derivative with respect to v.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The first derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: uu_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative with respect to u.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: uv_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative with respect to u and v.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative with respect to u and v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: vv_derivative() -> ansys.geometry.core.math.Vector3D
+
+      
+      The second derivative with respect to v.
+
+
+
+      :Returns:
+
+          :obj:`Vector3D`
+              The second derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: min_curvature() -> ansys.geometry.core.typing.Real
+
+      
+      The minimum curvature of the sphere.
+
+
+
+      :Returns:
+
+          :obj:`Real`
+              The minimum curvature of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: min_curvature_direction() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The minimum curvature direction.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: max_curvature() -> ansys.geometry.core.typing.Real
+
+      
+      The maximum curvature of the sphere.
+
+
+
+      :Returns:
+
+          :obj:`Real`
+              The maximum curvature of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: max_curvature_direction() -> ansys.geometry.core.math.UnitVector3D
+
+      
+      The maximum curvature direction.
+
+
+
+      :Returns:
+
+          :obj:`UnitVector3D`
+              The maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

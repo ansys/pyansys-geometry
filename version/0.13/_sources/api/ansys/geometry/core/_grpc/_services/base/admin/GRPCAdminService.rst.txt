@@ -1,0 +1,163 @@
+
+
+
+
+
+
+:class:`GRPCAdminService`
+=========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.admin.GRPCAdminService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Admin service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: GRPCAdminService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~get_backend`
+            - Get server information.
+          * - :py:attr:`~get_logs`
+            - Get server logs.
+          * - :py:attr:`~get_service_status`
+            - Get server status (i.e. healthy or not).
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.admin import GRPCAdminService
+
+
+
+Method detail
+-------------
+
+.. py:method:: get_backend(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server information.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_logs(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server logs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: get_service_status(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Get server status (i.e. healthy or not).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

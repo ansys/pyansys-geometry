@@ -1,0 +1,79 @@
+
+
+
+
+
+The ``surface_evaluation.py`` module
+====================================
+
+.. py:module:: ansys.geometry.core.primitives.surface_evaluation
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: surface_evaluation
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~SurfaceEvaluation`
+            - Provides for evaluating a surface.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🝆 SurfaceEvaluation<SurfaceEvaluation>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for evaluating a surface.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

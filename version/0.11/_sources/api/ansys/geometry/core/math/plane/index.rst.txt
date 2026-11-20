@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``plane.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.math.plane
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plane
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.plane.Plane`
+            - Provides primitive representation of a 2D plane in 3D space.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Plane</api/ansys/geometry/core/math/plane/Plane>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides primitive representation of a 2D plane in 3D space.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

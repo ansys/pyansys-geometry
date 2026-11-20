@@ -1,0 +1,548 @@
+
+
+
+
+
+
+:class:`Sphere`
+===============
+
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.sphere.Sphere(origin: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.point.Point3D, radius: pint.Quantity | ansys.geometry.core.misc.measurements.Distance | ansys.geometry.core.typing.Real, reference: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_X, axis: numpy.ndarray | ansys.geometry.core.typing.RealSequence | ansys.geometry.core.math.vector.UnitVector3D | ansys.geometry.core.math.vector.Vector3D = UNITVECTOR3D_Z)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface.Surface`
+
+
+   
+   Provides 3D sphere representation.
+
+
+   :Parameters:
+
+       **origin** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Point3D`
+           Origin of the sphere.
+
+       **radius** : :obj:`~pint.Quantity` | :obj:`Distance` | :obj:`Real`
+           Radius of the sphere.
+
+       **reference** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           X-axis direction.
+
+       **axis** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`UnitVector3D` | :obj:`Vector3D`
+           Z-axis direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+.. py:currentmodule:: Sphere
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~contains_param`
+            - Check a parameter is within the parametric range of the surface.
+          * - :py:attr:`~contains_point`
+            - Check a point is contained by the surface.
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~transformed_copy`
+            - Create a transformed copy of the sphere from a transformation matrix.
+          * - :py:attr:`~mirrored_copy`
+            - Create a mirrored copy of the sphere along the y-axis.
+          * - :py:attr:`~evaluate`
+            - Evaluate the sphere at the given parameters.
+          * - :py:attr:`~project_point`
+            - Project a point onto the sphere and evaluate the sphere.
+          * - :py:attr:`~parameterization`
+            - Parameterization of the sphere surface as a tuple (U, V).
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~origin`
+            - Origin of the sphere.
+          * - :py:attr:`~radius`
+            - Radius of the sphere.
+          * - :py:attr:`~dir_x`
+            - X-direction of the sphere.
+          * - :py:attr:`~dir_y`
+            - Y-direction of the sphere.
+          * - :py:attr:`~dir_z`
+            - Z-direction of the sphere.
+          * - :py:attr:`~surface_area`
+            - Surface area of the sphere.
+          * - :py:attr:`~volume`
+            - Volume of the sphere.
+
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__eq__`
+            - Equals operator for the ``Sphere`` class.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.sphere import Sphere
+
+Property detail
+---------------
+
+.. py:property:: origin
+   :type: ansys.geometry.core.math.point.Point3D
+
+
+   
+   Origin of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: radius
+   :type: pint.Quantity
+
+
+   
+   Radius of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_x
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   X-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_y
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Y-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: dir_z
+   :type: ansys.geometry.core.math.vector.UnitVector3D
+
+
+   
+   Z-direction of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: surface_area
+   :type: pint.Quantity
+
+
+   
+   Surface area of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: volume
+   :type: pint.Quantity
+
+
+   
+   Volume of the sphere.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __eq__(other: Sphere) -> bool
+
+   
+   Equals operator for the ``Sphere`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: transformed_copy(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Sphere
+
+   
+   Create a transformed copy of the sphere from a transformation matrix.
+
+
+   :Parameters:
+
+       **matrix** : :obj:`Matrix44`
+           4X4 transformation matrix to apply to the sphere.
+
+
+
+   :Returns:
+
+       :obj:`Sphere`
+           New sphere that is the transformed copy of the original sphere.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: mirrored_copy() -> Sphere
+
+   
+   Create a mirrored copy of the sphere along the y-axis.
+
+
+
+
+
+   :Returns:
+
+       :obj:`Sphere`
+           New sphere that is a mirrored copy of the original sphere.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: evaluate(parameter: ansys.geometry.core.shapes.parameterization.ParamUV) -> SphereEvaluation
+
+   
+   Evaluate the sphere at the given parameters.
+
+
+   :Parameters:
+
+       **parameter** : :obj:`ParamUV`
+           Parameters (u,v) to evaluate the sphere at.
+
+
+
+   :Returns:
+
+       :obj:`SphereEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: project_point(point: ansys.geometry.core.math.point.Point3D) -> SphereEvaluation
+
+   
+   Project a point onto the sphere and evaluate the sphere.
+
+
+   :Parameters:
+
+       **point** : :obj:`Point3D`
+           Point to project onto the sphere.
+
+
+
+   :Returns:
+
+       :obj:`SphereEvaluation`
+           Resulting evaluation.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: parameterization() -> tuple[ansys.geometry.core.shapes.parameterization.Parameterization, ansys.geometry.core.shapes.parameterization.Parameterization]
+
+   
+   Parameterization of the sphere surface as a tuple (U, V).
+
+   The U parameter specifies the longitude angle, increasing clockwise (east) about
+   ``dir_z`` (right-hand corkscrew law). It has a zero parameter at ``dir_x`` and a
+   period of ``2*pi``.
+
+   The V parameter specifies the latitude, increasing north, with a zero parameter
+   at the equator and a range of [-pi/2, pi/2].
+
+
+
+
+   :Returns:
+
+       :class:`python:tuple`\[:obj:`Parameterization`, :obj:`Parameterization`]
+           Information about how a sphere's u and v parameters are parameterized, respectively.
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_param(param_uv: ansys.geometry.core.shapes.parameterization.ParamUV) -> bool
+   :abstractmethod:
+
+
+   
+   Check a parameter is within the parametric range of the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: contains_point(point: ansys.geometry.core.math.point.Point3D) -> bool
+   :abstractmethod:
+
+
+   
+   Check a point is contained by the surface.
+
+   The point can either lie within the surface or on its boundary.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

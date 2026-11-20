@@ -1,0 +1,38 @@
+
+
+
+
+Distance
+========
+
+.. py:class:: Distance(value: beartype.typing.Union[ansys.geometry.core.typing.Real, pint.Quantity], unit: beartype.typing.Optional[pint.Unit] = None)
+   :canonical: ansys.geometry.core.misc.measurements.Distance
+
+
+
+Bases: :py:obj:`Measurement`
+
+Provides the ``Measurement`` subclass for holding a distance.
+
+
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.measurements import Distance
+
+
+
+
+

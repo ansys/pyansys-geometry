@@ -1,0 +1,93 @@
+
+
+
+
+
+
+:class:`PMDBImportParameterType`
+================================
+
+
+.. py:class:: ansys.geometry.core.misc.options.PMDBImportParameterType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Provides values for the parameter processing type used during PMDB export.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PMDBImportParameterType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~NONE`
+            - 
+          * - :py:attr:`~INDEPENDENT`
+            - 
+          * - :py:attr:`~ALL`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import PMDBImportParameterType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: NONE
+   :value: 0
+
+
+.. py:attribute:: INDEPENDENT
+   :value: 1
+
+
+.. py:attribute:: ALL
+   :value: 2
+
+
+
+
+
+

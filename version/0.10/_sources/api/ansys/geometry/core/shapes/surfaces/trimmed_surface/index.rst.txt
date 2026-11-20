@@ -1,0 +1,87 @@
+
+
+
+
+
+
+The ``trimmed_surface.py`` module
+=================================
+
+.. py:module:: ansys.geometry.core.shapes.surfaces.trimmed_surface
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: trimmed_surface
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.trimmed_surface.TrimmedSurface`
+            - Represents a trimmed surface.
+
+
+          * - :py:obj:`~ansys.geometry.core.shapes.surfaces.trimmed_surface.ReversedTrimmedSurface`
+            - Represents a reversed trimmed surface.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> TrimmedSurface</api/ansys/geometry/core/shapes/surfaces/trimmed_surface/TrimmedSurface>
+    <span class="nf nf-cod-symbol_class"></span> ReversedTrimmedSurface</api/ansys/geometry/core/shapes/surfaces/trimmed_surface/ReversedTrimmedSurface>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides the ``TrimmedSurface`` class.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

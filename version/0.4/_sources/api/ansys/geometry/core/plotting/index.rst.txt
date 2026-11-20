@@ -1,0 +1,124 @@
+
+
+
+
+
+The ``plotting`` package 
+============================
+
+.. py:module:: ansys.geometry.core.plotting
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+.. py:currentmodule:: plotting
+.. tab-set::
+
+    .. tab-item:: Subpackages
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting.widgets`
+            - Submodule providing widgets for the PyAnsys Geometry plotter.
+
+
+
+    .. tab-item:: Submodules
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting.plotter`
+            - Provides plotting for various PyAnsys Geometry objects.
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting.plotter_helper`
+            - Provides a wrapper to aid in plotting.
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting.plotting_types`
+            - Data types for plotting.
+
+
+          * - :py:attr:`~ansys.geometry.core.plotting.trame_gui`
+            - Module for using `trame <https://kitware.github.io/trame/index.html>`_ for visualization.
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🖿 widgets<widgets/index.rst>
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    🗎 plotter<plotter/index.rst>
+    🗎 plotter_helper<plotter_helper/index.rst>
+    🗎 plotting_types<plotting_types/index.rst>
+    🗎 trame_gui<trame_gui/index.rst>
+
+
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+
+Provides the PyAnsys Geometry plotting subpackage.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+

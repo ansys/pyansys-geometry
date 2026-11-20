@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``frame.py`` module
+=======================
+
+.. py:module:: ansys.geometry.core.math.frame
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: frame
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.frame.Frame`
+            - Representation of a frame.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> Frame</api/ansys/geometry/core/math/frame/Frame>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a frame.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

@@ -1,0 +1,53 @@
+
+
+
+
+
+
+:class:`Matrix33`
+=================
+
+
+.. py:class:: ansys.geometry.core.math.matrix.Matrix33(shape, dtype=float, buffer=None, offset=0, strides=None, order=None)
+
+   Bases: :py:obj:`Matrix`
+
+
+   
+   Provides 3x3 matrix representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`~numpy.ndarray` | :obj:`RealSequence` | :obj:`Matrix`, default: :obj:`DEFAULT_MATRIX33`
+           Matrix arguments as a :class:`np.ndarray <numpy.ndarray>` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.math.matrix import Matrix33
+
+
+
+
+
