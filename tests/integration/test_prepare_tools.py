@@ -453,8 +453,16 @@ def test_find_and_fix_imprint(modeler: Modeler):
 def test_share_topology_create(modeler: Modeler):
     """Test shared topology creation using a geometry file to be supplied."""
     design = modeler.open_file(FILES_DIR / "FixImprint.dsco")
+    bodies = design.get_all_bodies()
+    body_count = len(bodies)
+    assert len(bodies[1].edges) == 12
 
     assert modeler.prepare_tools.share_topology_create(design) is True
+
+    # The contact region is imprinted onto the second body, adding one edge
+    bodies = design.get_all_bodies()
+    assert len(bodies) == body_count
+    assert len(bodies[1].edges) == 13
 
 
 def test_share_topology_create_named_selection(modeler: Modeler):
