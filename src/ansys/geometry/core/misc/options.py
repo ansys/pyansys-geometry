@@ -245,6 +245,19 @@ class FMDExportOptions:
 
 
 @unique
+class ImprintInstanceType(Enum):
+    """Control how imprinting handles instances.
+
+    ``IGNORE`` ignores instances, ``ACROSS`` imprints across instances,
+    and ``BREAK`` imprints and breaks instances.
+    """
+
+    IGNORE = 0
+    ACROSS = 1
+    BREAK = 2
+
+
+@unique
 class AnalysisType(Enum):
     """Provides values for the analysis type used during PMDB export."""
 

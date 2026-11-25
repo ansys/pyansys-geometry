@@ -160,6 +160,27 @@ class GRPCPrepareToolsServiceV0(GRPCPrepareToolsService):
         }
 
     @protect_grpc
+    def find_and_fix_imprint(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.find_and_fix_imprint' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def share_topology_create(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.share_topology_create' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
+    def share_topology_create_named_selection(self, **kwargs) -> dict:  # noqa: D102
+        raise NotImplementedError(
+            f"Method '{self.__class__.__name__}.share_topology_create_named_selection' is not "
+            "implemented in this protofile version."
+        )
+
+    @protect_grpc
     def find_logos(self, **kwargs) -> dict:  # noqa: D102
         from ansys.api.geometry.v0.models_pb2 import FindLogoOptions
         from ansys.api.geometry.v0.preparetools_pb2 import FindLogosRequest

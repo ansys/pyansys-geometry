@@ -66,6 +66,21 @@ class GRPCPrepareToolsService(ABC):  # pragma: no cover
         pass
 
     @abstractmethod
+    def find_and_fix_imprint(self, **kwargs) -> dict:
+        """Find and fix imprint problems in the active design."""
+        pass
+
+    @abstractmethod
+    def share_topology_create(self, **kwargs) -> dict:
+        """Create shared topology in the active design."""
+        pass
+
+    @abstractmethod
+    def share_topology_create_named_selection(self, **kwargs) -> dict:
+        """Create named selections for shared topology in the active design."""
+        pass
+
+    @abstractmethod
     def find_logos(self, **kwargs) -> dict:
         """Detect logos in geometry."""
         pass
