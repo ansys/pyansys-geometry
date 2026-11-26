@@ -81,7 +81,7 @@ doc = [
   "ansys-sphinx-theme[autoapi]==1.12.1",
   "ipyvtklink==0.2.3",
   "jupyter-sphinx==0.5.3",
-  "jupytext==1.19.6",
+  "jupytext==1.19.7",
   "myst-parser==5.2.0",
   "nbconvert==7.17.2",
   "nbsphinx==0.9.8",
