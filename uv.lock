@@ -507,7 +507,7 @@ dev = [
     { name = "semver", specifier = "==3.1.2" },
     { name = "six", specifier = "==1.17.0" },
     { name = "sphinx", specifier = "==9.1.1" },
-    { name = "sphinx-autodoc-typehints", specifier = "==3.17.6" },
+    { name = "sphinx-autodoc-typehints", specifier = "==3.17.7" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "ty", specifier = "==0.0.108" },
@@ -545,7 +545,7 @@ doc = [
     { name = "semver", specifier = "==3.1.2" },
     { name = "six", specifier = "==1.17.0" },
     { name = "sphinx", specifier = "==9.1.1" },
-    { name = "sphinx-autodoc-typehints", specifier = "==3.17.6" },
+    { name = "sphinx-autodoc-typehints", specifier = "==3.17.7" },
     { name = "sphinx-copybutton", specifier = "==0.5.2" },
     { name = "sphinx-jinja", specifier = "==2.0.2" },
     { name = "vtk", specifier = "==9.7.2" },
@@ -4335,7 +4335,7 @@ wheels = [
 
 [[package]]
 name = "sphinx-autodoc-typehints"
-version = "3.17.6"
+version = "3.17.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "docutils" },
@@ -4343,9 +4343,9 @@ dependencies = [
     { name = "sphinx" },
     { name = "typing-extensions", marker = "python_full_version < '3.15'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dc/e8/f2ce890cb2beb746e975c88db71c31e6c84dc37185f0ed04e9cf69db5147/sphinx_autodoc_typehints-3.17.6.tar.gz", hash = "sha256:d5b8dace7d1b8688869033ab7d5307139b3f02e67d40446e2bafd707a08dad68", size = 523599, upload-time = "2026-11-18T00:21:36.6Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e4/a4/d8e90d76de41a4f297e2ba132bf66ea7482c44072ee604d4433dddcd98e2/sphinx_autodoc_typehints-3.17.7.tar.gz", hash = "sha256:7796aec473aafac09d37158586fe96092ac50c4c66b427b24b7101343ce084bd", size = 525867, upload-time = "2026-11-23T19:20:42.643Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/1d/1cb7724abd08eb1594d15e50ad44c854c198ad2eb800a4e6bb3c4bd7c076/sphinx_autodoc_typehints-3.17.6-py3-none-any.whl", hash = "sha256:0242291ff90300ca43748ae3f61ae34a39b23ae0f1d43e500621802cde6502b8", size = 198517, upload-time = "2026-11-18T00:21:34.965Z" },
+    { url = "https://files.pythonhosted.org/packages/85/70/4bb22d6e6445562f00c97e5c7c7b37ccdfc799fca66555da27efb740da5d/sphinx_autodoc_typehints-3.17.7-py3-none-any.whl", hash = "sha256:ed74adcd3f54f6c9530a7ffebe52c6c771c1371248641208b3d69fe4e88ff3bb", size = 203895, upload-time = "2026-11-23T19:20:41.137Z" },
 ]
 
 [[package]]
