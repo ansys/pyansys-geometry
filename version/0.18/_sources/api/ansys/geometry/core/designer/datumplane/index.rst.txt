@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``datumplane.py`` module
+============================
+
+.. py:module:: ansys.geometry.core.designer.datumplane
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.designer.datumplane
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.designer.datumplane.DatumPlane`
+            - Provides for creating datum planes in components.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> DatumPlane</api/ansys/geometry/core/designer/datumplane/DatumPlane>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Module for creating and managing datum planes.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

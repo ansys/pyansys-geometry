@@ -1,0 +1,412 @@
+
+
+:class:`PlaneEvaluation`
+========================
+
+.. py:class:: ansys.geometry.core.shapes.surfaces.plane.PlaneEvaluation(plane: PlaneSurface, parameter: ansys.geometry.core.shapes.parameterization.ParamUV)
+
+   Bases: :py:obj:`ansys.geometry.core.shapes.surfaces.surface_evaluation.SurfaceEvaluation`
+
+
+   
+   Provides evaluation of a plane at given parameters.
+
+
+   :Parameters:
+
+       **plane: ~ansys.geometry.core.shapes.surfaces.plane.PlaneSurface**
+           Plane to evaluate.
+
+       **parameter: ParamUV**
+           Parameters (u, v) to evaluate the plane at.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: PlaneEvaluation
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~position`
+            - Point on the surface, based on the evaluation.
+          * - :py:attr:`~normal`
+            - Normal to the surface.
+          * - :py:attr:`~u_derivative`
+            - First derivative with respect to u.
+          * - :py:attr:`~v_derivative`
+            - First derivative with respect to v.
+          * - :py:attr:`~uu_derivative`
+            - Second derivative with respect to u.
+          * - :py:attr:`~uv_derivative`
+            - Second derivative with respect to u and v.
+          * - :py:attr:`~vv_derivative`
+            - Second derivative with respect to v.
+          * - :py:attr:`~min_curvature`
+            - Minimum curvature.
+          * - :py:attr:`~min_curvature_direction`
+            - Minimum curvature direction.
+          * - :py:attr:`~max_curvature`
+            - Maximum curvature.
+          * - :py:attr:`~max_curvature_direction`
+            - Maximum curvature direction.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plane`
+            - Plane being evaluated.
+          * - :py:attr:`~parameter`
+            - Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.shapes.surfaces.plane import PlaneEvaluation
+
+Property detail
+---------------
+.. py:property:: plane
+   :type: PlaneSurface
+
+   
+   Plane being evaluated.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: parameter
+   :type: ansys.geometry.core.shapes.parameterization.ParamUV
+
+   
+   Parameter that the evaluation is based upon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+    
+
+Method detail
+-------------
+.. py:method:: position() -> ansys.geometry.core.math.point.Point3D
+
+   
+   Point on the surface, based on the evaluation.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: normal() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Normal to the surface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: u_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: v_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   First derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: uu_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to u.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: uv_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to u and v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: vv_derivative() -> ansys.geometry.core.math.vector.Vector3D
+
+   
+   Second derivative with respect to v.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: min_curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Minimum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: min_curvature_direction() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Minimum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: max_curvature() -> ansys.geometry.core.typing.Real
+
+   
+   Maximum curvature.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: max_curvature_direction() -> ansys.geometry.core.math.vector.UnitVector3D
+
+   
+   Maximum curvature direction.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

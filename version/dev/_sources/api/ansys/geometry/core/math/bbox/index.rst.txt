@@ -1,0 +1,80 @@
+
+
+
+
+
+
+The ``bbox.py`` module
+======================
+
+.. py:module:: ansys.geometry.core.math.bbox
+
+
+Summary
+-------
+
+
+
+
+
+
+
+
+
+
+.. py:currentmodule:: ansys.geometry.core.math.bbox
+.. tab-set::
+
+
+
+
+    .. tab-item:: Classes
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+
+          * - :py:obj:`~ansys.geometry.core.math.bbox.BoundingBox`
+            - Maintains the box structure for Bounding Boxes.
+
+
+
+
+
+
+
+
+
+
+
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+   :hidden:
+
+    <span class="nf nf-cod-symbol_class"></span> BoundingBox</api/ansys/geometry/core/math/bbox/BoundingBox>
+
+
+
+
+
+
+
+
+
+Description
+-----------
+
+Provides for managing a bounding box.
+
+..
+    !! processed by numpydoc !!
+
+
+
+
+
+
+

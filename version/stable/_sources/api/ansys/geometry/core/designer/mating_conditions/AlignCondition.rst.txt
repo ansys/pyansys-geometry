@@ -1,0 +1,90 @@
+
+
+
+
+
+
+:class:`AlignCondition`
+=======================
+
+
+.. py:class:: ansys.geometry.core.designer.mating_conditions.AlignCondition
+
+   Bases: :py:obj:`MatingCondition`
+
+
+   
+   AlignCondition dataclass.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: AlignCondition
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~offset`
+            - 
+          * - :py:attr:`~is_reversed`
+            - 
+          * - :py:attr:`~is_valid`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.mating_conditions import AlignCondition
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: offset
+   :type:  float
+
+.. py:attribute:: is_reversed
+   :type:  bool
+
+.. py:attribute:: is_valid
+   :type:  bool
+
+
+
+
+

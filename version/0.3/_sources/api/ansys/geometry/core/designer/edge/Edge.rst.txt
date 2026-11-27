@@ -1,0 +1,228 @@
+
+
+
+
+Edge
+====
+
+.. py:class:: Edge(id: str, curve_type: CurveType, body: ansys.geometry.core.designer.body.Body, grpc_client: ansys.geometry.core.connection.client.GrpcClient)
+   :canonical: ansys.geometry.core.designer.edge.Edge
+
+
+
+
+Represents a single edge of a body within the design assembly.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Edge
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~id`
+            - ID of the edge.
+          * - :py:attr:`~length`
+            - Calculated length of the edge.
+          * - :py:attr:`~curve_type`
+            - Curve type of the edge.
+          * - :py:attr:`~faces`
+            - Faces that contain the edge.
+          * - :py:attr:`~start_point`
+            - Edge start point.
+          * - :py:attr:`~end_point`
+            - Edge end point.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.designer.edge import Edge
+
+
+Property detail
+---------------
+.. py:property:: id
+   :canonical: ansys.geometry.core.designer.edge.Edge.id
+   :type: str
+
+
+   
+   ID of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :canonical: ansys.geometry.core.designer.edge.Edge.length
+   :type: pint.Quantity
+
+
+   
+   Calculated length of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: curve_type
+   :canonical: ansys.geometry.core.designer.edge.Edge.curve_type
+   :type: CurveType
+
+
+   
+   Curve type of the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: faces
+   :canonical: ansys.geometry.core.designer.edge.Edge.faces
+   :type: beartype.typing.List[ansys.geometry.core.designer.face.Face]
+
+
+   
+   Faces that contain the edge.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: start_point
+   :canonical: ansys.geometry.core.designer.edge.Edge.start_point
+   :type: Point3D
+
+
+   
+   Edge start point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: end_point
+   :canonical: ansys.geometry.core.designer.edge.Edge.end_point
+   :type: Point3D
+
+
+   
+   Edge end point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

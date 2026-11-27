@@ -1,0 +1,95 @@
+
+
+
+
+
+
+:class:`ImprintInstanceType`
+============================
+
+
+.. py:class:: ansys.geometry.core.misc.options.ImprintInstanceType
+
+   Bases: :py:obj:`enum.Enum`
+
+
+   
+   Control how imprinting handles instances.
+
+   ``IGNORE`` ignores instances, ``ACROSS`` imprints across instances,
+   and ``BREAK`` imprints and breaks instances.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: ImprintInstanceType
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~IGNORE`
+            - 
+          * - :py:attr:`~ACROSS`
+            - 
+          * - :py:attr:`~BREAK`
+            - 
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import ImprintInstanceType
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: IGNORE
+   :value: 0
+
+
+.. py:attribute:: ACROSS
+   :value: 1
+
+
+.. py:attribute:: BREAK
+   :value: 2
+
+
+
+
+
+

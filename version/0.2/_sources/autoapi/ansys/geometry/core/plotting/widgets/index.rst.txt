@@ -1,0 +1,42 @@
+:py:mod:`ansys.geometry.core.plotting.widgets`
+==============================================
+
+.. py:module:: ansys.geometry.core.plotting.widgets
+
+.. autoapi-nested-parse::
+
+   
+   Subpackage providing widgets for the PyGeometry plotter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   button/index.rst
+   displace_arrows/index.rst
+   ruler/index.rst
+   view_button/index.rst
+   widget/index.rst
+
+

@@ -1,0 +1,191 @@
+
+
+
+
+
+
+:class:`GRPCPointsService`
+==========================
+
+
+.. py:class:: ansys.geometry.core._grpc._services.base.points.GRPCPointsService(channel: grpc.Channel)
+
+   Bases: :py:obj:`abc.ABC`
+
+
+   
+   Points service for gRPC communication with the Geometry server.
+
+
+   :Parameters:
+
+       **channel** : :obj:`grpc.Channel`
+           The gRPC channel to the server.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+
+
+.. py:currentmodule:: GRPCPointsService
+
+Overview
+--------
+
+.. tab-set::
+
+   .. tab-item:: Abstract methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~create_design_points`
+            - Create design points.
+          * - :py:attr:`~revolve_points`
+            - Revolve design points around an axis to create curves.
+          * - :py:attr:`~revolve_points_by_helix`
+            - Revolve design points around an axis in a helix shape to create curves.
+          * - :py:attr:`~sweep_points`
+            - Sweep design points along a trajectory to create curves.
+
+
+
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core._grpc._services.base.points import GRPCPointsService
+
+
+
+Method detail
+-------------
+
+.. py:method:: create_design_points(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Create design points.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_points(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Revolve design points around an axis to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: revolve_points_by_helix(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Revolve design points around an axis in a helix shape to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:method:: sweep_points(**kwargs) -> dict
+   :abstractmethod:
+
+
+   
+   Sweep design points along a trajectory to create curves.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

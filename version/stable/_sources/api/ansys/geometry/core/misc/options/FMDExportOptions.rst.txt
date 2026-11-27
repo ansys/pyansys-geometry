@@ -1,0 +1,150 @@
+
+
+
+
+
+
+:class:`FMDExportOptions`
+=========================
+
+
+.. py:class:: ansys.geometry.core.misc.options.FMDExportOptions
+
+   
+   Provides options for FMD export.
+
+
+   :Parameters:
+
+       **deviation** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface position.
+           If a Real is provided, it is assumed to be in the default length unit.
+           Must be between 0.00003 m and 0.002 m.
+
+       **angle** : :obj:`Angle` | :obj:`Quantity` | :obj:`Real`
+           The maximum deviation from the true surface normal.
+           If a Real is provided, it is assumed to be in the default angle unit.
+           Must be between 0.05 degrees (≈ 8.727e-4 rad) and 30 degrees (≈ 0.5236 rad).
+
+       **aspect_ratio** : :class:`python:int`, default=-3
+           The maximum aspect ratio of facets.
+
+       **max_edge_length** : :obj:`Distance` | :obj:`Quantity` | :obj:`Real`, default=0.0
+           The maximum facet edge length.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+.. py:currentmodule:: FMDExportOptions
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+
+
+   .. tab-item:: Attributes
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~deviation`
+            - 
+          * - :py:attr:`~angle`
+            - 
+          * - :py:attr:`~aspect_ratio`
+            - 
+          * - :py:attr:`~max_edge_length`
+            - 
+
+
+
+   .. tab-item:: Special methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~__post_init__`
+            - Normalize measurement fields and validate their ranges.
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.misc.options import FMDExportOptions
+
+
+Attribute detail
+----------------
+
+.. py:attribute:: deviation
+   :type:  ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real
+
+.. py:attribute:: angle
+   :type:  ansys.geometry.core.misc.measurements.Angle | pint.Quantity | ansys.geometry.core.typing.Real
+
+.. py:attribute:: aspect_ratio
+   :type:  int
+   :value: -3
+
+
+.. py:attribute:: max_edge_length
+   :type:  ansys.geometry.core.misc.measurements.Distance | pint.Quantity | ansys.geometry.core.typing.Real
+   :value: 0.0
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: __post_init__()
+
+   
+   Normalize measurement fields and validate their ranges.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

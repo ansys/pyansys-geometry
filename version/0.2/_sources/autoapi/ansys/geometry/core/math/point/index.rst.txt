@@ -1,0 +1,607 @@
+:py:mod:`ansys.geometry.core.math.point`
+========================================
+
+.. py:module:: ansys.geometry.core.math.point
+
+.. autoapi-nested-parse::
+
+   Provides ``Point`` classes.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.point.Point2D
+   ansys.geometry.core.math.point.Point3D
+
+
+
+
+Attributes
+~~~~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.math.point.DEFAULT_POINT2D_VALUES
+   ansys.geometry.core.math.point.DEFAULT_POINT3D_VALUES
+   ansys.geometry.core.math.point.BASE_UNIT_LENGTH
+
+
+.. py:data:: DEFAULT_POINT2D_VALUES
+
+   
+   Default values for a 2D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: DEFAULT_POINT3D_VALUES
+
+   
+   Default values for a 3D point.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:data:: BASE_UNIT_LENGTH
+
+   
+   Default value for the length of the base unit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:class:: Point2D(input: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence] = DEFAULT_POINT2D_VALUES, unit: beartype.typing.Optional[pint.Unit] = None)
+
+
+   Bases: :py:obj:`numpy.ndarray`, :py:obj:`ansys.geometry.core.misc.PhysicalQuantity`
+
+   
+   Provides ``Point2D`` geometry primitive representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`], default: :obj:`DEFAULT_POINT2D_VALUES`
+           Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
+           or as a ``RealSequence``.
+
+       **unit** : :obj:`~pint.Unit`, :obj:`optional`
+           Units for defining 2D point values. By default, ``DEFAULT_UNITS.LENGTH``
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: x
+      :type: pint.Quantity
+
+      
+      X plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: y
+      :type: pint.Quantity
+
+      
+      Y plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Point2D) -> bool
+
+      
+      Equals operator for the``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Point2D) -> bool
+
+      
+      Not equals operator for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __add__(other: beartype.typing.Union[Point2D, ansys.geometry.core.math.vector.Vector2D]) -> Point2D
+
+      
+      Add operation for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __sub__(other: Point2D) -> Point2D
+
+      
+      Subtraction operation for the ``Point2D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: unit() -> pint.Unit
+
+      
+      Get the unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: base_unit() -> pint.Unit
+
+      
+      Get the base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Point3D(input: beartype.typing.Union[numpy.ndarray, ansys.geometry.core.typing.RealSequence] = DEFAULT_POINT3D_VALUES, unit: beartype.typing.Optional[pint.Unit] = None)
+
+
+   Bases: :py:obj:`numpy.ndarray`, :py:obj:`ansys.geometry.core.misc.PhysicalQuantity`
+
+   
+   Provides ``Point3D`` geometry primitive representation.
+
+
+   :Parameters:
+
+       **input** : :obj:`Union`\[:obj:`~numpy.ndarray`, :obj:`RealSequence`], default: :obj:`DEFAULT_POINT3D_VALUES`
+           Direction arguments, either as a :class:`numpy.ndarray <numpy.ndarray>` class
+           or as a ``RealSequence``.
+
+       **unit** : :obj:`~pint.Unit`, :obj:`optional`
+           Units for defining 3D point values. By default, ``DEFAULT_UNITS.LENGTH``
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: x
+      :type: pint.Quantity
+
+      
+      X plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: y
+      :type: pint.Quantity
+
+      
+      Y plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: z
+      :type: pint.Quantity
+
+      
+      Z plane component value.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __eq__(other: Point3D) -> bool
+
+      
+      Equals operator for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __ne__(other: Point3D) -> bool
+
+      
+      Not equals operator for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __add__(other: beartype.typing.Union[Point3D, ansys.geometry.core.math.vector.Vector3D]) -> Point3D
+
+      
+      Add operation for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __sub__(other: beartype.typing.Union[Point3D, ansys.geometry.core.math.vector.Vector3D]) -> Point3D
+
+      
+      Subtraction operation for the ``Point3D`` class.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: unit() -> pint.Unit
+
+      
+      Get the unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: base_unit() -> pint.Unit
+
+      
+      Get the base unit of the object.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: transform(matrix: ansys.geometry.core.math.matrix.Matrix44) -> Point3D
+
+      
+      Transform the current Point3D with a transformation matrix.
+
+
+      :Parameters:
+
+          **matrix** : :obj:`Matrix44`
+              The 4x4 transformation matrix to apply to the point.
+
+      :Returns:
+
+          :obj:`Point3D`
+              A new Point3D object that is the transformed copy of the original point after applying
+              the transformation matrix.
+
+
+
+
+
+
+
+
+      .. rubric:: Notes
+
+      Transform the current Point3D object by applying the specified 4x4
+      transformation matrix and returns a new Point3D object representing the
+      transformed point.
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

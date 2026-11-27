@@ -1,0 +1,10 @@
+API reference
+=============
+
+This page contains the ``ansys-geometry-core`` API reference.
+
+.. toctree::
+   :titlesonly:
+   :maxdepth: 2
+
+   /autoapi/ansys/geometry/core/index

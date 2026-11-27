@@ -1,0 +1,156 @@
+
+
+
+
+
+
+:class:`InterferenceProblemAreas`
+=================================
+
+
+.. py:class:: ansys.geometry.core.tools.problem_areas.InterferenceProblemAreas(id: str, grpc_client: ansys.geometry.core.connection.GrpcClient, bodies: list[ansys.geometry.core.designer.body.Body])
+
+   Bases: :py:obj:`ProblemArea`
+
+
+   
+   Represents an interference problem area with a unique identifier and associated bodies.
+
+
+   :Parameters:
+
+       **id** : :class:`python:str`
+           Server-defined ID for the problem area.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting geometry service instance for design modeling.
+
+       **bodies** : :class:`python:list`\[:obj:`Body`]
+           List of bodies in the problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+.. py:currentmodule:: InterferenceProblemAreas
+
+Overview
+--------
+
+.. tab-set::
+
+
+
+   .. tab-item:: Methods
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~fix`
+            - Fix the problem area.
+
+
+   .. tab-item:: Properties
+
+      .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~bodies`
+            - The list of the bodies connected to this problem area.
+
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.tools.problem_areas import InterferenceProblemAreas
+
+Property detail
+---------------
+
+.. py:property:: bodies
+   :type: list[ansys.geometry.core.designer.body.Body]
+
+
+   
+   The list of the bodies connected to this problem area.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+.. py:method:: fix() -> ansys.geometry.core.tools.repair_tool_message.RepairToolMessage
+
+   
+   Fix the problem area.
+
+
+
+
+
+   :Returns:
+
+       message: :obj:`RepairToolMessage`
+           Message containing created and/or modified bodies.
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   The current implementation does not properly track changes.
+   The list of created and modified bodies are empty.
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+

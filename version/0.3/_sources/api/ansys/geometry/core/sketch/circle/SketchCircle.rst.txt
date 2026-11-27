@@ -1,0 +1,199 @@
+
+
+
+
+SketchCircle
+============
+
+.. py:class:: SketchCircle(center: ansys.geometry.core.math.point.Point2D, radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], plane: ansys.geometry.core.math.plane.Plane = Plane())
+   :canonical: ansys.geometry.core.sketch.circle.SketchCircle
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`, :py:obj:`ansys.geometry.core.primitives.circle.Circle`
+
+Provides for modeling a circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: SketchCircle
+.. tab-set::
+
+
+
+    .. tab-item:: Methods
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~plane_change`
+            - Redefine the plane containing the ``SketchCircle`` objects.
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center of the circle.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the circle.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.circle import SketchCircle
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.circle.SketchCircle.center
+   :type: Point2D
+
+
+   
+   Center of the circle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.sketch.circle.SketchCircle.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the circle.
+
+
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This property resolves the dilemma between using the ``SkethFace.perimeter``
+   property and the ``Circle.perimeter`` property.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.circle.SketchCircle.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+Method detail
+-------------
+
+
+.. py:method:: plane_change(plane: ansys.geometry.core.math.plane.Plane) -> None
+
+   
+   Redefine the plane containing the ``SketchCircle`` objects.
+
+
+   :Parameters:
+
+       **plane** : :obj:`Plane`
+           Desired new plane that is to contain the sketched circle.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   This implies that their 3D definition might suffer changes.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+

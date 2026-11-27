@@ -1,0 +1,319 @@
+
+
+
+
+Polygon
+=======
+
+.. py:class:: Polygon(center: ansys.geometry.core.math.point.Point2D, inner_radius: beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Distance, ansys.geometry.core.typing.Real], sides: int, angle: beartype.typing.Optional[beartype.typing.Union[pint.Quantity, ansys.geometry.core.misc.measurements.Angle, ansys.geometry.core.typing.Real]] = 0)
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon
+
+
+
+Bases: :py:obj:`ansys.geometry.core.sketch.face.SketchFace`
+
+Provides for modeling regular polygons.
+
+
+
+
+
+
+
+
+
+
+
+
+Overview
+--------
+.. py:currentmodule:: Polygon
+.. tab-set::
+
+
+
+
+    .. tab-item:: Properties
+
+        .. list-table::
+          :header-rows: 0
+          :widths: auto
+
+          * - :py:attr:`~center`
+            - Center point of the polygon.
+          * - :py:attr:`~inner_radius`
+            - Inner radius (apothem) of the polygon.
+          * - :py:attr:`~n_sides`
+            - Number of sides of the polygon.
+          * - :py:attr:`~angle`
+            - Orientation angle of the polygon.
+          * - :py:attr:`~length`
+            - Side length of the polygon.
+          * - :py:attr:`~outer_radius`
+            - Outer radius of the polygon.
+          * - :py:attr:`~perimeter`
+            - Perimeter of the polygon.
+          * - :py:attr:`~area`
+            - Area of the polygon.
+          * - :py:attr:`~visualization_polydata`
+            - VTK polydata representation for PyVista visualization.
+
+
+
+
+
+
+Import detail
+-------------
+
+.. code-block:: python
+
+    from ansys.geometry.core.sketch.polygon import Polygon
+
+
+Property detail
+---------------
+.. py:property:: center
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.center
+   :type: Point2D
+
+
+   
+   Center point of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: inner_radius
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.inner_radius
+   :type: pint.Quantity
+
+
+   
+   Inner radius (apothem) of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: n_sides
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.n_sides
+   :type: int
+
+
+   
+   Number of sides of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: angle
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.angle
+   :type: pint.Quantity
+
+
+   
+   Orientation angle of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: length
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.length
+   :type: pint.Quantity
+
+
+   
+   Side length of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: outer_radius
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.outer_radius
+   :type: pint.Quantity
+
+
+   
+   Outer radius of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: perimeter
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.perimeter
+   :type: pint.Quantity
+
+
+   
+   Perimeter of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: area
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.area
+   :type: pint.Quantity
+
+
+   
+   Area of the polygon.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+.. py:property:: visualization_polydata
+   :canonical: ansys.geometry.core.sketch.polygon.Polygon.visualization_polydata
+   :type: pyvista.PolyData
+
+
+   
+   VTK polydata representation for PyVista visualization.
+
+   The representation lies in the X/Y plane within
+   the standard global Cartesian coordinate system.
+
+
+   :Returns:
+
+       :obj:`pyvista.PolyData`
+           VTK pyvista.Polydata configuration.
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+
+
+
+
+

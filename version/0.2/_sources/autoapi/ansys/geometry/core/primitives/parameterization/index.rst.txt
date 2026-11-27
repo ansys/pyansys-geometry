@@ -1,0 +1,660 @@
+:py:mod:`ansys.geometry.core.primitives.parameterization`
+=========================================================
+
+.. py:module:: ansys.geometry.core.primitives.parameterization
+
+.. autoapi-nested-parse::
+
+   Provides the parametrization-related classes.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.primitives.parameterization.ParamUV
+   ansys.geometry.core.primitives.parameterization.Interval
+   ansys.geometry.core.primitives.parameterization.ParamForm
+   ansys.geometry.core.primitives.parameterization.ParamType
+   ansys.geometry.core.primitives.parameterization.Parameterization
+
+
+
+
+.. py:class:: ParamUV(u: ansys.geometry.core.typing.Real, v: ansys.geometry.core.typing.Real)
+
+
+   
+   Parameter class containing 2 parameters: (u, v).
+
+
+   :Parameters:
+
+       **u** : :obj:`Real`
+           u-parameter.
+
+       **v** : :obj:`Real`
+           v-parameter.
+
+
+
+
+
+
+
+
+
+   .. rubric:: Notes
+
+   Likened to a 2D point in UV space Used as an argument in parametric
+   surface evaluations. This matches the service implementation for the
+   Geometry service.
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: u
+      :type: ansys.geometry.core.typing.Real
+
+      
+      u-parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: v
+      :type: ansys.geometry.core.typing.Real
+
+      
+      v-parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __add__(other: ParamUV) -> ParamUV
+
+      
+      Add the u and v components of the other ParamUV to this ParamUV.
+
+
+      :Parameters:
+
+          **other** : :obj:`ParamUV`
+              The parameters to add these parameters.
+
+      :Returns:
+
+          :obj:`ParamUV`
+              The sum of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __sub__(other: ParamUV) -> ParamUV
+
+      
+      Subtract the u and v components of the other ParamUV from this ParamUV.
+
+
+      :Parameters:
+
+          **other** : :obj:`ParamUV`
+              The parameters to subtract from these parameters.
+
+      :Returns:
+
+          :obj:`ParamUV`
+              The difference of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __mul__(other: ParamUV) -> ParamUV
+
+      
+      Multiplies the u and v components of this ParamUV by the other ParamUV.
+
+
+      :Parameters:
+
+          **other** : :obj:`ParamUV`
+              The parameters to multiply by these parameters.
+
+      :Returns:
+
+          :obj:`ParamUV`
+              The product of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __truediv__(other: ParamUV) -> ParamUV
+
+      
+      Divides the u and v components of this ParamUV by the other ParamUV.
+
+
+      :Parameters:
+
+          **other** : :obj:`ParamUV`
+              The parameters to divide these parameters by.
+
+      :Returns:
+
+          :obj:`ParamUV`
+              The quotient of the parameters.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``ParamUV`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: Interval(start: ansys.geometry.core.typing.Real, end: ansys.geometry.core.typing.Real)
+
+
+   
+   Interval class that defines a range of values.
+
+
+   :Parameters:
+
+       **start** : :obj:`Real`
+           Start value of the interval.
+
+       **end** : :obj:`Real`
+           End value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: start
+      :type: ansys.geometry.core.typing.Real
+
+      
+      Start value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: end
+      :type: ansys.geometry.core.typing.Real
+
+      
+      End value of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_open() -> bool
+
+      
+      If the interval is open (-inf, inf).
+
+
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              True if both ends of the interval are negative and positive infinity respectively.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: is_closed() -> bool
+
+      
+      If the interval is closed. Neither value is inf or -inf.
+
+
+
+      :Returns:
+
+          :ref:`bool <python:bltin-boolean-values>`
+              True if neither bound of the interval is infinite.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: get_span() -> ansys.geometry.core.typing.Real
+
+      
+      Return the quantity contained by the interval. Interval must be closed.
+
+
+
+      :Returns:
+
+          :obj:`Real`
+              The difference between the end and start of the interval.
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``Interval`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
+.. py:class:: ParamForm
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   ParamForm enum class that defines the form of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: OPEN
+      :value: 1
+
+      
+
+   .. py:attribute:: CLOSED
+      :value: 2
+
+      
+
+   .. py:attribute:: PERIODIC
+      :value: 3
+
+      
+
+   .. py:attribute:: OTHER
+      :value: 4
+
+      
+
+
+.. py:class:: ParamType
+
+
+   Bases: :py:obj:`enum.Enum`
+
+   
+   ParamType enum class that defines the type of a Parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:attribute:: LINEAR
+      :value: 1
+
+      
+
+   .. py:attribute:: CIRCULAR
+      :value: 2
+
+      
+
+   .. py:attribute:: OTHER
+      :value: 3
+
+      
+
+
+.. py:class:: Parameterization(form: ParamForm, type: ParamType, interval: Interval)
+
+
+   
+   Parameterization class describes the parameters of a specific geometry.
+
+
+   :Parameters:
+
+       **form** : :obj:`ParamForm`
+           Form of the parameterization.
+
+       **type** : :obj:`ParamType`
+           Type of the parameterization.
+
+       **interval** : :obj:`Interval`
+           Interval of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: form
+      :type: ParamForm
+
+      
+      The form of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: type
+      :type: ParamType
+
+      
+      The type of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: interval
+      :type: Interval
+
+      
+      The interval of the parameterization.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``Parameterization`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+

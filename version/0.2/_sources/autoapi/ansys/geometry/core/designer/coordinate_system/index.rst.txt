@@ -1,0 +1,207 @@
+:py:mod:`ansys.geometry.core.designer.coordinate_system`
+========================================================
+
+.. py:module:: ansys.geometry.core.designer.coordinate_system
+
+.. autoapi-nested-parse::
+
+   Provides the ``CoordinateSystem`` class module.
+
+   ..
+       !! processed by numpydoc !!
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   ansys.geometry.core.designer.coordinate_system.CoordinateSystem
+
+
+
+
+.. py:class:: CoordinateSystem(name: str, frame: ansys.geometry.core.math.Frame, parent_component: ansys.geometry.core.designer.component.Component, grpc_client: ansys.geometry.core.connection.GrpcClient, preexisting_id: beartype.typing.Optional[str] = None)
+
+
+   
+   Represents a user-defined coordinate system within the design assembly.
+
+   This coordinate system synchronizes to a design within a supporting Geometry service instance.
+
+   :Parameters:
+
+       **name** : :class:`python:str`
+           User-defined label for the coordinate system.
+
+       **frame** : :obj:`Frame`
+           Frame defining the coordinate system bounds.
+
+       **parent_component** : :obj:`Component`, default: :obj:`Component`
+           Parent component the coordinate system is assigned against.
+
+       **grpc_client** : :obj:`GrpcClient`
+           Active supporting Geometry service instance for design modeling.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ..
+       !! processed by numpydoc !!
+   .. py:property:: id
+      :type: str
+
+      
+      ID of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: name
+      :type: str
+
+      
+      Name of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: frame
+      :type: ansys.geometry.core.math.Frame
+
+      
+      Frame of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: parent_component
+      :type: ansys.geometry.core.designer.component.Component
+
+      
+      Parent component of the coordinate system.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:property:: is_alive
+      :type: bool
+
+      
+      If the CoordinateSystem is still alive on the server side.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+   .. py:method:: __repr__() -> str
+
+      
+      Represent the ``CoordinateSystem`` as a string.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ..
+          !! processed by numpydoc !!
+
+
