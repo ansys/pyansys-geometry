@@ -21,7 +21,7 @@ repos:
         args: [--keep-full-version]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: ef6cf06c079dd6b299dfc720b0f14400c9d168e1 # frozen: v0.17.5
+    rev: 9026c9127e153371d7a78dfcb0c45ae2046a3d10 # frozen: v0.17.6
     hooks:
       - id: ruff-check
       - id: ruff-format
@@ -41,7 +41,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: dbcd0a4ad0060f78ac3c7d53d342f510edc48eab # frozen: v0.8.1
+    rev: e55c4e315cb8ce98e3b81c63b5e869cfc3114039 # frozen: v0.8.2
     hooks:
       - id: add-license-headers
         files: '(src|examples|tests|doc|docker)/.*\.(py)'
